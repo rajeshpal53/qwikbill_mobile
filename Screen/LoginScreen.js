@@ -1,12 +1,11 @@
-import React from 'react';
+import {React ,useState} from 'react';
 import { View,StyleSheet, Alert,Image } from 'react-native';
 import{Text,TextInput,Button} from 'react-native-paper'
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Link } from 'expo-router';
 
-const LoginScreen = () => {
+ const LoginScreen = ({navigation}) => {
+
   const validationSchema = Yup.object().shape({
     email: Yup.string()
       .email('Invalid email address')
@@ -16,29 +15,33 @@ const LoginScreen = () => {
       .required('Password is required')
   });
 
-  const handleLogin = async (values: any ) => {
+  const handleLogin = async (values,{resetForm} ) => {
      console.log(values)
-     try {
-      const response = await fetch("http://localhost:8888/api/login",{
-        credentials:"include",
+      // const response = await axios.post("https://localhost:8888/api/login",{
+      //   values
+      // }); 
+      // console.log(response)   
+      // const data= response.result;
+      // if (data.success) {  
+      //     useNavigation().navigate("/")
+      //   // localStorage.setItem('user',data.result);
+      //   // dispatch({ type: 'LOGIN', payload: users});
+      // } else {
+      //   alert("Wrong Login Credentials!");
+      // }     
+
+      const response = await fetch('http:/192.168.1.4:8888/api/login', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials:'include',
         body: JSON.stringify(values),
       });
-      const result = await response.json();
-      if (result.success) {  
-          console.log(result.result)
-        // localStorage.setItem('user',result.result);
-        // dispatch({ type: 'LOGIN', payload: users});
-      } else {
-        alert("Wrong Login Credentials!");
-      }
-    } catch (error) {
-      console.error("Error fetching users data:", error);
-    }
-     
+      const data = await response.json();
+      console.log(data.result)
+      navigation.navigate("wertone",{screen:'invoice'})
+      resetForm();
 }
   return (
     <Formik
@@ -48,7 +51,7 @@ const LoginScreen = () => {
     >
       {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
         <View style={styles.container}>
-          <Image source={require('../assets/images/logo-wertone.png')} style={styles.img} />
+          <Image source={require('../assets/logo-wertone.png')} style={styles.img} />
           <Text variant='labelMedium' style={styles.wertoneTag}> wertone billing center</Text>
           <Text variant='bodyLarge'> Login</Text>
           <TextInput
@@ -71,9 +74,10 @@ const LoginScreen = () => {
             onBlur={handleBlur('password')}
             value={values.password}
             secureTextEntry
+            autoCapitalize='none'
           />
           {touched.password && errors.password && <Text style={styles.error}>{errors.password}</Text>}
-            <Link href='' style={styles.link}> forget password?..</Link>
+            {/* <Link href='' style={styles.link}> forget password?..</Link> */}
           <Button onPress={handleSubmit} textColor='white' style={styles.button} >Login</Button>
         </View>
       )}
@@ -83,7 +87,7 @@ const LoginScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,  
+    justifyContent :"center", 
     paddingHorizontal: 16,
     alignItems:"center",
     elevation:12,
