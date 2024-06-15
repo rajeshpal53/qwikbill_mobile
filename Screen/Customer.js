@@ -2,7 +2,7 @@ import React, { useState,useEffect } from 'react';
 import { ScrollView, Text, StyleSheet } from 'react-native';
 import {Button} from 'react-native-paper'
 import CustomerCard from '../Components/CustomerCard'
- export default function Customer() {
+ export default function Customer({navigation}) {
   const [customer,setCustomer]= useState([]);
   useEffect(() => {
     async function fetchData() {
@@ -23,7 +23,7 @@ import CustomerCard from '../Components/CustomerCard'
   }, []);
   return (
     <ScrollView style={styles.container}>
-       <Button style={styles.addButton} buttonColor='#ffffff' textColor='white'> Add New Customer</Button>
+       <Button style={styles.addButton} buttonColor='#ffffff' textColor='white' onPress={()=>{ navigation.navigate('AddCustomer')}}> Add New Customer</Button>
       {customer?<CustomerCard customer={customer}/>: <Text> no Customer found</Text>}
     </ScrollView>
   );

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text } from 'react-native-paper';
 import {View} from 'react-native';
- const AddInvoice=()=>{
+ const AddCustomer=()=>{
   return (
    <View>
     <Text variant='headlineLarge'>add new Invoice </Text>
@@ -9,4 +9,4 @@ import {View} from 'react-native';
   )
 }
 
-export default AddInvoice;
+export default AddCustomer;
