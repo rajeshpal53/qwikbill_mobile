@@ -5,7 +5,7 @@ import { StyleSheet,View } from "react-native";
 function InvoiceCard({invoices}) {
   return (
    <View>
-    { invoices.map((item)=>{return( 
+    { invoices.map((item)=>( 
          <Card key={item._id} style={styles.card}>
            <Card.Title title={item.date} titleStyle={styles.cardTitle} />
            <Card.Content>
@@ -32,7 +32,7 @@ function InvoiceCard({invoices}) {
              </Button>
            </Card.Actions>
          </Card>
-    )})}
+    ))}
    </View>
   )
 }

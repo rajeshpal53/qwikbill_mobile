@@ -3,7 +3,7 @@ import { View, Text, StyleSheet,ScrollView } from 'react-native';
 import ProductCard from'../Components/ProductCard'
 import { Button} from 'react-native-paper';
 
-export default function Products() {
+export default function Products({navigation}) {
   const[products,setProducts]=useState([]);
   useEffect(() => {
     async function fetchData() {
@@ -24,7 +24,7 @@ export default function Products() {
   }, []);
   return (
     <ScrollView style={styles.container}>
-      <Button style={styles.addButton} buttonColor='#ffffff' textColor='white'> Add New Product</Button>
+      <Button style={styles.addButton} buttonColor='#ffffff' textColor='white' onPress={()=>{navigation.navigate('AddProduct') }}> Add New Product</Button>
        {products?<ProductCard products={products}/>:<Text>no products found</Text>}
     </ScrollView>
   );

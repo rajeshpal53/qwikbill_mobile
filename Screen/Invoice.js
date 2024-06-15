@@ -3,8 +3,8 @@ import React,{useState,useEffect} from 'react';
 import { View, StyleSheet,Text} from 'react-native';
 import { Button } from 'react-native-paper';
 import InvoiceCard from '../Components/InvoiceCard'
-import AddInvoice from '../Components/AddInvoice';
- export default function Invoice({navigation}){
+
+export default function Invoice({navigation}){
   const[invoices,setInvoices]= useState();
   useEffect(() => {
     async function fetchData() {
