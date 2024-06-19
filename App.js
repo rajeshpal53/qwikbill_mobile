@@ -10,10 +10,10 @@ import Customer from "./Screen/Customer";
 import LoginScreen from './Screen/LoginScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Provider } from 'react-native-paper';
-import AddInvoice from "./Screen/AddInvoice"
 import AddProduct from './Screen/AddProduct';
-import AddCustomer from './Screen/AddCustomer';
 import { DefaultTheme } from 'react-native-paper';
+import AddInvoiceScreen from './Screen/AddInvoiceScreen';
+import AddCustomerScreen from './Screen/AddCustomerScreen';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const customTheme = {
@@ -41,9 +41,9 @@ export default function App() {
         <Stack.Navigator initialRouteName="login">
           <Stack.Screen name='wertone' component={DrawerNavigator} options={{headerShown:false}} />
         <Stack.Screen name='login' component={LoginScreen}  screenOptions={{headerShown: false}}/> 
-        <Stack.Screen name='addInvoice' component={AddInvoice}  screenOptions={{}}/>
+        <Stack.Screen name='AddInvoice' component={AddInvoiceScreen}  screenOptions={{}}/>
         <Stack.Screen name='AddProduct' component={AddProduct}  screenOptions={{}}/>
-        <Stack.Screen name='AddCustomer' component={AddCustomer}  screenOptions={{}}/>
+        <Stack.Screen name='AddCustomer' component={AddCustomerScreen}  screenOptions={{}}/>
       </Stack.Navigator>    
     </NavigationContainer>
     </Provider>

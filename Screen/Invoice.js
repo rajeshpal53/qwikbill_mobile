@@ -1,15 +1,14 @@
 
 import React,{useState,useEffect} from 'react';
-import { View, StyleSheet,Text} from 'react-native';
+import { View, StyleSheet,Text,ScrollView} from 'react-native';
 import { Button } from 'react-native-paper';
 import InvoiceCard from '../Components/InvoiceCard'
-
 export default function Invoice({navigation}){
   const[invoices,setInvoices]= useState();
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("http://192.168.1.4:8888/api/invoice/list", {
+        const response = await fetch("http://192.168.1.5:8888/api/invoice/list", {
           credentials: "include",
         });
         if (!response.ok) {
@@ -25,7 +24,7 @@ export default function Invoice({navigation}){
   }, []);
  console.log(invoices)
  const addInvoiceHandler=()=>{
-  navigation.navigate('addInvoice')
+  navigation.navigate('AddInvoice')
  }
 //   const [invoices,setInvoices]=useState([])
 //  useEffect(()=>{
@@ -45,10 +44,10 @@ export default function Invoice({navigation}){
 //       fetchData();
 //  },[])
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Button style={styles.addButton} buttonColor='#ffffff' textColor='white' onPress={addInvoiceHandler}> Add New Invoice</Button>
         {invoices?<InvoiceCard invoices={invoices}/>:<Text>no invoices found</Text>}
-  </View>
+  </ScrollView>
     
   );
 };
