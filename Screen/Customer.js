@@ -7,7 +7,7 @@ import CustomerCard from '../Components/CustomerCard'
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("http://192.168.1.5:8888/api/people/list", {
+        const response = await fetch("http://192.168.1.8:8888/api/people/list", {
           credentials: "include",
         });
         if (!response.ok) {

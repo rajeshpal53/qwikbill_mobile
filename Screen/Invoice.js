@@ -1,14 +1,16 @@
 
-import React,{useState,useEffect} from 'react';
+import React,{useState,useEffect, useContext} from 'react';
 import { View, StyleSheet,Text,ScrollView} from 'react-native';
-import { Button } from 'react-native-paper';
+import { Button,ActivityIndicator} from 'react-native-paper';
 import InvoiceCard from '../Components/InvoiceCard'
+import { AuthContext } from '../Store/AuthContext';
 export default function Invoice({navigation}){
   const[invoices,setInvoices]= useState();
+
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("http://192.168.1.5:8888/api/invoice/list", {
+        const response = await fetch("http://192.168.1.8:8888/api/invoice/list", {
           credentials: "include",
         });
         if (!response.ok) {
@@ -22,31 +24,16 @@ export default function Invoice({navigation}){
     }
     fetchData();
   }, []);
- console.log(invoices)
  const addInvoiceHandler=()=>{
-  navigation.navigate('AddInvoice')
+  navigation.navigate('StackNavigator',{screen:'AddInvoice'})
  }
-//   const [invoices,setInvoices]=useState([])
-//  useEffect(()=>{
-//   async function fetchData() {
-//         try {
-//           const response = await fetch("http://192.168.1.3:3000/invoices/", {
-//           });
-//           if (!response.ok) {
-//             throw new Error("Network response was not ok");
-//           }
-//           const result = await response.json();
-//           setInvoices(result);
-//         } catch (error) {
-//           console.error("error", error);
-//         }
-//       }
-//       fetchData();
-//  },[])
+
   return (
     <ScrollView style={styles.container}>
       <Button style={styles.addButton} buttonColor='#ffffff' textColor='white' onPress={addInvoiceHandler}> Add New Invoice</Button>
-        {invoices?<InvoiceCard invoices={invoices}/>:<Text>no invoices found</Text>}
+        {invoices?<InvoiceCard invoices={invoices}/>: <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <ActivityIndicator size="large" />
+          </View>}
   </ScrollView>
     
   );
