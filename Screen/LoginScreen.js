@@ -1,10 +1,12 @@
-import {React ,useState} from 'react';
+import {React ,useState,useContext} from 'react';
 import { View,StyleSheet, Alert,Image } from 'react-native';
 import{Text,TextInput,Button} from 'react-native-paper'
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { AuthContext } from '../Store/AuthContext';
 
  const LoginScreen = ({navigation}) => {
+  const{login,isAuthenticated,isLoading}= useContext(AuthContext)
 
   const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -17,20 +19,7 @@ import * as Yup from 'yup';
 
   const handleLogin = async (values,{resetForm} ) => {
      console.log(values)
-      // const response = await axios.post("https://localhost:8888/api/login",{
-      //   values
-      // }); 
-      // console.log(response)   
-      // const data= response.result;
-      // if (data.success) {  
-      //     useNavigation().navigate("/")
-      //   // localStorage.setItem('user',data.result);
-      //   // dispatch({ type: 'LOGIN', payload: users});
-      // } else {
-      //   alert("Wrong Login Credentials!");
-      // }     
-
-      const response = await fetch('http:/192.168.1.5:8888/api/login', { 
+      const response = await fetch('http:/192.168.1.8:8888/api/login', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -39,9 +28,21 @@ import * as Yup from 'yup';
         body: JSON.stringify(values),
       });
       const data = await response.json();
-      console.log(data.result)
-      navigation.navigate("wertone",{screen:'invoice'})
-      resetForm();
+     const token='dummyToken'
+      login(token)
+      if (isLoading) {
+        {
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <ActivityIndicator size="large" />
+          </View>
+        }
+       }
+      if(isAuthenticated){
+        navigation.navigate("wertone",{screen:'invoice'})
+        resetForm();
+      }
+    
+      
 }
   return (
     <Formik
