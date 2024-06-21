@@ -1,5 +1,5 @@
 import React,{useState} from 'react'
-import { View } from "react-native"
+import { ScrollView } from "react-native"
 import { Text } from "react-native-paper"
 import AddInvoice from "../Components/AddInvoice"
 
@@ -11,9 +11,9 @@ const AddInvoiceScreen=({navigation})=>{
           items: [{ itemName: "", price: "", quantity: "", total: "" }],
         })
      return( 
-     <View>
+     <ScrollView>
        <AddInvoice initialValues={initialValues} navigation={navigation}/>
-      </View>
+      </ScrollView>
      )
 }
 export default AddInvoiceScreen;

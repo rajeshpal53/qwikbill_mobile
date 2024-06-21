@@ -1,11 +1,11 @@
 import React,{useState} from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Button, TextInput, Text, HelperText,ScrollView,List } from 'react-native-paper';
+import { View, StyleSheet,ScrollView } from 'react-native';
+import { Button, TextInput, Text, HelperText,List } from 'react-native-paper';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 const fetchOptions = async (input) => {
     const response = await fetch(
-      `http://192.168.1.8:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
+      `http://192.168.1.3:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
       {
         credentials: "include",
       }
@@ -46,7 +46,7 @@ const AddCustomer = ({navigation}) => {
         people: "6655af58afe60865000019cc",
             }
             console.log(postData)
-            const url = "http://192.168.1.8:8888/api/people/create"; //put url into fetch arguments
+            const url = "http://192.168.1.3:8888/api/people/create"; //put url into fetch arguments
             const response = await fetch(url, {
               method: "POST",
               credentials: "include",
@@ -75,6 +75,7 @@ const AddCustomer = ({navigation}) => {
                     marginVertical: 10,
                     marginHorizontal: 2,
                     marginBottom: 10,
+                    position:'relative',
                   }}>
                 <TextInput
                   label="Phone"
@@ -105,10 +106,12 @@ const AddCustomer = ({navigation}) => {
                   </HelperText>
                 )}
                 {showOptions &&
+                <View style={styles.suggestionsContainer}>
+                <ScrollView style={styles.suggestionsList}>{
                   options.map((option) => (
-                      <View><List.Item
-                      key={option._id}
-                      title={option.phone}
+                    <List.Item
+                    key={option._id}
+                    title={option.phone}
                       onPress={async () => {
                         setFieldValue("phone", option.phone)
                         setFieldValue("firstname", option.firstname);
@@ -117,8 +120,10 @@ const AddCustomer = ({navigation}) => {
                         setFieldValue('type',option.type)
                         setShowOptions(false);
                       }}
-                    > {option.phone}</List.Item></View>
+                      />
                   ))}
+                  </ScrollView>
+                  </View>}
               </View>
          <View style={{ width: "100%", marginBottom: 10 }}>
                 <TextInput
@@ -128,7 +133,7 @@ const AddCustomer = ({navigation}) => {
                   onBlur={handleBlur("firstname")}
                   value={values.firstname}
                   error={touched.firstname && errors.firstname ? true : false}
-                  style={{ width: "100%", marginBottom: 10 }}
+                  style={{ width: "100%", marginBottom: 10 , overflow:'hidden'}}
                 />
                 {touched.firstname && errors.firstname && (
                   <HelperText
@@ -147,7 +152,7 @@ const AddCustomer = ({navigation}) => {
                   onBlur={handleBlur("lastname")}
                   value={values.lastname}
                   error={touched.lastname && errors.lastname ? true : false}
-                  style={{ width: "100%", marginBottom: 10 }}
+                  style={{ width: "100%", marginBottom: 10, overflow:'hidden' }}
                 />
                 {touched.lastname && errors.lastname && (
                   <HelperText
@@ -166,7 +171,7 @@ const AddCustomer = ({navigation}) => {
                   onBlur={handleBlur("email")}
                   value={values.email}
                   error={touched.email && errors.email ? true : false}
-                  style={{ width: "100%", marginBottom: 10 }}
+                  style={{ width: "100%", marginBottom: 10 , overflow:'hidden'}}
                 />
                 {touched.email && errors.email && (
                   <HelperText
@@ -202,17 +207,18 @@ const AddCustomer = ({navigation}) => {
                     {errors.type}
                   </HelperText>
                 )}
-                {typeShowOptions &&
+                {typeShowOptions && <View style={styles.suggestionsContainer}>
+                <ScrollView style={styles.suggestionsList}>{
                   typeOptions.map((option,index) => (
-                      <View><List.Item
+                      <List.Item
                       key={index}
                       title={option}
                       onPress={async () => {
                         setFieldValue('type',option)
                         setTypeShowOptions(false);
                       }}
-                    > {option}</List.Item></View>
-                  ))}
+                    > {option}</List.Item>
+                  ))}</ScrollView></View>}
 
               </View>
         <Button mode="contained" onPress={handleSubmit} style={styles.button}>
@@ -225,12 +231,17 @@ const AddCustomer = ({navigation}) => {
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    justifyContent: "center",
-    padding: 20,
-    backgroundColor: "#f5f5f5",
-    marginVertical: 20,
-    
+    backgroundColor: "#fff",
+    margin:10,
+    padding: 25,
+    borderRadius: 10,
+    elevation: 5, // For shadow on Android
+    shadowColor: "#000", // For shadow on iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    marginVertical: 10,
+    flex:1
   },
   form: {
     backgroundColor: "#fff",
@@ -246,9 +257,30 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 16,
+    backgroundColor: "white",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 4,
+    overflow:'hidden'
   },
   button: {
     marginTop: 16,
+  },
+  suggestionsContainer: {
+    position: 'absolute',
+    top: 55, // Adjust based on your input height and margin
+    width: '100%',
+    maxHeight: 200, // Adjust height as needed
+    zIndex: 1,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+  },
+  suggestionsList: {
+    width: '100%',
   },
 });
 

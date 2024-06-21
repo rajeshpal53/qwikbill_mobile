@@ -1,0 +1,76 @@
+[
+  {
+    "__v": 0,
+    "_id": "6659f176e7c88398e5bf27ba",
+    "country": "USA",
+    "created": "2024-05-31T15:49:10.583Z",
+    "customField": [],
+    "email": "fs60faizan@gmail.com",
+    "enabled": true,
+    "files": [],
+    "firstname": "Faizan",
+    "images": [],
+    "isClient": false,
+    "isPublic": false,
+    "lastname": "Shaikh",
+    "otherEmail": [],
+    "otherPhone": [],
+    "phone": "22023030320201",
+    "removed": false,
+    "tags": [],
+    "updated": "2024-05-31T15:49:10.583Z"
+  },
+  {
+    "__v": 0,
+    "_id": "66606f60967caac7f33b3f16",
+    "created": "2024-06-05T14:00:00.604Z",
+    "currency": "USD",
+    "customField": [
+      {
+        "_id": "66618691a9c613f8846296ed",
+        "fieldName": "costprice",
+        "fieldType": "string",
+        "fieldValue": "2999"
+      },
+      {
+        "_id": "66618691a9c613f8846296ee",
+        "fieldName": "hsncode",
+        "fieldType": "string",
+        "fieldValue": "SGST"
+      },
+      {
+        "_id": "66618691a9c613f8846296ef",
+        "fieldName": "taxvalue",
+        "fieldType": "string",
+        "fieldValue": 9
+      }
+    ],
+    "enabled": true,
+    "files": [],
+    "images": [],
+    "isPublic": true,
+    "name": "newCussion",
+    "price": 5999,
+    "productCategory": {
+      "__v": 0,
+      "_id": "66541ab2e30f1c041bd776e8",
+      "color": "blue",
+      "created": "2024-05-27T05:31:30.740Z",
+      "description": "all electronic Appliences",
+      "enabled": true,
+      "files": [],
+      "hasParentCategory": false,
+      "images": [],
+      "isPublic": true,
+      "name": "Electronic Items ",
+      "removed": false,
+      "tags": [],
+      "updated": "2024-05-27T05:31:30.740Z"
+    },
+    "removed": false,
+    "suppliers": [],
+    "tags": [],
+    "taxRate": 0,
+    "updated": "2024-06-05T14:00:00.604Z"
+  }
+]
