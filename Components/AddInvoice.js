@@ -1,6 +1,6 @@
 import { Directions } from "react-native-gesture-handler";
 import React, { useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import {
   TextInput,
   Button,
@@ -16,7 +16,7 @@ import { useRoute } from "@react-navigation/native";
 
 const fetchOptions = async (input) => {
   const response = await fetch(
-    `http://192.168.1.8:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
+    `http://192.168.1.3:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
     {
       credentials: "include",
     }
@@ -26,7 +26,7 @@ const fetchOptions = async (input) => {
 };
 const fetchItemOptions = async (input) => {
   const response = await fetch(
-    `http://192.168.1.8:8888/api/product/search?fields=name&q=${input}&page=1&items=10`,
+    `http://192.168.1.3:8888/api/product/search?fields=name&q=${input}&page=1&items=10`,
     {
       credentials: "include",
     }
@@ -78,12 +78,12 @@ const getNextMonthDate = (date) => {
   const nextMonth = new Date(dateObj.setMonth(dateObj.getMonth() + 1));
   return nextMonth.toISOString().substring(0, 10);
 };
-const AddInvoice = ({initialValues,navigation}) => {
+const AddInvoice = ({ initialValues, navigation }) => {
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [showItemOptions, setShowItemOptions] = useState(false);
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View contentContainerStyle={styles.container}>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
@@ -101,7 +101,7 @@ const AddInvoice = ({initialValues,navigation}) => {
           delete postData.phone;
           console.log(postData, "------postdata");
           const response = await fetch(
-            "http://192.168.1.8:8888/api/invoice/create",
+            "http://192.168.1.3:8888/api/invoice/create",
             {
               method: "POST",
               credentials: "include",
@@ -150,15 +150,17 @@ const AddInvoice = ({initialValues,navigation}) => {
                   </HelperText>
                 )}
               </View>
-              <View  style={{
-                    width: "45%",
-                    marginVertical: 10,
-                    marginHorizontal: 2,
-                    marginBottom: 10,
-                  }}>
+              <View
+                style={{
+                  width: "45%",
+                  marginVertical: 10,
+                  marginHorizontal: 2,
+                  marginBottom: 10,
+                  position:'relative'
+                }}
+              >
                 <TextInput
                   label="Phone"
-                  
                   mode="outlined"
                   keyboardType="phone-pad"
                   onChangeText={async (text) => {
@@ -185,26 +187,35 @@ const AddInvoice = ({initialValues,navigation}) => {
                     {errors.phone}
                   </HelperText>
                 )}
-                {showOptions &&
-                  options.map((option) => (
-                      <ScrollView><List.Item
-                      key={option._id}
-                      title={option.phone}
-                      onPress={async () => {
-                        setFieldValue("client", option.firstname+option.lastname);
-                        setFieldValue("phone", option.phone)
-                        setShowOptions(false);
-                       
-                      }}
-                    > {option.phone}</List.Item></ScrollView>
-                  ))}
+                {showOptions && (
+                  <View style={styles.suggestionsContainer}>
+                  <ScrollView nestedScrollEnabled={true}  style={styles.suggestionsList} >
+                    {options.map((option) => (
+                        <List.Item
+                          key={option._id}
+                          title={option.phone}
+                          onPress={async () => {
+                            setFieldValue(
+                              "client",
+                              option.firstname + option.lastname
+                            );
+                            setFieldValue("phone", option.phone);
+                            setShowOptions(false);
+                          }}/>
+                          
+                    ))}
+                  </ScrollView>
+                  </View>
+                )}
               </View>
-              <View  style={{
-                    width: "45%",
-                    marginVertical: 10,
-                    marginHorizontal: 2,
-                    marginBottom: 10,
-                  }}>
+              <View
+                style={{
+                  width: "45%",
+                  marginVertical: 10,
+                  marginHorizontal: 2,
+                  marginBottom: 10,
+                }}
+              >
                 <TextInput
                   label="date"
                   // style={{
@@ -233,24 +244,21 @@ const AddInvoice = ({initialValues,navigation}) => {
 
             <FieldArray name="items">
               {({ insert, remove, push }) => (
-                <View>
+                <View >
                   <Text variant="titleMedium">add new Items</Text>
                   {values.items.map((item, index) => {
-                    //   useEffect(() => {
-                    //     const price = parseFloat(values.items[index].price) || 0;
-                    //     const quantity = parseFloat(values.items[index].quantity) || 0;
-                    //     const total = price * quantity;
-                    //     setFieldValue(`items[${index}].total`, total.toString());
-                    // }, [values.items[index].price, values.items[index].quantity]);
                     return (
                       <View key={index} style={styles.itemContainer}>
+                        <View style={{position:'relative'}}>
                         <TextInput
                           label={`Item ${index + 1} Name`}
                           mode="outlined"
                           onChangeText={async (text) => {
                             handleChange(`items[${index}].itemName`)(text);
                             if (text.length > 1) {
-                              const fetchedOptions = await fetchItemOptions(text);
+                              const fetchedOptions = await fetchItemOptions(
+                                text
+                              );
                               setOptions(fetchedOptions);
                               setShowItemOptions(true);
                             } else {
@@ -289,20 +297,33 @@ const AddInvoice = ({initialValues,navigation}) => {
                             </HelperText>
                           )}
 
-                      {showItemOptions &&<ScrollView >{
-                  options.map((option) => (
-                      <List.Item
-                      key={option._id}
-                      title={option.name}
-                      onPress={async () => {
-                        setFieldValue(`items[${index}].itemName`,option.name)
-                       setFieldValue(`items[${index}].price`, option.price)
-                        setShowItemOptions(false);
-                       
-                      }}
-                    > {option.name}</List.Item>
-                  ))}
-                  </ScrollView>}
+                        {showItemOptions && (
+                          <View  style={styles.suggestionsContainer} >
+                          <ScrollView nestedScrollEnabled={true}  style={styles.suggestionsList}>
+                            {options.map((option) => (
+                              <List.Item
+                                key={option._id}
+                                title={option.name}
+                                onPress={async () => {
+                                  setFieldValue(
+                                    `items[${index}].itemName`,
+                                    option.name
+                                  );
+                                  setFieldValue(
+                                    `items[${index}].price`,
+                                    option.price
+                                  );
+                                  setShowItemOptions(false);
+                                }}
+                              >
+                                {" "}
+                                {option.name}
+                              </List.Item>
+                            ))}
+                          </ScrollView>
+                          </View>
+                        )}
+                        </View>
 
                         <TextInput
                           label={`Item ${index + 1} Price`}
@@ -346,11 +367,18 @@ const AddInvoice = ({initialValues,navigation}) => {
                           keyboardType="numeric"
                           onChangeText={async (text) => {
                             handleChange(`items[${index}].quantity`)(text);
-                            text>0?setFieldValue(`items[${index}].total`,parseFloat(values.items[index].price* values.items[index].quantity)):0
+                            text > 0
+                              ? setFieldValue(
+                                  `items[${index}].total`,
+                                  parseFloat(
+                                    values.items[index].price *
+                                      values.items[index].quantity
+                                  )
+                                )
+                              : 0;
                           }}
                           onBlur={handleBlur(`items[${index}].quantity`)}
                           value={item.quantity}
-                         
                           error={
                             touched.items &&
                             touched.items[index] &&
@@ -422,7 +450,7 @@ const AddInvoice = ({initialValues,navigation}) => {
           </View>
         )}
       </Formik>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -433,6 +461,21 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#f5f5f5",
     marginVertical: 20,
+    position:'relative'
+  },
+  suggestionsContainer: {
+    position: 'absolute',
+    top: 55, // Adjust based on your input height and margin
+    width: '100%',
+    maxHeight: 200, // Adjust height as needed
+    zIndex: 1,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+  },
+  suggestionsList: {
+    width: '100%',
   },
   form: {
     backgroundColor: "#fff",
@@ -447,6 +490,7 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 10,
+    overflow:"hidden"
   },
   button: {
     marginTop: 10,

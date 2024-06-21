@@ -2,11 +2,16 @@ import React from 'react'
 import { Button, Card, Text } from "react-native-paper";
 import { IconButton, Icon } from "react-native-paper";
 import { StyleSheet,View } from "react-native";
-function ProductCard({products}) {
+function ProductCard({products,navigation}) {
+  function ProductDetail(id){
+    navigation.navigate("ProductDetail", {
+      productId:id
+    })
+}
   return (
    <View>
     { products.map((item)=>{return( 
-         <Card key={item._id} style={styles.card}>
+         <Card key={item._id} style={styles.card}  onPress={()=>{ProductDetail(item._id)}}>
            <Card.Title title={item.created} titleStyle={styles.cardTitle} />
            <Card.Content>
              <Text variant="headlineLarge">{item.name}</Text>

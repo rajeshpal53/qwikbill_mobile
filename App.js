@@ -10,14 +10,16 @@ import Customer from "./Screen/Customer";
 import LoginScreen from './Screen/LoginScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Provider } from 'react-native-paper';
-import AddProduct from './Screen/AddProduct';
 import { DefaultTheme,ActivityIndicator} from 'react-native-paper';
 import AddInvoiceScreen from './Screen/AddInvoiceScreen';
 import AddCustomerScreen from './Screen/AddCustomerScreen';
 import { AuthProvider,AuthContext } from './Store/AuthContext';
 import { useContext } from 'react';
 import { CustomDrawerContent } from './Components/CustomDrawerContent';
-
+import AddProductScreen from './Screen/AddProductScreen';
+import InvoiceDetailScreen from './Screen/InvoiceDetailScreen';
+import CustomerDetailScreen from './Screen/CustomerDetailScreen';
+import ProductDetailScreen from './Screen/ProductDetailScreen';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const customTheme = {
@@ -42,6 +44,8 @@ function StackNavigator(){
     const {isAuthenticated,isLoading}=useContext(AuthContext)
     useEffect(()=>{
         isAuthenticated
+       
+
     },[isAuthenticated])
   console.log(isAuthenticated)
   if (isLoading) {
@@ -51,13 +55,17 @@ function StackNavigator(){
       </View>
     );
   }
+  
   return (
     <Stack.Navigator initialRouteName={isAuthenticated?'wertone':'login'}>
       <Stack.Screen name='wertone' component={DrawerNavigator} options={{headerShown:false}} />
         <Stack.Screen name='login' component={LoginScreen}  screenOptions={{headerShown: false}}/> 
         <Stack.Screen name='AddInvoice' component={AddInvoiceScreen}  screenOptions={{}}/>
-        <Stack.Screen name='AddProduct' component={AddProduct}  screenOptions={{}}/>
+        <Stack.Screen name='AddProduct' component={AddProductScreen}  screenOptions={{}}/>
         <Stack.Screen name='AddCustomer' component={AddCustomerScreen}  screenOptions={{}}/>
+        <Stack.Screen name='InvoiceDetail' component={InvoiceDetailScreen}  screenOptions={{}}/>
+        <Stack.Screen name='CustomerDetail' component={CustomerDetailScreen}  screenOptions={{}}/>
+        <Stack.Screen name='ProductDetail' component={ProductDetailScreen}  screenOptions={{}}/>
     </Stack.Navigator>
   )
 

@@ -2,13 +2,18 @@ import React from 'react'
 import { Button, Card, Text } from "react-native-paper";
 import { IconButton, Icon } from "react-native-paper";
 import { StyleSheet,View} from "react-native";
-function InvoiceCard({invoices}) {
+function InvoiceCard({invoices,navigation}) {
+    function detailInvoice(id){
+        navigation.navigate("InvoiceDetail", {
+          invoiceId:id
+        })
+    }
   return (
    <View>
-    { invoices.map((item)=>( 
-         <Card key={item._id} style={styles.card}>
+    { invoices.map((item,index)=>{return( 
+         <Card key={index} style={styles.card} onPress={()=>detailInvoice(item._id)}>
            <Card.Title title={item.date} titleStyle={styles.cardTitle} />
-           <Card.Content>
+           <Card.Content key={index}>
              <Text variant="headlineLarge">{item.year}</Text>  
              <Text variant="bodyMedium" style={styles.cardText}>
                {" "}
@@ -25,14 +30,14 @@ function InvoiceCard({invoices}) {
                icon="delete"
                iconColor="#1976d2"
                size={20}
-               onPress={() => console.log("Pressed")}
+               onPress={() => console.log(item._id)}
              />
              <Button style={{ backgroundColor: "#1976d2" }}>
                <Icon source="pencil" color="white" size={20} /> Edit
              </Button>
            </Card.Actions>
          </Card>
-    ))}
+    )})}
    </View>
   )
 }

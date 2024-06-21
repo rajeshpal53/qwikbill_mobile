@@ -8,7 +8,7 @@ export default function Products({navigation}) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("http://192.168.1.8:8888/api/product/list", {
+        const response = await fetch("http://192.168.1.3:8888/api/product/list", {
           credentials: "include",
         });
         if (!response.ok) {
@@ -25,7 +25,7 @@ export default function Products({navigation}) {
   return (
     <ScrollView style={styles.container}>
       <Button style={styles.addButton} buttonColor='#ffffff' textColor='white' onPress={()=>{navigation.navigate('AddProduct') }}> Add New Product</Button>
-       {products?<ProductCard products={products}/>:<Text>no products found</Text>}
+       {products?<ProductCard products={products} navigation={navigation}/>:<Text>no products found</Text>}
     </ScrollView>
   );
 };
