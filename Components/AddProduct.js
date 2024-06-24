@@ -13,7 +13,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 const fetchOptions = async (input) => {
   const response = await fetch(
-    `http://192.168.1.3:8888/api/productcategory/search?fields=name&q=${input}&page=1&items=10`,
+    `http://192.168.1.2:8888/api/productcategory/search?fields=name&q=${input}&page=1&items=10`,
     {
       credentials: "include",
     }
@@ -23,7 +23,7 @@ const fetchOptions = async (input) => {
 };
 const fetchHsnOptions = async (input) => {
   const response = await fetch(
-    `http://192.168.1.3:8888/api/taxes/list?fields=taxName&q=${input}&page=1&items=10`,
+    `http://192.168.1.2:8888/api/taxes/list?fields=taxName&q=${input}&page=1&items=10`,
     {
       credentials: "include",
     }
@@ -84,7 +84,7 @@ const AddProduct = ({ navigation }) => {
           ],
         };
         const response = await fetch(
-          "http://192.168.1.3:8888/api/product/create",
+          "http://192.168.1.2:8888/api/product/create",
           {
             method: "POST",
             credentials: "include",

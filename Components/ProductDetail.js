@@ -1,22 +1,55 @@
-import { Card, Text } from "react-native-paper";
+import { Card, Divider, Text } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
+
 function ProductDetail({ detail }) {
   return (
     <View style={styles.container}>
-      <Card>
-        <Card.Content>
-          <Text variant="headlineLarge" style={styles.label}>
-            Name
-          </Text>
-          <Text variant="headlineLarge" style={styles.value}>
-            {detail.name}
-          </Text>
+      <Card style={{backgroundColor:'#fff'}} >
+        <Card.Title title={detail.created} />
+        <Card.Content style={styles.cardContainer}>
+          <Text style={styles.label}> Product Name:</Text>
+          <Text style={styles.value}>{detail.name}</Text>
+        </Card.Content>
+        <Divider style={{marginVertical: 10 }} />
 
-          <Text variant="labelSmall" style={styles.cardText}>
-            ${detail.price}
-          </Text>
+        <Card.Content style={styles.cardContainer}>
+          <View style={{width:'100%',flexDirection:'row'}}>
+            <Text style={styles.descriptionText}> Product Category: </Text>
+            <Text style={styles.descriptionText}>Electronic Items</Text>
+          </View>
+          <View  style={{width:'100%',flexDirection:'row'}}>
+            <Text style={styles.descriptionText}> description: </Text>
+            <Text style={styles.descriptionTextValue}>
+              all electronic Appliences
+            </Text>
+          </View>
         </Card.Content>
       </Card>
+      <View style={styles.tableContainer}>
+      <View style={styles.headerRow}>
+        <Text style={styles.headerCell}>Name</Text>
+        <Text style={styles.headerCell}>Value</Text>
+      </View>
+        <View style={styles.row} >
+          <Text style={styles.cell}>price</Text>
+          <Text style={styles.cell}>{detail.price}</Text>       
+          </View>
+          <View style={styles.row} >
+          <Text style={styles.cell}>taxRate</Text>
+          <Text style={styles.cell}>{detail.taxRate}</Text>
+          </View>
+          <View style={styles.row} >
+          <Text style={styles.cell}>Currency</Text>
+          <Text style={styles.cell}>{detail.currency}</Text>
+          </View>
+          {detail.customField&&detail.customField.map((item,index)=>(
+            <View style={styles.row} key={index}>
+             <Text style={styles.cell}>{item.fieldName}</Text>
+             <Text style={styles.cell}>{item.fieldValue}</Text> 
+          </View>
+        ))}  
+      
+    </View>
     </View>
   );
 }
@@ -24,16 +57,19 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 16,
+    margin:10,
     backgroundColor: "#fff",
   },
+ 
   label: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginTop: 10,
+    fontSize: 20,
+    marginVertical: 10,
+    marginRight: 5,
   },
   value: {
-    fontSize: 16,
-    marginBottom: 10,
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 10,
   },
   loaderContainer: {
     flex: 1,
@@ -48,6 +84,54 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 18,
     color: "red",
+  },
+  cardContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+
+  },
+  text: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  descriptionText: {
+    color: "grey",
+    marginVertical: 5,
+  },
+  descriptionTextValue: {
+    flex: 1,
+    flexGrow: 1,
+    color: "grey",
+    marginVertical: 5,
+
+  },
+  tableContainer:{
+    width:'100%',
+     marginVertical:20,
+     marginHorizontal:2,
+   },
+  headerRow: {
+    flexDirection: 'row',
+    borderBottomWidth: 2,
+    borderBottomColor: '#000',
+    paddingVertical: 10,
+
+    backgroundColor: '#f4f4f4',
+  },
+  row: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    paddingVertical: 10,
+  },
+  cell: {
+    flex: 1,
+    fontSize: 16,
+  },
+  headerCell: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

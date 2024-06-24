@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import {Text }from 'react-native-paper'
+import {ActivityIndicator, Text }from 'react-native-paper'
 import{View} from 'react-native'
 import InvoiceDetail from '../Components/InvoiceDetail';
 
@@ -12,7 +12,7 @@ function InvoiceDetailScreen({route}) {
               return [];
             }
             const response = await fetch(
-              `http://192.168.1.3:8888/api/invoice/read/${invoiceId}`,
+              `http://192.168.1.2:8888/api/invoice/read/${invoiceId}`,
               {
                 credentials: "include",
               }
@@ -29,8 +29,7 @@ function InvoiceDetailScreen({route}) {
     console.log(detail)
   return (
     <View>
-   <Text> hello InvoiceDetailScreen ishere {invoiceId}</Text>
-    <InvoiceDetail detail={detail}/>
+     {detail?<InvoiceDetail detail={detail }/>:<ActivityIndicator/>}
     </View>
   )
 }

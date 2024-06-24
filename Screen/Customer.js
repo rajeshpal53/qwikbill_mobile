@@ -7,7 +7,7 @@ import CustomerCard from '../Components/CustomerCard'
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("http://192.168.1.3:8888/api/people/list", {
+        const response = await fetch("http://192.168.1.2:8888/api/people/list", {
           credentials: "include",
         });
         if (!response.ok) {
@@ -21,6 +21,7 @@ import CustomerCard from '../Components/CustomerCard'
     }
     fetchData();
   }, []);
+  console.log(customer,"response")
   return (
     <ScrollView style={styles.container}>
        <Button style={styles.addButton} buttonColor='#ffffff' textColor='white' onPress={()=>{ navigation.navigate('AddCustomer')}}> Add New Customer</Button>

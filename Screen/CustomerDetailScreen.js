@@ -1,4 +1,4 @@
-import { Text } from "react-native-paper"
+import { ActivityIndicator, Text } from "react-native-paper"
 import { useState,useEffect } from "react"
 import { View } from "react-native"
 import CustomerDetail from "../Components/CustomerDetail"
@@ -11,7 +11,7 @@ function CustomerDetailScreen({route}) {
               return [];
             }
             const response = await fetch(
-              `http://192.168.1.3:8888/api/people/read/${customerId}`,
+              `http://192.168.1.2:8888/api/people/read/${customerId}`,
               {
                 credentials: "include",
               }
@@ -25,9 +25,8 @@ function CustomerDetailScreen({route}) {
           fetchDetailHandler();
     },[])
   return (
-    <View>
-    <Text> for checking of ProductDetailScreen{customerId}</Text>
-    <CustomerDetail detail={detail}/>
+    <View >
+      {detail!=[]? <CustomerDetail detail={detail}/>:<ActivityIndicator/>}
     </View>
   )
 }
