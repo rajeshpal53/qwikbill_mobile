@@ -16,7 +16,7 @@ import { useRoute } from "@react-navigation/native";
 
 const fetchOptions = async (input) => {
   const response = await fetch(
-    `http://192.168.1.3:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
+    `http://192.168.1.2:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
     {
       credentials: "include",
     }
@@ -26,7 +26,7 @@ const fetchOptions = async (input) => {
 };
 const fetchItemOptions = async (input) => {
   const response = await fetch(
-    `http://192.168.1.3:8888/api/product/search?fields=name&q=${input}&page=1&items=10`,
+    `http://192.168.1.2:8888/api/product/search?fields=name&q=${input}&page=1&items=10`,
     {
       credentials: "include",
     }
@@ -101,7 +101,7 @@ const AddInvoice = ({ initialValues, navigation }) => {
           delete postData.phone;
           console.log(postData, "------postdata");
           const response = await fetch(
-            "http://192.168.1.3:8888/api/invoice/create",
+            "http://192.168.1.2:8888/api/invoice/create",
             {
               method: "POST",
               credentials: "include",

@@ -11,7 +11,7 @@ function ProductDetailScreen({route}) {
               return [];
             }
             const response = await fetch(
-              `http://192.168.1.3:8888/api/product/read/${productId}`,
+              `http://192.168.1.2:8888/api/product/read/${productId}`,
               {
                 credentials: "include",
               }
@@ -26,7 +26,7 @@ function ProductDetailScreen({route}) {
     },[])
     console.log(detail)
   return (
-    <View>
+    <View style={{justifyContent:"center"}}>
     <ProductDetail detail={detail}/>
     </View>
   )

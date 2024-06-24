@@ -10,7 +10,7 @@ export default function Invoice({navigation}){
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("http://192.168.1.3:8888/api/invoice/list", {
+        const response = await fetch("http://192.168.1.2:8888/api/invoice/list", {
           credentials: "include",
         });
         if (!response.ok) {

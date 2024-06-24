@@ -8,7 +8,7 @@ export default function Products({navigation}) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("http://192.168.1.3:8888/api/product/list", {
+        const response = await fetch("http://192.168.1.2:8888/api/product/list", {
           credentials: "include",
         });
         if (!response.ok) {
