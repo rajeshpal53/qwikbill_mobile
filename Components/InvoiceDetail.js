@@ -1,48 +1,51 @@
 import React, { useEffect } from "react";
-import { ActivityIndicator, Text,Card,Divider } from "react-native-paper";
+import { ActivityIndicator, Text, Card, Divider } from "react-native-paper";
 
-import { StyleSheet } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 import { View } from "react-native";
-const InvoiceDetail = ({ detail }) => {
-
-  console.log(typeof(detail.items));
-  useEffect(()=>{
-    detail
-  },[detail])
-
+const InvoiceDetail = (props) => {
+  const { detail } = props;
+  const renderItem = ({ item }) => (
+    <View style={styles.row}>
+      <Text style={styles.cell}>{item.itemName}</Text>
+      <Text style={styles.cell}>{item.price}</Text>
+      <Text style={styles.cell}>{item.quantity}</Text>
+      <Text style={styles.cell}>{item.total}</Text>
+    </View>)
+  useEffect(() => {
+    detail;
+  }, [detail]);
   return (
     <View style={styles.container}>
-      <Card style={{backgroundColor:'#fff'}} >
-        <Card.Title title={detail.created} />
+      <Card style={{ backgroundColor: "#fff",backgroundColor: "#1976d2",
+    color:'#fff' }}>
+        <Card.Title title={detail.created} titleStyle={styles.descriptionText} />
         <Card.Content style={styles.cardContainer}>
-          <Text style={styles.label}>first name:</Text>
-          <Text style={styles.value}> Rajesh pal </Text>
+          <Text style={styles.label}>Name:</Text>
+          <Text style={styles.value}> {`${detail.people.firstname} ${detail.people.lastname}`} </Text>
         </Card.Content>
         <Card.Content style={styles.cardContainer}>
           <Text style={styles.label}>Email:</Text>
-          <Text style={styles.value}>fs60faizan@gmail.com </Text>
+          <Text style={styles.value}>{detail.people.email}</Text>
         </Card.Content>
         <Card.Content style={styles.cardContainer}>
-          <Text style={styles.label}>phone</Text>
-          <Text style={styles.value}>9340950360 </Text>
+          <Text style={styles.label}>Phone</Text>
+          <Text style={styles.value}>{detail.people.phone} </Text>
         </Card.Content>
-        <Divider style={{marginVertical: 10 }} />
+        <Divider style={{ marginVertical: 10 }} />
 
-        <Card.Content style={styles.cardContainer}>
-          <View style={{width:'100%',flexDirection:'row'}}>
-            <Text style={styles.descriptionText}> type: </Text>
+        <Card.Content style={styles.blueCardContainer}>
+          <View style={{ width: "100%", flexDirection: "row" }}>
+            <Text style={styles.descriptionText}> Type: </Text>
             <Text style={styles.descriptionText}>people</Text>
           </View>
-          <View  style={{width:'100%',flexDirection:'row'}}>
+          <View style={{ width: "100%", flexDirection: "row" }}>
             <Text style={styles.descriptionText}>Currency: </Text>
-            <Text style={styles.descriptionTextValue}> USD
-            </Text>
+            <Text style={styles.descriptionTextValue}> {detail.currency}</Text>
           </View>
-          <View  style={{width:'100%',flexDirection:'row'}}>
+          <View style={{ width: "100%", flexDirection: "row" }}>
             <Text style={styles.descriptionText}> Date: </Text>
-            <Text style={styles.descriptionTextValue}>
-            {detail.date||''}
-            </Text>
+            <Text style={styles.descriptionTextValue}>{detail.date || ""}</Text>
           </View>
         </Card.Content>
       </Card>
@@ -53,18 +56,15 @@ const InvoiceDetail = ({ detail }) => {
           <Text style={styles.headerCell}>Quantity</Text>
           <Text style={styles.headerCell}>Total</Text>
         </View>
-        <View style={styles.row}>
-          
-        </View>
-        { detail.items?detail.items.map((item, index) => (
-          <View key={index}>
-            <Text style={styles.cell}>{item.itemName}</Text>
-            <Text style={styles.cell}>{item.price}</Text>
-            <Text style={styles.cell}>{item.quantity}</Text>
-            <Text style={styles.cell}>{item.total}</Text>
-          </View>
-        )) : <ActivityIndicator/>}
       </View>
+      <View>
+      </View>
+      <FlatList
+        data={detail.items}
+        renderItem={renderItem}
+        keyExtractor={(item) => item._id}
+      />
+      
     </View>
   );
 };
@@ -72,19 +72,21 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 16,
-    margin:10,
+    margin: 10,
     backgroundColor: "#fff",
   },
- 
+
   label: {
     fontSize: 16,
     marginVertical: 10,
     marginRight: 5,
+    color:"#fff"
   },
   value: {
     fontSize: 16,
     fontWeight: "bold",
     marginTop: 10,
+    color:"#fff"
   },
   loaderContainer: {
     flex: 1,
@@ -103,22 +105,20 @@ const styles = StyleSheet.create({
   cardContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-
   },
   text: {
     fontSize: 20,
     fontWeight: "bold",
   },
   descriptionText: {
-    color: "grey",
+    color: "#fff",
     marginVertical: 5,
   },
   descriptionTextValue: {
     flex: 1,
     flexGrow: 1,
-    color: "grey",
+    color: "#fff",
     marginVertical: 5,
-
   },
   tableContainer: {
     width: "100%",

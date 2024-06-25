@@ -164,67 +164,62 @@
     "subTotal": 625,
     "taxRate": 0,
     "taxTotal": 0,
-    "total": 625,   
+    "total": 625,
     "updated": "2024-06-19T07:54:25.261Z",
     "year": 2024
   },
-
-
-
-
-
 
   {
     "_id": "666130c9a9c613f884628d76",
     "removed": false,
     "createdBy": {
-        "_id": "664f064f61d70716f0b7e0c0",
-        "name": "Wertone "
+      "_id": "664f064f61d70716f0b7e0c0",
+      "name": "Wertone "
     },
     "number": 120,
     "year": 2024,
     "date": "2024-06-06T03:44:29.763Z",
     "expiredDate": "2024-07-06T03:44:29.763Z",
     "client": {
-        "_id": "6655afdeafe6086500001a13",
+      "_id": "6655afdeafe6086500001a13",
+      "removed": false,
+      "enabled": true,
+      "type": "people",
+      "name": "temp person",
+      "people": {
+        "_id": "6655af58afe60865000019cc",
         "removed": false,
         "enabled": true,
-        "type": "people",
-        "name": "temp person",
-        "people": {
-            "_id": "6655af58afe60865000019cc",
-            "removed": false,
-            "enabled": true,
-            "firstname": "temp",
-            "lastname": "person",
-            "isClient": true,
-            "country": "USA",
-            "phone": "112304040220",
-            "otherPhone": [],
-            "email": "temp@gamil.com",
-            "otherEmail": [],
-            "tags": [],
-            "isPublic": false,
-            "customField": [],
-            "images": [],
-            "files": [],
-            "created": "2024-05-28T10:18:00.058Z",
-            "updated": "2024-05-28T10:18:00.058Z",
-            "__v": 0
-        },
-        "interestedIn": [],
-        "created": "2024-05-28T10:20:14.030Z",
-        "updated": "2024-05-28T10:20:14.030Z",
+        "firstname": "temp",
+        "lastname": "person",
+        "isClient": true,
+        "country": "USA",
+        "phone": "112304040220",
+        "otherPhone": [],
+        "email": "temp@gamil.com",
+        "otherEmail": [],
+        "tags": [],
+        "isPublic": false,
+        "customField": [],
+        "images": [],
+        "files": [],
+        "created": "2024-05-28T10:18:00.058Z",
+        "updated": "2024-05-28T10:18:00.058Z",
         "__v": 0
+      },
+      "interestedIn": [],
+      "created": "2024-05-28T10:20:14.030Z",
+      "updated": "2024-05-28T10:20:14.030Z",
+      "__v": 0
     },
     "items": [
-        {
-            "itemName": "xyz",
-            "quantity": 26,
-            "price": 1456,
-            "total": 37856,
-            "_id": "666130c9a9c613f884628d77"
-        }
+      {
+        "itemName": "xyz",
+        "quantity": 26,
+        "price": 1456,
+        "total": 37856,
+        "_id": "666130c9a9c613f884628d77"
+      }
     ],
     "taxRate": 9,
     "subTotal": 37856,
@@ -243,5 +238,99 @@
     "created": "2024-06-06T03:45:13.132Z",
     "__v": 0,
     "pdf": "invoice-666130c9a9c613f884628d76.pdf"
-}
+  },
+
+  {
+    "__v": 0,
+    "_id": "667a39db1a73f2074d75be34",
+    "approved": false,
+    "client": null,
+    "created": "2024-06-25T03:30:35.931Z",
+    "createdBy": { "_id": "664f064f61d70716f0b7e0c0", "name": "Wertone " },
+    "credit": 0,
+    "currency": "USD",
+    "date": "2024-06-25T00:00:00.000Z",
+    "discount": 0,
+    "expiredDate": "2024-07-25T00:00:00.000Z",
+    "files": [],
+    "isOverdue": false,
+    "items": [
+      {
+        "_id": "667a39db1a73f2074d75be35",
+        "itemName": "led new 5",
+        "price": 799,
+        "quantity": 25,
+        "total": 19975
+      }
+    ],
+    "number": 122033330202,
+    "payment": [],
+    "paymentStatus": "unpaid",
+    "pdf": "invoice-667a39db1a73f2074d75be34.pdf",
+    "people": {
+      "__v": 0,
+      "_id": "665071776a9ebb2688c92941",
+      "created": "2024-05-24T10:52:39.416Z",
+      "customField": [],
+      "email": "temp@123.in",
+      "enabled": true,
+      "files": [],
+      "firstname": "Rajesh",
+      "images": [],
+      "isClient": true,
+      "isPublic": false,
+      "lastname": "pal sir",
+      "otherEmail": [],
+      "otherPhone": [],
+      "phone": "122033330202",
+      "removed": false,
+      "tags": [],
+      "updated": "2024-05-24T10:52:39.416Z"
+    },
+    "removed": false,
+    "status": "draft",
+    "subTotal": 19975,
+    "taxRate": 0,
+    "taxTotal": 0,
+    "total": 19975,
+    "updated": "2024-06-25T03:30:35.931Z",
+    "year": 2024
+  },
+
+  {
+    "__v": 0,
+    "_id": "66614c64a9c613f884628ff0",
+    "created": "2024-06-06T05:43:00.840Z",
+    "currency": "USD",
+    "customField": [
+      { "_id": "66614c64a9c613f884628ff1", "fieldType": "string" }
+    ],
+    "enabled": true,
+    "files": [],
+    "images": [],
+    "isPublic": true,
+    "name": "Faizan Shaikh",
+    "price": 100,
+    "productCategory": {
+      "__v": 0,
+      "_id": "66541ab2e30f1c041bd776e8",
+      "color": "blue",
+      "created": "2024-05-27T05:31:30.740Z",
+      "description": "all electronic Appliences",
+      "enabled": true,
+      "files": [],
+      "hasParentCategory": false,
+      "images": [],
+      "isPublic": true,
+      "name": "Electronic Items ",
+      "removed": false,
+      "tags": [],
+      "updated": "2024-05-27T05:31:30.740Z"
+    },
+    "removed": false,
+    "suppliers": [],
+    "tags": [],
+    "taxRate": 0,
+    "updated": "2024-06-06T05:43:00.840Z"
+  }
 ]
