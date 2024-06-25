@@ -5,6 +5,7 @@ import { Button,ActivityIndicator} from 'react-native-paper';
 import InvoiceCard from '../Components/InvoiceCard'
 import { AuthContext } from '../Store/AuthContext';
 export default function Invoice({navigation}){
+  const {logout}=useContext(AuthContext)
   const[invoices,setInvoices]= useState();
 
   useEffect(() => {
@@ -14,6 +15,8 @@ export default function Invoice({navigation}){
           credentials: "include",
         });
         if (!response.ok) {
+          logout()
+          navigation.navigate('StackNaviigator',{screen:'login'})
           throw new Error("Network response was not ok",response);
         }
         const result = await response.json();
@@ -27,7 +30,6 @@ export default function Invoice({navigation}){
  const addInvoiceHandler=()=>{
   navigation.navigate('StackNavigator',{screen:'AddInvoice'})
  }
-
   return (
     <ScrollView style={styles.container}>
       <Button style={styles.addButton} buttonColor='#ffffff' textColor='white' onPress={addInvoiceHandler}> Add New Invoice</Button>

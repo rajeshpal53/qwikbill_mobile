@@ -13,7 +13,7 @@ import { Formik, FieldArray } from "formik";
 import * as Yup from "yup";
 import { useEffect } from "react";
 import { useRoute } from "@react-navigation/native";
-
+import { v4 as uuidv4 } from 'uuid';
 const fetchOptions = async (input) => {
   const response = await fetch(
     `http://192.168.1.2:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
@@ -82,15 +82,19 @@ const AddInvoice = ({ initialValues, navigation }) => {
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [showItemOptions, setShowItemOptions] = useState(false);
+  const [fetchData,setFetchData]= useState([])
   return (
     <View contentContainerStyle={styles.container}>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={async (values, { resetForm }) => {
+          console.log(fetchData,"\tfetchdata")
           const postData = {
             ...values,
+            _id: uuidv4(),
             client: "666130c9a9c613f884628d76",
+            people:fetchData._id,
             number: parseInt(values.phone),
             taxRate: 0,
             currency: "USD",
@@ -100,6 +104,7 @@ const AddInvoice = ({ initialValues, navigation }) => {
           };
           delete postData.phone;
           console.log(postData, "------postdata");
+          try{
           const response = await fetch(
             "http://192.168.1.2:8888/api/invoice/create",
             {
@@ -111,14 +116,17 @@ const AddInvoice = ({ initialValues, navigation }) => {
               body: JSON.stringify(postData),
             }
           );
-          if (response.ok) {
             console.log(response, "ddddddddddddddddddddddd");
-            navigation.navigate("Invoice");
+           
             resetForm();
-          } else {
+        }
+            catch(error){
             console.error("Failed to add invoice", response);
-          }
-        }}
+            }
+            finally{
+              navigation.navigate("Invoice");
+            }
+        }}  
       >
         {({
           handleChange,
@@ -157,6 +165,7 @@ const AddInvoice = ({ initialValues, navigation }) => {
                   marginHorizontal: 2,
                   marginBottom: 10,
                   position:'relative'
+
                 }}
               >
                 <TextInput
@@ -165,7 +174,7 @@ const AddInvoice = ({ initialValues, navigation }) => {
                   keyboardType="phone-pad"
                   onChangeText={async (text) => {
                     handleChange("phone")(text);
-                    if (text.length > 2) {
+                    if (text.length > 1) {
                       const fetchedOptions = await fetchOptions(text);
                       setOptions(fetchedOptions);
                       setShowOptions(true);
@@ -200,6 +209,7 @@ const AddInvoice = ({ initialValues, navigation }) => {
                               option.firstname + option.lastname
                             );
                             setFieldValue("phone", option.phone);
+                            setFetchData(option)
                             setShowOptions(false);
                           }}/>
                           
