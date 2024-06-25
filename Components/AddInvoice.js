@@ -1,5 +1,5 @@
 import { Directions } from "react-native-gesture-handler";
-import React, { useState } from "react";
+import React, { useState,useId } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import {
   TextInput,
@@ -11,9 +11,7 @@ import {
 } from "react-native-paper";
 import { Formik, FieldArray } from "formik";
 import * as Yup from "yup";
-import { useEffect } from "react";
-import { useRoute } from "@react-navigation/native";
-import { v4 as uuidv4 } from 'uuid';
+import UUIDGenerator from 'react-native-uuid-generator';
 const fetchOptions = async (input) => {
   const response = await fetch(
     `http://192.168.1.2:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
@@ -78,11 +76,12 @@ const getNextMonthDate = (date) => {
   const nextMonth = new Date(dateObj.setMonth(dateObj.getMonth() + 1));
   return nextMonth.toISOString().substring(0, 10);
 };
-const AddInvoice = ({ initialValues, navigation }) => {
+const AddInvoice = ({ initialValues, navigation}) => {
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [showItemOptions, setShowItemOptions] = useState(false);
   const [fetchData,setFetchData]= useState([])
+  const id=useId();
   return (
     <View contentContainerStyle={styles.container}>
       <Formik
@@ -92,7 +91,7 @@ const AddInvoice = ({ initialValues, navigation }) => {
           console.log(fetchData,"\tfetchdata")
           const postData = {
             ...values,
-            _id: uuidv4(),
+            _id:id,
             client: "666130c9a9c613f884628d76",
             people:fetchData._id,
             number: parseInt(values.phone),

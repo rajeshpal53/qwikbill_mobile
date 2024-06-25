@@ -33,7 +33,7 @@ export default function Invoice({navigation}){
   return (
     <ScrollView style={styles.container}>
       <Button style={styles.addButton} buttonColor='#ffffff' textColor='white' onPress={addInvoiceHandler}> Add New Invoice</Button>
-        {invoices?<InvoiceCard invoices={invoices} navigation={navigation}/>: <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        {invoices?<InvoiceCard invoices={invoices} navigation={navigation} setInvoices={setInvoices}/>: <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <ActivityIndicator size="large" />
           </View>}
   </ScrollView>

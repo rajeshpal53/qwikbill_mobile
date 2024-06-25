@@ -1,14 +1,8 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import {  Button, Dialog, Portal, Paragraph } from 'react-native-paper';
-const DeleteModal = ({visible,setVisible,invoiceId}) => {
-    const hideDialog = () => setVisible(false);
-  
-    const handleDelete = () => {
-      // Your delete logic here
-      console.log(invoiceId);
-      hideDialog();
-    };
+const DeleteModal = ({visible,setVisible,handleDelete}) => {
+    const hideDialog = () => setVisible(false); 
   return (
     <View style={styles.container}>
     <Portal>
