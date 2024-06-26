@@ -12,7 +12,6 @@ import {
 import { Formik, FieldArray } from "formik";
 import { InvoiceContext } from "../Store/InvoiceContext";
 import * as Yup from "yup";
-import UUIDGenerator from 'react-native-uuid-generator';
 const fetchOptions = async (input) => {
   const response = await fetch(
     `http://192.168.1.3:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
@@ -65,66 +64,27 @@ const validationSchema = Yup.object().shape({
     .required("Must have items")
     .min(1, "Minimum of 1 item"),
 });
-
-const getYear = (date) => {
-  if (!date) return "";
-  const dateObj = new Date(date);
-  return dateObj.getFullYear();
-};
-const getNextMonthDate = (date) => {
-  if (!date) return "";
-  const dateObj = new Date(date);
-  const nextMonth = new Date(dateObj.setMonth(dateObj.getMonth() + 1));
-  return nextMonth.toISOString().substring(0, 10);
-};
-const AddInvoice = ({ initialValues, navigation}) => {
+const AddInvoice = ({ initialValues,submitHandler}) => {
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [showItemOptions, setShowItemOptions] = useState(false);
   const [fetchData,setFetchData]= useState([])
-  const {setInvoices}= useContext(InvoiceContext)
   return (
     <View contentContainerStyle={styles.container}>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={async (values, { resetForm }) => {
-          console.log(fetchData,"\tfetchdata")
-          const postData = {
-            ...values,
-            client: "666130c9a9c613f884628d76",
-            people:fetchData._id,
-            number: parseInt(values.phone),
-            taxRate: 0,
-            currency: "USD",
-            status: "draft",
-            year: getYear(values.date),
-            expiredDate: getNextMonthDate(values.date),
-          };
-          delete postData.phone;
-          console.log(postData, "------postdata");
-          try{
-          const response = await fetch(
-            "http://192.168.1.3:8888/api/invoice/create",
-            {
-              method: "POST",
-              credentials: "include",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(postData),
-            }
-          );
-              setInvoices((prev)=>[...prev,postData])
-              console.log(response, "ddddddddddddddddddddddd");
-              resetForm();  
-        }
-            catch(error){
-            console.error("Failed to add invoice", response);
-            }
-            finally{
-              navigation.navigate("Invoice");
-            }
+          if(fetchData._id){
+          const fetchDataId=fetchData._id
+          submitHandler(values,fetchDataId);
+          }
+          else{
+            submitHandler(values);
+          }
+          
+
+          resetForm(); 
         }}  
       >
         {({

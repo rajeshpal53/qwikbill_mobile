@@ -15,6 +15,11 @@ function InvoiceCard({ invoices, navigation }) {
       invoiceId: id,
     });
   }
+  function EditInvoice(id){
+    navigation.navigate("EditInvoice",{
+      invoiceId:id
+    }    );
+  }
   function deleteInvoiceHandler(id) {
     setInvoiceId(id);
     setVisible(true);
@@ -41,66 +46,61 @@ function InvoiceCard({ invoices, navigation }) {
             console.error('Error:', error);
           }    
   };
-  const renderItem=({item})=>(
-    <Card
-    style={styles.card}
-    onPress={() => detailInvoice(item._id)}
-  >
-    <Card.Title title={item.date} titleStyle={styles.cardTitle} />
-    <Card.Content>
-      <Text variant="headlineLarge">{item.people.firstname}</Text>
-      <Text variant="bodyMedium" style={styles.cardText}>
-        {" "}
-        {/* {item.client.people.phone} */}
-      </Text>
-      
-    </Card.Content>
-    {/* <NestedList data={item.items}/> */}
-
-    {
-      item.items.map((newItem)=>(
-        <View key={newItem._id}>
-             <Text variant="labelSmall" style={styles.cardText}>
-                     {"items: " +
-                       newItem.itemName +
-                       ", price: " +
-                       newItem.price +
-                       ", quantity: " +
-                       newItem.quantity}
-                   </Text>
-          </View>
-      ))
-    }
-    <Card.Actions>
-      <IconButton
-        icon="delete"
-        iconColor="#1976d2"
-        size={20}
-        onPress={() => deleteInvoiceHandler(item._id)}
-      />
-      {visible && (
-        <DeleteModal
-          visible={visible}
-          setVisible={setVisible}
-          handleDelete={handleDelete}
+  return(
+    <View> 
+      {invoices.map((item,index)=>(
+      <Card
+      key={index}
+      style={styles.card}
+      onPress={() => detailInvoice(item._id)}
+    >
+      <Card.Title title={item.date} titleStyle={styles.cardTitle} />
+      <Card.Content>
+        <Text variant="headlineLarge">{item.people.firstname}</Text>
+        <Text variant="bodyMedium" style={styles.cardText}>
+          {" "}
+          {/* {item.client.people.phone} */}
+        </Text>
+        
+      </Card.Content>
+      {/* <NestedList data={item.items}/> */}
+  
+      {
+        item.items.map((newItem)=>(
+          <View key={newItem._id}>
+               <Text variant="labelSmall" style={styles.cardText}>
+                       {"items: " +
+                         newItem.itemName +
+                         ", price: " +
+                         newItem.price +
+                         ", quantity: " +
+                         newItem.quantity}
+                     </Text>
+            </View>
+        ))
+      }
+      <Card.Actions>
+        <IconButton
+          icon="delete"
+          iconColor="#1976d2"
+          size={20}
+          onPress={() => deleteInvoiceHandler(item._id)}
         />
-      )}
-      <Button style={{ backgroundColor: "#1976d2" }}>
-        <Icon source="pencil" color="white" size={20} /> Edit
-      </Button>
-    </Card.Actions>
-  </Card>
-  )
-  return (
-    <View>
-     <FlatList
-     data={invoices}
-     keyExtractor={(item, index) => index.toString()}
-     renderItem={renderItem}
-     />
+        {visible && (
+          <DeleteModal
+            visible={visible}
+            setVisible={setVisible}
+            handleDelete={handleDelete}
+          />
+        )}
+        <Button style={{ backgroundColor: "#1976d2" }} onPress={()=>EditInvoice(item._id)}>
+          <Icon source="pencil" color="white" size={20}  /> Edit
+        </Button>
+      </Card.Actions>
+    </Card>
+    ))}
     </View>
-  );
-}
+  )}
 const styles = StyleSheet.create({
   cardTitle: {
     color: "gray",

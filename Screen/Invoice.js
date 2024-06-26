@@ -8,25 +8,25 @@ import { InvoiceContext } from '../Store/InvoiceContext';
 export default function Invoice({navigation}){
   const {logout}=useContext(AuthContext)
   const{invoices,setInvoices}= useContext(InvoiceContext)
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch("http://192.168.1.3:8888/api/invoice/list", {
-          credentials: "include",
-        });
-        if (!response.ok) {
-          logout()
-          navigation.navigate('StackNaviigator',{screen:'login'})
-          throw new Error("Network response was not ok",response);
-        }
-        const result = await response.json();
-        setInvoices(result.result);
-      } catch (error) {
-        console.error("error", error);
+  async function fetchData() {
+    try {
+      const response = await fetch("http://192.168.1.3:8888/api/invoice/list", {
+        credentials: "include",
+      });
+      if (!response.ok) {
+        logout()
+        navigation.navigate('StackNaviigator',{screen:'login'})
+        throw new Error("Network response was not ok",response);
       }
+      const result = await response.json();
+      setInvoices(result.result);
+    } catch (error) {
+      console.error("error", error);
     }
+  }
+  useEffect(() => {
     fetchData();
-  }, [invoices]);
+  }, [fetchData]);
  const addInvoiceHandler=()=>{
   navigation.navigate('StackNavigator',{screen:'AddInvoice'})
  }
@@ -40,10 +40,9 @@ export default function Invoice({navigation}){
     
   );
 };
-
 const styles = StyleSheet.create({
   container: {
-  padding:16
+  padding:16,
   },
   text: {
     fontSize: 24,

@@ -32,7 +32,6 @@ const fetchHsnOptions = async (input) => {
   const data = await response.json();
   return data.result; // Adjust according to your API response
 };
-
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
   productCategory: Yup.string().required("Product category is required"),
@@ -52,8 +51,6 @@ const AddProduct = ({ navigation }) => {
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [showHsnOptions, setShowHsnOptions] = useState(false);
-  const{setProducts}=useContext(ProductContext)
-  const id=useId()
   return (
     <Formik
       initialValues={{
@@ -97,7 +94,6 @@ const AddProduct = ({ navigation }) => {
             body: JSON.stringify(postData),
           }
         );
-        setProducts((prev)=>[...prev,postData])
         if (response.ok) {
           console.log("product added successfully", response);
           navigation.navigate("wertone", { screen: "Products" });

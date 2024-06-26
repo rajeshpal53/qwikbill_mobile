@@ -23,6 +23,9 @@ import ProductDetailScreen from './Screen/ProductDetailScreen';
 import { InvoiceProvider } from './Store/InvoiceContext';
 import { ProductProvider } from './Store/ProductContext';
 import { CustomerProvider } from './Store/CustomerContext';
+import EditInvoiceScreen from './Screen/EditInvoiceScreen';
+import EditProductScreen from './Screen/EditProductScreen';
+import EditCustomerScreen from './Screen/EditCustomerScreen';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const customTheme = {
@@ -69,6 +72,9 @@ function StackNavigator(){
         <Stack.Screen name='InvoiceDetail' component={InvoiceDetailScreen}  screenOptions={{}}/>
         <Stack.Screen name='CustomerDetail' component={CustomerDetailScreen}  screenOptions={{}}/>
         <Stack.Screen name='ProductDetail' component={ProductDetailScreen}  screenOptions={{}}/>
+        <Stack.Screen name='EditInvoice' component={EditInvoiceScreen}  screenOptions={{}}/>
+        <Stack.Screen name='EditProduct' component={EditProductScreen}  screenOptions={{}}/>
+        <Stack.Screen name='EditCustomer' component={EditCustomerScreen}  screenOptions={{}}/>
     </Stack.Navigator>
   )
 
