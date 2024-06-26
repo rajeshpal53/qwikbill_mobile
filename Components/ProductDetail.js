@@ -50,7 +50,7 @@ function ProductDetail({ detail }) {
           <Text style={styles.cell}>{detail.currency}</Text>
         </View>
         
-        <FlatList data={detail.customField} renderItem={renderItem}   keyExtractor={(item, index) => index.toString()}/>
+        <FlatList data={detail.customField} renderItem={renderItem}  keyExtractor={(item, index) => index.toString()}/>
       </View>
     </View>
   );

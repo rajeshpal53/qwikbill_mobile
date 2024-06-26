@@ -4,14 +4,14 @@ import { View, StyleSheet,Text,ScrollView} from 'react-native';
 import { Button,ActivityIndicator} from 'react-native-paper';
 import InvoiceCard from '../Components/InvoiceCard'
 import { AuthContext } from '../Store/AuthContext';
+import { InvoiceContext } from '../Store/InvoiceContext';
 export default function Invoice({navigation}){
   const {logout}=useContext(AuthContext)
-  const[invoices,setInvoices]= useState();
-
+  const{invoices,setInvoices}= useContext(InvoiceContext)
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("http://192.168.1.2:8888/api/invoice/list", {
+        const response = await fetch("http://192.168.1.3:8888/api/invoice/list", {
           credentials: "include",
         });
         if (!response.ok) {
@@ -26,7 +26,7 @@ export default function Invoice({navigation}){
       }
     }
     fetchData();
-  }, []);
+  }, [invoices]);
  const addInvoiceHandler=()=>{
   navigation.navigate('StackNavigator',{screen:'AddInvoice'})
  }

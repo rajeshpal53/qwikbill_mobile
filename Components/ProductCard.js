@@ -1,11 +1,13 @@
-import React,{useState} from 'react'
+import React,{useState,useContext} from 'react'
 import { Button, Card, Text } from "react-native-paper";
 import { IconButton, Icon } from "react-native-paper";
 import { StyleSheet,View } from "react-native";
 import DeleteModal from '../UI/DeleteModal';
+import { ProductContext } from '../Store/ProductContext';
 function ProductCard({products,navigation}) {
   const [visible, setVisible] = useState(false);
   const [productId, setProductId] = useState("");
+  const {setProducts}=useContext(ProductContext)
   function deleteProductHandler(id) {
     setProductId(id);
     setVisible(true);
@@ -14,10 +16,12 @@ function ProductCard({products,navigation}) {
   const handleDelete = async () => {
     // Your delete logic here
     console.log(productId);
+    const updatedInvoice = products.filter(item => item._id !== productId);
     // setInvoices((prev)=>prev.filter((item) => item.id !== productId));
+    setProducts(updatedInvoice)
     setVisible(false);
     try{
-      const response= await fetch(`http://192.168.1.2:8888/api/product/delete/${productId}`, {
+      const response= await fetch(`http://192.168.1.3:8888/api/product/delete/${productId}`, {
           method: 'DELETE',
           credentials:'include'
         })
@@ -38,8 +42,8 @@ function ProductCard({products,navigation}) {
 }
   return (
    <View>
-    { products.map((item)=>{return( 
-         <Card key={item._id} style={styles.card}  onPress={()=>{ProductDetail(item._id)}}>
+    { products.map((item,index)=>{return( 
+         <Card key={index} style={styles.card}  onPress={()=>{ProductDetail(item._id)}}>
            <Card.Title title={item.created} titleStyle={styles.cardTitle} />
            <Card.Content>
              <Text variant="headlineLarge">{item.name}</Text>

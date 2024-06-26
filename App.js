@@ -20,6 +20,9 @@ import AddProductScreen from './Screen/AddProductScreen';
 import InvoiceDetailScreen from './Screen/InvoiceDetailScreen';
 import CustomerDetailScreen from './Screen/CustomerDetailScreen';
 import ProductDetailScreen from './Screen/ProductDetailScreen';
+import { InvoiceProvider } from './Store/InvoiceContext';
+import { ProductProvider } from './Store/ProductContext';
+import { CustomerProvider } from './Store/CustomerContext';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const customTheme = {
@@ -74,6 +77,9 @@ export default function App() {
 
   return (
     <AuthProvider>
+      <InvoiceProvider>
+        <ProductProvider>
+        <CustomerProvider>
     <Provider theme={customTheme}> 
     <NavigationContainer>     
         <Stack.Navigator initialRouteName='StackNavigator'>
@@ -81,6 +87,9 @@ export default function App() {
       </Stack.Navigator>    
     </NavigationContainer>
     </Provider>
+    </CustomerProvider>
+    </ProductProvider>
+    </InvoiceProvider>
     </AuthProvider>
   );
 }

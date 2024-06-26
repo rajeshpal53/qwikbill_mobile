@@ -11,7 +11,7 @@ function CustomerDetailScreen({route}) {
               return [];
             }
             const response = await fetch(
-              `http://192.168.1.2:8888/api/people/read/${customerId}`,
+              `http://192.168.1.3:8888/api/people/read/${customerId}`,
               {
                 credentials: "include",
               }
