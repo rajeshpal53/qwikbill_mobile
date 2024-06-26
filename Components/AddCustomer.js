@@ -1,11 +1,12 @@
-import React,{useState} from 'react';
+import React,{useContext, useState} from 'react';
 import { View, StyleSheet,ScrollView } from 'react-native';
 import { Button, TextInput, Text, HelperText,List } from 'react-native-paper';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { CustomerContext } from '../Store/CustomerContext';
 const fetchOptions = async (input) => {
     const response = await fetch(
-      `http://192.168.1.2:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
+      `http://192.168.1.3:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
       {
         credentials: "include",
       }
@@ -31,6 +32,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const AddCustomer = ({navigation}) => {
+  const{setCustomer}=useContext(CustomerContext)
     const [options, setOptions] = useState([]);
     const [showOptions, setShowOptions] = useState(false);
     const [typeOptions,setTypeOptions]= useState(["people",'company'])
@@ -46,7 +48,7 @@ const AddCustomer = ({navigation}) => {
         people: "6655af58afe60865000019cc",
             }
             console.log(postData)
-            const url = "http://192.168.1.2:8888/api/people/create"; //put url into fetch arguments
+            const url = "http://192.168.1.3:8888/api/people/create"; //put url into fetch arguments
             const response = await fetch(url, {
               method: "POST",
               credentials: "include",
@@ -55,6 +57,7 @@ const AddCustomer = ({navigation}) => {
               },
               body: JSON.stringify(postData),
             });
+            setCustomer((prev)=>[...prev,postData])
             if(response.ok){
               console.log("response",response)
                 navigation.navigate('Customer')

@@ -1,5 +1,5 @@
 import { Directions } from "react-native-gesture-handler";
-import React, { useState,useId } from "react";
+import React, { useState,useId,useContext} from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import {
   TextInput,
@@ -10,11 +10,12 @@ import {
   List,
 } from "react-native-paper";
 import { Formik, FieldArray } from "formik";
+import { InvoiceContext } from "../Store/InvoiceContext";
 import * as Yup from "yup";
 import UUIDGenerator from 'react-native-uuid-generator';
 const fetchOptions = async (input) => {
   const response = await fetch(
-    `http://192.168.1.2:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
+    `http://192.168.1.3:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
     {
       credentials: "include",
     }
@@ -24,7 +25,7 @@ const fetchOptions = async (input) => {
 };
 const fetchItemOptions = async (input) => {
   const response = await fetch(
-    `http://192.168.1.2:8888/api/product/search?fields=name&q=${input}&page=1&items=10`,
+    `http://192.168.1.3:8888/api/product/search?fields=name&q=${input}&page=1&items=10`,
     {
       credentials: "include",
     }
@@ -81,7 +82,7 @@ const AddInvoice = ({ initialValues, navigation}) => {
   const [showOptions, setShowOptions] = useState(false);
   const [showItemOptions, setShowItemOptions] = useState(false);
   const [fetchData,setFetchData]= useState([])
-  const id=useId();
+  const {setInvoices}= useContext(InvoiceContext)
   return (
     <View contentContainerStyle={styles.container}>
       <Formik
@@ -91,7 +92,6 @@ const AddInvoice = ({ initialValues, navigation}) => {
           console.log(fetchData,"\tfetchdata")
           const postData = {
             ...values,
-            _id:id,
             client: "666130c9a9c613f884628d76",
             people:fetchData._id,
             number: parseInt(values.phone),
@@ -105,7 +105,7 @@ const AddInvoice = ({ initialValues, navigation}) => {
           console.log(postData, "------postdata");
           try{
           const response = await fetch(
-            "http://192.168.1.2:8888/api/invoice/create",
+            "http://192.168.1.3:8888/api/invoice/create",
             {
               method: "POST",
               credentials: "include",
@@ -115,9 +115,9 @@ const AddInvoice = ({ initialValues, navigation}) => {
               body: JSON.stringify(postData),
             }
           );
-            console.log(response, "ddddddddddddddddddddddd");
-           
-            resetForm();
+              setInvoices((prev)=>[...prev,postData])
+              console.log(response, "ddddddddddddddddddddddd");
+              resetForm();  
         }
             catch(error){
             console.error("Failed to add invoice", response);

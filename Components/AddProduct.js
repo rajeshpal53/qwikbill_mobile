@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useContext, useId} from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import {
   TextInput,
@@ -11,9 +11,10 @@ import {
 } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { ProductContext } from "../Store/ProductContext";
 const fetchOptions = async (input) => {
   const response = await fetch(
-    `http://192.168.1.2:8888/api/productcategory/search?fields=name&q=${input}&page=1&items=10`,
+    `http://192.168.1.3:8888/api/productcategory/search?fields=name&q=${input}&page=1&items=10`,
     {
       credentials: "include",
     }
@@ -23,7 +24,7 @@ const fetchOptions = async (input) => {
 };
 const fetchHsnOptions = async (input) => {
   const response = await fetch(
-    `http://192.168.1.2:8888/api/taxes/list?fields=taxName&q=${input}&page=1&items=10`,
+    `http://192.168.1.3:8888/api/taxes/list?fields=taxName&q=${input}&page=1&items=10`,
     {
       credentials: "include",
     }
@@ -51,6 +52,8 @@ const AddProduct = ({ navigation }) => {
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [showHsnOptions, setShowHsnOptions] = useState(false);
+  const{setProducts}=useContext(ProductContext)
+  const id=useId()
   return (
     <Formik
       initialValues={{
@@ -84,7 +87,7 @@ const AddProduct = ({ navigation }) => {
           ],
         };
         const response = await fetch(
-          "http://192.168.1.2:8888/api/product/create",
+          "http://192.168.1.3:8888/api/product/create",
           {
             method: "POST",
             credentials: "include",
@@ -94,6 +97,7 @@ const AddProduct = ({ navigation }) => {
             body: JSON.stringify(postData),
           }
         );
+        setProducts((prev)=>[...prev,postData])
         if (response.ok) {
           console.log("product added successfully", response);
           navigation.navigate("wertone", { screen: "Products" });

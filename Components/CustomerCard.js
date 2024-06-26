@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState,useContext } from 'react'
 import { Button, Card, Text } from "react-native-paper";
 import { IconButton, Icon } from "react-native-paper";
 import { StyleSheet,View } from "react-native";
 import DeleteModal from '../UI/DeleteModal';
+import { CustomerContext } from '../Store/CustomerContext';
 export default function CustomerCard({customer,navigation}) {
+  const{setCustomer}= useContext(CustomerContext)
   const[visible,setVisible]= useState(false);
   const [customerId,setCustomerId]=useState('')
   function deleteCustomerDelete(id) {
@@ -14,9 +16,11 @@ export default function CustomerCard({customer,navigation}) {
     // Your delete logic here
     console.log(customerId);
     // setInvoices((prev)=>prev.filter((item) => item.id !== invoiceId));
+    const updateCustomer= customer.filter((item)=>item._id !==customerId)
+    setCustomer(updateCustomer)
     setVisible(false);
     try{
-      const response= await fetch(`http://192.168.1.2:8888/api/people/delete/${customerId}`, {
+      const response= await fetch(`http://192.168.1.3:8888/api/people/delete/${customerId}`, {
           method: 'DELETE',
           credentials:'include'
         })
@@ -38,8 +42,8 @@ export default function CustomerCard({customer,navigation}) {
 }
   return (
    <View>
-    { customer.map((item)=>{return( 
-         <Card key={item._id} style={styles.card} onPress={()=>{ customerDetail(item._id)}}>
+    { customer.map((item,index)=>{return( 
+         <Card key={index} style={styles.card} onPress={()=>{ customerDetail(item._id)}}>
            <Card.Title title={item.created} titleStyle={styles.cardTitle} />
            <Card.Content>
              <Text variant="headlineLarge">{item.firstname+item.lastname}</Text>

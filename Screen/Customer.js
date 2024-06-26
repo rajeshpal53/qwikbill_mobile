@@ -1,13 +1,15 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState,useEffect, useContext } from 'react';
 import { ScrollView, Text, StyleSheet } from 'react-native';
-import {Button} from 'react-native-paper'
+import {ActivityIndicator, Button} from 'react-native-paper'
 import CustomerCard from '../Components/CustomerCard'
+import { CustomerContext } from '../Store/CustomerContext';
  export default function Customer({navigation}) {
-  const [customer,setCustomer]= useState([]);
+  const {customer,setCustomer}= useContext(CustomerContext);
+  const [isLoading,setIsLoading]=useState(true)
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("http://192.168.1.2:8888/api/people/list", {
+        const response = await fetch("http://192.168.1.3:8888/api/people/list", {
           credentials: "include",
         });
         if (!response.ok) {
@@ -18,10 +20,15 @@ import CustomerCard from '../Components/CustomerCard'
       } catch (error) {
         console.error("error", error);
       }
+      finally{
+        setIsLoading(false);
+      }
     }
     fetchData();
-  }, []);
-  console.log(customer,"response")
+  }, [customer]);
+  if(isLoading){
+    return<ActivityIndicator size='large'/>
+  }
   return (
     <ScrollView style={styles.container}>
        <Button style={styles.addButton} buttonColor='#ffffff' textColor='white' onPress={()=>{ navigation.navigate('AddCustomer')}}> Add New Customer</Button>

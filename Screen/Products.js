@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useContext } from 'react';
 import { View, Text, StyleSheet,ScrollView } from 'react-native';
 import ProductCard from'../Components/ProductCard'
 import { ActivityIndicator, Button} from 'react-native-paper';
+import { ProductContext } from '../Store/ProductContext';
 
 export default function Products({navigation}) {
-  const[products,setProducts]=useState([]);
+  const{products,setProducts}=useContext(ProductContext);
   const[isLoading,setIsLoading]=useState(true)
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("http://192.168.1.2:8888/api/product/list", {
+        const response = await fetch("http://192.168.1.3:8888/api/product/list", {
           credentials: "include",
         });
         const result = await response.json();
@@ -22,7 +23,7 @@ export default function Products({navigation}) {
       }
     }
     fetchData();
-  }, []);
+  }, [products]);
   if(isLoading){
     return<ActivityIndicator size='large'/>
   }

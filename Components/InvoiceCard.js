@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button, Card, Text } from "react-native-paper";
 import { IconButton, Icon } from "react-native-paper";
-import { StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import DeleteModal from "../UI/DeleteModal";
-function InvoiceCard({ invoices, navigation, setInvoices }) {
+import { InvoiceContext } from "../Store/InvoiceContext";
+
+function InvoiceCard({ invoices, navigation }) {
   const [visible, setVisible] = useState(false);
   const [invoiceId, setInvoiceId] = useState("");
+  const {setInvoices}= useContext(InvoiceContext)
 
   function detailInvoice(id) {
     navigation.navigate("InvoiceDetail", {
@@ -20,10 +23,11 @@ function InvoiceCard({ invoices, navigation, setInvoices }) {
   const handleDelete = async () => {
     // Your delete logic here
     console.log(invoiceId);
-    // setInvoices((prev)=>prev.filter((item) => item.id !== invoiceId));
+    const updatedInvoice = invoices.filter(item => item._id !== invoiceId);
+    setInvoices(updatedInvoice);
     setVisible(false);
     try{
-      const response= await fetch(`http://192.168.1.2:8888/api/invoice/delete/${invoiceId}`, {
+      const response= await fetch(`http://192.168.1.3:8888/api/invoice/delete/${invoiceId}`, {
           method: 'DELETE',
           credentials:'include'
         })
@@ -37,57 +41,63 @@ function InvoiceCard({ invoices, navigation, setInvoices }) {
             console.error('Error:', error);
           }    
   };
+  const renderItem=({item})=>(
+    <Card
+    style={styles.card}
+    onPress={() => detailInvoice(item._id)}
+  >
+    <Card.Title title={item.date} titleStyle={styles.cardTitle} />
+    <Card.Content>
+      <Text variant="headlineLarge">{item.people.firstname}</Text>
+      <Text variant="bodyMedium" style={styles.cardText}>
+        {" "}
+        {/* {item.client.people.phone} */}
+      </Text>
+      
+    </Card.Content>
+    {/* <NestedList data={item.items}/> */}
 
+    {
+      item.items.map((newItem)=>(
+        <View key={newItem._id}>
+             <Text variant="labelSmall" style={styles.cardText}>
+                     {"items: " +
+                       newItem.itemName +
+                       ", price: " +
+                       newItem.price +
+                       ", quantity: " +
+                       newItem.quantity}
+                   </Text>
+          </View>
+      ))
+    }
+    <Card.Actions>
+      <IconButton
+        icon="delete"
+        iconColor="#1976d2"
+        size={20}
+        onPress={() => deleteInvoiceHandler(item._id)}
+      />
+      {visible && (
+        <DeleteModal
+          visible={visible}
+          setVisible={setVisible}
+          handleDelete={handleDelete}
+        />
+      )}
+      <Button style={{ backgroundColor: "#1976d2" }}>
+        <Icon source="pencil" color="white" size={20} /> Edit
+      </Button>
+    </Card.Actions>
+  </Card>
+  )
   return (
     <View>
-      {invoices.map((item, index) => {
-        return (
-          <Card
-            key={index}
-            style={styles.card}
-            onPress={() => detailInvoice(item._id)}
-          >
-            <Card.Title title={item.date} titleStyle={styles.cardTitle} />
-            <Card.Content key={index}>
-              <Text variant="headlineLarge">{item.people.firstname}</Text>
-              <Text variant="bodyMedium" style={styles.cardText}>
-                {" "}
-                {/* {item.client.people.phone} */}
-              </Text>
-              {item.items.map((newItem) => {
-                return (
-                  <Text variant="labelSmall" style={styles.cardText}>
-                    {"items: " +
-                      newItem.itemName +
-                      ", price: " +
-                      newItem.price +
-                      ", quantity: " +
-                      newItem.quantity}
-                  </Text>
-                );
-              })}
-            </Card.Content>
-            <Card.Actions>
-              <IconButton
-                icon="delete"
-                iconColor="#1976d2"
-                size={20}
-                onPress={() => deleteInvoiceHandler(item._id)}
-              />
-              {visible && (
-                <DeleteModal
-                  visible={visible}
-                  setVisible={setVisible}
-                  handleDelete={handleDelete}
-                />
-              )}
-              <Button style={{ backgroundColor: "#1976d2" }}>
-                <Icon source="pencil" color="white" size={20} /> Edit
-              </Button>
-            </Card.Actions>
-          </Card>
-        );
-      })}
+     <FlatList
+     data={invoices}
+     keyExtractor={(item, index) => index.toString()}
+     renderItem={renderItem}
+     />
     </View>
   );
 }
