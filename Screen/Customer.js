@@ -6,26 +6,27 @@ import { CustomerContext } from '../Store/CustomerContext';
  export default function Customer({navigation}) {
   const {customer,setCustomer}= useContext(CustomerContext);
   const [isLoading,setIsLoading]=useState(true)
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch("http://192.168.1.3:8888/api/people/list", {
-          credentials: "include",
-        });
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const result = await response.json();
-        setCustomer(result.result);
-      } catch (error) {
-        console.error("error", error);
+  async function fetchData() {
+    try {
+      const response = await fetch("http://192.168.1.3:8888/api/people/list", {
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
       }
-      finally{
-        setIsLoading(false);
-      }
+      const result = await response.json();
+      setCustomer(result.result);
+    } catch (error) {
+      console.error("error", error);
     }
+    finally{
+      setIsLoading(false);
+    }
+  }
+  useEffect(() => {
     fetchData();
-  }, [customer]);
+  }, [fetchData]);
+
   if(isLoading){
     return<ActivityIndicator size='large'/>
   }

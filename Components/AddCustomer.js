@@ -32,7 +32,6 @@ const validationSchema = Yup.object().shape({
 });
 
 const AddCustomer = ({navigation}) => {
-  const{setCustomer}=useContext(CustomerContext)
     const [options, setOptions] = useState([]);
     const [showOptions, setShowOptions] = useState(false);
     const [typeOptions,setTypeOptions]= useState(["people",'company'])
@@ -57,7 +56,6 @@ const AddCustomer = ({navigation}) => {
               },
               body: JSON.stringify(postData),
             });
-            setCustomer((prev)=>[...prev,postData])
             if(response.ok){
               console.log("response",response)
                 navigation.navigate('Customer')

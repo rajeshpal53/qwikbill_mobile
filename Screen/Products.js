@@ -7,23 +7,23 @@ import { ProductContext } from '../Store/ProductContext';
 export default function Products({navigation}) {
   const{products,setProducts}=useContext(ProductContext);
   const[isLoading,setIsLoading]=useState(true)
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch("http://192.168.1.3:8888/api/product/list", {
-          credentials: "include",
-        });
-        const result = await response.json();
-        setProducts(result.result);
-      } catch (Error) {
-        throw new Error("Network response was not ok");
-      }
-      finally{
-        setIsLoading(false)
-      }
+  async function fetchData() {
+    try {
+      const response = await fetch("http://192.168.1.3:8888/api/product/list", {
+        credentials: "include",
+      });
+      const result = await response.json();
+      setProducts(result.result);
+    } catch (Error) {
+      throw new Error("Network response was not ok");
     }
+    finally{
+      setIsLoading(false)
+    }
+  }
+  useEffect(() => {
     fetchData();
-  }, [products]);
+  }, [fetchData]);
   if(isLoading){
     return<ActivityIndicator size='large'/>
   }
