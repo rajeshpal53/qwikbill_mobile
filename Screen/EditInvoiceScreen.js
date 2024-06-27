@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { ActivityIndicator, Text } from "react-native-paper";
 import AddInvoice from "../Components/AddInvoice";
-
+import { useSnackbar } from '../Store/SnackbarContext'
 const getYear = (date) => {
     if (!date) return "";
     const dateObj = new Date(date);
@@ -16,6 +16,7 @@ const getYear = (date) => {
   };
 
 function EditInvoiceScreen({ route,navigation }) {
+  const{showSnackbar}=useSnackbar()
   const invoiceId = route.params.invoiceId;
   const [initialValues, setInitialValues] = useState({
     date: new Date().toISOString().substring(0, 10),
@@ -29,7 +30,7 @@ function EditInvoiceScreen({ route,navigation }) {
     const fetchDataHandler = async () => {
       try {
         const response = await fetch(
-          `http://192.168.1.3:8888/api/invoice/read/${invoiceId}`,
+          `http://192.168.1.9:8888/api/invoice/read/${invoiceId}`,
           {
             credentials: "include",
           }
@@ -44,9 +45,9 @@ function EditInvoiceScreen({ route,navigation }) {
           items: invoiceData.items.map((item) => (
              {
               itemName: item.itemName,
-              quantity: item.quantity,
-              price: item.price,
-              total: item.total,
+              quantity: item.quantity.toString(),
+              price: item.price.toString(),
+              total: item.total.toString(),
             }
           )),
         });
@@ -76,7 +77,7 @@ function EditInvoiceScreen({ route,navigation }) {
        console.log(postData, "------postdata");
 
        try{
-        const response= await fetch(`http://192.168.1.3:8888/api/invoice/update/${invoiceId}`, {
+        const response= await fetch(`http://192.168.1.9:8888/api/invoice/update/${invoiceId}`, {
           method: "PATCH",
           credentials: "include",
           headers: {
@@ -85,10 +86,13 @@ function EditInvoiceScreen({ route,navigation }) {
           body: JSON.stringify(postData),
         });     
         if (response.ok) {
+          showSnackbar("update product Successfully","success")
           navigation.navigate("Invoice");
+          
         }   
       } 
        catch (error){
+        showSnackbar("Failed to update invoice","error")
         console.error("Failed to update invoice",response);
       }
 

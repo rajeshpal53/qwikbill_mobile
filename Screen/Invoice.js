@@ -5,17 +5,18 @@ import { Button,ActivityIndicator} from 'react-native-paper';
 import InvoiceCard from '../Components/InvoiceCard'
 import { AuthContext } from '../Store/AuthContext';
 import { InvoiceContext } from '../Store/InvoiceContext';
+import { useSnackbar } from '../Store/SnackbarContext';
 export default function Invoice({navigation}){
   const {logout}=useContext(AuthContext)
   const{invoices,setInvoices}= useContext(InvoiceContext)
   async function fetchData() {
     try {
-      const response = await fetch("http://192.168.1.3:8888/api/invoice/list", {
+      const response = await fetch("http://192.168.1.9:8888/api/invoice/list", {
         credentials: "include",
       });
       if (!response.ok) {
         logout()
-        navigation.navigate('StackNaviigator',{screen:'login'})
+        navigation.navigate('StackNavigator',{screen:'login'})
         throw new Error("Network response was not ok",response);
       }
       const result = await response.json();
@@ -32,6 +33,7 @@ export default function Invoice({navigation}){
  }
   return (
     <ScrollView style={styles.container}>
+     
       <Button style={styles.addButton} buttonColor='#ffffff' textColor='white' onPress={addInvoiceHandler}> Add New Invoice</Button>
         {invoices?<InvoiceCard invoices={invoices} navigation={navigation} setInvoices={setInvoices}/>: <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <ActivityIndicator size="large" />

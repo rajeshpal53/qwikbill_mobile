@@ -5,28 +5,32 @@ import CustomerDetail from "../Components/CustomerDetail"
 function CustomerDetailScreen({route}) {
     const customerId= route.params.customerId
     const[detail,setDetail]= useState([])
+    const[isLoading,setIsLoading]= useState(true)
     useEffect(()=>{
         async function fetchDetailHandler() {
-            if (customerId === undefined) {
-              return [];
-            }
+            try{
             const response = await fetch(
-              `http://192.168.1.3:8888/api/people/read/${customerId}`,
+              `http://192.168.1.9:8888/api/people/read/${customerId}`,
               {
                 credentials: "include",
               }
             );
-            if (!response.ok) {
-              throw new Error("Item not found");
-            }
             const data = await response.json();
              setDetail(data.result);
+          }catch(error){
+            throw new Error("Item not found");
+          }finally{
+            setIsLoading(false)
+          }
           }
           fetchDetailHandler();
     },[])
+            if(isLoading){
+              return<ActivityIndicator/>
+            }
   return (
     <View >
-      {detail!=[]? <CustomerDetail detail={detail}/>:<ActivityIndicator/>}
+    <CustomerDetail detail={detail}/>
     </View>
   )
 }

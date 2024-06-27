@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 import { CustomerContext } from '../Store/CustomerContext';
 const fetchOptions = async (input) => {
     const response = await fetch(
-      `http://192.168.1.3:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
+      `http://192.168.1.9:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
       {
         credentials: "include",
       }
@@ -31,39 +31,17 @@ const validationSchema = Yup.object().shape({
     .required('Type is required'),
 });
 
-const AddCustomer = ({navigation}) => {
+const AddCustomer = ({navigation,initialValues,handleSubmit}) => {
     const [options, setOptions] = useState([]);
     const [showOptions, setShowOptions] = useState(false);
     const [typeOptions,setTypeOptions]= useState(["people",'company'])
     const [typeShowOptions,setTypeShowOptions]= useState(false)
     return(
   <Formik style={styles.container}
-    initialValues={{ firstname: '', lastname: '', email: '', phone: '', type: '' }}
+  initialValues={initialValues}
     validationSchema={validationSchema}
-    onSubmit={async(values)=>{
-            const postData={
-                ...values,
-                country: "USA",
-        people: "6655af58afe60865000019cc",
-            }
-            console.log(postData)
-            const url = "http://192.168.1.3:8888/api/people/create"; //put url into fetch arguments
-            const response = await fetch(url, {
-              method: "POST",
-              credentials: "include",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(postData),
-            });
-            if(response.ok){
-              console.log("response",response)
-                navigation.navigate('Customer')
-         
-            }
-            else{
-                    console.error("error to fetch customer",response)
-            }
+    onSubmit={(values)=>{
+      handleSubmit(values);
     }
 
 

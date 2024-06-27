@@ -1,8 +1,9 @@
 import React,{useState,useContext} from 'react'
 import { ScrollView } from "react-native"
-import { Text } from "react-native-paper"
+import { Snackbar, Text } from "react-native-paper"
 import AddInvoice from "../Components/AddInvoice"
 import { InvoiceContext } from '../Store/InvoiceContext'
+import { useSnackbar } from '../Store/SnackbarContext'
 const getYear = (date) => {
      if (!date) return "";
      const dateObj = new Date(date);
@@ -16,7 +17,7 @@ const getYear = (date) => {
    };
 
 const AddInvoiceScreen=({navigation})=>{
-     const {setInvoices}= useContext(InvoiceContext)
+     const{showSnackbar}= useSnackbar();
      const[initialValues,setInitialValues]=useState({
           client: "",
           phone: "",
@@ -40,7 +41,7 @@ const submitHandler= async( values,fetchDataId)=>{
         console.log(postData, "------postdata");
         try{
         const response = await fetch(
-          "http://192.168.1.3:8888/api/invoice/create",
+          "http://192.168.1.9:8888/api/invoice/create",
           {
             method: "POST",
             credentials: "include",
@@ -51,12 +52,14 @@ const submitHandler= async( values,fetchDataId)=>{
           }
         ); 
         const data= response.json();
-        console.log(data,'sssssssssssssss') 
+        showSnackbar("invoice Added Successfull","success")
           }
           catch(error){
           console.error("Failed to add invoice", response);
+          showSnackbar("Failed to add invoice","error")
           }
           finally{
+           
             navigation.navigate("Invoice");
           }
 }
