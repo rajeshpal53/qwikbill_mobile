@@ -332,5 +332,27 @@
     "tags": [],
     "taxRate": 0,
     "updated": "2024-06-06T05:43:00.840Z"
+  },
+  {
+    "customField": [
+      {
+        "_id": "667bd506bee232c6ee678f0d",
+        "fieldName": "costprice",
+        "fieldType": "string",
+        "fieldValue": "266"
+      },
+      {
+        "_id": "667bd506bee232c6ee678f0e",
+        "fieldName": "hsncode",
+        "fieldType": "string",
+        "fieldValue": "SGST"
+      },
+      {
+        "_id": "667bd506bee232c6ee678f0f",
+        "fieldName": "taxvalue",
+        "fieldType": "string",
+        "fieldValue": 9
+      }
+    ]
   }
 ]

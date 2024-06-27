@@ -14,7 +14,7 @@ function InvoiceDetailScreen({ route }) {
       }
       try {
       const response = await fetch(
-        `http://192.168.1.3:8888/api/invoice/read/${invoiceId}`,
+        `http://192.168.1.9:8888/api/invoice/read/${invoiceId}`,
         {
           credentials: "include",
         }

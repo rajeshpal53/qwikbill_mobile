@@ -14,7 +14,7 @@ import { InvoiceContext } from "../Store/InvoiceContext";
 import * as Yup from "yup";
 const fetchOptions = async (input) => {
   const response = await fetch(
-    `http://192.168.1.3:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
+    `http://192.168.1.9:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
     {
       credentials: "include",
     }
@@ -24,7 +24,7 @@ const fetchOptions = async (input) => {
 };
 const fetchItemOptions = async (input) => {
   const response = await fetch(
-    `http://192.168.1.3:8888/api/product/search?fields=name&q=${input}&page=1&items=10`,
+    `http://192.168.1.9:8888/api/product/search?fields=name&q=${input}&page=1&items=10`,
     {
       credentials: "include",
     }
@@ -280,7 +280,7 @@ const AddInvoice = ({ initialValues,submitHandler}) => {
                                   );
                                   setFieldValue(
                                     `items[${index}].price`,
-                                    option.price
+                                    option.price.toString()
                                   );
                                   setShowItemOptions(false);
                                 }}
@@ -336,13 +336,11 @@ const AddInvoice = ({ initialValues,submitHandler}) => {
                           keyboardType="numeric"
                           onChangeText={async (text) => {
                             handleChange(`items[${index}].quantity`)(text);
-                            text > 0
+                            text.length>0
                               ? setFieldValue(
                                   `items[${index}].total`,
-                                  parseFloat(
-                                    values.items[index].price *
-                                      values.items[index].quantity
-                                  )
+                                    (values.items[index].price * values.items[index].quantity).toString()
+                                     
                                 )
                               : 0;
                           }}

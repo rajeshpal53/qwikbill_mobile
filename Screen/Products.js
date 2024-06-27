@@ -9,7 +9,7 @@ export default function Products({navigation}) {
   const[isLoading,setIsLoading]=useState(true)
   async function fetchData() {
     try {
-      const response = await fetch("http://192.168.1.3:8888/api/product/list", {
+      const response = await fetch("http://192.168.1.9:8888/api/product/list", {
         credentials: "include",
       });
       const result = await response.json();
@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
  },
   container: {
     flex: 1,
+    padding:16
   },
   text: {
     fontSize: 24,

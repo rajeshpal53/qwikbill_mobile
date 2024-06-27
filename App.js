@@ -9,7 +9,7 @@ import Products from "./Screen/Products";
 import Customer from "./Screen/Customer";
 import LoginScreen from './Screen/LoginScreen';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Provider } from 'react-native-paper';
+import { Provider, Snackbar } from 'react-native-paper';
 import { DefaultTheme,ActivityIndicator} from 'react-native-paper';
 import AddInvoiceScreen from './Screen/AddInvoiceScreen';
 import AddCustomerScreen from './Screen/AddCustomerScreen';
@@ -26,6 +26,8 @@ import { CustomerProvider } from './Store/CustomerContext';
 import EditInvoiceScreen from './Screen/EditInvoiceScreen';
 import EditProductScreen from './Screen/EditProductScreen';
 import EditCustomerScreen from './Screen/EditCustomerScreen';
+import { SnackbarProvider } from './Store/SnackbarContext';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const customTheme = {
@@ -82,6 +84,8 @@ function StackNavigator(){
 export default function App() {
 
   return (
+    <SafeAreaProvider>
+    <SnackbarProvider>
     <AuthProvider>
       <InvoiceProvider>
         <ProductProvider>
@@ -97,5 +101,7 @@ export default function App() {
     </ProductProvider>
     </InvoiceProvider>
     </AuthProvider>
+    </SnackbarProvider>
+    </SafeAreaProvider>
   );
 }

@@ -14,7 +14,7 @@ import * as Yup from "yup";
 import { ProductContext } from "../Store/ProductContext";
 const fetchOptions = async (input) => {
   const response = await fetch(
-    `http://192.168.1.3:8888/api/productcategory/search?fields=name&q=${input}&page=1&items=10`,
+    `http://192.168.1.9:8888/api/productcategory/search?fields=name&q=${input}&page=1&items=10`,
     {
       credentials: "include",
     }
@@ -24,7 +24,7 @@ const fetchOptions = async (input) => {
 };
 const fetchHsnOptions = async (input) => {
   const response = await fetch(
-    `http://192.168.1.3:8888/api/taxes/list?fields=taxName&q=${input}&page=1&items=10`,
+    `http://192.168.1.9:8888/api/taxes/list?fields=taxName&q=${input}&page=1&items=10`,
     {
       credentials: "include",
     }
@@ -47,59 +47,16 @@ const validationSchema = Yup.object().shape({
   hsncode: Yup.string().required("HSN code is required"),
 });
 
-const AddProduct = ({ navigation }) => {
+const AddProduct = ({ navigation,initialValues,handleSubmit }) => {
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [showHsnOptions, setShowHsnOptions] = useState(false);
   return (
     <Formik
-      initialValues={{
-        name: "",
-        productCategory: "",
-        sellingPrice: "",
-        taxValue: "",
-        purchasePrice: "",
-        hsncode: "",
-      }}
+      initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={async (values) => {
-        const postData = {
-          name: values.name,
-          price: values.sellingPrice,
-          productCategory: "66541ab2e30f1c041bd776e8", //:values.productCategory,,
-          currency: "USD",
-          customField: [
-            {
-              fieldName: "costPrice",
-              fieldValue: values.purchasePrice,
-            },
-            {
-              fieldName: "hsncode",
-              fieldValue: values.hsncode,
-            },
-            {
-              fieldName: "taxvalue",
-              fieldValue: values.taxValue,
-            },
-          ],
-        };
-        const response = await fetch(
-          "http://192.168.1.3:8888/api/product/create",
-          {
-            method: "POST",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(postData),
-          }
-        );
-        if (response.ok) {
-          console.log("product added successfully", response);
-          navigation.navigate("wertone", { screen: "Products" });
-        } else {
-          console.error("errror to create new product", response);
-        }
+        handleSubmit(values)
       }}
     >
       {({
@@ -112,7 +69,6 @@ const AddProduct = ({ navigation }) => {
         setFieldValue,
       }) => (
         <View style={styles.container}>
-          <Title style={styles.title}>Add New Product</Title>
           <TextInput
             label=" Product Name"
             mode="outlined"
@@ -234,7 +190,7 @@ const AddProduct = ({ navigation }) => {
                   title={option.taxName}
                   onPress={async () => {
                     setFieldValue("hsncode", option.taxName);
-                    setFieldValue("taxValue", option.taxValue);
+                    setFieldValue("taxValue", option.taxValue.toString());
                     setShowHsnOptions(false);
                   }}
                 > </List.Item>

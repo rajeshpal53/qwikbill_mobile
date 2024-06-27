@@ -4,11 +4,12 @@ import { IconButton, Icon } from "react-native-paper";
 import { FlatList, StyleSheet, View } from "react-native";
 import DeleteModal from "../UI/DeleteModal";
 import { InvoiceContext } from "../Store/InvoiceContext";
-
+import { useSnackbar } from '../Store/SnackbarContext'
 function InvoiceCard({ invoices, navigation }) {
   const [visible, setVisible] = useState(false);
   const [invoiceId, setInvoiceId] = useState("");
   const {setInvoices}= useContext(InvoiceContext)
+  const{showSnackbar}=useSnackbar()
 
   function detailInvoice(id) {
     navigation.navigate("InvoiceDetail", {
@@ -32,18 +33,20 @@ function InvoiceCard({ invoices, navigation }) {
     setInvoices(updatedInvoice);
     setVisible(false);
     try{
-      const response= await fetch(`http://192.168.1.3:8888/api/invoice/delete/${invoiceId}`, {
+      const response= await fetch(`http://192.168.1.9:8888/api/invoice/delete/${invoiceId}`, {
           method: 'DELETE',
           credentials:'include'
         })
         if (response.ok) {
               console.log("item delted")
-              
+              showSnackbar("item delete successfully","success")
             } else {
               console.error('Failed to delete the item');
             }
           } catch (error) {
             console.error('Error:', error);
+            showSnackbar("Failed to delete the item","error")
+
           }    
   };
   return(
