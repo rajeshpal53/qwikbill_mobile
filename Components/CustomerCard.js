@@ -20,7 +20,7 @@ export default function CustomerCard({ customer, navigation }) {
     setVisible(false);
     try {
       const response = await fetch(
-        `http://192.168.1.9:8888/api/people/delete/${customerId}`,
+        `http://192.168.1.6:8888/api/people/delete/${customerId}`,
         {
           method: "DELETE",
           credentials: "include",

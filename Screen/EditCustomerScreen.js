@@ -12,7 +12,7 @@ function EditCustomerScreen({route,navigation}) {
       const fetchDataHandler = async () => {
         try {
           const response = await fetch(
-            `http://192.168.1.9:8888/api/people/read/${customerId}`,
+            `http://192.168.1.6:8888/api/people/read/${customerId}`,
             {
               credentials: "include",
             }
@@ -48,7 +48,7 @@ function EditCustomerScreen({route,navigation}) {
           people: "6655af58afe60865000019cc",
           }
             try{
-              const response= await fetch(`http://192.168.1.9:8888/api/people/update/${customerId}`, {
+              const response= await fetch(`http://192.168.1.6:8888/api/people/update/${customerId}`, {
                 method: "PATCH",
                 credentials: "include",
                 headers: {

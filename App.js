@@ -28,6 +28,7 @@ import EditProductScreen from './Screen/EditProductScreen';
 import EditCustomerScreen from './Screen/EditCustomerScreen';
 import { SnackbarProvider } from './Store/SnackbarContext';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import ProfileSetting from './Screen/ProfileSetting';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const customTheme = {
@@ -43,7 +44,8 @@ function DrawerNavigator(){
       <Drawer.Navigator drawerContent={(props) => <CustomDrawerContent {...props} />} initialRouteName='Invoice'> 
         <Drawer.Screen name="Invoice" component={Invoice} />
         <Drawer.Screen name="Products" component={Products} />
-        <Drawer.Screen name="Customer" component={Customer} /> 
+        <Drawer.Screen name="Customer" component={Customer}  /> 
+        <Drawer.Screen name="Profile Setting" component={ProfileSetting}/>
         </Drawer.Navigator>
  
     )
@@ -55,7 +57,6 @@ function StackNavigator(){
        
 
     },[isAuthenticated])
-  console.log(isAuthenticated)
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -86,21 +87,23 @@ export default function App() {
   return (
     <SafeAreaProvider>
     <SnackbarProvider>
-    <AuthProvider>
+    
       <InvoiceProvider>
         <ProductProvider>
         <CustomerProvider>
     <Provider theme={customTheme}> 
-    <NavigationContainer>     
+    <NavigationContainer> 
+    <AuthProvider>    
         <Stack.Navigator initialRouteName='StackNavigator'>
           <Stack.Screen name='StackNavigator' component={StackNavigator} options={{headerShown:false}} />
-      </Stack.Navigator>    
+      </Stack.Navigator> 
+      </AuthProvider>
     </NavigationContainer>
     </Provider>
     </CustomerProvider>
     </ProductProvider>
     </InvoiceProvider>
-    </AuthProvider>
+  
     </SnackbarProvider>
     </SafeAreaProvider>
   );

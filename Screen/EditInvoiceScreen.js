@@ -30,7 +30,7 @@ function EditInvoiceScreen({ route,navigation }) {
     const fetchDataHandler = async () => {
       try {
         const response = await fetch(
-          `http://192.168.1.9:8888/api/invoice/read/${invoiceId}`,
+          `http://192.168.1.6:8888/api/invoice/read/${invoiceId}`,
           {
             credentials: "include",
           }
@@ -77,7 +77,7 @@ function EditInvoiceScreen({ route,navigation }) {
        console.log(postData, "------postdata");
 
        try{
-        const response= await fetch(`http://192.168.1.9:8888/api/invoice/update/${invoiceId}`, {
+        const response= await fetch(`http://192.168.1.6:8888/api/invoice/update/${invoiceId}`, {
           method: "PATCH",
           credentials: "include",
           headers: {

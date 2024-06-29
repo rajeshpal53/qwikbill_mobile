@@ -34,7 +34,7 @@ const AddProductScreen = ({navigation}) => {
     ],
   };
   const response = await fetch(
-    "http://192.168.1.9:8888/api/product/create",
+    "http://192.168.1.6:8888/api/product/create",
     {
       method: "POST",
       credentials: "include",

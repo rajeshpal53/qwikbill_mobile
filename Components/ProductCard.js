@@ -25,7 +25,7 @@ function ProductCard({ products, navigation }) {
     setVisible(false);
     try {
       const response = await fetch(
-        `http://192.168.1.9:8888/api/product/delete/${productId}`,
+        `http://192.168.1.6:8888/api/product/delete/${productId}`,
         {
           method: "DELETE",
           credentials: "include",

@@ -10,7 +10,7 @@ function CustomerDetailScreen({route}) {
         async function fetchDetailHandler() {
             try{
             const response = await fetch(
-              `http://192.168.1.9:8888/api/people/read/${customerId}`,
+              `http://192.168.1.6:8888/api/people/read/${customerId}`,
               {
                 credentials: "include",
               }

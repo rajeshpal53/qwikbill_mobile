@@ -354,5 +354,17 @@
         "fieldValue": 9
       }
     ]
+  },
+  {
+    "message": "Successfully login user",
+    "result": {
+      "_id": "664f064f61d70716f0b7e0c0",
+      "email": "admin@wertone.in",
+      "name": "Wertone ",
+      "photo": "public/uploads/admin/logo-wertone-p7mff.png",
+      "role": "owner",
+      "surname": "Admin"
+    },
+    "success": true
   }
 ]

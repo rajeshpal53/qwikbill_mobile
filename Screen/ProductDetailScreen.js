@@ -13,7 +13,7 @@ function ProductDetailScreen({route}) {
             }
             try{
             const response = await fetch(
-              `http://192.168.1.9:8888/api/product/read/${productId}`,
+              `http://192.168.1.6:8888/api/product/read/${productId}`,
               {
                 credentials: "include",
               }

@@ -8,7 +8,7 @@ import { CustomerContext } from '../Store/CustomerContext';
   const [isLoading,setIsLoading]=useState(true)
   async function fetchData() {
     try {
-      const response = await fetch("http://192.168.1.9:8888/api/people/list", {
+      const response = await fetch("http://192.168.1.6:8888/api/people/list", {
         credentials: "include",
       });
       if (!response.ok) {
