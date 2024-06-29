@@ -4,9 +4,13 @@ import{Text,TextInput,Button} from 'react-native-paper'
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { AuthContext } from '../Store/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+
 
  const LoginScreen = ({navigation}) => {
-  const{login,isAuthenticated,isLoading}= useContext(AuthContext)
+  const{login,isAuthenticated,isLoading,storeData,setLoginDetail}= useContext(AuthContext)
 
   const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -18,8 +22,7 @@ import { AuthContext } from '../Store/AuthContext';
   });
 
   const handleLogin = async (values,{resetForm} ) => {
-     console.log(values)
-      const response = await fetch('http:/192.168.1.9:8888/api/login', { 
+      const response = await fetch('http:/192.168.1.6:8888/api/login', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -27,8 +30,10 @@ import { AuthContext } from '../Store/AuthContext';
         credentials:'include',
         body: JSON.stringify(values),
       });
-      
       const data = await response.json();
+       await storeData("loginDetail",data.result);
+      console.log(data,"dta")   
+      setLoginDetail(data.result) ;    
      const token='dummyToken'
       login(token)
       if (isLoading) {
@@ -41,9 +46,7 @@ import { AuthContext } from '../Store/AuthContext';
       if(isAuthenticated){
         navigation.navigate("wertone",{screen:'invoice'})
         resetForm();
-      }
-    
-      
+      }      
 }
   return (
     <Formik

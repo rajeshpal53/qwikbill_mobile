@@ -14,7 +14,7 @@ import { InvoiceContext } from "../Store/InvoiceContext";
 import * as Yup from "yup";
 const fetchOptions = async (input) => {
   const response = await fetch(
-    `http://192.168.1.9:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
+    `http://192.168.1.6:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
     {
       credentials: "include",
     }
@@ -24,7 +24,7 @@ const fetchOptions = async (input) => {
 };
 const fetchItemOptions = async (input) => {
   const response = await fetch(
-    `http://192.168.1.9:8888/api/product/search?fields=name&q=${input}&page=1&items=10`,
+    `http://192.168.1.6:8888/api/product/search?fields=name&q=${input}&page=1&items=10`,
     {
       credentials: "include",
     }

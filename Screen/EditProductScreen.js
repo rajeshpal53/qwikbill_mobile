@@ -19,7 +19,7 @@ function EditProductScreen({route,navigation}) {
         const fetchDataHandler = async () => {
           try {
             const response = await fetch(
-              `http://192.168.1.9:8888/api/product/read/${productId}`,
+              `http://192.168.1.6:8888/api/product/read/${productId}`,
               {
                 credentials: "include",
               }
@@ -75,7 +75,7 @@ function EditProductScreen({route,navigation}) {
       };
       try {
         const response = await fetch(
-          `http://192.168.1.9:8888/api/product/update/${productId}`,
+          `http://192.168.1.6:8888/api/product/update/${productId}`,
           {
             method: "PATCH",
             credentials: "include",

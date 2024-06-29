@@ -33,7 +33,7 @@ function InvoiceCard({ invoices, navigation }) {
     setInvoices(updatedInvoice);
     setVisible(false);
     try{
-      const response= await fetch(`http://192.168.1.9:8888/api/invoice/delete/${invoiceId}`, {
+      const response= await fetch(`http://192.168.1.6:8888/api/invoice/delete/${invoiceId}`, {
           method: 'DELETE',
           credentials:'include'
         })
@@ -52,14 +52,14 @@ function InvoiceCard({ invoices, navigation }) {
   return(
     <View> 
       {invoices.map((item,index)=>(
-      <Card
+      item && item.people && <Card
       key={index}
       style={styles.card}
       onPress={() => detailInvoice(item._id)}
     >
       <Card.Title title={item.date} titleStyle={styles.cardTitle} />
       <Card.Content>
-        <Text variant="headlineLarge">{item.people.firstname}</Text>
+        <Text variant="headlineLarge">{item?.people?.firstname}</Text>
         <Text variant="bodyMedium" style={styles.cardText}>
           {" "}
           {/* {item.client.people.phone} */}

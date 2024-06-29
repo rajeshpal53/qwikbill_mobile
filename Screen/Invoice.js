@@ -6,28 +6,35 @@ import InvoiceCard from '../Components/InvoiceCard'
 import { AuthContext } from '../Store/AuthContext';
 import { InvoiceContext } from '../Store/InvoiceContext';
 import { useSnackbar } from '../Store/SnackbarContext';
+import { readApi } from '../Util/UtilApi';
+import { useIsFocused } from '@react-navigation/native';
 export default function Invoice({navigation}){
   const {logout}=useContext(AuthContext)
   const{invoices,setInvoices}= useContext(InvoiceContext)
-  async function fetchData() {
-    try {
-      const response = await fetch("http://192.168.1.9:8888/api/invoice/list", {
-        credentials: "include",
-      });
-      if (!response.ok) {
-        logout()
-        navigation.navigate('StackNavigator',{screen:'login'})
-        throw new Error("Network response was not ok",response);
-      }
-      const result = await response.json();
-      setInvoices(result.result);
-    } catch (error) {
-      console.error("error", error);
-    }
-  }
+  const isFocused = useIsFocused();
+  
   useEffect(() => {
+    async function fetchData() {
+      console.log("Api is calling ")
+      try {
+        const response = await fetch("http://192.168.1.6:8888/api/invoice/list", {
+          credentials: "include",
+        });
+        
+        if (!response.ok) {
+          logout()
+          navigation.navigate('StackNavigator',{screen:'login'})
+          throw new Error("Network response was not ok",response);
+        }
+        const result = await response.json();
+      
+        setInvoices(result.result);
+      } catch (error) {
+        console.error("error", error);
+      }
+    }
     fetchData();
-  }, [fetchData]);
+  }, [isFocused]);
  const addInvoiceHandler=()=>{
   navigation.navigate('StackNavigator',{screen:'AddInvoice'})
  }

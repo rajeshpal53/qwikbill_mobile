@@ -41,7 +41,7 @@ const submitHandler= async( values,fetchDataId)=>{
         console.log(postData, "------postdata");
         try{
         const response = await fetch(
-          "http://192.168.1.9:8888/api/invoice/create",
+          "http://192.168.1.6:8888/api/invoice/create",
           {
             method: "POST",
             credentials: "include",
@@ -59,7 +59,6 @@ const submitHandler= async( values,fetchDataId)=>{
           showSnackbar("Failed to add invoice","error")
           }
           finally{
-           
             navigation.navigate("Invoice");
           }
 }

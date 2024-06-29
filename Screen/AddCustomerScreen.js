@@ -13,7 +13,7 @@ const AddCustomerScreen = ({navigation}) => {
 people: "6655af58afe60865000019cc",
 }
 console.log(postData)
-const url = "http://192.168.1.9:8888/api/people/create"; //put url into fetch arguments
+const url = "http://192.168.1.6:8888/api/people/create"; //put url into fetch arguments
 const response = await fetch(url, {
   method: "POST",
   credentials: "include",
