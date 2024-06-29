@@ -3,20 +3,17 @@ import { Button, Card, Text } from "react-native-paper";
 import { IconButton, Icon } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
 import DeleteModal from "../UI/DeleteModal";
-import { ProductContext } from "../Store/ProductContext";
 import{useSnackbar} from "../Store/SnackbarContext";
-function ProductCard({ products, navigation }) {
+import { deleteApi } from "../Util/UtilApi";
+function ProductCard({ products, navigation,setProducts }) {
   const [visible, setVisible] = useState(false);
   const [productId, setProductId] = useState("");
-  const { setProducts } = useContext(ProductContext);
   const{showSnackbar}=useSnackbar()
   function deleteProductHandler(id) {
     setProductId(id);
     setVisible(true);
   }
- 
-
-  const handleDelete = async () => {
+   const handleDelete = async () => {
     // Your delete logic here
     console.log(productId);
     const updatedInvoice = products.filter((item) => item._id !== productId);
@@ -24,21 +21,13 @@ function ProductCard({ products, navigation }) {
     setProducts(updatedInvoice);
     setVisible(false);
     try {
-      const response = await fetch(
-        `http://192.168.1.6:8888/api/product/delete/${productId}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
-      if (response.ok) {
+      const response = await deleteApi(
+        `api/product/delete/${productId}`);
         console.log("item delted");
         showSnackbar("item delete successfully","success")
-      } 
     } catch (error) {
       console.error("Error:", error);
       showSnackbar("Failed to delete the item","error")
-
     }
   };
   function ProductDetail(id) {

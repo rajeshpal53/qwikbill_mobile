@@ -5,9 +5,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { AuthContext } from '../Store/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
-
+import { createApi } from '../Util/UtilApi';
 
  const LoginScreen = ({navigation}) => {
   const{login,isAuthenticated,isLoading,storeData,setLoginDetail}= useContext(AuthContext)
@@ -22,15 +20,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
   });
 
   const handleLogin = async (values,{resetForm} ) => {
-      const response = await fetch('http:/192.168.1.6:8888/api/login', { 
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials:'include',
-        body: JSON.stringify(values),
-      });
-      const data = await response.json();
+    const headers={
+      'Content-Type': 'application/json',
+    }
+    const response= await createApi("api/login",values,headers)
+    console.log(response,"newResponse")
+      const data = await response
        await storeData("loginDetail",data.result);  
       setLoginDetail(data.result) ;    
      const token='dummyToken'

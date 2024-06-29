@@ -2,6 +2,7 @@ import { ActivityIndicator, Text } from "react-native-paper"
 import { useState,useEffect } from "react"
 import { View } from "react-native"
 import CustomerDetail from "../Components/CustomerDetail"
+import { readApi } from "../Util/UtilApi"
 function CustomerDetailScreen({route}) {
     const customerId= route.params.customerId
     const[detail,setDetail]= useState([])
@@ -9,13 +10,8 @@ function CustomerDetailScreen({route}) {
     useEffect(()=>{
         async function fetchDetailHandler() {
             try{
-            const response = await fetch(
-              `http://192.168.1.6:8888/api/people/read/${customerId}`,
-              {
-                credentials: "include",
-              }
-            );
-            const data = await response.json();
+            const response = await readApi(`api/people/read/${customerId}`);
+            const data = await response;
              setDetail(data.result);
           }catch(error){
             throw new Error("Item not found");

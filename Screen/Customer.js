@@ -2,23 +2,18 @@ import React, { useState,useEffect, useContext } from 'react';
 import { ScrollView, Text, StyleSheet } from 'react-native';
 import {ActivityIndicator, Button} from 'react-native-paper'
 import CustomerCard from '../Components/CustomerCard'
-import { CustomerContext } from '../Store/CustomerContext';
 import { useIsFocused } from '@react-navigation/native';
+import { readApi } from '../Util/UtilApi';
  export default function Customer({navigation}) {
-  const {customer,setCustomer}= useContext(CustomerContext);
   const [isLoading,setIsLoading]=useState(true)
+  const [customer,setCustomer]=useState([])
   const isFocused = useIsFocused();
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("http://192.168.1.6:8888/api/people/list", {
-          credentials: "include",
-        });
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const result = await response.json();
-        setCustomer(result.result);
+        const response = await readApi("api/people/list");
+        const result = await response
+        setCustomer(result.result)
       } catch (error) {
         console.error("error", error);
       }
@@ -35,7 +30,7 @@ import { useIsFocused } from '@react-navigation/native';
   return (
     <ScrollView style={styles.container}>
        <Button style={styles.addButton} buttonColor='#ffffff' textColor='white' onPress={()=>{ navigation.navigate('AddCustomer')}}> Add New Customer</Button>
-      {customer?<CustomerCard customer={customer} navigation={navigation}/>: <Text> no Customer found</Text>}
+      {customer?<CustomerCard customer={customer} navigation={navigation} setCustomer={setCustomer}/>: <Text> no Customer found</Text>}
     </ScrollView>
   );
 };

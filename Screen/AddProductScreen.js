@@ -2,6 +2,7 @@ import React from 'react'
 import AddProduct from '../Components/AddProduct'
 import { StyleSheet ,ScrollView} from 'react-native'
 import { useSnackbar } from '../Store/SnackbarContext'
+import { createApi } from '../Util/UtilApi'
 const AddProductScreen = ({navigation}) => {
   const {showSnackbar}=useSnackbar();
   const initialValues={
@@ -33,21 +34,14 @@ const AddProductScreen = ({navigation}) => {
       },
     ],
   };
-  const response = await fetch(
-    "http://192.168.1.6:8888/api/product/create",
-    {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(postData),
+  try{
+    headers={
+      "Content-Type": "application/json",
     }
-  );
-  if (response.ok) {
+  const response = await createApi("api/product/create",postData,headers);
     showSnackbar("product added successfully","success")
     navigation.navigate("wertone", { screen: "Products" });
-  } else {
+} catch(error) {
     console.error("errror to create new product", response);
     showSnackbar("error to create new product","error")
   }

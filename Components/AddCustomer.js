@@ -3,15 +3,11 @@ import { View, StyleSheet,ScrollView } from 'react-native';
 import { Button, TextInput, Text, HelperText,List } from 'react-native-paper';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { CustomerContext } from '../Store/CustomerContext';
+import { createApi } from '../Util/UtilApi';
 const fetchOptions = async (input) => {
-    const response = await fetch(
-      `http://192.168.1.6:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
-      {
-        credentials: "include",
-      }
-    );
-    const data = await response.json();
+    const response = await createApi(
+      `api/people/search?fields=phone&q=${input}&page=1&items=10`);
+    const data = await response;
     return data.result; // Adjust according to your API response
   };
 

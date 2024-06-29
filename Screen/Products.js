@@ -2,20 +2,18 @@ import React, { useEffect, useState,useContext } from 'react';
 import { View, Text, StyleSheet,ScrollView } from 'react-native';
 import ProductCard from'../Components/ProductCard'
 import { ActivityIndicator, Button} from 'react-native-paper';
-import { ProductContext } from '../Store/ProductContext';
 import { useIsFocused } from '@react-navigation/native';
+import { readApi } from '../Util/UtilApi';
 export default function Products({navigation}) {
-  const{products,setProducts}=useContext(ProductContext);
+  const [products,setProducts]=useState([])
   const[isLoading,setIsLoading]=useState(true)
   const isFocused = useIsFocused();
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("http://192.168.1.6:8888/api/product/list", {
-          credentials: "include",
-        });
-        const result = await response.json();
-        setProducts(result.result);
+        const response = await readApi("api/product/list");
+        const result = await response;
+        setProducts(response.result);
       } catch (Error) {
         throw new Error("Network response was not ok");
       }
@@ -31,7 +29,7 @@ export default function Products({navigation}) {
   return (
     <ScrollView style={styles.container}>
       <Button style={styles.addButton} buttonColor='#ffffff' textColor='white' onPress={()=>{navigation.navigate('AddProduct') }}> Add New Product</Button>
-       {products?<ProductCard products={products} navigation={navigation}/>:<Text>no products found</Text>}
+      <ProductCard products={products} navigation={navigation}setProducts={setProducts}/>
     </ScrollView>
   );
 };

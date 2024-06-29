@@ -4,32 +4,24 @@ import { View, StyleSheet,Text,ScrollView} from 'react-native';
 import { Button,ActivityIndicator} from 'react-native-paper';
 import InvoiceCard from '../Components/InvoiceCard'
 import { AuthContext } from '../Store/AuthContext';
-import { InvoiceContext } from '../Store/InvoiceContext';
-import { useSnackbar } from '../Store/SnackbarContext';
 import { readApi } from '../Util/UtilApi';
 import { useIsFocused } from '@react-navigation/native';
+import axios from 'axios';
 export default function Invoice({navigation}){
   const {logout}=useContext(AuthContext)
-  const{invoices,setInvoices}= useContext(InvoiceContext)
   const isFocused = useIsFocused();
-  
+  const[invoices,setInvoices]=useState([])
   useEffect(() => {
     async function fetchData() {
-      try {
-        const response = await fetch("http://192.168.1.6:8888/api/invoice/list", {
-          credentials: "include",
-        });
-        
-        if (!response.ok) {
-          logout()
-          navigation.navigate('StackNavigator',{screen:'login'})
-          throw new Error("Network response was not ok",response);
-        }
-        const result = await response.json();
-      
-        setInvoices(result.result);
+      try { 
+        const response=await readApi("api/invoice/list")
+        setInvoices(response.result);
       } catch (error) {
         console.error("error", error);
+        console.log(response)
+        logout()
+        navigation.navigate('StackNavigator',{screen:'login'})
+        throw new Error("Network response was not ok",response);
       }
     }
     fetchData();

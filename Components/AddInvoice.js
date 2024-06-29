@@ -10,26 +10,22 @@ import {
   List,
 } from "react-native-paper";
 import { Formik, FieldArray } from "formik";
-import { InvoiceContext } from "../Store/InvoiceContext";
 import * as Yup from "yup";
+import { readApi } from "../Util/UtilApi";
 const fetchOptions = async (input) => {
-  const response = await fetch(
-    `http://192.168.1.6:8888/api/people/search?fields=phone&q=${input}&page=1&items=10`,
-    {
-      credentials: "include",
-    }
-  );
-  const data = await response.json();
+  const headers={
+    "Content-Type": "application/json",
+  }
+  const response = await readApi(`api/people/search?fields=phone&q=${input}&page=1&items=10`,headers);
+  const data = await response;
   return data.result; // Adjust according to your API response
 };
 const fetchItemOptions = async (input) => {
-  const response = await fetch(
-    `http://192.168.1.6:8888/api/product/search?fields=name&q=${input}&page=1&items=10`,
-    {
-      credentials: "include",
-    }
-  );
-  const data = await response.json();
+  const headers={
+    "Content-Type": "application/json",
+  }
+  const response = await readApi(`api/product/search?fields=name&q=${input}&page=1&items=10`,headers);
+  const data = await response;
 
   return data.result; // Adjust according to your API response
 };

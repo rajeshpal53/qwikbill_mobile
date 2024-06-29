@@ -2,6 +2,7 @@ import React from 'react'
 import AddCustomer from '../Components/AddCustomer'
 import { StyleSheet ,ScrollView} from 'react-native'
 import { useSnackbar } from '../Store/SnackbarContext'
+import { createApi } from '../Util/UtilApi'
 
 const AddCustomerScreen = ({navigation}) => {
  const initialValues={ firstname: '', lastname: '', email: '', phone: '', type: '' }
@@ -13,21 +14,16 @@ const AddCustomerScreen = ({navigation}) => {
 people: "6655af58afe60865000019cc",
 }
 console.log(postData)
-const url = "http://192.168.1.6:8888/api/people/create"; //put url into fetch arguments
-const response = await fetch(url, {
-  method: "POST",
-  credentials: "include",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify(postData),
-});
-if(response.ok){
+try{
+const headers= {
+  "Content-Type": "application/json",
+} 
+const response = await createApi("api/people/create",postData,headers);
   console.log("response",response)
   showSnackbar("add customer Successfully","success")
     navigation.navigate('Customer')
 }
-else{
+catch(error){
         console.error("error to fetch customer",responsehandleSubmit)
         showSnackbar("error to fetch customer","error")
 }

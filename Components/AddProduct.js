@@ -11,25 +11,16 @@ import {
 } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { ProductContext } from "../Store/ProductContext";
+import { readApi } from "../Util/UtilApi";
 const fetchOptions = async (input) => {
-  const response = await fetch(
-    `http://192.168.1.6:8888/api/productcategory/search?fields=name&q=${input}&page=1&items=10`,
-    {
-      credentials: "include",
-    }
-  );
-  const data = await response.json();
+  const response = await readApi(`api/productcategory/search?fields=name&q=${input}&page=1&items=10`);
+  const data = await response;
   return data.result; // Adjust according to your API response
 };
 const fetchHsnOptions = async (input) => {
-  const response = await fetch(
-    `http://192.168.1.6:8888/api/taxes/list?fields=taxName&q=${input}&page=1&items=10`,
-    {
-      credentials: "include",
-    }
-  );
-  const data = await response.json();
+  const response = await readApi(
+    `api/taxes/list?fields=taxName&q=${input}&page=1&items=10`);
+  const data = await response;
   return data.result; // Adjust according to your API response
 };
 const validationSchema = Yup.object().shape({

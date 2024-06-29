@@ -3,6 +3,7 @@ import { ScrollView, View } from "react-native"
 import { ActivityIndicator, Text } from "react-native-paper"
 import AddProduct from "../Components/AddProduct"
 import { useSnackbar } from '../Store/SnackbarContext'
+import { readApi, updateApi } from "../Util/UtilApi"
 function EditProductScreen({route,navigation}) {
   const [isLoading,setIsLoading]=useState(true)
   
@@ -18,13 +19,8 @@ function EditProductScreen({route,navigation}) {
       useEffect(()=>{
         const fetchDataHandler = async () => {
           try {
-            const response = await fetch(
-              `http://192.168.1.6:8888/api/product/read/${productId}`,
-              {
-                credentials: "include",
-              }
-            );
-            const data = await response.json();
+      const response = await readApi(`api/product/read/${productId}`);
+            const data = await response;
             const productData = data.result;
             console.log(productData)
             setInitialValues({
@@ -35,7 +31,6 @@ function EditProductScreen({route,navigation}) {
               hsncode: productData.customField[1].fieldValue || "",
               taxValue: productData.customField[2].fieldValue.toString() || "",
             });
-  
            
           } catch (Error) {
             throw new Error("Item not found");
@@ -74,21 +69,12 @@ function EditProductScreen({route,navigation}) {
         ],
       };
       try {
-        const response = await fetch(
-          `http://192.168.1.6:8888/api/product/update/${productId}`,
-          {
-            method: "PATCH",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(postData),
-          }
-        );
-        if (response.ok) {
+        const headers={
+          "Content-Type": "application/json",
+        }
+        const response = await updateApi(`api/product/update/${productId}`,postData,headers);
           showSnackbar("update product Successfully","success")
           navigation.navigate("Products");
-        }
       } catch (error) {
         console.error("error", error);
         showSnackbar("Failed to update invoice","error")

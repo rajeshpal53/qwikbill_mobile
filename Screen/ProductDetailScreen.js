@@ -2,6 +2,7 @@ import { ActivityIndicator, Text } from "react-native-paper"
 import { useState,useEffect } from "react"
 import { View } from "react-native"
 import ProductDetail from "../Components/ProductDetail"
+import { readApi } from "../Util/UtilApi"
 function ProductDetailScreen({route}) {
     const productId= route.params.productId
     const[detail,setDetail]= useState([])
@@ -12,14 +13,8 @@ function ProductDetailScreen({route}) {
               return [];
             }
             try{
-            const response = await fetch(
-              `http://192.168.1.6:8888/api/product/read/${productId}`,
-              {
-                credentials: "include",
-              }
-             
-            ) 
-            const data = await response.json();
+            const response = await readApi(`api/product/read/${productId}`) 
+            const data = await response;
             setDetail(data.result);
           }
            catch(Error) {
