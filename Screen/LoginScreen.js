@@ -31,8 +31,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
         body: JSON.stringify(values),
       });
       const data = await response.json();
-       await storeData("loginDetail",data.result);
-      console.log(data,"dta")   
+       await storeData("loginDetail",data.result);  
       setLoginDetail(data.result) ;    
      const token='dummyToken'
       login(token)

@@ -18,8 +18,8 @@ export function CustomDrawerContent(props) {
     loginDetail,
     setLoginDetail,
   } = useContext(AuthContext);
-  console.log(loginDetail, "customDrawer");
   const [loginDetail1, setLoginDetail1] = useState(loginDetail);
+  const [newLoading,setNewLoading] =useState(true)
   const isFocused=useIsFocused()
   const logoutHandler = () => {
     logout();
@@ -38,16 +38,24 @@ export function CustomDrawerContent(props) {
   };
 
   useEffect(() => {
-    async function xyz() {
-      const newValue = await getData("loginDetail");
-      console.log(newValue, "newValue");
+    async function loginDetailHandler() {
+      try{
+      const newValue = await getData("loginDetail")||'';
       setLoginDetail1(newValue);
+      }catch{
+        console.log("failed get data ")
+      }
+      finally{
+        setNewLoading(false)
+      }
     }
 
-    xyz();
+    loginDetailHandler();
   }, [isFocused,loginDetail]);
-  const login=loginDetail || loginDetail1
-  console.log(login,"login")
+  const login=loginDetail1
+  if(newLoading){
+    return <ActivityIndicator size="large"/>
+  }
   return (
     <DrawerContentScrollView {...props}>
       <View style={styles.container}>

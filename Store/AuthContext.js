@@ -16,10 +16,10 @@ export const AuthProvider = ({ children }) => {
     const checkLoginStatus = async () => {
       try {
         const token = await AsyncStorage.getItem("userToken");
-        const token2= await AsyncStorage.getItem("loginDetail");
-          console.log(token2,"token2")
-          console.log(token,"token")
-          setLoginDetail(token2)
+        // const token2= await AsyncStorage.getItem("loginDetail");
+        //   console.log(token2,"token2")
+        //   console.log(token,"token")
+        //   setLoginDetail(token2)
         if (token) {
           setIsAuthenticated(true);
          

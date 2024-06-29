@@ -3,29 +3,31 @@ import { ScrollView, Text, StyleSheet } from 'react-native';
 import {ActivityIndicator, Button} from 'react-native-paper'
 import CustomerCard from '../Components/CustomerCard'
 import { CustomerContext } from '../Store/CustomerContext';
+import { useIsFocused } from '@react-navigation/native';
  export default function Customer({navigation}) {
   const {customer,setCustomer}= useContext(CustomerContext);
   const [isLoading,setIsLoading]=useState(true)
-  async function fetchData() {
-    try {
-      const response = await fetch("http://192.168.1.6:8888/api/people/list", {
-        credentials: "include",
-      });
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const result = await response.json();
-      setCustomer(result.result);
-    } catch (error) {
-      console.error("error", error);
-    }
-    finally{
-      setIsLoading(false);
-    }
-  }
+  const isFocused = useIsFocused();
   useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch("http://192.168.1.6:8888/api/people/list", {
+          credentials: "include",
+        });
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const result = await response.json();
+        setCustomer(result.result);
+      } catch (error) {
+        console.error("error", error);
+      }
+      finally{
+        setIsLoading(false);
+      }
+    }
     fetchData();
-  }, [fetchData]);
+  }, [isFocused]);
 
   if(isLoading){
     return<ActivityIndicator size='large'/>

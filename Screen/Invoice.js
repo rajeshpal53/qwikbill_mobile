@@ -15,7 +15,6 @@ export default function Invoice({navigation}){
   
   useEffect(() => {
     async function fetchData() {
-      console.log("Api is calling ")
       try {
         const response = await fetch("http://192.168.1.6:8888/api/invoice/list", {
           credentials: "include",

@@ -3,27 +3,28 @@ import { View, Text, StyleSheet,ScrollView } from 'react-native';
 import ProductCard from'../Components/ProductCard'
 import { ActivityIndicator, Button} from 'react-native-paper';
 import { ProductContext } from '../Store/ProductContext';
-
+import { useIsFocused } from '@react-navigation/native';
 export default function Products({navigation}) {
   const{products,setProducts}=useContext(ProductContext);
   const[isLoading,setIsLoading]=useState(true)
-  async function fetchData() {
-    try {
-      const response = await fetch("http://192.168.1.6:8888/api/product/list", {
-        credentials: "include",
-      });
-      const result = await response.json();
-      setProducts(result.result);
-    } catch (Error) {
-      throw new Error("Network response was not ok");
-    }
-    finally{
-      setIsLoading(false)
-    }
-  }
+  const isFocused = useIsFocused();
   useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch("http://192.168.1.6:8888/api/product/list", {
+          credentials: "include",
+        });
+        const result = await response.json();
+        setProducts(result.result);
+      } catch (Error) {
+        throw new Error("Network response was not ok");
+      }
+      finally{
+        setIsLoading(false)
+      }
+    }
     fetchData();
-  }, [fetchData]);
+  }, [isFocused]);
   if(isLoading){
     return<ActivityIndicator size='large'/>
   }
