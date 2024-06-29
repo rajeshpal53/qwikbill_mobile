@@ -3,10 +3,9 @@ import { Button, Card, Text } from "react-native-paper";
 import { IconButton, Icon } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
 import DeleteModal from "../UI/DeleteModal";
-import { CustomerContext } from "../Store/CustomerContext";
 import { useSnackbar } from '../Store/SnackbarContext'
-export default function CustomerCard({ customer, navigation }) {
-  const { setCustomer } = useContext(CustomerContext);
+import { deleteApi } from "../Util/UtilApi";
+export default function CustomerCard({ customer, navigation,setCustomer }) {
   const [visible, setVisible] = useState(false);
   const [customerId, setCustomerId] = useState("")
   const{showSnackbar}=useSnackbar()
@@ -19,18 +18,9 @@ export default function CustomerCard({ customer, navigation }) {
     setCustomer(updateCustomer);
     setVisible(false);
     try {
-      const response = await fetch(
-        `http://192.168.1.6:8888/api/people/delete/${customerId}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
-      if (response.ok) {
+      const response = await deleteApi(`api/people/delete/${customerId}`);
         console.log("item delted");
         showSnackbar("item delete successfully","success")
-
-      }
     } catch (error) {
       console.error("Error:", error);
       showSnackbar("Failed to delete the item","error")

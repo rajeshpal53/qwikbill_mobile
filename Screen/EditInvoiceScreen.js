@@ -3,6 +3,7 @@ import { ScrollView, View } from "react-native";
 import { ActivityIndicator, Text } from "react-native-paper";
 import AddInvoice from "../Components/AddInvoice";
 import { useSnackbar } from '../Store/SnackbarContext'
+import { createApi, readApi, updateApi } from "../Util/UtilApi";
 const getYear = (date) => {
     if (!date) return "";
     const dateObj = new Date(date);
@@ -29,13 +30,12 @@ function EditInvoiceScreen({ route,navigation }) {
   useEffect(() => {
     const fetchDataHandler = async () => {
       try {
-        const response = await fetch(
-          `http://192.168.1.6:8888/api/invoice/read/${invoiceId}`,
-          {
-            credentials: "include",
-          }
-        );
-        const data = await response.json();
+        const headers = {
+          "Content-Type": "application/json",
+        };
+        const response = await readApi(
+          `api/invoice/read/${invoiceId}`,headers);
+        const data = await response;
         const invoiceData = data.result;
         setInitialValues({
           date: new Date(invoiceData.date).toISOString().substring(0, 10) || "",
@@ -77,19 +77,12 @@ function EditInvoiceScreen({ route,navigation }) {
        console.log(postData, "------postdata");
 
        try{
-        const response= await fetch(`http://192.168.1.6:8888/api/invoice/update/${invoiceId}`, {
-          method: "PATCH",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(postData),
-        });     
-        if (response.ok) {
+        const headers={
+               "Content-Type": "application/json",
+             }
+          const response= await updateApi(`api/invoice/update/${invoiceId}`,postData,headers)
           showSnackbar("update product Successfully","success")
-          navigation.navigate("Invoice");
-          
-        }   
+          navigation.navigate("Invoice");   
       } 
        catch (error){
         showSnackbar("Failed to update invoice","error")

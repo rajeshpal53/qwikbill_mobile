@@ -2,8 +2,8 @@ import React,{useState,useContext} from 'react'
 import { ScrollView } from "react-native"
 import { Snackbar, Text } from "react-native-paper"
 import AddInvoice from "../Components/AddInvoice"
-import { InvoiceContext } from '../Store/InvoiceContext'
 import { useSnackbar } from '../Store/SnackbarContext'
+import { createApi } from '../Util/UtilApi'
 const getYear = (date) => {
      if (!date) return "";
      const dateObj = new Date(date);
@@ -40,18 +40,11 @@ const submitHandler= async( values,fetchDataId)=>{
         delete postData.phone;
         console.log(postData, "------postdata");
         try{
-        const response = await fetch(
-          "http://192.168.1.6:8888/api/invoice/create",
-          {
-            method: "POST",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(postData),
-          }
-        ); 
-        const data= response.json();
+        
+        const headers= {
+          "Content-Type": "application/json",
+        }
+        const response= await createApi("api/invoice/create",postData,headers)
         showSnackbar("invoice Added Successfull","success")
           }
           catch(error){

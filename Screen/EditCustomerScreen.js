@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
-import { View } from "react-native"
+import { ScrollView, View } from "react-native"
 import { Text,ActivityIndicator } from "react-native-paper"
 import AddCustomer from "../Components/AddCustomer"
 import { useSnackbar } from '../Store/SnackbarContext'
+import { readApi, updateApi } from "../Util/UtilApi"
 function EditCustomerScreen({route,navigation}) {
   const[initialValues,setInitialValues]=useState({firstname: '', lastname: '', email: '', phone: '', type: ''})
   const [isLoading,setIsLoading]=useState(true)
@@ -11,13 +12,8 @@ function EditCustomerScreen({route,navigation}) {
     useEffect(()=>{
       const fetchDataHandler = async () => {
         try {
-          const response = await fetch(
-            `http://192.168.1.6:8888/api/people/read/${customerId}`,
-            {
-              credentials: "include",
-            }
-          );
-          const data = await response.json();
+          const response = await readApi(`api/people/read/${customerId}`);
+          const data = await response;
           const customerData = data.result;
           setInitialValues({
             firstname: customerData.firstname,
@@ -48,21 +44,12 @@ function EditCustomerScreen({route,navigation}) {
           people: "6655af58afe60865000019cc",
           }
             try{
-              const response= await fetch(`http://192.168.1.6:8888/api/people/update/${customerId}`, {
-                method: "PATCH",
-                credentials: "include",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(postData),
-              });     
-              if (response.ok) {
+              const headers={
+                "Content-Type": "application/json",
+              }
+              const response= await updateApi(`api/people/update/${customerId}`,postData,headers);     
                 showSnackbar("successfully update customer","success")
                 navigation.navigate("Customer");
-              }   else{
-                console.error(response)
-              }
-    
             } 
              catch (error){
               console.error("Failed to update invoice", "error");
@@ -70,9 +57,9 @@ function EditCustomerScreen({route,navigation}) {
             }
           }
   return (
-   <View>
+   <ScrollView>
           <AddCustomer initialValues={initialValues} handleSubmit={submitHandler} />
-   </View>
+   </ScrollView>
   )
 }
 

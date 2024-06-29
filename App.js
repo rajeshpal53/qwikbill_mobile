@@ -20,9 +20,6 @@ import AddProductScreen from './Screen/AddProductScreen';
 import InvoiceDetailScreen from './Screen/InvoiceDetailScreen';
 import CustomerDetailScreen from './Screen/CustomerDetailScreen';
 import ProductDetailScreen from './Screen/ProductDetailScreen';
-import { InvoiceProvider } from './Store/InvoiceContext';
-import { ProductProvider } from './Store/ProductContext';
-import { CustomerProvider } from './Store/CustomerContext';
 import EditInvoiceScreen from './Screen/EditInvoiceScreen';
 import EditProductScreen from './Screen/EditProductScreen';
 import EditCustomerScreen from './Screen/EditCustomerScreen';
@@ -87,10 +84,6 @@ export default function App() {
   return (
     <SafeAreaProvider>
     <SnackbarProvider>
-    
-      <InvoiceProvider>
-        <ProductProvider>
-        <CustomerProvider>
     <Provider theme={customTheme}> 
     <NavigationContainer> 
     <AuthProvider>    
@@ -100,10 +93,6 @@ export default function App() {
       </AuthProvider>
     </NavigationContainer>
     </Provider>
-    </CustomerProvider>
-    </ProductProvider>
-    </InvoiceProvider>
-  
     </SnackbarProvider>
     </SafeAreaProvider>
   );

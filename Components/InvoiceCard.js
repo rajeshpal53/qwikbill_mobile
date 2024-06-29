@@ -3,12 +3,11 @@ import { Button, Card, Text } from "react-native-paper";
 import { IconButton, Icon } from "react-native-paper";
 import { FlatList, StyleSheet, View } from "react-native";
 import DeleteModal from "../UI/DeleteModal";
-import { InvoiceContext } from "../Store/InvoiceContext";
 import { useSnackbar } from '../Store/SnackbarContext'
-function InvoiceCard({ invoices, navigation }) {
+import { deleteApi } from "../Util/UtilApi";
+function InvoiceCard({ invoices, navigation,setInvoices }) {
   const [visible, setVisible] = useState(false);
   const [invoiceId, setInvoiceId] = useState("");
-  const {setInvoices}= useContext(InvoiceContext)
   const{showSnackbar}=useSnackbar()
 
   function detailInvoice(id) {
@@ -29,25 +28,24 @@ function InvoiceCard({ invoices, navigation }) {
   const handleDelete = async () => {
     // Your delete logic here
     console.log(invoiceId);
-    const updatedInvoice = invoices.filter(item => item._id !== invoiceId);
-    setInvoices(updatedInvoice);
-    setVisible(false);
+  
     try{
-      const response= await fetch(`http://192.168.1.6:8888/api/invoice/delete/${invoiceId}`, {
-          method: 'DELETE',
-          credentials:'include'
-        })
-        if (response.ok) {
+      const headers = {
+        "Content-Type": "application/json",
+      };
+      const response= await deleteApi(`api/invoice/delete/${invoiceId}`)
+      const updatedInvoice = invoices.filter(item => item._id !== invoiceId);
               console.log("item delted")
-              showSnackbar("item delete successfully","success")
-            } else {
-              console.error('Failed to delete the item');
-            }
+              showSnackbar("item delete successfully","success") 
+    setInvoices(updatedInvoice);
           } catch (error) {
-            console.error('Error:', error);
+            console.error('Failed to delete the item :', error);
             showSnackbar("Failed to delete the item","error")
-
-          }    
+          }  
+          finally{
+            setVisible(false);
+          } 
+          
   };
   return(
     <View> 
