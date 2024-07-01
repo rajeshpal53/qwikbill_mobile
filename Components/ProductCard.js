@@ -21,8 +21,7 @@ function ProductCard({ products, navigation,setProducts }) {
     setProducts(updatedInvoice);
     setVisible(false);
     try {
-      const response = await deleteApi(
-        `api/product/delete/${productId}`);
+      const response = await deleteApi(`api/product/delete/${productId}`);
         console.log("item delted");
         showSnackbar("item delete successfully","success")
     } catch (error) {

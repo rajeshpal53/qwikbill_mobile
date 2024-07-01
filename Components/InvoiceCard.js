@@ -5,6 +5,7 @@ import { FlatList, StyleSheet, View } from "react-native";
 import DeleteModal from "../UI/DeleteModal";
 import { useSnackbar } from '../Store/SnackbarContext'
 import { deleteApi } from "../Util/UtilApi";
+import axios from "axios";
 function InvoiceCard({ invoices, navigation,setInvoices }) {
   const [visible, setVisible] = useState(false);
   const [invoiceId, setInvoiceId] = useState("");
@@ -30,9 +31,9 @@ function InvoiceCard({ invoices, navigation,setInvoices }) {
     console.log(invoiceId);
   
     try{
-      const headers = {
-        "Content-Type": "application/json",
-      };
+      // const headers = {
+      //   "Content-Type": "application/json",
+      // };
       const response= await deleteApi(`api/invoice/delete/${invoiceId}`)
       const updatedInvoice = invoices.filter(item => item._id !== invoiceId);
               console.log("item delted")
