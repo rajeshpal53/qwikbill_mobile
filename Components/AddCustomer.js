@@ -3,9 +3,9 @@ import { View, StyleSheet,ScrollView } from 'react-native';
 import { Button, TextInput, Text, HelperText,List } from 'react-native-paper';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { createApi } from '../Util/UtilApi';
+import { createApi, readApi } from '../Util/UtilApi';
 const fetchOptions = async (input) => {
-    const response = await createApi(
+    const response = await readApi(
       `api/people/search?fields=phone&q=${input}&page=1&items=10`);
     const data = await response;
     return data.result; // Adjust according to your API response

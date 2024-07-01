@@ -1,5 +1,5 @@
 import axios from 'axios';
-const API_BASE_URL = "http://192.168.1.7:8888/";
+const API_BASE_URL = "http://192.168.1.6:8888/";
 
 const apiRequest = async (method, url, data = null, headers) => {
     try {
@@ -7,18 +7,27 @@ const apiRequest = async (method, url, data = null, headers) => {
            url: `${API_BASE_URL}${url}`,
             method,
             data: data ? JSON.stringify(data) : null, // Stringify the data if present
-            headers: {
+           headers:{
               'Content-Type': 'application/json', // Set the content type to JSON
               ...headers,
             },
             withCredentials: true, // Include credentials
           });
-          return response.data;
+          return response.data||'';
     } catch (error) {
       console.error(`Error with ${method.toUpperCase()} request to ${url}:`, error.response || error.message);
       throw error.response || error.message;
     }
   };
+
+  const deleteApiRequest= async( method ,url )=>{
+        const response= await axios({
+          url:`${API_BASE_URL}${url}`,
+          method,
+          withCredentials:true
+        })
+        return response
+  }
   //CREATE  
   export const createApi = async (endpoint, data, headers) => {
     return apiRequest('post', endpoint, data, headers);
@@ -35,6 +44,6 @@ export const updateApi = async (endpoint, data, headers) => {
   };
   
   // DELETE
-  export const deleteApi = async (endpoint, headers) => {
-    return apiRequest('delete', endpoint, null, headers);
+  export const deleteApi = async (endpoint) => {
+    return deleteApiRequest('delete', endpoint,);
   };
