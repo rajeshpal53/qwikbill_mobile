@@ -332,13 +332,11 @@ const AddInvoice = ({ initialValues,submitHandler}) => {
                           keyboardType="numeric"
                           onChangeText={async (text) => {
                             handleChange(`items[${index}].quantity`)(text);
-                            text.length>0
-                              ? setFieldValue(
+                               setFieldValue(
                                   `items[${index}].total`,
-                                    (values.items[index].price * values.items[index].quantity).toString()
-                                     
+                                  (values.items[index].price * (text ? parseFloat(text) : 0)).toString()
                                 )
-                              : 0;
+                             
                           }}
                           onBlur={handleBlur(`items[${index}].quantity`)}
                           value={item.quantity}

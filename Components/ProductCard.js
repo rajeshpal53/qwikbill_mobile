@@ -72,7 +72,7 @@ function ProductCard({ products, navigation,setProducts }) {
             <Card.Actions>
               <IconButton
                 icon="delete"
-                iconColor="#1976d2"
+                iconColor="#0c3b73"
                 size={20}
                 onPress={() => deleteProductHandler(item._id)}
               />
@@ -84,7 +84,7 @@ function ProductCard({ products, navigation,setProducts }) {
                 />
               )}
               <Button
-                style={{ backgroundColor: "#1976d2" }}
+                style={{ backgroundColor: "#0c3b73" }}
                onPress={()=>editProductHandler(item._id)}
               >
                 <Icon source="pencil" color="white" size={20} /> Edit

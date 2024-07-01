@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: '100%',
-    backgroundColor:'#1976d2'
+    backgroundColor:'#0c3b73'
   },
   paragraph:{
     marginVertical:10,

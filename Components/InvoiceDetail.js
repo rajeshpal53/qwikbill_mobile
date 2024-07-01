@@ -17,7 +17,7 @@ const InvoiceDetail = (props) => {
   }, [detail]);
   return (
     <View style={styles.container}>
-      <Card style={{ backgroundColor: "#fff",backgroundColor: "#1976d2",
+      <Card style={{ backgroundColor: "#fff",backgroundColor: "#0c3b73",
     color:'#fff' }}>
         <Card.Title title={detail.created} titleStyle={styles.descriptionText} />
         <Card.Content style={styles.cardContainer}>
