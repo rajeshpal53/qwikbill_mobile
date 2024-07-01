@@ -11,7 +11,7 @@ function ProductDetail({ detail }) {
 
   return (
     <View style={styles.container}>
-      <Card style={{ backgroundColor: "#1976d2" }}>
+      <Card style={{ backgroundColor: "#0c3b73" }}>
         <Card.Title title={detail.created} titleStyle={{color:'#fff'}} />
         <Card.Content style={styles.cardContainer}>
           <Text style={styles.label}> Product Name:</Text>

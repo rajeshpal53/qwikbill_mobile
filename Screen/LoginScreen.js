@@ -1,6 +1,6 @@
 import {React ,useState,useContext} from 'react';
 import { View,StyleSheet, Alert,Image } from 'react-native';
-import{Text,TextInput,Button} from 'react-native-paper'
+import{Text,TextInput,Button, Card} from 'react-native-paper'
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { AuthContext } from '../Store/AuthContext';
@@ -50,9 +50,10 @@ import { createApi } from '../Util/UtilApi';
     >
       {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
         <View style={styles.container}>
+          <Card >
           <Image source={require('../assets/logo-wertone.png')} style={styles.img} />
           <Text variant='labelMedium' style={styles.wertoneTag}> wertone billing center</Text>
-          <Text variant='bodyLarge'> Login</Text>
+          <Text variant='bodyLarge' style={{alignSelf:"center"}}> Login</Text>
           <TextInput
           label='email'
             style={styles.input}
@@ -78,6 +79,7 @@ import { createApi } from '../Util/UtilApi';
           {touched.password && errors.password && <Text style={styles.error}>{errors.password}</Text>}
             {/* <Link href='' style={styles.link}> forget password?..</Link> */}
           <Button onPress={handleSubmit} textColor='white' style={styles.button} >Login</Button>
+          </Card>
         </View>
       )}
     </Formik>
@@ -86,16 +88,19 @@ import { createApi } from '../Util/UtilApi';
 
 const styles = StyleSheet.create({
   container: {
+    paddingVertical:"30%",
+    marginVertical:10,
+    flex:1,
     justifyContent :"center", 
     paddingHorizontal: 16,
-    alignItems:"center",
     elevation:12,
   },
   input: {
     marginBottom: 16,
     paddingHorizontal: 8,
     borderRadius:50,
-    width:'90%'
+    width:'90%',
+    alignSelf:"center"
 
   },
   img:{
@@ -120,8 +125,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   button:{
-    backgroundColor:'#1976d2',
-    width:'80%'
+    backgroundColor:'#0c3b73',
+    width:'80%',
+    alignSelf:"center",
+    marginBottom:20
   }
 });
 

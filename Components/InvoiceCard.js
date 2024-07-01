@@ -84,7 +84,7 @@ function InvoiceCard({ invoices, navigation,setInvoices }) {
       <Card.Actions>
         <IconButton
           icon="delete"
-          iconColor="#1976d2"
+          iconColor="#0c3b73"
           size={20}
           onPress={() => deleteInvoiceHandler(item._id)}
         />
@@ -95,7 +95,7 @@ function InvoiceCard({ invoices, navigation,setInvoices }) {
             handleDelete={handleDelete}
           />
         )}
-        <Button style={{ backgroundColor: "#1976d2" }} onPress={()=>EditInvoice(item._id)}>
+        <Button style={{ backgroundColor: "#0c3b73" }} onPress={()=>EditInvoice(item._id)}>
           <Icon source="pencil" color="white" size={20}  /> Edit
         </Button>
       </Card.Actions>

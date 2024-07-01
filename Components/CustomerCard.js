@@ -63,7 +63,7 @@ export default function CustomerCard({ customer, navigation, setCustomer }) {
             <Card.Actions>
               <IconButton
                 icon="delete"
-                iconColor="#1976d2"
+                iconColor="#0c3b73"
                 size={20}
                 onPress={() => deleteCustomerDelete(item._id)}
               />
@@ -75,7 +75,7 @@ export default function CustomerCard({ customer, navigation, setCustomer }) {
                 />
               )}
               <Button
-                style={{ backgroundColor: "#1976d2" }}
+                style={{ backgroundColor: "#0c3b73" }}
                 onPress={() => editCustomerhandler(item._id)}
               >
                 <Icon source="pencil" color="white" size={20} /> Edit
