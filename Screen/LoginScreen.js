@@ -38,7 +38,8 @@ import { createApi } from '../Util/UtilApi';
         }
        }
       if(isAuthenticated){
-        navigation.navigate("wertone",{screen:'invoice'})
+        // navigation.navigate("wertone",{screen:'invoice'})
+        navigation.navigate('Passcode');
         resetForm();
       }      
 }

@@ -2,11 +2,12 @@ import "react-native-gesture-handler";
 import React, { useEffect } from "react";
 import Icon from "react-native-vector-icons/Ionicons";
 
-import { Button, View } from "react-native";
+import { Button, TextComponent, View } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Invoice from "./Screen/Invoice";
+import PasscodeScreen from "./Screen/PasscodeScreen.js";
 import Products from "./Screen/Products";
 import Customer from "./Screen/Customer";
 import LoginScreen from "./Screen/LoginScreen";
@@ -31,6 +32,8 @@ import EditCustomerScreen from "./Screen/EditCustomerScreen";
 import { SnackbarProvider } from "./Store/SnackbarContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import ProfileSetting from "./Screen/ProfileSetting";
+import HomeScreen from "./Screen/HomeScreen.js";
+import { size } from "lodash";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -46,7 +49,8 @@ const customTheme = {
 };
 function DrawerNavigator() {
   return (
-    <Tab.Navigator initialRouteName="Invoice"  screenOptions={{
+    <Tab.Navigator initialRouteName="Home"  screenOptions={{
+      headerShown:false,
       headerStyle: {
         backgroundColor: `#0c3b73`, // Set your desired header background color here
       },
@@ -56,6 +60,18 @@ function DrawerNavigator() {
       },  
     }}>
       <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          tabBarIcon: ({color, size}) => (
+            <Icon name="home-outline" color = "#0c3b73" size={size} />
+          ),
+          headerShown:true,
+          // tabBarVisible:false,
+          // tabBarButton: () => null
+        }}
+      />
+      <Tab.Screen
         name="Invoice"
         component={Invoice}
         options={{
@@ -64,6 +80,7 @@ function DrawerNavigator() {
           ),
         }}
       />
+      
       <Tab.Screen
         name="Products"
         component={Products}
@@ -91,6 +108,7 @@ function DrawerNavigator() {
           ),
         }}
       />
+      
     </Tab.Navigator>
   );
 }
@@ -171,6 +189,11 @@ function StackNavigator() {
         name="EditCustomer"
         component={EditCustomerScreen}
         screenOptions={{}}
+      />
+      <Stack.Screen
+        name="Passcode"
+        component={PasscodeScreen}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );
