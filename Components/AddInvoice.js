@@ -12,6 +12,7 @@ import {
 import { Formik, FieldArray } from "formik";
 import * as Yup from "yup";
 import { readApi } from "../Util/UtilApi";
+import { useNavigation } from "@react-navigation/native";
 const fetchOptions = async (input) => {
   const headers={
     "Content-Type": "application/json",
@@ -34,6 +35,7 @@ const validationSchema = Yup.object().shape({
   client: Yup.string()
     .required("client is required")
     .min(2, "client must be at least 2 characters long"),
+  address:Yup.string().required("Address is required"),
   date: Yup.string()
     .required("date is required")
     .min(2, "date must be at least 2 characters long"),
@@ -65,21 +67,49 @@ const AddInvoice = ({ initialValues,submitHandler}) => {
   const [showOptions, setShowOptions] = useState(false);
   const [showItemOptions, setShowItemOptions] = useState(false);
   const [fetchData,setFetchData]= useState([])
+  const navigation = useNavigation();
   return (
     <View contentContainerStyle={styles.container}>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={async (values, { resetForm }) => {
-          if(fetchData._id){
-          const fetchDataId=fetchData._id
-          submitHandler(values,fetchDataId);
-          }
-          else{
-            submitHandler(values);
-          }
+
           
 
+          navigation.navigate("StackNavigator", { 
+            screen: "ReviewAndPay", 
+            params: { formData: values } 
+          });
+          
+          if(fetchData._id){
+          const fetchDataId=fetchData._id
+
+          navigation.navigate("StackNavigator", { 
+            screen: "ReviewAndPay", 
+            params: { 
+              formData: values,
+              submitHandler: submitHandler,
+              fetchedId: fetchDataId
+            },
+            
+            
+          });
+
+          // submitHandler(values,fetchDataId);
+          }
+          else{
+            navigation.navigate("StackNavigator", { 
+              screen: "ReviewAndPay", 
+              params: { 
+                formData: values,
+                submitHandler: submitHandler,
+              },
+              
+            });
+            // submitHandler(values);
+          }
+          
           resetForm(); 
         }}  
       >
@@ -110,6 +140,25 @@ const AddInvoice = ({ initialValues,submitHandler}) => {
                     visible={touched.client && errors.client}
                   >
                     {errors.client}
+                  </HelperText>
+                )}
+              </View>
+              <View style={{ width: "100%", marginBottom: 10 }}>
+                <TextInput
+                  label="Address"
+                  mode="outlined"
+                  onChangeText={handleChange("address")}
+                  onBlur={handleBlur("address")}
+                  value={values.address}
+                  error={touched.address && errors.address ? true : false}
+                  style={{ width: "100%", marginBottom: 10 }}
+                />
+                {touched.address && errors.address && (
+                  <HelperText
+                    type="error"
+                    visible={touched.address && errors.address}
+                  >
+                    {errors.address}
                   </HelperText>
                 )}
               </View>
@@ -205,7 +254,7 @@ const AddInvoice = ({ initialValues,submitHandler}) => {
                 )}
               </View>
             </View>
-            <Divider style={{ marginVertical: 10 }} />
+            {/* <Divider style={{ marginVertical: 10 }} /> */}
 
             <FieldArray name="items">
               {({ insert, remove, push }) => (
@@ -213,6 +262,8 @@ const AddInvoice = ({ initialValues,submitHandler}) => {
                   <Text variant="titleMedium">add new Items</Text>
                   {values.items.map((item, index) => {
                     return (
+                      <>
+                      <Divider style={{ marginVertical: 10 }} />
                       <View key={index} style={styles.itemContainer}>
                         <View style={{position:'relative'}}>
                         <TextInput
@@ -386,6 +437,7 @@ const AddInvoice = ({ initialValues,submitHandler}) => {
                           Remove
                         </Button>
                       </View>
+                      </>
                     );
                   })}
                   <Button
@@ -406,7 +458,7 @@ const AddInvoice = ({ initialValues,submitHandler}) => {
               onPress={handleSubmit}
               style={styles.button}
             >
-              Submit
+              Review and Pay
             </Button>
           </View>
         )}

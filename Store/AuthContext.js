@@ -11,6 +11,9 @@ export const AuthProvider = ({ children }) => {
   const [loginDetail, setLoginDetail] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const isFocused = useIsFocused();
+  const [searchMode, setSearchMode] = useState(false);
+  const [selectedShop, setSelectedShop] = useState('');
+  const [overlayHeight, setOverlayHeight] = useState('25%')
   // Check if user is logged in on app startup
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -102,6 +105,12 @@ export const AuthProvider = ({ children }) => {
            getData,
            loginDetail,
            setLoginDetail,
+           searchMode,
+           setSearchMode, 
+           selectedShop, 
+           setSelectedShop,
+           overlayHeight,
+           setOverlayHeight
          }}
     >
       {children}
