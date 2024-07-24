@@ -44,6 +44,8 @@ import CreateInvoice from "./Components/CreateInvoice.js";
 import LogoutBtn from "./Components/HeaderComponents/LogoutBtn.js";
 import ReviewAndPayScreen from "./Screen/ReviewAndPayScreen.js";
 import InvoiceSuccessScreen from "./Screen/InvoiceSuccessScreen.js";
+import * as LocalAuthentication from 'expo-local-authentication';
+import LocalAuthScreen from "./LocalAuthScreen.js";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -182,7 +184,7 @@ function StackNavigator() {
   }
 
   return (
-    <Stack.Navigator initialRouteName={isAuthenticated ? "wertone" : "login"}  screenOptions={{
+    <Stack.Navigator initialRouteName={isAuthenticated ? "Passcode" : "login"}  screenOptions={{
       headerStyle: {
         backgroundColor: '#0c3b73', // Set your desired header background color here
       },
@@ -195,6 +197,11 @@ function StackNavigator() {
         name="wertone"
         component={DrawerNavigator}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="local"
+        component={LocalAuthScreen}
+        screenOptions={{ headerShown: false }}
       />
       <Stack.Screen
         name="login"
@@ -282,9 +289,6 @@ function StackNavigator() {
   );
 }
 export default function App() {
-
-  
-
   return (
     <SafeAreaProvider>
       <SnackbarProvider>
