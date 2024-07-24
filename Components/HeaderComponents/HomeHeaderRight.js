@@ -6,9 +6,10 @@ import { AuthContext } from "../../Store/AuthContext";
 import { ActivityIndicator } from "react-native-paper";
 import { useNavigation } from '@react-navigation/native';
 import LogoutBtn from "./LogoutBtn";
+import SearchBarComp from "../SearchBarComp";
 // import {LogoutBtn} from "./LogoutBtn"
 
-export default function HomeHeaderRight({ onSearch}) {
+export default function HomeHeaderRight() {
     const navigation = useNavigation();
 
     const { isLoading, isAuthenticated, logout } = useContext(AuthContext);
@@ -51,7 +52,8 @@ export default function HomeHeaderRight({ onSearch}) {
         </Pressable>
       </View>
 
-      <SearchHeader onSearch={onSearch} />
+      <SearchBarComp/>
+      {/* <SearchHeader onSearch={onSearch} /> */}
     </View>
   );
 }

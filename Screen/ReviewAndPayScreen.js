@@ -20,6 +20,7 @@ export default function ReviewAndPayScreen({ navigation }) {
   const route = useRoute();
 
   const { formData } = route.params;
+  console.log("formdata ", formData)
   const {submitHandler} = route.params;
   const [checked, setChecked] = useState(false);
 

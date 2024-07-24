@@ -77,10 +77,10 @@ const AddInvoice = ({ initialValues,submitHandler}) => {
 
           
 
-          navigation.navigate("StackNavigator", { 
-            screen: "ReviewAndPay", 
-            params: { formData: values } 
-          });
+          // navigation.navigate("StackNavigator", { 
+          //   screen: "ReviewAndPay", 
+          //   params: { formData: values } 
+          // });
           
           if(fetchData._id){
           const fetchDataId=fetchData._id
