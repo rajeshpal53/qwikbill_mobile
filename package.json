@@ -19,6 +19,7 @@
     "@react-navigation/stack": "^6.3.29",
     "axios": "^1.7.2",
     "expo": "^51.0.22",
+    "expo-local-authentication": "~14.0.1",
     "expo-status-bar": "~1.12.1",
     "formik": "^2.4.6",
     "lodash": "^4.17.21",
