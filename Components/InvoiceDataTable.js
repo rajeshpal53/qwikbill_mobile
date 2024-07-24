@@ -12,38 +12,39 @@ const InvoiceDataTable = ({formData}) => {
   );
 
  
-  const [items] = useState([
-   {
-     key: 1,
-     name: 'Cupcake',
-     calories: 356,
-     fat: 16,
-   },
-   {
-     key: 2,
-     name: 'Eclair',
-     calories: 262,
-     fat: 16,
-   },
-   {
-     key: 3,
-     name: 'Frozen yogurt',
-     calories: 159,
-     fat: 6,
-   },
-   {
-     key: 4,
-     name: 'Gingerbread',
-     calories: 305,
-     fat: 3.7,
-   },
-  ]);
+  // const [items] = useState([
+  //  {
+  //    key: 1,
+  //    name: 'Cupcake',
+  //    calories: 356,
+  //    fat: 16,
+  //  },
+  //  {
+  //    key: 2,
+  //    name: 'Eclair',
+  //    calories: 262,
+  //    fat: 16,
+  //  },
+  //  {
+  //    key: 3,
+  //    name: 'Frozen yogurt',
+  //    calories: 159,
+  //    fat: 6,
+  //  },
+  //  {
+  //    key: 4,
+  //    name: 'Gingerbread',
+  //    calories: 305,
+  //    fat: 3.7,
+  //  },
+  // ]);
 
   const from = page * itemsPerPage;
-  const to = Math.min((page + 1) * itemsPerPage, items.length);
+  const to = Math.min((page + 1) * itemsPerPage, formData.items.length);
 
   
   useEffect(() => {
+    console.log("pra")
     setPage(0);
   }, [itemsPerPage]);
 
@@ -81,9 +82,9 @@ const InvoiceDataTable = ({formData}) => {
 
       <DataTable.Pagination
         page={page}
-        numberOfPages={Math.ceil(items.length / itemsPerPage)}
+        numberOfPages={Math.ceil(formData.items.length / itemsPerPage)}
         onPageChange={(page) => setPage(page)}
-        label={`${from + 1}-${to} of ${items.length}`}
+        label={`${from + 1}-${to} of ${formData.items.length}`}
         numberOfItemsPerPageList={numberOfItemsPerPageList}
         numberOfItemsPerPage={itemsPerPage}
         onItemsPerPageChange={onItemsPerPageChange}
