@@ -22,6 +22,7 @@ const AddInvoiceScreen=({navigation})=>{
           client: "",
           phone: "",
           people:"",
+          address:"",
           date: new Date().toISOString().substring(0, 10),
           items: [{ itemName: "", price: "", quantity: "", total: "" }],
         })
@@ -44,7 +45,7 @@ const submitHandler= async( values,fetchDataId)=>{
         const headers= {
           "Content-Type": "application/json",
         }
-        const response= await createApi("api/invoice/create",postData,headers)
+        // const response= await createApi("api/invoice/create",postData,headers)
         showSnackbar("invoice Added Successfull","success")
           }
           catch(error){

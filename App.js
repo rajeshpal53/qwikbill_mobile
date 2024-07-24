@@ -1,8 +1,8 @@
 import "react-native-gesture-handler";
 import React, { useEffect } from "react";
 import Icon from "react-native-vector-icons/Ionicons";
-
-import { Button, TextComponent, View } from "react-native";
+import WertoneLogoTitle from "./Components/HeaderComponents/WertoneLogoTitle.js";
+import { Button, Pressable, TextComponent, View, Text } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -11,6 +11,7 @@ import PasscodeScreen from "./Screen/PasscodeScreen.js";
 import Products from "./Screen/Products";
 import Customer from "./Screen/Customer";
 import LoginScreen from "./Screen/LoginScreen";
+import SearchHeader from "./Components/SearchHeader.js";
 import {
   HeaderStyleInterpolators,
   createStackNavigator,
@@ -33,7 +34,16 @@ import { SnackbarProvider } from "./Store/SnackbarContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import ProfileSetting from "./Screen/ProfileSetting";
 import HomeScreen from "./Screen/HomeScreen.js";
+import { useState } from "react";
 import { size } from "lodash";
+// import { Ionicons } from "@expo/vector-icons";
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { Feather } from "@expo/vector-icons";
+import HomeHeaderRight from "./Components/HeaderComponents/HomeHeaderRight.js";
+import CreateInvoice from "./Components/CreateInvoice.js";
+import LogoutBtn from "./Components/HeaderComponents/LogoutBtn.js";
+import ReviewAndPayScreen from "./Screen/ReviewAndPayScreen.js";
+import InvoiceSuccessScreen from "./Screen/InvoiceSuccessScreen.js";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -48,16 +58,43 @@ const customTheme = {
   },
 };
 function DrawerNavigator() {
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const {searchMode} = useContext(AuthContext);
+
+  const handleSearch = (query) => {
+    console.log("seravj")
+    setSearchQuery(query);
+    // Handle search logic here
+    console.log(query);
+  };
+
   return (
-    <Tab.Navigator initialRouteName="Home"  screenOptions={{
+    <Tab.Navigator 
+    initialRouteName="Home"
+      screenOptions={{
       headerShown:false,
       headerStyle: {
-        backgroundColor: `#0c3b73`, // Set your desired header background color here
+        // backgroundColor: `#262580`, // Set your desired header background color here
+        backgroundColor:"#0c3b73",
+        shadowColor: 'transparent', // This removes the shadow on iOS
+        elevation: 0,               // This removes the shadow on Android
       },
+      tabBarHideOnKeyboard:true,
       headerTintColor: 'white', // Set your desired header text color here
       headerTitleStyle: {
         fontWeight: 'bold', // Optional: Set your desired font weight
       },  
+      headerLeft:() => (
+        <Pressable onPress={()=> console.log("bar Pressed")}>
+          <Ionicons name="person-circle-outline" size={40} color="#ffffff" />
+        </Pressable>
+      ),
+      headerRight:() => (
+        <HomeHeaderRight onSearch={handleSearch} />
+
+      ),
+
     }}>
       <Tab.Screen
         name="Home"
@@ -67,6 +104,16 @@ function DrawerNavigator() {
             <Icon name="home-outline" color = "#0c3b73" size={size} />
           ),
           headerShown:true,
+          // title:"myHome",
+          headerTitle: ((!searchMode)? 
+             ((props) => (<WertoneLogoTitle {...props} />)):
+             ("")),
+          headerTitleStyle:{
+            backgroundColor:"white",
+          },
+          // headerTitle:"",
+          headerTitleAlign:((!searchMode)?"center":"left"),
+          tabBarLabel:"Home", 
           // tabBarVisible:false,
           // tabBarButton: () => null
         }}
@@ -105,6 +152,15 @@ function DrawerNavigator() {
         options={{
           tabBarIcon: ({ color, size }) => (
             <Icon name="person-outline" color="#0c3b73" size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="more"
+        component={ProfileSetting}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="more-horizontal" size={size} color="#0c3b73"/>
           ),
         }}
       />
@@ -195,10 +251,40 @@ function StackNavigator() {
         component={PasscodeScreen}
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+      name="CreateInvoice"
+      component={CreateInvoice}
+      options={{
+        headerRight:() => (
+          <LogoutBtn/>
+        ),
+      }}
+      />
+      <Stack.Screen
+      name="ReviewAndPay"
+      component={ReviewAndPayScreen}
+      options={{
+        headerRight:() => (
+          <LogoutBtn/>
+        )
+      }}
+      />
+      <Stack.Screen
+      name="InvoiceSuccess"
+      component={InvoiceSuccessScreen}
+      options={{
+        headerRight:() => (
+          <LogoutBtn/>
+        )
+      }}
+      />
     </Stack.Navigator>
   );
 }
 export default function App() {
+
+  
+
   return (
     <SafeAreaProvider>
       <SnackbarProvider>

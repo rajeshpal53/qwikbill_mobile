@@ -80,11 +80,12 @@ export default function PasscodeScreen({ navigation }) {
   };
 
   const handleOnLoginPress = () => {
-    navigation.navigate("wertone", { screen: "invoice" });
+    navigation.navigate("wertone", { screen: "Home" });
   };
+  
   return (
     <>
-    <StatusBar style="light" backgroundColor={"#262580"}/>
+    <StatusBar style="light" backgroundColor={"#0c3b73"}/>
 
       <SafeAreaView style={styles.SafeAreaView}>
       
@@ -351,7 +352,7 @@ const styles1 = StyleSheet.create({
     width: "100%",
     // height: 250,
     height:"45%",
-    backgroundColor: "#262580",
+    backgroundColor: "#0c3b73",
     zIndex: 0,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
