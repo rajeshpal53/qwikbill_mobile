@@ -17,16 +17,19 @@ export const services = [
       name: "Add Customer",
       icon: <AntDesign name="adduser" size={30} color="#0c3b73" />,
       key: "2",
+      navigateTo:"AddCustomer"
     },
     {
-      name: "Card Services",
-      icon: <Ionicons name="card" size={30} color="#0c3b73" />,
+      name: "Add Product",
+      icon: <Ionicons name="bag" size={30} color="#0c3b73" />,
       key: "3",
+      navigateTo:"AddProduct"
     },
     {
-      name: "UPI",
-      icon: <Ionicons name="md-send" size={30} color="#0c3b73" />,
+      name: "Add Vendor",
+      icon: <AntDesign name="adduser" size={30} color="#0c3b73" />,
       key: "4",
+      navigateTo:"AddVendor"
     },
     {
       name: "Utility Payments",
@@ -34,11 +37,13 @@ export const services = [
         <MaterialCommunityIcons name="file-document" size={30} color="#0c3b73" />
       ),
       key: "5",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Market Place",
       icon: <FontAwesome5 name="store" size={30} color="#0c3b73" />,
       key: "6",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Cheque Services",
@@ -50,271 +55,205 @@ export const services = [
         />
       ),
       key: "7",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Insurance",
       icon: <FontAwesome5 name="shield-alt" size={30} color="#0c3b73" />,
       key: "8",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Favourites",
       icon: <Ionicons name="heart-outline" size={30} color="#0c3b73" />,
       key: "9",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Deposits",
       icon: <FontAwesome5 name="piggy-bank" size={30} color="#0c3b73" />,
       key: "10",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Recharge",
       icon: <Ionicons name="battery-charging" size={30} color="#0c3b73" />,
       key: "11",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "12",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "13",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "14",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "15",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "16",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "17",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "18",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "19",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "20",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "21",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "22",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "23",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "24",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "25",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "26",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "27",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "28",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "29",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "30",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "31",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "32",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "33",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "34",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "35",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "36",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "37",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "38",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "39",
+      navigateTo:"CreateInvoice"
     },
     {
       name: "Investment/ASBA",
       icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
       key: "40",
-    },
-    {
-      name: "Investment/ASBA",
-      icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
-      key: "41",
-    },
-    {
-      name: "Investment/ASBA",
-      icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
-      key: "42",
-    },
-    {
-      name: "Investment/ASBA",
-      icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
-      key: "43",
-    },
-    {
-      name: "Investment/ASBA",
-      icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
-      key: "44",
-    },
-    {
-      name: "Investment/ASBA",
-      icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
-      key: "45",
-    },
-    {
-      name: "Investment/ASBA",
-      icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
-      key: "46",
-    },
-    {
-      name: "Investment/ASBA",
-      icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
-      key: "47",
-    },
-    {
-      name: "Investment/ASBA",
-      icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
-      key: "48",
-    },
-    {
-      name: "Investment/ASBA",
-      icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
-      key: "49",
-    },
-    {
-      name: "Investment/ASBA",
-      icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
-      key: "50",
-    },
-    {
-      name: "Investment/ASBA",
-      icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
-      key: "51",
-    },
-    {
-      name: "Investment/ASBA",
-      icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
-      key: "52",
-    },
-    {
-      name: "Investment/ASBA",
-      icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
-      key: "53",
-    },
-    {
-      name: "Investment/ASBA",
-      icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
-      key: "54",
-    },
-    {
-      name: "Investment/ASBA",
-      icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
-      key: "55",
-    },
-    {
-      name: "Investment/ASBA",
-      icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
-      key: "56",
-    },
-    {
-      name: "Investment/ASBA",
-      icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
-      key: "57",
-    },
-    {
-      name: "Investment/ASBA",
-      icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
-      key: "58",
-    },
-    {
-      name: "Investment/ASBA",
-      icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
-      key: "59",
-    },
-    {
-      name: "Investment/ASBA",
-      icon: <Ionicons name="trending-up" size={30} color="#0c3b73" />,
-      key: "60",
+      navigateTo:"CreateInvoice"
     },
   ];
 

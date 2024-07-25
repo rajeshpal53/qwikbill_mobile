@@ -24,6 +24,7 @@ import { AuthContext } from "../Store/AuthContext";
 import { useFocusEffect } from "@react-navigation/native";
 import { services } from "../tempList/ServicesList";
 import CreateInvoice from "../Components/CreateInvoice";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 export default function HomeScreen({navigation}) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -66,6 +67,9 @@ export default function HomeScreen({navigation}) {
       };
     }, [searchMode])
   );
+  const handleOutsidePress = () => {
+    setSearchMode(false);
+  }
 
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -73,10 +77,10 @@ export default function HomeScreen({navigation}) {
     console.log(query);
   };
 
-  const goToHandler = () =>{
+  const goToHandler = (Screen) =>{
       // navigation.navigate("wertone", {screen:'CreateInvoice'});
       // console.log("Pra ", item)
-      navigation.navigate("StackNavigator", { screen: "CreateInvoice" })
+      navigation.navigate("StackNavigator", { screen: Screen })
   }
   return (
     <SafeAreaView style={styles.safeContainer}>
@@ -85,6 +89,7 @@ export default function HomeScreen({navigation}) {
         ]}></View>
 
       <ScrollView style={styles.scrollView}>
+      <TouchableWithoutFeedback onPress={handleOutsidePress}>
         <View style={[styles.container, {height:(windowHeight-142)}]}>
           <View style={styles.header}>
             {/* <TextInput></TextInput> */}
@@ -149,7 +154,7 @@ export default function HomeScreen({navigation}) {
               data={services}
               numColumns={4}
               renderItem={({ item }) => (
-                <TouchableOpacity style={styles.item} onPress={goToHandler}>
+                <TouchableOpacity style={styles.item} onPress={() => goToHandler(item.navigateTo)}>
                 <View style={{ alignItems:"center"}} >
                   {item.icon}
                   <Text style={styles.itemText}>{item.name}</Text>
@@ -165,6 +170,7 @@ export default function HomeScreen({navigation}) {
             />
           </View>
         </View>
+        </TouchableWithoutFeedback>
       </ScrollView>
     </SafeAreaView>
   );

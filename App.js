@@ -44,6 +44,7 @@ import CreateInvoice from "./Components/CreateInvoice.js";
 import LogoutBtn from "./Components/HeaderComponents/LogoutBtn.js";
 import ReviewAndPayScreen from "./Screen/ReviewAndPayScreen.js";
 import InvoiceSuccessScreen from "./Screen/InvoiceSuccessScreen.js";
+import AddVendorScreen from "./Screen/AddVendorScreen.js";
 import * as LocalAuthentication from 'expo-local-authentication';
 import LocalAuthScreen from "./LocalAuthScreen.js";
 const Stack = createStackNavigator();
@@ -214,15 +215,20 @@ function StackNavigator() {
         screenOptions={{}}
       />
       <Stack.Screen
+        name="AddCustomer"
+        component={AddCustomerScreen}
+        screenOptions={{}}
+      />
+      <Stack.Screen
         name="AddProduct"
         component={AddProductScreen}
         screenOptions={{}}
       />
       <Stack.Screen
-        name="AddCustomer"
-        component={AddCustomerScreen}
-        screenOptions={{}}
-      />
+       name="AddVendor"
+       component={AddVendorScreen}
+       screenOptions={{}}
+       />
       <Stack.Screen
         name="InvoiceDetail"
         component={InvoiceDetailScreen}
