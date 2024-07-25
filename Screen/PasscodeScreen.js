@@ -27,6 +27,8 @@ import { Feather } from "@expo/vector-icons";
 import { useContext, useState, useEffect } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { AuthContext } from "../Store/AuthContext";
+import * as LocalAuthentication from 'expo-local-authentication';
+
 
 export default function PasscodeScreen({ navigation }) {
   // const navigation = useNavigation();
@@ -34,17 +36,42 @@ export default function PasscodeScreen({ navigation }) {
   const [buttonsModes, setButtonsModes] = useState({
     passcodeButtonMode: false,
     domainButtonMode: true,
-  });
+  }); 
 
   const [loginDetail1, setLoginDetail1] = useState(loginDetail);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [eyeOn, setEyeOn] = useState(false);
-
+  const [isBiometricSupported, setIsBiometricSupported] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+useEffect(() => {
+    // (async () => {
+    //   const compatible = await LocalAuthentication.hasHardwareAsync();
+    //   const enrolled = await LocalAuthentication.isEnrolledAsync();
+    //   setIsBiometricSupported(compatible);
+    //   setIsEnrolled(enrolled);
+    // })();
+    const handleLocalAuthentication = async () => {
+      const result = await LocalAuthentication.authenticateAsync({
+        promptMessage: 'Authenticate',
+        fallbackLabel: 'Enter Passcode',
+      });
+  
+      if (result.success) {
+        Alert.alert('Authenticated', 'You have successfully authenticated');
+        navigation.navigate("wertone")
+      } else {
+        Alert.alert('Authentication Failed', 'Please try again');
+      }
+    };
+    handleLocalAuthentication()
+  }, []);
+  
   const handleEyePress = () => {
     setSecureTextEntry(!secureTextEntry);
     setEyeOn(!eyeOn);
   };
 
+ 
   useEffect(() => {
     async function loginDetailHandler() {
       try {

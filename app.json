@@ -11,6 +11,14 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "plugins": [
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID."
+        }
+      ]
+    ],
     "ios": {
       "buildNumber": "1.0.0",
       "supportsTablet": true
@@ -21,6 +29,8 @@
         "foregroundImage": "./assets/logo-wertone.png",
         "backgroundColor": "#ffffff"
       },
+      "permissions": ["USE_FINGERPRINT", "USE_BIOMETRIC"],
+
       "package": "com.faizanshaikh0.DummyReactApp"
     },
     "web": {
