@@ -1,4 +1,3 @@
- 
 import React, { useState, useContext, useEffect } from "react";
 import { useRef } from "react";
 import { View, Text, useWindowDimensions } from "react-native";
@@ -11,7 +10,7 @@ import {
   StyleSheet,
   FlatList,
   BackHandler,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native";
 import SearchHeader from "../Components/SearchHeader";
 import {
@@ -25,11 +24,13 @@ import { useFocusEffect } from "@react-navigation/native";
 import { services } from "../tempList/ServicesList";
 import CreateInvoice from "../Components/CreateInvoice";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { readApi } from "../Util/UtilApi";
 
-export default function HomeScreen({navigation}) {
+export default function HomeScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState("");
   const { searchMode, setSearchMode } = useContext(AuthContext);
   const { selectedShop, setSelectedShop } = useContext(AuthContext);
+  const [options, setOptions] = useState([]);
   // const {overlayHeight} = useContext(AuthContext);
   const pickerRef = useRef();
 
@@ -37,9 +38,19 @@ export default function HomeScreen({navigation}) {
   const windowHeight = useWindowDimensions().height;
   useEffect(() => {
     setSelectedShop("Kunal Electrical Shop");
-    console.log("windowWidth, ", windowWidth)
-    console.log("windowHeight, ", windowHeight)
+    console.log("windowWidth, ", windowWidth);
+    console.log("windowHeight, ", windowHeight);
   }, []);
+  useEffect(() => {
+    async function fetchOptions() {
+      const response = await readApi(`api/shop/list`);
+      setOptions(response.result); // Adjust according to your API response
+
+      // setSelectedOption(data.result[0].shopname)
+    }
+    fetchOptions();
+  }, []);
+
 
   function open() {
     pickerRef.current.focus();
@@ -69,7 +80,7 @@ export default function HomeScreen({navigation}) {
   );
   const handleOutsidePress = () => {
     setSearchMode(false);
-  }
+  };
 
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -77,99 +88,104 @@ export default function HomeScreen({navigation}) {
     console.log(query);
   };
 
-  const goToHandler = (Screen) =>{
-      // navigation.navigate("wertone", {screen:'CreateInvoice'});
-      // console.log("Pra ", item)
-      navigation.navigate("StackNavigator", { screen: Screen })
-  }
+  const goToHandler = (Screen) => {
+    // navigation.navigate("wertone", {screen:'CreateInvoice'});
+    // console.log("Pra ", item)
+    navigation.navigate("StackNavigator", { screen: Screen });
+  };
   return (
     <SafeAreaView style={styles.safeContainer}>
-      <View style={[styles.overlay, 
-        // {height:overlayHeight}
-        ]}></View>
+      <View
+        style={[
+          styles.overlay,
+          // {height:overlayHeight}
+        ]}
+      ></View>
 
       <ScrollView style={styles.scrollView}>
-      <TouchableWithoutFeedback onPress={handleOutsidePress}>
-        <View style={[styles.container, {height:(windowHeight-142)}]}>
-          <View style={styles.header}>
-            {/* <TextInput></TextInput> */}
-            {/* <SearchHeader onSearch={handleSearch}/> */}
-            <Text style={styles.headerText}>Welcome YOGESH D GAHANE</Text>
-            <Text style={styles.subHeaderText}>
-              Last Login: 14 Jul 2024, 12:49 AM
-            </Text>
-          </View>
+        <TouchableWithoutFeedback onPress={handleOutsidePress}>
+          <View style={[styles.container, { height: windowHeight - 142 }]}>
+            <View style={styles.header}>
+              {/* <TextInput></TextInput> */}
+              {/* <SearchHeader onSearch={handleSearch}/> */}
+              <Text style={styles.headerText}>Welcome YOGESH D GAHANE</Text>
+              <Text style={styles.subHeaderText}>
+                Last Login: 14 Jul 2024, 12:49 AM
+              </Text>
+            </View>
 
-          <View style={{ flex: 0.7, marginBottom:5 }}>
-            <Card style={styles.card}>
-              <View>
-                <Card.Content style={styles.cardContent}>
-                  <View style={styles.pickerContainer}>
-                    <Picker
-                      ref={pickerRef}
-                      selectedValue={selectedShop}
-                      onValueChange={(itemValue, itemIndex) =>
-                        setSelectedShop(itemValue)
-                      }
-                    >
-                      <Picker.Item
-                        label="Kunal Electrical Shop"
-                        value="Kunal Electrical Shop"
-                      />
-                      <Picker.Item label="Kunal Dairy" value="Kunal Dairy" />
-                      <Picker.Item
-                        label="Kunal Kirana Shop"
-                        value="Kunal Kirana Shop"
-                      />
-                    </Picker>
-                  </View>
-
-                  <View style={styles.viewsContainer}>
-                    <View style={styles.allThreeViews}>
-                      <Text style={styles.whiteColor}>View</Text>
-                      <Text style={styles.whiteColor}>Customer</Text>
-                      
+            <View style={{ flex: 0.7, marginBottom: 5 }}>
+              <Card style={styles.card}>
+                <View>
+                  <Card.Content style={styles.cardContent}>
+                    <View style={styles.pickerContainer}>
+                      <Picker
+                        ref={pickerRef}
+                        selectedValue={selectedShop}
+                        onValueChange={(itemValue, itemIndex) =>
+                          setSelectedShop(itemValue)
+                        }
+                      >
+                        {options.map((option, index) => (
+                          <Picker.Item
+                            key={index}
+                            value={option.shopname}
+                            label={option.shopname}
+                          >
+                            {option.shopname}
+                          </Picker.Item>
+                        ))}
+                      </Picker>
                     </View>
 
-                    <View style={styles.allThreeViews}>
-                      <Text style={styles.whiteColor}>View</Text>
-                      <Text style={styles.whiteColor}>Invoices</Text>
+                    <View style={styles.viewsContainer}>
+                      <View style={styles.allThreeViews}>
+                        <Text style={styles.whiteColor}>View</Text>
+                        <Text style={styles.whiteColor}>Customer</Text>
+                      </View>
+
+                      <View style={styles.allThreeViews}>
+                        <Text style={styles.whiteColor}>View</Text>
+                        <Text style={styles.whiteColor}>Invoices</Text>
+                      </View>
+
+                      <View style={styles.allThreeViews}>
+                        <Text style={styles.whiteColor}>View</Text>
+                        <Text style={styles.whiteColor}>Stocks</Text>
+                      </View>
                     </View>
 
-                    <View style={styles.allThreeViews}>
-                      <Text style={styles.whiteColor}>View</Text>
-                      <Text style={styles.whiteColor}>Stocks</Text>
-                    </View>
-                  </View>
-
-                  {/* <Text style={styles.accountNumber}>2070100000085650</Text>
+                    {/* <Text style={styles.accountNumber}>2070100000085650</Text>
            <Text style={styles.balance}>₹ 924.56</Text> */}
-                </Card.Content>
-              </View>
-            </Card>
-          </View>
-          <View style={{flex:1}}>
-            <FlatList
-              style={styles.flatList}
-              data={services}
-              numColumns={4}
-              renderItem={({ item }) => (
-                <TouchableOpacity style={styles.item} onPress={() => goToHandler(item.navigateTo)}>
-                <View style={{ alignItems:"center"}} >
-                  {item.icon}
-                  <Text style={styles.itemText}>{item.name}</Text>
+                  </Card.Content>
                 </View>
-                </TouchableOpacity>
-              )}
-              keyExtractor={(item) => item.key}
-              key={4}
-              // ItemSeparatorComponent={<View style={{height:10}} />}
-              ListEmptyComponent={<Text>No Items Found</Text>}
-              // ListHeaderComponent={<Text style={styles.listHeader}>List</Text>}
-              // ListFooterComponent={<Text>List end</Text>}
-            />
+              </Card>
+            </View>
+            <View style={{ flex: 1 }}>
+              <FlatList
+                style={styles.flatList}
+                data={services}
+                numColumns={4}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.item}
+                    onPress={() => goToHandler(item.navigateTo)}
+                  >
+                    <View style={{ alignItems: "center" }}>
+                      {item.icon}
+                      <Text style={styles.itemText}>{item.name}</Text>
+                    </View>
+                  </TouchableOpacity>
+                )}
+                keyExtractor={(item) => item.key}
+                key={4}
+                // ItemSeparatorComponent={<View style={{height:10}} />}
+                ListEmptyComponent={<Text>No Items Found</Text>}
+                // ListHeaderComponent={<Text style={styles.listHeader}>List</Text>}
+                // ListFooterComponent={<Text>List end</Text>}
+              />
+            </View>
           </View>
-        </View>
         </TouchableWithoutFeedback>
       </ScrollView>
     </SafeAreaView>
@@ -216,7 +232,7 @@ const styles = StyleSheet.create({
     // marginTop: 5,
   },
   card: {
-    flex:1
+    flex: 1,
   },
   cardContent: {
     // flex:1,

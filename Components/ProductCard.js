@@ -55,14 +55,14 @@ function ProductCard({ products, navigation,setProducts }) {
           >
             <Card.Title title={item.created} titleStyle={styles.cardTitle} />
             <Card.Content>
-              <Text variant="headlineLarge">{item.name}</Text>
+              <Text variant="headlineLarge">{item.name||""}</Text>
               <Text variant="bodyMedium" style={styles.cardText}>
                 {" "}
-                {item.productCategory.name}
+                {item.productCategory.name||""}
               </Text>
               <Text variant="labelSmall" style={styles.cardText}>
                 {" "}
-                {item.productCategory.description}
+                {item.productCategory.description||""}
               </Text>
               <Text variant="labelSmall" style={styles.cardText}>
                 {" "}

@@ -19,7 +19,7 @@ const getYear = (date) => {
 const AddInvoiceScreen=({navigation})=>{
      const{showSnackbar}= useSnackbar();
      const[initialValues,setInitialValues]=useState({
-          client: "",
+          client:"",
           phone: "",
           people:"",
           address:"",
