@@ -47,6 +47,7 @@ import InvoiceSuccessScreen from "./Screen/InvoiceSuccessScreen.js";
 import AddVendorScreen from "./Screen/AddVendorScreen.js";
 import * as LocalAuthentication from 'expo-local-authentication';
 import LocalAuthScreen from "./LocalAuthScreen.js";
+import FilterInvoiceScreen from "./Screen/FilterInvoiceScreen.js";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -290,6 +291,11 @@ function StackNavigator() {
           <LogoutBtn/>
         )
       }}
+      />
+      <Stack.Screen
+      name="Invoices"
+      component={FilterInvoiceScreen}
+      options={{}}
       />
     </Stack.Navigator>
   );
