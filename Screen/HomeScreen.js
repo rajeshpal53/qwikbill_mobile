@@ -1,7 +1,7 @@
  
 import React, { useState, useContext, useEffect } from "react";
 import { useRef } from "react";
-import { View, Text, useWindowDimensions } from "react-native";
+import { View, Text, useWindowDimensions, Pressable } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import {
   SafeAreaView,
@@ -125,21 +125,20 @@ export default function HomeScreen({navigation}) {
                   </View>
 
                   <View style={styles.viewsContainer}>
-                    <View style={styles.allThreeViews}>
+                    <Pressable style={styles.allThreeViews}>
                       <Text style={styles.whiteColor}>View</Text>
                       <Text style={styles.whiteColor}>Customer</Text>
-                      
-                    </View>
-
-                    <View style={styles.allThreeViews}>
+                      </Pressable>
+                      <Pressable style={styles.allThreeViews} 
+                      onPress={() => goToHandler("Invoices")}>
                       <Text style={styles.whiteColor}>View</Text>
                       <Text style={styles.whiteColor}>Invoices</Text>
-                    </View>
+                      </Pressable>
 
-                    <View style={styles.allThreeViews}>
+                      <Pressable style={styles.allThreeViews}>
                       <Text style={styles.whiteColor}>View</Text>
                       <Text style={styles.whiteColor}>Stocks</Text>
-                    </View>
+                      </Pressable>
                   </View>
 
                   {/* <Text style={styles.accountNumber}>2070100000085650</Text>

@@ -17,15 +17,16 @@ export default function InvoiceSuccessScreen() {
 
   const formData = route.params.formData;
 
-  const [mediaBtnActive, setmediaBtnActive] = useState("whatsapp");
-  const [nextBtnActive, setNextBtnActive] = useState("anotherInvoice");
+  // const [mediaBtnActive, setmediaBtnActive] = useState("whatsapp");
+  // const [nextBtnActive, setNextBtnActive] = useState("anotherInvoice");
 
   const mediaBtnHandler = (key) => {
-    setmediaBtnActive(key);
+
+    // setmediaBtnActive(key); this was only for toggling button colors
   }
 
   const nextBtnHandler = (key) => {
-    setNextBtnActive(key);
+    // setNextBtnActive(key); this was only for toggling button colors
   }
 
 //   console.log("params are, ", route.params)
@@ -47,10 +48,10 @@ export default function InvoiceSuccessScreen() {
           <Card style={styles.card}>
             <View style={styles.header}>
               <Avatar.Icon
-                size={50}
+                size={80}
                 icon="check-circle"
                 style={styles.avatar}
-                color="green"
+                color="white"
               />
               <Text style={styles.title}>Invoice Generated Successfully</Text>
               <Text style={styles.subtitle}>
@@ -80,13 +81,15 @@ export default function InvoiceSuccessScreen() {
             <Card.Actions style={styles.actions}>
                <Button 
                icon="gmail" 
-               mode=  {(mediaBtnActive === "gmail")? ("contained") : ("outlined") } 
+              mode = "contained"
+              buttonColor="#D44638"
                onPress={() => mediaBtnHandler("gmail")}>
                  Gmail
                </Button>
                <Button 
                icon="whatsapp" 
-               mode={(mediaBtnActive === "whatsapp")? ("contained") : ("outlined") }
+              mode="contained"
+              buttonColor="#25D366"
                onPress={() => mediaBtnHandler("whatsapp")}>
                  WhatsApp
                </Button>
@@ -94,12 +97,14 @@ export default function InvoiceSuccessScreen() {
           </Card>
           <View style={styles.buttonContainer}>
              <Button 
-             mode= { (nextBtnActive === "anotherInvoice") ? ("contained") : ("outlined")} 
+            //  mode= { (nextBtnActive === "anotherInvoice") ? ("contained") : ("outlined")} 
+            mode="contained"
              onPress={() => nextBtnHandler("anotherInvoice")}>
                Make Another Invoice
              </Button>
              <Button 
-             mode= { (nextBtnActive === "home") ? ("contained") : ("outlined")}  
+            //  mode= { (nextBtnActive === "home") ? ("contained") : ("outlined")}  
+            mode="contained"
              onPress={() => nextBtnHandler("home")}>
                Return Home
              </Button>
@@ -138,7 +143,8 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   avatar: {
-    marginBottom: 10,
+    marginBottom: 5,
+    backgroundColor:"green",
   },
   title: {
     fontSize: 30,
@@ -211,7 +217,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
+    // backgroundColor:"orange",
+    gap:5
 },
 });
 
