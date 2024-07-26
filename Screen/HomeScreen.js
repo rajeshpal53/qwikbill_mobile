@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useRef } from "react";
-import { View, Text, useWindowDimensions } from "react-native";
+import { View, Text, useWindowDimensions, Pressable } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import {
   SafeAreaView,
@@ -113,7 +113,22 @@ export default function HomeScreen({ navigation }) {
                 Last Login: 14 Jul 2024, 12:49 AM
               </Text>
             </View>
+                  <View style={styles.viewsContainer}>
+                    <Pressable style={styles.allThreeViews}>
+                      <Text style={styles.whiteColor}>View</Text>
+                      <Text style={styles.whiteColor}>Customer</Text>
+                      </Pressable>
+                      <Pressable style={styles.allThreeViews} 
+                      onPress={() => goToHandler("Invoices")}>
+                      <Text style={styles.whiteColor}>View</Text>
+                      <Text style={styles.whiteColor}>Invoices</Text>
+                      </Pressable>
 
+                      <Pressable style={styles.allThreeViews}>
+                      <Text style={styles.whiteColor}>View</Text>
+                      <Text style={styles.whiteColor}>Stocks</Text>
+                      </Pressable>
+                  </View>
             <View style={{ flex: 0.7, marginBottom: 5 }}>
               <Card style={styles.card}>
                 <View>
@@ -154,6 +169,7 @@ export default function HomeScreen({ navigation }) {
                         <Text style={styles.whiteColor}>Stocks</Text>
                       </View>
                     </View>
+
 
                     {/* <Text style={styles.accountNumber}>2070100000085650</Text>
            <Text style={styles.balance}>₹ 924.56</Text> */}

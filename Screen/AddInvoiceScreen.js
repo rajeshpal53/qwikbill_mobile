@@ -23,7 +23,7 @@ const AddInvoiceScreen=({navigation})=>{
           phone: "",
           people:"",
           address:"",
-          date: new Date().toISOString().substring(0, 10),
+          date: new Date().toISOString().split('T')[0],
           items: [{ itemName: "", price: "", quantity: "", total: "" }],
         })
 const submitHandler= async( values,fetchDataId)=>{
