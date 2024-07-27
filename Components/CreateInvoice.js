@@ -18,6 +18,7 @@ import * as Yup from "yup";
 import { ToggleButton, TextInput, Card } from "react-native-paper";
 import AddInvoice from "./AddInvoice";
 import AddInvoiceScreen from "../Screen/AddInvoiceScreen";
+import DropDownList from "../UI/DropDownList";
 
 
 export default function CreateInvoice({ navigation }) {
@@ -102,23 +103,7 @@ export default function CreateInvoice({ navigation }) {
           <View style={styles.logoPickerContainer}>
             <Entypo name="shop" size={30} color="#0c3b73" />
             <View style={styles.pickerContainer}>
-              <Picker
-                ref={pickerRef}
-                selectedValue={selectedShop}
-                onValueChange={(itemValue, itemIndex) =>
-                  setSelectedShop(itemValue)
-                }
-              >
-                <Picker.Item
-                  label="Kunal Electrical Shop"
-                  value="Kunal Electrical Shop"
-                />
-                <Picker.Item label="Kunal Dairy" value="Kunal Dairy" />
-                <Picker.Item
-                  label="Kunal Kirana Shop"
-                  value="Kunal Kirana Shop"
-                />
-              </Picker>
+             <DropDownList/>
             </View>
           </View>
         </View>
