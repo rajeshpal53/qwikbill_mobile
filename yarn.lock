@@ -3646,6 +3646,11 @@ expo-modules-core@1.12.19:
   dependencies:
     invariant "^2.2.4"
 
+expo-screen-orientation@^7.0.5:
+  version "7.0.5"
+  resolved "https://registry.npmjs.org/expo-screen-orientation/-/expo-screen-orientation-7.0.5.tgz"
+  integrity sha512-1j0MzVzYpjKQo4BWowQ3ZYwC3OnddX/8k06C8VYTAxMyd8ou1k+rG4tm+GIV2n2RSzc3g7cfPlQwSYr3/SGmbg==
+
 expo-status-bar@~1.12.1:
   version "1.12.1"
   resolved "https://registry.npmjs.org/expo-status-bar/-/expo-status-bar-1.12.1.tgz"

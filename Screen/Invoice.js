@@ -11,6 +11,7 @@ export default function Invoice({ navigation }) {
   const isFocused = useIsFocused();
   const [invoices, setInvoices] = useState([]);
   useEffect(() => {
+    console.log("invoicea")
     async function fetchData() {
       try {
         const response = await readApi("api/invoice/list");
