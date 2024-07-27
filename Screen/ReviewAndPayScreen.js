@@ -19,9 +19,8 @@ import { useEffect, useState } from "react";
 export default function ReviewAndPayScreen({ navigation }) {
   const route = useRoute();
 
-  const { formData } = route.params;
-  console.log("formdata ", formData)
-  const {submitHandler} = route.params;
+  const { formData,submitHandler,fetchDataId} = route.params;
+
   const [checked, setChecked] = useState(false);
 
   const [visible, setVisible] = useState(false);
@@ -30,31 +29,31 @@ export default function ReviewAndPayScreen({ navigation }) {
   const hideModal = () => setVisible(false);
 
   const [totalAdded, setTotalAdded] = useState(false);
-  useEffect(() => {
-    if (!totalAdded) {
-      // Calculate the total price of all items in the array
-      const grandTotal = formData.items.reduce((accumulator, currValue) => {
-        return accumulator + parseInt(currValue.total);
-      }, 0);
+  // useEffect(() => {
+  //   if (!totalAdded) {
+  //     // Calculate the total price of all items in the array
+  //     const grandTotal = formData.items.reduce((accumulator, currValue) => {
+  //       return accumulator + parseInt(currValue.total);
+  //     }, 0);
 
-      // Add the total to the items array if it doesn't already exist
-      if (!formData.items.some((item) => item.Total !== undefined)) {
-        const obj = {
-          Total: grandTotal,
-        };
-        formData.items.push(obj);
-        setTotalAdded(true);
-      }
-    }
-  }, [formData.items, totalAdded]); // Ensure dependencies are correct
+  //     // Add the total to the items array if it doesn't already exist
+  //     // if (!formData.items.some((item) => item.Total !== undefined)) {
+  //     //   const obj = {
+  //     //     Total: grandTotal,
+  //     //   };
+  //     //   formData.items.push(obj);
+  //     //   setTotalAdded(true);
+  //     // }
+  //   }
+  // }, [formData.items, totalAdded]); // Ensure dependencies are correct
 
-  const buttonPressed = (buttonName) => {
-    console.log("buttonName , ", buttonName);
-
+  const buttonPressed =async (buttonName) => {
+     const newData= await submitHandler(formData,fetchDataId)
     hideModal();
     navigation.navigate("StackNavigator", { 
       screen: "InvoiceSuccess", 
       params: { 
+        newData:newData,
         formData: formData,
         paymentMode:buttonName,
         submitHandler:submitHandler,
@@ -130,7 +129,7 @@ export default function ReviewAndPayScreen({ navigation }) {
                         icon="qrcode-scan"
                         iconColor="grey"
                         size={60}
-                        onPress={() => buttonPressed("scanner")}
+                        onPress={() =>buttonPressed("scan")}
                       />
                     </View>
 
@@ -147,7 +146,7 @@ export default function ReviewAndPayScreen({ navigation }) {
                   }}>
                      <FontAwesome name="rupee" size={50} color="grey"
                      style={{ marginHorizontal:30, marginVertical:18}}
-                     onPress={() => buttonPressed("cash") }/>
+                     onPress={() =>buttonPressed("cash") }/>
                   </View>
 
                     <Text style={{fontSize:18}}>Cash</Text>
@@ -156,6 +155,7 @@ export default function ReviewAndPayScreen({ navigation }) {
                   <View style={{alignItems:"center"}}>
                   <View style={{ borderWidth: 2 , borderRadius:50}}>
                       <IconButton
+                      
                         style={{ margin: 5}}
                         icon="credit-card"
                         iconColor="grey"
