@@ -76,6 +76,7 @@ const AddInvoice = ({ initialValues,submitHandler,shopDetails}) => {
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={async (values, { resetForm }) => {
+
           // navigation.navigate("StackNavigator", { 
           //   screen: "ReviewAndPay", 
           //   params: { formData: values } 
