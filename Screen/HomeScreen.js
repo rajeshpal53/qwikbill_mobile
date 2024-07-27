@@ -64,6 +64,7 @@ export default function HomeScreen({ navigation }) {
       };
     }, [searchMode])
   );
+
   const handleOutsidePress = () => {
     setSearchMode(false);
   };
@@ -99,28 +100,27 @@ export default function HomeScreen({ navigation }) {
                 Last Login: 14 Jul 2024, 12:49 AM
               </Text>
             </View>
-                 
             <View style={{ flex: 0.7, marginBottom: 5 }}>
               <Card style={styles.card}>
                 <View>
                   <Card.Content style={styles.cardContent}>
                          <DropDownList/>
                     <View style={styles.viewsContainer}>
-                      <View style={styles.allThreeViews}>
-                        <Text style={styles.whiteColor}>View</Text>
-                        <Text style={styles.whiteColor}>Customer</Text>
-                      </View>
+                    <Pressable style={styles.allThreeViews}>
+                      <Text style={styles.whiteColor}>View</Text>
+                      <Text style={styles.whiteColor}>Customer</Text>
+                      </Pressable>
+                      <Pressable style={styles.allThreeViews} 
+                      onPress={() => goToHandler("Invoices")}>
+                      <Text style={styles.whiteColor}>View</Text>
+                      <Text style={styles.whiteColor}>Invoices</Text>
+                      </Pressable>
 
-                      <View style={styles.allThreeViews}>
-                        <Text style={styles.whiteColor}>View</Text>
-                        <Text style={styles.whiteColor}>Invoices</Text>
-                      </View>
-
-                      <View style={styles.allThreeViews}>
-                        <Text style={styles.whiteColor}>View</Text>
-                        <Text style={styles.whiteColor}>Stocks</Text>
-                      </View>
-                    </View>
+                      <Pressable style={styles.allThreeViews}>
+                      <Text style={styles.whiteColor}>View</Text>
+                      <Text style={styles.whiteColor}>Stocks</Text>
+                      </Pressable>
+                  </View>
 
 
                     {/* <Text style={styles.accountNumber}>2070100000085650</Text>
