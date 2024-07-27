@@ -25,32 +25,18 @@ import { services } from "../tempList/ServicesList";
 import CreateInvoice from "../Components/CreateInvoice";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { readApi } from "../Util/UtilApi";
-
+import DropDownList from "../UI/DropDownList";
 export default function HomeScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState("");
   const { searchMode, setSearchMode } = useContext(AuthContext);
-  const { selectedShop, setSelectedShop } = useContext(AuthContext);
-  const [options, setOptions] = useState([]);
   // const {overlayHeight} = useContext(AuthContext);
   const pickerRef = useRef();
-
   const windowWidth = useWindowDimensions().width;
   const windowHeight = useWindowDimensions().height;
   useEffect(() => {
-    setSelectedShop("Kunal Electrical Shop");
     console.log("windowWidth, ", windowWidth);
     console.log("windowHeight, ", windowHeight);
   }, []);
-  useEffect(() => {
-    async function fetchOptions() {
-      const response = await readApi(`api/shop/list`);
-      setOptions(response.result); // Adjust according to your API response
-
-      // setSelectedOption(data.result[0].shopname)
-    }
-    fetchOptions();
-  }, []);
-
 
   function open() {
     pickerRef.current.focus();
@@ -113,46 +99,12 @@ export default function HomeScreen({ navigation }) {
                 Last Login: 14 Jul 2024, 12:49 AM
               </Text>
             </View>
-                  <View style={styles.viewsContainer}>
-                    <Pressable style={styles.allThreeViews}>
-                      <Text style={styles.whiteColor}>View</Text>
-                      <Text style={styles.whiteColor}>Customer</Text>
-                      </Pressable>
-                      <Pressable style={styles.allThreeViews} 
-                      onPress={() => goToHandler("Invoices")}>
-                      <Text style={styles.whiteColor}>View</Text>
-                      <Text style={styles.whiteColor}>Invoices</Text>
-                      </Pressable>
-
-                      <Pressable style={styles.allThreeViews}>
-                      <Text style={styles.whiteColor}>View</Text>
-                      <Text style={styles.whiteColor}>Stocks</Text>
-                      </Pressable>
-                  </View>
+                 
             <View style={{ flex: 0.7, marginBottom: 5 }}>
               <Card style={styles.card}>
                 <View>
                   <Card.Content style={styles.cardContent}>
-                    <View style={styles.pickerContainer}>
-                      <Picker
-                        ref={pickerRef}
-                        selectedValue={selectedShop}
-                        onValueChange={(itemValue, itemIndex) =>
-                          setSelectedShop(itemValue)
-                        }
-                      >
-                        {options.map((option, index) => (
-                          <Picker.Item
-                            key={index}
-                            value={option.shopname}
-                            label={option.shopname}
-                          >
-                            {option.shopname}
-                          </Picker.Item>
-                        ))}
-                      </Picker>
-                    </View>
-
+                         <DropDownList/>
                     <View style={styles.viewsContainer}>
                       <View style={styles.allThreeViews}>
                         <Text style={styles.whiteColor}>View</Text>
