@@ -48,6 +48,8 @@ import AddVendorScreen from "./Screen/AddVendorScreen.js";
 import * as LocalAuthentication from 'expo-local-authentication';
 import LocalAuthScreen from "./LocalAuthScreen.js";
 import FilterInvoiceScreen from "./Screen/FilterInvoiceScreen.js";
+import ViewInvoiceScreen from "./Screen/Invoices/ViewInvoiceScreen.js";
+import RotateBtn from "./Components/HeaderComponents/RotateBtn.js";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -295,7 +297,22 @@ function StackNavigator() {
       <Stack.Screen
       name="Invoices"
       component={FilterInvoiceScreen}
-      options={{}}
+      options={{
+        // headerTitle: ((false)? 
+        //      (() => ("")):
+        //      ("kunal store"))
+      }}
+      />
+      <Stack.Screen
+      name="ViewInvoices"
+      component={ViewInvoiceScreen}
+      options={({ route }) => ({
+        headerTitle: route.params?.data?.selectedShop || "Default Title",
+        headerRight:() => (
+           <RotateBtn />
+  
+        ),
+      })}
       />
     </Stack.Navigator>
   );
