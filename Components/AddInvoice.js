@@ -14,19 +14,20 @@ import { Formik, FieldArray } from "formik";
 import * as Yup from "yup";
 import { readApi } from "../Util/UtilApi";
 import { useNavigation } from "@react-navigation/native";
-const fetchOptions = async (input) => {
+
+const fetchOptions = async (input,shopDetails) => {
   const headers={
     "Content-Type": "application/json",
   }
-  const response = await readApi(`api/people/search?fields=phone&q=${input}&page=1&items=10`,headers);
+  const response = await readApi(`api/client/search?shop=${shopDetails}&fields=name&q=${input}&page=1&items=10`,headers);
   const data = await response;
   return data.result; // Adjust according to your API response
 };
-const fetchItemOptions = async (input) => {
+const fetchItemOptions = async (input,shopDetails) => {
   const headers={
     "Content-Type": "application/json",
   }
-  const response = await readApi(`api/product/search?fields=name&q=${input}&page=1&items=10`,headers);
+  const response = await readApi(`api/product/search?shop=${shopDetails}&fields=name&q=${input}&page=1&items=10`,headers);
   const data = await response;
 
   return data.result; // Adjust according to your API response
@@ -63,7 +64,7 @@ const validationSchema = Yup.object().shape({
     .required("Must have items")
     .min(1, "Minimum of 1 item"),
 });
-const AddInvoice = ({ initialValues,submitHandler}) => {
+const AddInvoice = ({ initialValues,submitHandler,shopDetails}) => {
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [showItemOptions, setShowItemOptions] = useState(false);
@@ -75,9 +76,6 @@ const AddInvoice = ({ initialValues,submitHandler}) => {
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={async (values, { resetForm }) => {
-
-          
-
           // navigation.navigate("StackNavigator", { 
           //   screen: "ReviewAndPay", 
           //   params: { formData: values } 
@@ -85,13 +83,14 @@ const AddInvoice = ({ initialValues,submitHandler}) => {
           
           if(fetchData._id){
           const fetchDataId=fetchData._id
+       
 
           navigation.navigate("StackNavigator", { 
             screen: "ReviewAndPay", 
             params: { 
               formData: values,
               submitHandler: submitHandler,
-              fetchedId: fetchDataId
+              fetchDataId: fetchDataId
             },
             
             
@@ -129,7 +128,16 @@ const AddInvoice = ({ initialValues,submitHandler}) => {
                 <TextInput
                   label="client Name"
                   mode="outlined"
-                  onChangeText={handleChange("client")}
+                  onChangeText={async (text) => {
+                    handleChange("client")(text);
+                    if (text.length > 1) {
+                      const fetchedOptions = await fetchOptions(text,shopDetails._id);
+                      setOptions(fetchedOptions);
+                      setShowOptions(true);
+                    } else {
+                      setShowOptions(false);
+                    }
+                  }}
                   onBlur={handleBlur("client")}
                   value={values.client}
                   error={touched.client && errors.client ? true : false}
@@ -142,6 +150,27 @@ const AddInvoice = ({ initialValues,submitHandler}) => {
                   >
                     {errors.client}
                   </HelperText>
+                )}
+                  {showOptions && (
+                  <View style={styles.suggestionsContainer}>
+                  <ScrollView nestedScrollEnabled={true}  style={styles.suggestionsList} >
+                    {options.map((option) => (
+                        <List.Item
+                          key={option._id}
+                          title={option.name}
+                          onPress={async () => {
+                            setFieldValue(
+                              "client",
+                              option.name
+                            );
+                            setFieldValue("phone", option.phone);
+                            setFetchData(option)
+                            setShowOptions(false);
+                          }}/>
+                          
+                    ))}
+                  </ScrollView>
+                  </View>
                 )}
               </View>
               <View style={{ width: "100%", marginBottom: 10 }}>
@@ -162,6 +191,7 @@ const AddInvoice = ({ initialValues,submitHandler}) => {
                     {errors.address}
                   </HelperText>
                 )}
+                 
               </View>
               <View
                 style={{
@@ -175,18 +205,9 @@ const AddInvoice = ({ initialValues,submitHandler}) => {
               >
                 <TextInput
                   label="Phone"
+                  onChangeText={handleChange("phone")}
                   mode="outlined"
                   keyboardType="phone-pad"
-                  onChangeText={async (text) => {
-                    handleChange("phone")(text);
-                    if (text.length > 1) {
-                      const fetchedOptions = await fetchOptions(text);
-                      setOptions(fetchedOptions);
-                      setShowOptions(true);
-                    } else {
-                      setShowOptions(false);
-                    }
-                  }}
                   onBlur={handleBlur("phone")}
                   value={values.phone}
                   error={touched.phone && errors.phone ? true : false}
@@ -201,27 +222,7 @@ const AddInvoice = ({ initialValues,submitHandler}) => {
                     {errors.phone}
                   </HelperText>
                 )}
-                {showOptions && (
-                  <View style={styles.suggestionsContainer}>
-                  <ScrollView nestedScrollEnabled={true}  style={styles.suggestionsList} >
-                    {options.map((option) => (
-                        <List.Item
-                          key={option._id}
-                          title={option.phone}
-                          onPress={async () => {
-                            setFieldValue(
-                              "client",
-                              option.firstname + option.lastname
-                            );
-                            setFieldValue("phone", option.phone);
-                            setFetchData(option)
-                            setShowOptions(false);
-                          }}/>
-                          
-                    ))}
-                  </ScrollView>
-                  </View>
-                )}
+               
               </View>
               <View
                 style={{
@@ -274,7 +275,7 @@ const AddInvoice = ({ initialValues,submitHandler}) => {
                             handleChange(`items[${index}].itemName`)(text);
                             if (text.length > 1) {
                               const fetchedOptions = await fetchItemOptions(
-                                text
+                                text,shopDetails._id
                               );
                               setOptions(fetchedOptions);
                               setShowItemOptions(true);
