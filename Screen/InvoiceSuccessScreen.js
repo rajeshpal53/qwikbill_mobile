@@ -1,6 +1,8 @@
 import { useRoute } from "@react-navigation/native";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet,Alert } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
 import React, { useState } from "react";
 import {
   Button,
@@ -9,13 +11,66 @@ import {
   Avatar,
   Text,
   Divider,
+
 } from "react-native-paper";
 // import { format } from "date-fns";
 
-export default function InvoiceSuccessScreen() {
+export default function InvoiceSuccessScreen({navigation}) {
   const route = useRoute();
 
-  const formData = route.params.formData;
+  const { formData,newData } = route.params;
+
+  const [loading,setLoading]=useState(false)
+
+  const convertHtmlToPdf = async (dataId) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`http://192.168.1.5:8888/download/invoice/invoice-${dataId}.pdf`, {
+        credentials: "include",
+      });
+      const blob = await response.blob();
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64data = reader.result.split(',')[1];
+        const fileUri = `${FileSystem.documentDirectory}invoice.pdf`;
+  
+        console.log('File URI:', fileUri); // Debugging line
+  
+        await FileSystem.writeAsStringAsync(fileUri, base64data, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+  
+        const fileInfo = await FileSystem.getInfoAsync(fileUri);
+        console.log('File Info:', fileInfo); 
+        if (await Sharing.isAvailableAsync()) {
+                await Sharing.shareAsync(fileUri, {
+                  mimeType: "application/pdf",
+                  dialogTitle: "Save file to Downloads",
+                }); 
+              }else{
+                console.log("sharing is not possible")
+              }
+        // Debugging line
+        // if (fileInfo.exists) {
+        //   const intent = {
+        //     action: IntentLauncher.ACTION_VIEW,
+        //     data: fileInfo.uri,
+        //     flags: 1,
+        //     type: 'application/pdf',
+        //   };
+  
+        //   await IntentLauncher.startActivityAsync(intent);
+        // } else {
+        //   Alert.alert("Error", "File does not exist.", [{ text: "OK" }]);
+        // }
+      };
+      reader.readAsDataURL(blob);
+    } catch (error) {
+      Alert.alert("Error", `Failed to download PDF. ${error.message}`, [{ text: "OK" }]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // const [mediaBtnActive, setmediaBtnActive] = useState("whatsapp");
   // const [nextBtnActive, setNextBtnActive] = useState("anotherInvoice");
@@ -27,6 +82,7 @@ export default function InvoiceSuccessScreen() {
 
   const nextBtnHandler = (key) => {
     // setNextBtnActive(key); this was only for toggling button colors
+    navigation.navigate("Home")
   }
 
 //   console.log("params are, ", route.params)
@@ -71,7 +127,7 @@ export default function InvoiceSuccessScreen() {
                  </Text>
                 
                 <Text style={styles.infoText}>Mobile No : {formData.phone}</Text>
-                <Text style={styles.infoText}>Invoice Amt : ₹{formData.items[formData.items.length-1].Total}/-</Text>
+                <Text style={styles.infoText}>Invoice Amt : ₹{formData.items[formData.items.length-1].total}/-</Text>
                 <Text style={styles.infoText}>Payment Mode : {route.params.paymentMode}</Text>
                 </View>
                 
@@ -80,18 +136,19 @@ export default function InvoiceSuccessScreen() {
 
             <Card.Actions style={styles.actions}>
                <Button 
-               icon="gmail" 
+               icon="download" 
               mode = "contained"
-              buttonColor="#D44638"
-               onPress={() => mediaBtnHandler("gmail")}>
-                 Gmail
+              
+               onPress={() => convertHtmlToPdf(newData._id)}>
+                 Downloads
                </Button>
                <Button 
-               icon="whatsapp" 
+               icon="share" 
               mode="contained"
-              buttonColor="#25D366"
+              buttonColor="#FFF"
+              textColor="black"
                onPress={() => mediaBtnHandler("whatsapp")}>
-                 WhatsApp
+               share
                </Button>
              </Card.Actions>
           </Card>

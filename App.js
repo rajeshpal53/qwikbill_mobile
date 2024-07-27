@@ -48,6 +48,7 @@ import AddVendorScreen from "./Screen/AddVendorScreen.js";
 import * as LocalAuthentication from 'expo-local-authentication';
 import LocalAuthScreen from "./LocalAuthScreen.js";
 import FilterInvoiceScreen from "./Screen/FilterInvoiceScreen.js";
+import { ShopDetailProvider } from "./Store/ShopDetailContext.js";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -302,6 +303,7 @@ function StackNavigator() {
 }
 export default function App() {
   return (
+    <ShopDetailProvider>
     <SafeAreaProvider>
       <SnackbarProvider>
         <Provider theme={customTheme}>
@@ -320,5 +322,6 @@ export default function App() {
         </Provider>
       </SnackbarProvider>
     </SafeAreaProvider>
+    </ShopDetailProvider>
   );
 }
