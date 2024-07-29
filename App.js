@@ -53,6 +53,8 @@ import ViewInvoiceScreen from "./Screen/Invoices/ViewInvoiceScreen.js";
 import RotateBtn from "./Components/HeaderComponents/RotateBtn.js";
 import { ShopDetailProvider } from "./Store/ShopDetailContext.js";
 import GenrateInvoiceScreen from "./Screen/GenrateInvoiceScreen.js";
+import Forgetpasscode from "./Screen/ForgetPasscode/Forgetpasscode.js";
+import CreateNewPasscode from "./Screen/ForgetPasscode/CreateNewPasscode.js";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -268,6 +270,16 @@ function StackNavigator() {
       <Stack.Screen
         name="Passcode"
         component={PasscodeScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="forgetPasscode"
+        component={Forgetpasscode}
+        options={{ headerShown: false }}
+      />
+       <Stack.Screen
+        name="CreateNewPasscode"
+        component={CreateNewPasscode}
         options={{ headerShown: false }}
       />
       <Stack.Screen
