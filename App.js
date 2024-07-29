@@ -51,6 +51,7 @@ import FilterInvoiceScreen from "./Screen/FilterInvoiceScreen.js";
 import ViewInvoiceScreen from "./Screen/Invoices/ViewInvoiceScreen.js";
 import RotateBtn from "./Components/HeaderComponents/RotateBtn.js";
 import { ShopDetailProvider } from "./Store/ShopDetailContext.js";
+import { ShopDetailContext } from "./Store/ShopDetailContext.js";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -188,6 +189,7 @@ function StackNavigator() {
     );
   }
 
+  const {shopDetails} = useContext(ShopDetailContext);
   return (
     <Stack.Navigator initialRouteName={isAuthenticated ? "Passcode" : "login"}  screenOptions={{
       headerStyle: {
@@ -308,7 +310,7 @@ function StackNavigator() {
       name="ViewInvoices"
       component={ViewInvoiceScreen}
       options={({ route }) => ({
-        headerTitle: route.params?.data?.selectedShop || "Default Title",
+        headerTitle: shopDetails.shopname,
         headerRight:() => (
            <RotateBtn />
   
