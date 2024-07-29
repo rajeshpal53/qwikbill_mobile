@@ -12,7 +12,6 @@ import {
   BackHandler,
   TouchableOpacity,
 } from "react-native";
-import SearchHeader from "../Components/SearchHeader";
 import {
   MaterialCommunityIcons,
   FontAwesome5,
@@ -26,7 +25,13 @@ import CreateInvoice from "../Components/CreateInvoice";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { readApi } from "../Util/UtilApi";
 import DropDownList from "../UI/DropDownList";
+
+
 export default function HomeScreen({ navigation }) {
+
+  const { loginDetail, getData } = useContext(AuthContext);
+  console.log("loginDetail , ", loginDetail);
+
   const [searchQuery, setSearchQuery] = useState("");
   const { searchMode, setSearchMode } = useContext(AuthContext);
   // const {overlayHeight} = useContext(AuthContext);
@@ -95,7 +100,7 @@ export default function HomeScreen({ navigation }) {
             <View style={styles.header}>
               {/* <TextInput></TextInput> */}
               {/* <SearchHeader onSearch={handleSearch}/> */}
-              <Text style={styles.headerText}>Welcome YOGESH D GAHANE</Text>
+              <Text style={styles.headerText}>{`Welcome ${loginDetail.name} ${loginDetail.surname}`}</Text>
               <Text style={styles.subHeaderText}>
                 Last Login: 14 Jul 2024, 12:49 AM
               </Text>
@@ -163,28 +168,16 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   safeContainer: {
     // flex: 1,
-    // backgroundColor:"blue",
     // paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
     paddingTop: 0,
-    // backgroundColor: "pink",
-    // display:"none"
   },
   scrollView: {
     height: "100%",
-    // backgroundColor:"blue"
   },
-  container: {
-    // flex: 1,
-    // height: 560,
-    // display:"none",
-    // backgroundColor: "#f5f5f5",
-    // backgroundColor:"orange",
+  container: { 
     marginHorizontal: 10,
-    // backgroundColor: "yellow",
   },
   header: {
-    // backgroundColor: "#262580",
-    // backgroundColor:"orange",
     flex: 0.2,
     padding: 15,
     gap: 4,
@@ -197,13 +190,11 @@ const styles = StyleSheet.create({
   subHeaderText: {
     color: "#fff",
     fontSize: 14,
-    // marginTop: 5,
   },
   card: {
     flex: 1,
   },
   cardContent: {
-    // flex:1,
     width: "100%",
     height: "100%",
     borderRadius: 10,
@@ -213,15 +204,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#0c3b73",
     borderRadius: 10,
-    // backgroundColor: "#0c3b73",
-    // backgroundColor:"orange",
     width: "100%",
-    // height:"50%",
     paddingHorizontal: 10,
   },
   viewsContainer: {
     height: "50%",
-    // backgroundColor:"lightblue",
     flexDirection: "row",
     justifyContent: "space-between",
     borderRadius: 10,
@@ -263,11 +250,7 @@ const styles = StyleSheet.create({
   overlay: {
     position: "absolute",
     top: 0, // Adjust the top value as needed
-    // left: 0,
-    // right:0,
-    // transform: [{ translateX: -75 }, { translateY: -75 }], // Center the overlay
     width: "100%",
-    // height: 250,
     height: "20%",
     backgroundColor: "#0c3b73",
     zIndex: 0,

@@ -162,7 +162,7 @@ const NewGenrateInvoice = ({ data }) => {
   const convertHtmlToPdf = async (data) => {
     setLoading(true);
     try {
-      const response = await fetch(`http://192.168.1.6:8888/download/invoice/invoice-${data._id}.pdf`, {
+      const response = await fetch(`http://192.168.1.46:8888/download/invoice/invoice-${data._id}.pdf`, {
         credentials: "include",
       });
       const blob = await response.blob();
