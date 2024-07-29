@@ -15,6 +15,7 @@ import { Entypo } from "@expo/vector-icons";
 import { readApi } from "../Util/UtilApi";
 import { useNavigation } from "@react-navigation/native";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
+import DropDownList from "../UI/DropDownList";
 
 export default function FilterInvoiceScreen() {
   const [activeTab, setActiveTab] = useState("dateRange");
@@ -163,23 +164,7 @@ export default function FilterInvoiceScreen() {
         <View style={styles.logoPickerContainer}>
           <Entypo name="shop" size={30} color="#0c3b73" />
           <View style={styles.pickerContainer}>
-          <Picker
-              ref={pickerRef}
-              selectedValue={selectedShop.shopName}
-              onValueChange={(itemValue, itemIndex) => {
-                const selected = options[itemIndex];
-                // console.log("selected, ", selected._id);
-                setSelectedShop({ shopName: selected.shopname, shopId: selected._id });
-              }}
-            >
-              {options.map((option, index) => (
-                <Picker.Item
-                  key={index}
-                  value={option.shopname}
-                  label={option.shopname}
-                />
-              ))}
-            </Picker>
+         <DropDownList/>
           </View>
         </View>
         <View style={styles.tabContainer}>

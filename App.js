@@ -22,6 +22,7 @@ import AddInvoiceScreen from "./Screen/AddInvoiceScreen";
 import AddCustomerScreen from "./Screen/AddCustomerScreen";
 import { AuthProvider, AuthContext } from "./Store/AuthContext";
 import { useContext } from "react";
+
 import { CustomTabBar } from "./Components/CustomDrawerContent";
 import AddProductScreen from "./Screen/AddProductScreen";
 import InvoiceDetailScreen from "./Screen/InvoiceDetailScreen";
@@ -51,6 +52,7 @@ import FilterInvoiceScreen from "./Screen/FilterInvoiceScreen.js";
 import ViewInvoiceScreen from "./Screen/Invoices/ViewInvoiceScreen.js";
 import RotateBtn from "./Components/HeaderComponents/RotateBtn.js";
 import { ShopDetailProvider } from "./Store/ShopDetailContext.js";
+import GenrateInvoiceScreen from "./Screen/GenrateInvoiceScreen.js";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -271,6 +273,15 @@ function StackNavigator() {
       <Stack.Screen
       name="CreateInvoice"
       component={CreateInvoice}
+      options={{
+        headerRight:() => (
+          <LogoutBtn/>
+        ),
+      }}
+      />
+      <Stack.Screen
+      name="genrateInvoice"
+      component={GenrateInvoiceScreen}
       options={{
         headerRight:() => (
           <LogoutBtn/>

@@ -1,15 +1,17 @@
 // import { Text } from "react-native-paper"
 import { useRoute } from "@react-navigation/native";
 import { Divider } from "react-native-paper";
-import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import React, { useContext, useEffect, useState  } from "react";
+import { View, Text, FlatList, StyleSheet,TouchableOpacity } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { readApi } from "../../Util/UtilApi";
+import { ShopDetailContext } from "../../Store/ShopDetailContext";
 
-export default function ViewInvoiceScreen() {
+export default function ViewInvoiceScreen({navigation}) {
   const data = useRoute().params;
+  const{shopDetails}= useContext(ShopDetailContext)
   // const [invoiceData, setInvoiceData] = useState({});
-  const shopId = data.data.selectedShopId;
+  const shopId =shopDetails._id
   const [invoiceData, setInvoiceData] = useState([]);
   let headline;
   let formattedDate = "NA";
@@ -62,6 +64,12 @@ export default function ViewInvoiceScreen() {
 
   // console.log("invoice data, ", invoiceData);
   const InvoiceItem = ({ item }) => (
+    <TouchableOpacity  onPress={()=> navigation.navigate("StackNavigator", { 
+      screen: "genrateInvoice", 
+      params: { 
+       detail:item
+      } 
+    })}>
     <View style={styles.row}>
       <Text style={styles.date}>{item.formattedDate}</Text>
       <Text style={styles.number}>{item.number}</Text>
@@ -69,6 +77,7 @@ export default function ViewInvoiceScreen() {
       <Text style={styles.paymentStatus}>{item.paymentStatus}</Text>
       <Text style={styles.total}>{item.total}</Text>
     </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -91,6 +100,7 @@ export default function ViewInvoiceScreen() {
         data={invoiceData}
         renderItem={InvoiceItem}
         keyExtractor={(item, index) => index.toString()}
+        
       />
     </View>
     </ScrollView>
