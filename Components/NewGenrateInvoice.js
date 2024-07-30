@@ -6,7 +6,6 @@ import Icon from "react-native-vector-icons/Ionicons";
 import * as FileSystem from "expo-file-system";
 
 import { ScrollView } from "react-native-gesture-handler";
-import numWords from "num-words";
 import * as Sharing from "expo-sharing";
 import { readApi } from "../Util/UtilApi";
 // import * as IntentLauncher from 'expo-intent-launcher';
@@ -118,7 +117,7 @@ const NewGenrateInvoice = ({ data }) => {
                 <p><strong>Invoice No. 1</strong></p>
                 <p> ${new Date(data.date).toISOString().substring(0, 10)}</p>
                 <p>Total Amount: <strong>${data.total}</strong></p>
-                <p class="note">${numWords(data.total)} only</p>
+                
               </div>
             </div>
             <table class="items">
@@ -162,7 +161,7 @@ const NewGenrateInvoice = ({ data }) => {
   const convertHtmlToPdf = async (data) => {
     setLoading(true);
     try {
-      const response = await fetch(`http://192.168.1.46:8888/download/invoice/invoice-${data._id}.pdf`, {
+      const response = await fetch(`http://192.168.1.3:8888/download/invoice/invoice-${data._id}.pdf`, {
         credentials: "include",
       });
       const blob = await response.blob();
