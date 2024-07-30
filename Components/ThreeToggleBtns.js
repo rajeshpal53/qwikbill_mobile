@@ -2,37 +2,7 @@
 import { View, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 
-export default function ThreeToggleBtns({buttonsModes, setButtonsModes, toggleButtonsTexts}){
-  
-    const handleButtonPress = (button) => {
-        setButtonsModes((prevstate) => {
-          if (button === "first" && !prevstate.firstButtonMode) {
-            return {
-              firstButtonMode: true,
-              secondButtonMode: false,
-              thirdButtonMode: false,
-            };
-          } else if (
-            button === "second" &&
-            !prevstate.secondButtonMode
-          ) {
-            console.log("pr")
-            return {
-              firstButtonMode: false,
-              secondButtonMode: true,
-              thirdButtonMode: false,
-            };
-          } else if (button === "third" && !prevstate.thirdButtonMode) {
-            return {
-              firstButtonMode: false,
-              secondButtonMode: false,
-              thirdButtonMode: true,
-            };
-          } else {
-            return prevstate;
-          }
-        });
-      };
+export default function ThreeToggleBtns({buttonsModes, setButtonsModes, toggleButtonsTexts, handleButtonPress}){
 
     return (
         <View style={styles.buttonContainer}>
