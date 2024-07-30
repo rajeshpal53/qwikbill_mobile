@@ -11,7 +11,7 @@ function GenrateInvoiceScreen({ route }) {
     <View>
       <ScrollView>
         {/* <GenrateInvoice data={detail}/> */}
-        {/* <NewGenrateInvoice data={detail} /> */}
+        <NewGenrateInvoice data={detail} />
         <Text>genrate invoice</Text>
       </ScrollView>
     </View>
