@@ -30,6 +30,9 @@ import { useContext, useState, useEffect } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { AuthContext } from "../Store/AuthContext";
 import * as LocalAuthentication from "expo-local-authentication";
+import moment from "moment";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Linking } from "react-native";
 
 
 export default function PasscodeScreen({ navigation }) {
@@ -37,8 +40,8 @@ export default function PasscodeScreen({ navigation }) {
   const { loginDetail, getData } = useContext(AuthContext);
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [buttonsModes, setButtonsModes] = useState({
-    passcodeButtonMode: false,
-    domainButtonMode: true,
+    passcodeButtonMode: true,
+    domainButtonMode: false,
   });
 
   const [loginDetail1, setLoginDetail1] = useState(loginDetail);
@@ -67,6 +70,34 @@ export default function PasscodeScreen({ navigation }) {
       keyboardDidShowListener.remove();
     };
   }, []);
+ 
+  const storeTime = async() => {
+    const previousLoginTime = await AsyncStorage.getItem("currentLoginTime");
+ 
+    
+    if(previousLoginTime){
+      await AsyncStorage.setItem("lastLoginTime", previousLoginTime);
+      console.log("previousTime , " , await AsyncStorage.getItem("lastLoginTime"));
+    }
+   const currentLoginTime = moment().format('D MMM YYYY, h:mm A');
+   await AsyncStorage.setItem("currentLoginTime", currentLoginTime);
+
+   console.log("currentTime , " , await AsyncStorage.getItem("currentLoginTime")); 
+
+   return {
+    previousLoginTime: (previousLoginTime || currentLoginTime)
+  }
+    
+  }
+
+  const handleNavigation = async() => {
+    const {previousLoginTime} = await storeTime();
+    
+    navigation.navigate("wertone", {
+     screen: "Home",
+     params : {previousLoginTime} 
+  });
+  }
 
   useEffect(() => {
     const handleLocalAuthentication = async () => {
@@ -77,7 +108,9 @@ export default function PasscodeScreen({ navigation }) {
 
       if (result.success) {
         Alert.alert("Authenticated", "You have successfully authenticated");
-        navigation.navigate("wertone");
+
+        handleNavigation();
+        
       } else {
         Alert.alert("Authentication Failed", "Please try again");
       }
@@ -122,10 +155,23 @@ export default function PasscodeScreen({ navigation }) {
         return prevstate;
       }
     });
+
+    if (button === "domain") {
+      // Open the URL in the default browser
+      Linking.openURL("https://www.google.com").catch((err) =>
+        console.error("Failed to open URL:", err)
+      );
+    }
   };
 
   const handleOnLoginPress = () => {
-    navigation.navigate("wertone", { screen: "Home" });
+
+    handleNavigation();
+    // const {previousLoginTime, currentLoginTime} = storeTime();
+    // navigation.navigate("wertone", { 
+    //   screen: "Home",
+    //   params : {previousLoginTime},
+    //  });
   };
 
   return (

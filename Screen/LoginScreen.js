@@ -39,7 +39,7 @@ import { createApi } from '../Util/UtilApi';
        }
       if(isAuthenticated){
         // navigation.navigate("wertone",{screen:'invoice'})
-        navigation.navigate('Passcode');
+        navigation.navigate('CreateNewPasscode');
         resetForm();
       }      
 }
@@ -80,6 +80,22 @@ import { createApi } from '../Util/UtilApi';
           {touched.password && errors.password && <Text style={styles.error}>{errors.password}</Text>}
             {/* <Link href='' style={styles.link}> forget password?..</Link> */}
           <Button onPress={handleSubmit} textColor='white' style={styles.button} >Login</Button>
+          <Button
+            icon={"google"}
+            // onPress={handleGoogleSignIn}
+            textColor='white'
+            style={[styles.button, { backgroundColor: '#DB4437' }]}
+          >
+            Login with Google
+          </Button>
+          <Button
+            icon={"facebook"}
+            // onPress={handleFacebookLogin}
+            textColor='white'
+            style={[styles.button, { backgroundColor: '#3b5998' }]}
+          >
+            Login with Facebook
+          </Button>
           </Card>
         </View>
       )}
@@ -124,6 +140,7 @@ const styles = StyleSheet.create({
   error: {
     color: 'red',
     marginBottom: 16,
+    marginLeft:16
   },
   button:{
     backgroundColor:'#0c3b73',

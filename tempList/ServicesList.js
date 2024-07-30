@@ -3,7 +3,8 @@ import {
     MaterialCommunityIcons,
     FontAwesome5,
     Ionicons,
-    AntDesign
+    AntDesign,
+    Entypo
   } from "@expo/vector-icons";
   
 export const services = [
@@ -32,12 +33,10 @@ export const services = [
       navigateTo:"AddVendor"
     },
     {
-      name: "Utility Payments",
-      icon: (
-        <MaterialCommunityIcons name="file-document" size={30} color="#0c3b73" />
-      ),
+      name: "Create New Shop",
+      icon: <FontAwesome5 name="store" size={30} color="#0c3b73" />,
       key: "5",
-      navigateTo:"CreateInvoice"
+      navigateTo:"CreateShopScreen"
     },
     {
       name: "Market Place",
