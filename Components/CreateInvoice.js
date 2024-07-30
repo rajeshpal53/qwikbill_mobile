@@ -1,4 +1,4 @@
-import { React, useRef, useContext, useState } from "react";
+import { React, useRef, useContext, useState, useEffect } from "react";
 import {
   View,
   Typography,
@@ -19,12 +19,14 @@ import { ToggleButton, TextInput, Card } from "react-native-paper";
 import AddInvoice from "./AddInvoice";
 import AddInvoiceScreen from "../Screen/AddInvoiceScreen";
 import DropDownList from "../UI/DropDownList";
+import ThreeToggleBtns from "./ThreeToggleBtns";
 
 
 export default function CreateInvoice({ navigation }) {
   const windowWidth = useWindowDimensions().width;
   const windowHeight = useWindowDimensions().height;
   const { selectedShop, setSelectedShop } = useContext(AuthContext);
+  const [invoiceType, setInvoiceType] = useState("recent")
   const pickerRef = useRef();
 
   const initialValues = {
@@ -33,11 +35,42 @@ export default function CreateInvoice({ navigation }) {
 
   }
 
+  // const [buttonsModes, setButtonsModes] = useState({
+  //   recentButtonMode: false,
+  //   provInvoiceButtonMode: true,
+  //   gstInvoiceButtonMode: false,
+  // });
+
+  
   const [buttonsModes, setButtonsModes] = useState({
-    recentButtonMode: false,
-    provInvoiceButtonMode: true,
-    gstInvoiceButtonMode: false,
+    firstButtonMode: true,
+    secondButtonMode: false,
+    thirdButtonMode: false,
+    
   });
+
+  const toggleButtonsTexts = {
+    first: "Recent",
+    second: "Prov Invoice",
+    third: "GST Invoice"
+  }
+
+  
+  useEffect(() => {
+
+    function setInvoiceHandler(){
+
+      if(buttonsModes.firstButtonMode){
+        setInvoiceType("recent");
+      }else if(buttonsModes.secondButtonMode){
+        setInvoiceType("provInvoice");
+      }else{
+        setInvoiceType("gstInvoice");
+      }
+    }
+
+      setInvoiceHandler()
+  }, [buttonsModes]);
 
   const handleButtonPress = (button) => {
     setButtonsModes((prevstate) => {
@@ -109,56 +142,11 @@ export default function CreateInvoice({ navigation }) {
         </View>
 
         {/* 3 */}
-        <View style={styles.buttonContainer}>
-          <Button
-            style={{
-              //   width: "50%",
-              backgroundColor: buttonsModes.recentButtonMode
-                ? "#6dbbc7"
-                : "transparent",
-            }}
-            mode={
-              buttonsModes.recentButtonMode ? "contained" : "contained-disabled"
-            }
-            onPress={() => handleButtonPress("recent")}
-          >
-            Recent
-          </Button>
+        <ThreeToggleBtns 
+        buttonsModes={buttonsModes}
+        setButtonsModes={setButtonsModes}
+        toggleButtonsTexts={toggleButtonsTexts}/>
 
-          <Button
-            style={{
-              //   width: "50%",
-              backgroundColor: buttonsModes.provInvoiceButtonMode
-                ? "#6dbbc7"
-                : "transparent",
-            }}
-            mode={
-              buttonsModes.provInvoiceButtonMode
-                ? "contained"
-                : "contained-disabled"
-            }
-            onPress={() => handleButtonPress("prov invoice")}
-          >
-            Prov Invoice
-          </Button>
-
-          <Button
-            style={{
-              //   width: "50%",
-              backgroundColor: buttonsModes.gstInvoiceButtonMode
-                ? "#6dbbc7"
-                : "transparent",
-            }}
-            mode={
-              buttonsModes.gstInvoiceButtonMode
-                ? "contained"
-                : "contained-disabled"
-            }
-            onPress={() => handleButtonPress("gst invoice")}
-          >
-            GST Invoice
-          </Button>
-        </View>
         {/* 4 */}
         <View style={styles.favPersonContainer}>
           <Card style={{ height:60, flex:1}}>
@@ -191,37 +179,24 @@ const styles = StyleSheet.create({
   ScrollView: {
     flex: 1,
     paddingHorizontal: 10,
-    // backgroundColor: "orange",
   },
   contentContainer: {
-    // backgroundColor:"orange",
     gap: 18,
   },
   shopText: {
     color: "black",
     fontSize: 20,
     fontWeight: "bold",
-    //  backgroundColor:"lightgreen"
   },
   container: {
     flex: 1,
-    // width:"100%",
-    // height:"100%",
-    // backgroundColor:"yellow"
   },
   pickerContainer: {
-    borderWidth: 1,
-    borderColor: "#0c3b73",
     borderRadius: 10,
-    // backgroundColor: "#0c3b73",
-    // backgroundColor:"orange",
     width: "90%",
-    // height:"50%",
-    paddingHorizontal: 10,
   },
   logoPickerContainer: {
     flexDirection: "row",
-    // backgroundColor:"orange",
     alignItems: "center",
     justifyContent: "space-between",
   },
@@ -237,48 +212,34 @@ const styles = StyleSheet.create({
   },
   formHeading: {
     flexDirection: "row",
-    // backgroundColor: "orange",
     justifyContent: "center",
   },
   formContainer: {
-    // backgroundColor: "lightgreen",
     gap: 15,
-    // borderWidth: 1,
     paddingHorizontal: 5,
   },
   input: {
-    // marginBottom: 16,
     height: 40,
     borderWidth: 1,
     paddingHorizontal: 8,
-    // borderRadius:50,
-    // width:'50%',
-    // alignSelf:"center"
   },
   inputContainer: {
     width: "90%",
-    // backgroundColor: "lighegreen",
     justifyContent: "center",
   },
   inputAndLabelContainer: {
-    // flexDirection: "row",
-    // justifyContent: "space-between",
-    backgroundColor:"brown",
-    // alignItems:"center",
-    // borderWidth:1
   },
   formikChild: {
-    // backgroundColor:"yellow",
     gap: 20,
   },
   error: {
     color: "red",
-    // marginBottom: 16,
   },
   reviewAndPayBtn: {
     backgroundColor: "#6dbbc7",
   },
 });
+
 // import { React, useRef, useContext, useState } from "react";
 // import {
 //   View,
