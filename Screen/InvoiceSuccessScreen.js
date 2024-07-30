@@ -25,7 +25,8 @@ export default function InvoiceSuccessScreen({navigation}) {
   const convertHtmlToPdf = async (dataId) => {
     setLoading(true);
     try {
-      const response = await fetch(`http://192.168.1.4:8888/download/invoice/invoice-${dataId}.pdf`, {
+
+      const response = await fetch(`http://192.168.1.3:8888/download/invoice/invoice-${dataId}.pdf`, {
         credentials: "include",
       });
       const blob = await response.blob();
