@@ -12,6 +12,14 @@ import { readApi } from "../Util/UtilApi";
 const NewGenrateInvoice = ({ data }) => {
   const [loading, setLoading] = useState(false);
   // const [fileUri,setFileUri]=useState();
+  let imgsrc = "";
+  if (data.paymentStatus === "unpaid") {
+    imgsrc =
+      "https://t4.ftcdn.net/jpg/03/53/98/37/360_F_353983709_EMteiTFWbe5rFtAPtaxCotjotHg4gqck.jpg";
+  } else {
+    imgsrc =
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0N2OTLA7ebEBgftFByOI29InQJxJZBjquOcl-LEtooFhju6-RBHDb3Gsmz4Ke2h74m3E&usqp=CAU";
+  }
   const [htmlContent, setHtmlContent] = useState(`<p1>loading...</p1>`);
   useEffect(() => {
     setHtmlContent(`<!DOCTYPE html>
@@ -46,7 +54,7 @@ const NewGenrateInvoice = ({ data }) => {
               justify-content: space-between;
               margin: 1.2em 0;
               padding-bottom: 5rem;
-              padding-top: 5rem;
+           
             }
             .invoice-details div {
               width: 45%;
@@ -66,7 +74,7 @@ const NewGenrateInvoice = ({ data }) => {
               width: 100%;
               border-collapse: collapse;
               margin-bottom: 1.5em;
-              padding-bottom: 4rem;
+              padding-bottom: 3rem;
             }
             .items th, .items td {
               border: 1px solid #ccc;
@@ -81,7 +89,7 @@ const NewGenrateInvoice = ({ data }) => {
               margin-right: 1.2em;
               font-size: 1.2em;
               font-weight: bold;
-              padding-bottom: 5rem;
+              padding-bottom: 2rem;
             }
             .note {
               font-style: italic;
@@ -99,24 +107,48 @@ const NewGenrateInvoice = ({ data }) => {
               text-decoration: none;
               border-radius: 5px;
             }
+            .logoUnpaid{
+              display:flex;
+              flex-direction: row;
+              justify-content:flex-end;
+              }
+              .logoUnpaid img{
+                height: 9rem;
+              }
+              .footer img{
+                width: 1.5rem;
+                height: 1.5rem;
+              }
           </style>
         </head>
         <body>
           <div class="container">
             <div class="header">
               <h1>Invoice</h1>
-              <p>Phone:${data.people.phone}</p>
+              <h3>${data.shop.shopname}</h3>
+              <p>Phone:${data.client.people.phone}</p>
+            </div>
+            <div class="logoUnpaid">
+             <img  src=${
+               data.paymentStatus === "unpaid"
+               ?"https://t4.ftcdn.net/jpg/03/53/98/37/360_F_353983709_EMteiTFWbe5rFtAPtaxCotjotHg4gqck.jpg"
+               :   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0N2OTLA7ebEBgftFByOI29InQJxJZBjquOcl-LEtooFhju6-RBHDb3Gsmz4Ke2h74m3E&usqp=CAU"
+             } alt='status'/>
             </div>
             <div class="invoice-details">
-              <div>
+            
+              <div> 
                 <p><strong>Bill and Ship To:</strong></p>
-                <p>${data.people.firstname} ${data.people.lastname}</p>
-                <p>Phone:${data.people.phone}</p>
+                <p>${data.client.people.firstname} ${
+      data.client.people.lastname
+    }</p>
+                <p>Phone:${data.client.people.phone}</p>
               </div>
               <div class="right-detail-div">
                 <p><strong>Invoice No. 1</strong></p>
                 <p> ${new Date(data.date).toISOString().substring(0, 10)}</p>
                 <p>Total Amount: <strong>${data.total}</strong></p>
+               
                 
               </div>
             </div>
@@ -146,11 +178,12 @@ const NewGenrateInvoice = ({ data }) => {
             </table>
             <div class="total">
               Total Amount:${data.total}
-               
+               <p style="color: red;">${data.paymentStatus}</p>
             </div>
             <div class="footer">
               <p>~ THIS IS A DIGITALLY CREATED INVOICE ~</p>
               <p>Thank you for the business.</p>
+              <div><img src="https://media.licdn.com/dms/image/D4E03AQGnw_RMI1_6JA/profile-displayphoto-shrink_400_400/0/1714732776742?e=1727913600&v=beta&t=tRl5POX-rSjbiuYiE6eB7GNdeR4va4swGFhKIShbvZo"/><p > Powered by Wertone Technology</p></div>
             </div>
           </div>
         </body>
@@ -161,31 +194,34 @@ const NewGenrateInvoice = ({ data }) => {
   const convertHtmlToPdf = async (data) => {
     setLoading(true);
     try {
-      const response = await fetch(`http://192.168.1.3:8888/download/invoice/invoice-${data._id}.pdf`, {
-        credentials: "include",
-      });
+      const response = await fetch(
+        `http://192.168.1.4:8888/download/invoice/invoice-${data._id}.pdf`,
+        {
+          credentials: "include",
+        }
+      );
       const blob = await response.blob();
       const reader = new FileReader();
       reader.onload = async () => {
-        const base64data = reader.result.split(',')[1];
+        const base64data = reader.result.split(",")[1];
         const fileUri = `${FileSystem.documentDirectory}invoice.pdf`;
-  
-        console.log('File URI:', fileUri); // Debugging line
-  
+
+        console.log("File URI:", fileUri); // Debugging line
+
         await FileSystem.writeAsStringAsync(fileUri, base64data, {
           encoding: FileSystem.EncodingType.Base64,
         });
-  
+
         const fileInfo = await FileSystem.getInfoAsync(fileUri);
-        console.log('File Info:', fileInfo); 
+        console.log("File Info:", fileInfo);
         if (await Sharing.isAvailableAsync()) {
-                await Sharing.shareAsync(fileUri, {
-                  mimeType: "application/pdf",
-                  dialogTitle: "Save file to Downloads",
-                }); 
-              }else{
-                console.log("sharing is not possible")
-              }
+          await Sharing.shareAsync(fileUri, {
+            mimeType: "application/pdf",
+            dialogTitle: "Save file to Downloads",
+          });
+        } else {
+          console.log("sharing is not possible");
+        }
         // Debugging line
         // if (fileInfo.exists) {
         //   const intent = {
@@ -194,7 +230,7 @@ const NewGenrateInvoice = ({ data }) => {
         //     flags: 1,
         //     type: 'application/pdf',
         //   };
-  
+
         //   await IntentLauncher.startActivityAsync(intent);
         // } else {
         //   Alert.alert("Error", "File does not exist.", [{ text: "OK" }]);
@@ -202,13 +238,15 @@ const NewGenrateInvoice = ({ data }) => {
       };
       reader.readAsDataURL(blob);
     } catch (error) {
-      Alert.alert("Error", `Failed to download PDF. ${error.message}`, [{ text: "OK" }]);
+      Alert.alert("Error", `Failed to download PDF. ${error.message}`, [
+        { text: "OK" },
+      ]);
     } finally {
       setLoading(false);
     }
   };
 
-  const shareFileHandler=async()=>{
+  const shareFileHandler = async () => {
     // try{
     //   if (await Sharing.isAvailableAsync()) {
     //       await Sharing.shareAsync(fileUri, {
@@ -221,7 +259,7 @@ const NewGenrateInvoice = ({ data }) => {
     //   }catch(error){
     //         console.log("faile to share",error)
     //   }
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -266,7 +304,7 @@ const styles = StyleSheet.create({
   webView: {
     flex: 1,
     width: "100%",
-    height: 800,
+    height: 1000,
   },
   buttonRow: {
     flexDirection: "row",

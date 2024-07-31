@@ -20,7 +20,7 @@ const headlineHandler = (data) => {
     : data.numberOfInvoices;
 };
 
-export default function ViewInvoiceScreen() {
+export default function ViewInvoiceScreen({navigation}) {
   const data = useRoute().params;
   // console.log("routedata , ", data.data.paidUnpaidAll);
   const { shopDetails } = useContext(ShopDetailContext);
@@ -36,14 +36,12 @@ export default function ViewInvoiceScreen() {
   // let formattedDate = "NA";
 
   const headline = headlineHandler(data.data);
-
+  console.log(shopId,"shopId")
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await readApi(
-          api/invoice/list?shop=${shopId}&items=12
-        );
+        const response = await readApi(`api/invoice/list?shop=${shopId}`);
 
         console.log("response length : ", response.result.length);
 
@@ -97,6 +95,15 @@ export default function ViewInvoiceScreen() {
 const toggleModal = () => {
   setModalVisible(!isModalVisible);
 };
+const genrateInvoice=(item)=>{
+  console.log(item,"item")
+  navigation.navigate("StackNavigator", {
+    screen: "genrateInvoice",
+    params: {
+     detail:item
+    },
+  });
+}
 
 
   return (
@@ -116,8 +123,10 @@ const toggleModal = () => {
               <Text style={styles.tableHeaderTextLast}>Amount (₹)</Text>
             </DataTable.Header>
             <Divider />
-            {invoiceData.slice(from, to).map((item, index) => (
-              <DataTable.Row key={item.key} style={styles.row}>
+            {invoiceData.slice(from, to).map((item, index) => 
+            
+            (
+              <DataTable.Row key={index} style={styles.row} onPress={()=>{ genrateInvoice(item)}}>
                 {/* <DataTable.Cell>{(from + index+1)}</DataTable.Cell> */}
                 <Text style={styles.date}>
                   {formatDateHandler(item.updated)}
@@ -136,13 +145,13 @@ const toggleModal = () => {
                   {item.total}
                 </Text>
               </DataTable.Row>
-            ))}
+            ) )}
 
             <DataTable.Pagination
               page={page}
               numberOfPages={Math.ceil(invoiceData.length / itemsPerPage)}
               onPageChange={(page) => setPage(page)}
-              label={${from + 1}-${to} of ${invoiceData.length}}
+              label={`${from + 1}-${to} of ${invoiceData.length}`}
               numberOfItemsPerPageList={numberOfItemsPerPageList}
               numberOfItemsPerPage={itemsPerPage}
               onItemsPerPageChange={onItemsPerPageChange}
