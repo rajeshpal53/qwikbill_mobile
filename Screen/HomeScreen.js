@@ -25,12 +25,11 @@ import CreateInvoice from "../Components/CreateInvoice";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { readApi } from "../Util/UtilApi";
 import DropDownList from "../UI/DropDownList";
-
-
-export default function HomeScreen({ navigation }) {
-
-  const { loginDetail, getData } = useContext(AuthContext);
-  console.log("loginDetail , ", loginDetail);
+import AsyncStorage from "@react-native-async-storage/async-storage";
+export default function HomeScreen({ navigation, route }) {
+  const [lastLoginTime, setLastLoginTime] = useState(route.params.previousLoginTime);
+  const { getData } = useContext(AuthContext);
+  const [loginDetail, setLoginDetail] = useState({});
 
   const [searchQuery, setSearchQuery] = useState("");
   const { searchMode, setSearchMode } = useContext(AuthContext);
@@ -38,9 +37,20 @@ export default function HomeScreen({ navigation }) {
   const pickerRef = useRef();
   const windowWidth = useWindowDimensions().width;
   const windowHeight = useWindowDimensions().height;
+
   useEffect(() => {
-    console.log("windowWidth, ", windowWidth);
-    console.log("windowHeight, ", windowHeight);
+    const getItem = async () => {
+      try {
+        const data = await AsyncStorage.getItem("loginDetail");
+        if (data) {
+          setLoginDetail(JSON.parse(data)); // Parse the data to JSON
+        }
+      } catch (error) {
+        console.log("Failed to fetch login details:", error);
+      }
+    };
+  
+    getItem();
   }, []);
 
   function open() {
@@ -102,7 +112,7 @@ export default function HomeScreen({ navigation }) {
               {/* <SearchHeader onSearch={handleSearch}/> */}
               <Text style={styles.headerText}>{`Welcome ${loginDetail.name} ${loginDetail.surname}`}</Text>
               <Text style={styles.subHeaderText}>
-                Last Login: 14 Jul 2024, 12:49 AM
+                Last Login: {lastLoginTime}
               </Text>
             </View>
             <View style={{ flex: 0.7, marginBottom: 5 }}>

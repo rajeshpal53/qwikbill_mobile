@@ -56,6 +56,7 @@ import { ShopDetailContext } from "./Store/ShopDetailContext.js";
 import GenrateInvoiceScreen from "./Screen/GenrateInvoiceScreen.js";
 import Forgetpasscode from "./Screen/ForgetPasscode/Forgetpasscode.js";
 import CreateNewPasscode from "./Screen/ForgetPasscode/CreateNewPasscode.js";
+import CreateShopScreen from "./Screen/CreateShopScreen.js";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -292,6 +293,11 @@ function StackNavigator() {
           <LogoutBtn/>
         ),
       }}
+      />
+      <Stack.Screen 
+      name="CreateShopScreen"
+      component={CreateShopScreen}
+      options={{}}
       />
       <Stack.Screen
       name="genrateInvoice"
