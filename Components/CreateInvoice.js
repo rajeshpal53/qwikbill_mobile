@@ -74,31 +74,43 @@ export default function CreateInvoice({ navigation }) {
 
   const handleButtonPress = (button) => {
     setButtonsModes((prevstate) => {
-      if (button === "recent" && !prevstate.recentButtonMode) {
+      if (button === "first" && !prevstate.firstButtonMode) {
         return {
-          recentButtonMode: true,
-          provInvoiceButtonMode: false,
-          gstInvoiceButtonMode: false,
+          firstButtonMode: true,
+          secondButtonMode: false,
+          thirdButtonMode: false,
         };
       } else if (
-        button === "prov invoice" &&
-        !prevstate.provInvoiceButtonMode
+        button === "second" &&
+        !prevstate.secondButtonMode
       ) {
         return {
-          gstInvoiceButtonMode: false,
-          recentButtonMode: false,
-          provInvoiceButtonMode: true,
+          firstButtonMode: false,
+          secondButtonMode: true,
+          thirdButtonMode: false,
         };
-      } else if (button === "gst invoice" && !prevstate.gstInvoiceButtonMode) {
+      } else if (button === "third" && !prevstate.thirdButtonMode) {
         return {
-          gstInvoiceButtonMode: true,
-          recentButtonMode: false,
-          provInvoiceButtonMode: false,
+          firstButtonMode: false,
+          secondButtonMode: false,
+          thirdButtonMode: true,
         };
       } else {
         return prevstate;
       }
     });
+
+    if(button === "first"){
+      data = {
+        filteredBy: "recent",
+      }
+      navigation.navigate("StackNavigator", {
+        screen: "ViewInvoices",
+        params: {
+          data: data,
+        },
+      });
+    }
   };
 
   function open() {
@@ -146,8 +158,7 @@ export default function CreateInvoice({ navigation }) {
         buttonsModes={buttonsModes}
         setButtonsModes={setButtonsModes}
         navigation={navigation}
-        toggleButtonsTexts={toggleButtonsTexts}/>
-
+        handleButtonPress={handleButtonPress}
         {/* 4 */}
         {/* 5 */}
         <View style={styles.formContainer}>

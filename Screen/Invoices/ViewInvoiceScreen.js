@@ -15,6 +15,11 @@ const headlineMap = {
 };
 
 const headlineHandler = (data) => {
+
+  if(data.filteredBy === "recent"){
+    return "Recent";
+  }
+
   return data.filteredBy === "dateRange"
     ? headlineMap[data.selectedOption] || "Date Wise"
     : data.numberOfInvoices;
@@ -36,13 +41,13 @@ export default function ViewInvoiceScreen({navigation}) {
   // let formattedDate = "NA";
 
   const headline = headlineHandler(data.data);
-  console.log(shopId,"shopId")
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await readApi(`api/invoice/list?shop=${shopId}`);
 
+        const response = await readApi(
+          `api/invoice/list?shop=${shopId}&items=12`
+        );
         console.log("response length : ", response.result.length);
 
         console.log("complete response \n  " , response.result[0].client)

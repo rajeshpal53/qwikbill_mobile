@@ -72,6 +72,34 @@ export default function FilterInvoiceScreen() {
     paidUnpaidAllHandler()
   }, [buttonsModes]);
 
+  const handleButtonPress = (button) => {
+        setButtonsModes((prevstate) => {
+          if (button === "first" && !prevstate.firstButtonMode) {
+            return {
+              firstButtonMode: true,
+              secondButtonMode: false,
+              thirdButtonMode: false,
+            };
+          } else if (
+            button === "second" &&
+            !prevstate.secondButtonMode
+          ) {
+            return {
+              firstButtonMode: false,
+              secondButtonMode: true,
+              thirdButtonMode: false,
+            };
+          } else if (button === "third" && !prevstate.thirdButtonMode) {
+            return {
+              firstButtonMode: false,
+              secondButtonMode: false,
+              thirdButtonMode: true,
+            };
+          } else {
+            return prevstate;
+          }
+        });
+      };
 
   const handlePressOutside = () => {
     // Hide the keyboard and blur the TextInput
@@ -194,6 +222,7 @@ export default function FilterInvoiceScreen() {
         <ThreeToggleBtns 
         buttonsModes={buttonsModes}
         setButtonsModes={setButtonsModes}
+        handleButtonPress={handleButtonPress}
         toggleButtonsTexts={toggleButtonsTexts}/>
 
         <View style={styles.tabContainer}>
