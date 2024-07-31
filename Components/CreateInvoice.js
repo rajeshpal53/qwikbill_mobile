@@ -26,7 +26,7 @@ export default function CreateInvoice({ navigation }) {
   const windowWidth = useWindowDimensions().width;
   const windowHeight = useWindowDimensions().height;
   const { selectedShop, setSelectedShop } = useContext(AuthContext);
-  const [invoiceType, setInvoiceType] = useState("recent")
+  const [invoiceType, setInvoiceType] = useState("provInvoice")
   const pickerRef = useRef();
 
   const initialValues = {
@@ -159,17 +159,7 @@ export default function CreateInvoice({ navigation }) {
         setButtonsModes={setButtonsModes}
         navigation={navigation}
         handleButtonPress={handleButtonPress}
-        toggleButtonsTexts={toggleButtonsTexts}/>
-
         {/* 4 */}
-        <View style={styles.favPersonContainer}>
-          <Card style={{ height:60, flex:1}}>
-            <Card.Content style={{}}>
-            <Ionicons name="person" size={30} color="#0c3b73" />
-            </Card.Content>
-          </Card>
-          
-        </View>
         {/* 5 */}
         <View style={styles.formContainer}>
           <View style={styles.formHeading}>
