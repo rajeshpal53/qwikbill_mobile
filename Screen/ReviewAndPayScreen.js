@@ -10,7 +10,7 @@ import {
   PaperProvider,
   IconButton,
 } from "react-native-paper";
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import InvoiceDataTable from "../Components/InvoiceDataTable";
@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 export default function ReviewAndPayScreen({ navigation }) {
   const route = useRoute();
 
-  const { formData,submitHandler,fetchDataId} = route.params;
+  const { formData, submitHandler, fetchDataId } = route.params;
 
   const [checked, setChecked] = useState(false);
 
@@ -47,20 +47,20 @@ export default function ReviewAndPayScreen({ navigation }) {
   //   }
   // }, [formData.items, totalAdded]); // Ensure dependencies are correct
 
-  const buttonPressed =async (buttonName) => {
-     const newData= await submitHandler(formData,fetchDataId)
+  const buttonPressed = async (buttonName) => {
     hideModal();
-    navigation.navigate("StackNavigator", { 
-      screen: "InvoiceSuccess", 
-      params: { 
-        newData:newData,
+    const newData = await submitHandler(formData, fetchDataId);
+    navigation.navigate("StackNavigator", {
+      screen: "InvoiceSuccess",
+      params: {
+        newData: newData,
         formData: formData,
-        paymentMode:buttonName,
-        submitHandler:submitHandler,
-      } 
+        paymentMode: buttonName,
+        submitHandler: submitHandler,
+      },
     });
-  }
-
+  };
+  console.log(checked, "checked");
   return (
     <View style={styles.mainContainer}>
       <View style={styles.overlay}></View>
@@ -110,62 +110,69 @@ export default function ReviewAndPayScreen({ navigation }) {
                   contentContainerStyle={styles.containerStyle}
                 >
                   <View style={{ alignItems: "center" }}>
-                    <Text style={{fontSize:20}}>Payment Through</Text>
+                    <Text style={{ fontSize: 20 }}>Payment Through</Text>
                   </View>
-                <View style={{
-                    flexDirection:"row",
-                    // backgroundColor:"lightgreen",
-                    justifyContent:"space-around"
-                    }}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      // backgroundColor:"lightgreen",
+                      justifyContent: "space-around",
+                    }}
+                  >
+                    <View style={{ alignItems: "center" }}>
+                      <View
+                        style={{
+                          borderWidth: 2,
+                          borderRadius: 50,
+                        }}
+                      >
+                        <IconButton
+                          style={{ margin: 5 }}
+                          icon="qrcode-scan"
+                          iconColor="grey"
+                          size={60}
+                          onPress={() => buttonPressed("scan")}
+                        />
+                      </View>
 
-                  
-                  <View style={{alignItems:"center"}}>
-                    <View style={{ 
-                        borderWidth: 2 , 
-                        borderRadius:50,
-                        }}>
-                      <IconButton
-                        style={{ margin: 5}}
-                        icon="qrcode-scan"
-                        iconColor="grey"
-                        size={60}
-                        onPress={() =>buttonPressed("scan")}
-                      />
+                      <Text style={{ fontSize: 18 }}>Scanner</Text>
                     </View>
 
-                    <Text style={{fontSize:18}}>Scanner</Text>
-                  </View>
+                    <View style={{ alignItems: "center" }}>
+                      <View
+                        style={{
+                          // backgroundColor:"grey",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          borderWidth: 2,
+                          borderRadius: 50,
+                        }}
+                      >
+                        <FontAwesome
+                          name="rupee"
+                          size={50}
+                          color="grey"
+                          style={{ marginHorizontal: 30, marginVertical: 18 }}
+                          onPress={() => buttonPressed("cash")}
+                        />
+                      </View>
 
-                  <View style={{alignItems:"center"}}>
-                  <View style={{
-                    // backgroundColor:"grey",
-                    justifyContent:"center",
-                    alignItems:"center",
-                    borderWidth:2,
-                    borderRadius:50
-                  }}>
-                     <FontAwesome name="rupee" size={50} color="grey"
-                     style={{ marginHorizontal:30, marginVertical:18}}
-                     onPress={() =>buttonPressed("cash") }/>
-                  </View>
-
-                    <Text style={{fontSize:18}}>Cash</Text>
-                  </View>
-
-                  <View style={{alignItems:"center"}}>
-                  <View style={{ borderWidth: 2 , borderRadius:50}}>
-                      <IconButton
-                      
-                        style={{ margin: 5}}
-                        icon="credit-card"
-                        iconColor="grey"
-                        size={60}
-                        onPress={() => buttonPressed("card")}
-                      />
+                      <Text style={{ fontSize: 18 }}>Cash</Text>
                     </View>
 
-                    <Text style={{fontSize:18}}>Card</Text>
-                  </View>
+                    <View style={{ alignItems: "center" }}>
+                      <View style={{ borderWidth: 2, borderRadius: 50 }}>
+                        <IconButton
+                          style={{ margin: 5 }}
+                          icon="credit-card"
+                          iconColor="grey"
+                          size={60}
+                          onPress={() => buttonPressed("card")}
+                        />
+                      </View>
+
+                      <Text style={{ fontSize: 18 }}>Card</Text>
+                    </View>
                   </View>
                 </Modal>
               </Portal>
@@ -186,7 +193,23 @@ export default function ReviewAndPayScreen({ navigation }) {
 
                 <View style={styles.confirmAndPayBtnContainer}>
                   <PaperProvider>
-                    <Button mode="contained" onPress={showModal}>
+                    <Button
+                      mode="contained"
+                      onPress={
+                        checked
+                          ?async()=>{ const newData = await submitHandler(formData, fetchDataId);
+                            navigation.navigate("StackNavigator", {
+                              screen: "InvoiceSuccess",
+                              params: {
+                                newData: newData,
+                                formData: formData,
+                                paymentMode: "unpaid",
+                                submitHandler: submitHandler,
+                              },
+                            });}
+                          : showModal
+                      }
+                    >
                       Confirm and Pay
                     </Button>
                   </PaperProvider>
@@ -257,7 +280,7 @@ const styles = StyleSheet.create({
   containerStyle: {
     backgroundColor: "white",
     padding: 20,
-    gap:10,
+    gap: 10,
     marginHorizontal: 10,
   },
 });
