@@ -39,10 +39,10 @@ export const services = [
       navigateTo:"CreateShopScreen"
     },
     {
-      name: "Market Place",
+      name: "View Your Shops",
       icon: <FontAwesome5 name="store" size={30} color="#0c3b73" />,
       key: "6",
-      navigateTo:"CreateInvoice"
+      navigateTo:"ViewShops"
     },
     {
       name: "Cheque Services",

@@ -56,7 +56,8 @@ import { ShopDetailContext } from "./Store/ShopDetailContext.js";
 import GenrateInvoiceScreen from "./Screen/GenrateInvoiceScreen.js";
 import Forgetpasscode from "./Screen/ForgetPasscode/Forgetpasscode.js";
 import CreateNewPasscode from "./Screen/ForgetPasscode/CreateNewPasscode.js";
-import CreateShopScreen from "./Screen/CreateShopScreen.js";
+import CreateShopScreen from "./Screen/Shops/CreateShopScreen.js";
+import ViewShopsScreen from "./Screen/Shops/ViewShopsScreen.js";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -345,6 +346,13 @@ function StackNavigator() {
   
         ),
       })}
+      />
+      <Stack.Screen
+      name="ViewShops"
+      component={ViewShopsScreen}
+      options={{
+        headerTitle:"My Shops"
+      }}
       />
     </Stack.Navigator>
   );
