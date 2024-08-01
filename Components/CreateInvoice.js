@@ -27,6 +27,7 @@ export default function CreateInvoice({ navigation }) {
   const windowHeight = useWindowDimensions().height;
   const { selectedShop, setSelectedShop } = useContext(AuthContext);
   const [invoiceType, setInvoiceType] = useState("provInvoice")
+
   const pickerRef = useRef();
 
   const initialValues = {
@@ -131,7 +132,7 @@ export default function CreateInvoice({ navigation }) {
     //   .min(6, 'Password must be at least 6 characters')
     //   .required('Password is required')
   });
-
+      console.log(invoiceType,  "invoice Type")
   return (
     <View style={styles.container}>
       <ScrollView
@@ -160,8 +161,6 @@ export default function CreateInvoice({ navigation }) {
         navigation={navigation}
         toggleButtonsTexts={toggleButtonsTexts}
         handleButtonPress={handleButtonPress}/>
-        {/* 4 */}
-        {/* 5 */}
         <View style={styles.formContainer}>
           <View style={styles.formHeading}>
             <Text style={{ fontSize: 20 }}>Provisional Invoice No :- </Text>
@@ -169,7 +168,7 @@ export default function CreateInvoice({ navigation }) {
           </View>
 
           {/* <AddInvoice initialValues={initialValues}/> */}
-          <AddInvoiceScreen navigation={navigation} />
+          <AddInvoiceScreen navigation={navigation} invoiceType={invoiceType} />
         </View>
         {/* 6 */}
         <View></View>

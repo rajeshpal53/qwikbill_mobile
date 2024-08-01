@@ -48,7 +48,7 @@ export const services = [
       name: "Cheque Services",
       icon: (
         <MaterialCommunityIcons
-          name="check-box-outline"
+          name="newspaper-variant"
           size={30}
           color="#0c3b73"
         />

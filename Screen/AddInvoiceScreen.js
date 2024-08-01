@@ -17,7 +17,7 @@ const getYear = (date) => {
      return nextMonth.toISOString().substring(0, 10);
    };
 
-const AddInvoiceScreen=({navigation})=>{
+const AddInvoiceScreen=({navigation,invoiceType})=>{
      const{showSnackbar}= useSnackbar();
      const {shopDetails}=useContext(ShopDetailContext)
      const[initialValues,setInitialValues]=useState({
@@ -25,6 +25,7 @@ const AddInvoiceScreen=({navigation})=>{
           phone: "",
           people:"",
           address:"",
+          gstnumber:"",
           date: new Date().toISOString().split('T')[0],
           items: [{ itemName: "", price: "", quantity: "", total: "" }],
         })
@@ -42,7 +43,7 @@ const submitHandler= async( values,fetchDataId)=>{
           people:fetchDataId,
         };
         delete postData.phone;
-        delete postData.address
+        // delete postData.address
         console.log(postData, "------postdata");
         try{
         
@@ -52,6 +53,7 @@ const submitHandler= async( values,fetchDataId)=>{
         const response= await createApi("api/invoice/create",postData,headers)
         showSnackbar("invoice Added Successfull","success")
         if(response){
+          console.log(response.result)
           return(response.result)
         }
        
@@ -63,7 +65,7 @@ const submitHandler= async( values,fetchDataId)=>{
 }
      return( 
      <ScrollView>
-       <AddInvoice initialValues={initialValues} navigation={navigation} shopDetails={shopDetails} submitHandler={submitHandler}/>
+       <AddInvoice initialValues={initialValues} invoiceType={invoiceType} navigation={navigation} shopDetails={shopDetails} submitHandler={submitHandler}/>
       </ScrollView>
      )
 }
