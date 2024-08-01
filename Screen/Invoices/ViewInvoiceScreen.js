@@ -97,9 +97,28 @@ export default function ViewInvoiceScreen({navigation}) {
   );
 
   
-const toggleModal = () => {
+const toggleModal = (sortBy) => {
+  let  filterData=[]
+  if(sortBy==="paid"){
+    filterData=invoiceData.filter(item=>item.paymentStatus==="paid")
+    setInvoiceData(filterData)
+  }else if(sortBy==="unpaid"){
+     filterData=invoiceData.filter(item=>item.paymentStatus==="unpaid")
+     setInvoiceData(filterData)
+  }
+  else if(sortBy==="old to new"){
+      filterData=  invoiceData.sort((a, b) => new Date(a.date) - new Date(b.date))
+      setInvoiceData(filterData)
+  }
+  else {
+    filterData=  invoiceData.sort((a, b) => new Date(b.date) - new Date(a.date))
+    setInvoiceData(filterData)
+  }
   setModalVisible(!isModalVisible);
 };
+const openModel=()=>{
+  setModalVisible(true);
+}
 const genrateInvoice=(item)=>{
   console.log(item,"item")
   navigation.navigate("StackNavigator", {
@@ -109,8 +128,6 @@ const genrateInvoice=(item)=>{
     },
   });
 }
-
-
   return (
     <>
       <ScrollView style={styles.scrollView}>
@@ -151,7 +168,6 @@ const genrateInvoice=(item)=>{
                 </Text>
               </DataTable.Row>
             ) )}
-
             <DataTable.Pagination
               page={page}
               numberOfPages={Math.ceil(invoiceData.length / itemsPerPage)}
@@ -169,7 +185,7 @@ const genrateInvoice=(item)=>{
       <FAB
         icon="filter"
         style={styles.fab}
-        onPress={toggleModal}
+        onPress={()=>{openModel()}}
       />
       <InvoiceFilterModel isModalVisible = {isModalVisible} setModalVisible = {setModalVisible} toggleModal={toggleModal}/>
     </>
