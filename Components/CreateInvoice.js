@@ -158,7 +158,8 @@ export default function CreateInvoice({ navigation }) {
         buttonsModes={buttonsModes}
         setButtonsModes={setButtonsModes}
         navigation={navigation}
-        handleButtonPress={handleButtonPress}
+        toggleButtonsTexts={toggleButtonsTexts}
+        handleButtonPress={handleButtonPress}/>
         {/* 4 */}
         {/* 5 */}
         <View style={styles.formContainer}>
