@@ -149,9 +149,10 @@ export default function HomeScreen({ navigation, route }) {
                 style={styles.flatList}
                 data={services}
                 numColumns={4}
-                renderItem={({ item }) => (
+                renderItem={({ item ,index}) => (
                   <TouchableOpacity
                     style={styles.item}
+                    key={index}
                     onPress={() => goToHandler(item.navigateTo)}
                   >
                     <View style={{ alignItems: "center" }}>
@@ -160,8 +161,8 @@ export default function HomeScreen({ navigation, route }) {
                     </View>
                   </TouchableOpacity>
                 )}
-                keyExtractor={(item) => item.key}
-                key={4}
+                keyExtractor={(item,index) =>index}
+               
                 // ItemSeparatorComponent={<View style={{height:10}} />}
                 ListEmptyComponent={<Text>No Items Found</Text>}
                 // ListHeaderComponent={<Text style={styles.listHeader}>List</Text>}

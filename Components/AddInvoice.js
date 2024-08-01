@@ -64,7 +64,7 @@ const validationSchema = Yup.object().shape({
     .required("Must have items")
     .min(1, "Minimum of 1 item"),
 });
-const AddInvoice = ({ initialValues,submitHandler,shopDetails}) => {
+const AddInvoice = ({ initialValues,submitHandler,shopDetails , invoiceType}) => {
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [showItemOptions, setShowItemOptions] = useState(false);
@@ -164,6 +164,8 @@ const AddInvoice = ({ initialValues,submitHandler,shopDetails}) => {
                               "client",
                               option.name
                             );
+                            setFieldValue("gstnumber",option.people.gstnumber||'')
+                            setFieldValue("address",option.people.address||'')
                             setFieldValue("phone", option.phone);
                             setFetchData(option)
                             setShowOptions(false);
@@ -190,6 +192,24 @@ const AddInvoice = ({ initialValues,submitHandler,shopDetails}) => {
                     visible={touched.address && errors.address}
                   >
                     {errors.address}
+                  </HelperText>
+                )}
+                 {invoiceType==='gstInvoice'&&(<TextInput
+                  label="GST Number"
+                  mode="outlined"
+                  onChangeText={handleChange("gstnumber")}
+                  onBlur={handleBlur("gstnumber")}
+                  value={values.gstnumber}
+                  error={touched.gstnumber && errors.gstnumber ? true : false}
+                  style={{ width: "100%", marginBottom: 10 }}
+                />)}
+                 
+                {touched.gstnumber && errors.gstnumber && (
+                  <HelperText
+                    type="error"
+                    visible={touched.gstnumber && errors.gstnumber}
+                  >
+                    {errors.gstnumber}
                   </HelperText>
                 )}
                  
