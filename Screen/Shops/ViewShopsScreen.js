@@ -66,7 +66,7 @@ export default function ViewShopsScreen() {
           <Avatar.Text label={item.shopname.charAt(0)} size={40} />
           <View style={styles.itemContent}>
             <Text style={styles.shopName}>{item.shopname}</Text>
-            <Text style={styles.phone}>{item.address[0].city}</Text>
+            <Text style={styles.phone}>{item.address[0]?.city||''}</Text>
           </View>
 
           <Menu
