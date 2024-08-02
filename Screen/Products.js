@@ -1,28 +1,34 @@
+// Products.js
 import React, { useEffect, useState, useContext } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
-import ProductCard from "../Components/ProductCard";
-import { ActivityIndicator, Button,FAB} from "react-native-paper";
+import { View, StyleSheet } from "react-native";
+import { ActivityIndicator, FAB } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
 import { readApi } from "../Util/UtilApi";
-import Icon from "react-native-vector-icons/Ionicons";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { AuthContext } from "../Store/AuthContext";
+import ItemList from "../Components/Lists/ItemList";
+import Icon from "react-native-vector-icons/Ionicons";
+import { deleteApi } from "../Util/UtilApi";
+import { useSnackbar } from "../Store/SnackbarContext";
+import DeleteModal from "../UI/DeleteModal";
 
 export default function Products({ navigation }) {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const { searchMode, setSearchMode } = useContext(AuthContext);
+  const [deleteId, setDeleteId] = useState();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const { setSearchMode } = useContext(AuthContext);
+
   const isFocused = useIsFocused();
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
     async function fetchData() {
+      console.log("pre")
       try {
         const response = await readApi("api/product/list");
-        const result = await response;
         setProducts(response.result);
       } catch (Error) {
-        throw new Error("Network response was not ok");
+        console.error("Error fetching products", Error);
       } finally {
         setIsLoading(false);
       }
@@ -34,60 +40,73 @@ export default function Products({ navigation }) {
     return <ActivityIndicator size="large" />;
   }
 
-  const handleOutsidePress = () => {
-    setSearchMode(false);
+  const handleDelete = async () => {
+    const updatedInvoice = products.filter((item) => item._id !== deleteId);
+    // setInvoices((prev)=>prev.filter((item) => item.id !== productId));
+    setProducts(updatedInvoice);
+    // setVisible(false);
+    try {
+      const response = await deleteApi(`api/product/delete/${deleteId}`);
+      setIsModalVisible(false);
+      showSnackbar("item delete successfully", "success");
+    } catch (error) {
+      console.error("Error:", error);
+      showSnackbar("Failed to delete the item", "error");
+    }
   };
-  return (
-    <View  style={styles.container}>
-      <View style={{flex:1}}>
-      <TouchableWithoutFeedback onPress={handleOutsidePress} style={{height:"100%"}}>
 
-      {products ? (<ProductCard
-          products={products}
-          navigation={navigation}
-          setProducts={setProducts}
-        />) : (
-          <Text> no Product found</Text>
-        )}
-        <FAB
-        icon={() => <Icon name="add-outline" size={20} color="white" />}
-        theme={{ colors: { primary: '#fff' } }}
-        color="white"
-        style={styles.fab}
-        textColor="white"
-        onPress={() => {
-          navigation.navigate("AddProduct");
-        }}
-        label="Add New Product"
-        labelStyle={{color:"#ffffff"}}
+  const handleEdit = (id) => {
+    navigation.navigate("EditProduct", { productId: id });
+  };
+
+  const handleView = (id) => {
+    navigation.navigate("ProductDetail", { productId: id });
+  };
+
+  const setModalVisible = (id) => {
+
+    setDeleteId(id);
+    setIsModalVisible(true);
+
+  }
+
+  return (
+    <View style={styles.container}>
+      <ItemList
+        data={products}
+        titleKey="name"
+        subtitleKey="price"
+        onDelete={setModalVisible}
+        onEdit={handleEdit}
+        onView={handleView}
       />
-      </TouchableWithoutFeedback>
-      </View>
-      
+      <FAB
+        icon={() => <Icon name="add-outline" size={20} color="white" />}
+        style={styles.fab}
+        onPress={() => navigation.navigate("AddProduct")}
+        label="Add New Product"
+      />
+      {isModalVisible && (
+        <DeleteModal
+          visible={isModalVisible}
+          setVisible={setIsModalVisible}
+          handleDelete={handleDelete}
+        />
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  addButton: {
-    color: "floralwhite ",
-    backgroundColor: "#96214e",
-    marginVertical: 20,
-  },
   container: {
     flex: 1,
-  },
-  text: {
-    fontSize: 24,
   },
   fab: {
     position: "absolute",
     margin: 13,
     right: 0,
     bottom: 0,
-    color: "floralwhite ",
     backgroundColor: "#96214e",
-    // zIndex: 100,
     color: "white",
   },
 });

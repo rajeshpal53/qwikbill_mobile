@@ -22,14 +22,13 @@ function EditProductScreen({route,navigation}) {
       const response = await readApi(`api/product/read/${productId}`);
             const data = await response;
             const productData = data.result;
-            console.log(productData)
             setInitialValues({
-              name: productData.name,
-              productCategory: productData.productCategory.name,
-              sellingPrice: productData.price.toString()|| '',
-              purchasePrice: productData.customField[0].fieldValue,
-              hsncode: productData.customField[1].fieldValue || "",
-              taxValue: productData.customField[2].fieldValue.toString() || "",
+              name: productData?.name || '',
+              productCategory: productData?.productCategory?.name || '',
+              sellingPrice: productData?.price?.toString()|| '',
+              purchasePrice: productData?.customField[0]?.fieldValue || '',
+              hsncode: productData?.customField[1]?.fieldValue || "",
+              taxValue: productData?.customField[2]?.fieldValue?.toString() || "",
             });
            
           } catch (Error) {
@@ -43,7 +42,8 @@ function EditProductScreen({route,navigation}) {
 
 
   
-      },[])
+      },[productId])
+
       if(isLoading){
           return<ActivityIndicator size='large'/>
       }

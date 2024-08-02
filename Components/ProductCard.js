@@ -1,15 +1,19 @@
 import React, { useState, useContext } from "react";
-import { Button, Card, Text } from "react-native-paper";
-import { IconButton, Icon } from "react-native-paper";
+import { Button, Card, Text, IconButton, Icon, Menu, Avatar } from "react-native-paper";
 import { StyleSheet, View, FlatList } from "react-native";
 import DeleteModal from "../UI/DeleteModal";
 import{useSnackbar} from "../Store/SnackbarContext";
 import { deleteApi } from "../Util/UtilApi";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
+// import Icon from "react-native-vector-icons/MaterialIcons";
+import { TouchableOpacity } from "react-native-gesture-handler";
+
 function ProductCard({ products, navigation,setProducts }) {
   const [visible, setVisible] = useState(false);
   const [productId, setProductId] = useState("");
   const [expandedId, setExpandedId] = useState(null);
+  const [currentItem, setCurrentItem] = useState(null);
   const{showSnackbar}=useSnackbar()
   function deleteProductHandler(id) {
     setProductId(id);
@@ -18,6 +22,18 @@ function ProductCard({ products, navigation,setProducts }) {
 
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);
+  };
+
+  const showMenu = (item) => {
+    setCurrentItem(item);
+    setVisible(true);
+    console.log("menu clicked");
+  };
+
+  const hideMenu = () => {
+    setVisible(false);
+    setCurrentItem(null); // Reset current item when hiding the menu
+    console.log("hide clicked");
   };
 
    const handleDelete = async () => {
@@ -53,21 +69,50 @@ function ProductCard({ products, navigation,setProducts }) {
   const renderItem = ({ item }) => {
     const isExpanded = item._id === expandedId;
     return (
-        <Card
-        // key={index}
-        style={styles.card}
+        <TouchableOpacity 
         onPress={() => {
           // customerDetail(item._id);
           toggleExpand(item._id)
         }}
+        // style={{backgroundColor:"orange"}}
       >
-        {/* <Card.Title title={item.created} titleStyle={styles.cardTitle} /> */}
-        <Card.Content style={styles.itemContent}>
-          <View style = {styles.cardMainContent}>
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.phone}>${item.price}</Text>
+        <View style={styles.itemContainer}>
+          <View style={styles.underItemContainer}>
+            <Avatar.Text label={item.name.charAt(0)} size={40} />
+            <View style={styles.itemContent}>
+              <Text style={styles.name}>{item.name}</Text>
+              <Text style={styles.phone}>${item.price}</Text>
+            </View>
+
+          <Menu
+            visible={visible && currentItem?._id === item._id} // Check if currentItem matches the item
+            onDismiss={hideMenu}
+            anchor={
+              <TouchableOpacity
+                onPress={() => showMenu(item)}
+                style={styles.menuButton}
+              >
+                <Feather name="more-vertical" size={24} color="black" />
+              </TouchableOpacity>
+            }
+            anchorPosition="bottom"
+           >
+            <Menu.Item
+              style={{ color: "black" }}
+              onPress={() => ProductDetail(item._id)}
+              title="View Product"
+            />
+            <Menu.Item
+              style={{ color: "black" }}
+              onPress={() => editProductHandler(item._id)}
+              title="Edit Product"
+            />
+            <Menu.Item
+              onPress={() => deleteProductHandler(item._id)}
+              title="Delete Product"
+            />
+           </Menu>
           </View>
-          
           {isExpanded && (
             <View style={styles.extraInfo}>
               <Text>{item.name}</Text>
@@ -76,41 +121,9 @@ function ProductCard({ products, navigation,setProducts }) {
               <Text>{item.name}</Text> 
             </View>
           )}
-        </Card.Content>
-        {isExpanded && (
-          <Card.Actions>
-            <View style={styles.actionBtnContainer}>
-            <Button
-            style={styles.actionBtns}
-            onPress={() => ProductDetail(item._id)}>
-              <Icon source="eye" color="white" size={20} />{" "}
-              <Text style={{ color: "white" }}>View</Text>
-          </Button>
-          <IconButton
-            icon="delete"
-            iconColor="#0c3b73"
-            size={20}
-            onPress={() => deleteProductHandler(item._id)}
-          />
-          {visible && (
-            <DeleteModal
-              visible={visible}
-              setVisible={setVisible}
-              handleDelete={handleDelete}
-            />
-          )}
-          <Button
-            style={styles.actionBtns}
-            onPress={() => editProductHandler(item._id)}
-          >
-            <Icon source="pencil" color="white" size={20} /> 
-            <Text style={{color:"white"}}>Edit</Text>
-          </Button>
-          </View>
-        </Card.Actions>
-        )}
+        </View>
 
-        </Card>
+        </TouchableOpacity>
     );
   };
 
@@ -132,6 +145,12 @@ const styles = StyleSheet.create({
   },
   card: {
     marginVertical: 10,
+  },
+  itemContainer: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    // backgroundColor:"orange"
   },
   cardMainContent:{
     // backgroundColor:"orange",
@@ -155,7 +174,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 20,
+    // padding: 20,
     backgroundColor: '#fff',
     // backgroundColor:"orange",
     // marginBottom:75
@@ -172,7 +191,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   itemContent: {
-    flexDirection: 'column',
+    flex:1,
+    marginLeft:10
   },
   name: {
     fontSize: 18,
@@ -187,6 +207,12 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#eee',
     paddingTop: 10,
+  },
+  underItemContainer: {
+    flexDirection:"row"
+  },
+  menuButton: {
+    padding: 10,
   },
 });
 export default ProductCard;
