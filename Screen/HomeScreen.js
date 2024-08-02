@@ -1,3 +1,5 @@
+
+
 import React, { useState, useContext, useEffect } from "react";
 import { useRef } from "react";
 import { View, Text, useWindowDimensions, Pressable } from "react-native";
@@ -26,9 +28,10 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { readApi } from "../Util/UtilApi";
 import DropDownList from "../UI/DropDownList";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 export default function HomeScreen({ navigation, route }) {
   const [lastLoginTime, setLastLoginTime] = useState(route.params.previousLoginTime);
-  const { getData } = useContext(AuthContext);
+  // const { getData } = useContext(AuthContext);
   const [loginDetail, setLoginDetail] = useState({});
 
   const [searchQuery, setSearchQuery] = useState("");
