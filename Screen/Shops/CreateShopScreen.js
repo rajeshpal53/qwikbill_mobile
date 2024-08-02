@@ -5,7 +5,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { useNavigation } from "@react-navigation/native";
 import CustomTextInput from "../../Components/Custom/CustomTextInput";
-import { createApi } from "../../Util/UtilApi";
+import { createApi, updateApi } from "../../Util/UtilApi";
 import { useSnackbar } from "../../Store/SnackbarContext";
 import { useRoute } from "@react-navigation/native";
 // Validation Schema using Yup
@@ -70,7 +70,7 @@ export default function CreateShopScreen() {
           branch: data?.bankDetail[0]?.branch || "",
         }}
         validationSchema={validationSchema}
-        onSubmit={async (values) => {
+        onSubmit={async (values, {resetForm}) => {
           console.log("shop created and values are , ", values);
 
           const formattedData = {
@@ -96,22 +96,46 @@ export default function CreateShopScreen() {
             email: values.email,
           };
 
-          try {
-            headers = {
-              "Content-Type": "application/json",
-            };
-            const response = await createApi(
-              "api/shop/create",
-              formattedData,
-              headers
-            );
-
-            console.log("response is , ", response)
-            showSnackbar("shop created successfully", "success");
-          } catch (error) {
-            console.log("error is ", error);
-            showSnackbar("error to create new product", "error");
+          if(data)
+          {
+            console.log("data is , ", data);
+            try {
+              headers = {
+                "Content-Type": "application/json",
+              };
+              const response = await updateApi(
+                `api/shop/update/${data._id}`,
+                formattedData,
+                headers
+              );
+  
+              console.log("response is , ", response)
+              showSnackbar("shop updated successfully", "success");
+              resetForm();
+            } catch (error) {
+              console.log("error is ", error);
+              showSnackbar("error to create new product", "error");
+            }
+          }else{
+            try {
+              headers = {
+                "Content-Type": "application/json",
+              };
+              const response = await createApi(
+                "api/shop/create",
+                formattedData,
+                headers
+              );
+  
+              console.log("response is , ", response)
+              showSnackbar("shop created successfully", "success");
+              resetForm();
+            } catch (error) {
+              console.log("error is ", error);
+              showSnackbar("error to create new product", "error");
+            }
           }
+          
         }}
       >
         {({
