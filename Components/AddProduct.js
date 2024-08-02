@@ -39,6 +39,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const AddProduct = ({ navigation,initialValues,handleSubmit }) => {
+  console.log("in addproduct ", initialValues);
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [showHsnOptions, setShowHsnOptions] = useState(false);
