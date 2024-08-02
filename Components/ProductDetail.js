@@ -22,12 +22,12 @@ function ProductDetail({ detail }) {
         <Card.Content style={styles.cardContainer}>
           <View style={{ width: "100%", flexDirection: "row" }}>
             <Text style={styles.descriptionText}> Product Category: </Text>
-            <Text style={styles.descriptionText}>{detail.productCategory.name}</Text>
+            <Text style={styles.descriptionText}>{detail?.productCategory?.name}</Text>
           </View>
           <View style={{ width: "100%", flexDirection: "row" }}>
             <Text style={styles.descriptionText}> description: </Text>
             <Text style={styles.descriptionTextValue}>
-             {detail.productCategory.description}
+             {detail?.productCategory?.description}
             </Text>
           </View>
         </Card.Content>
