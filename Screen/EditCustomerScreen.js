@@ -8,6 +8,7 @@ function EditCustomerScreen({route,navigation}) {
   const[initialValues,setInitialValues]=useState({firstname: '', lastname: '', email: '', phone: '', type: ''})
   const [isLoading,setIsLoading]=useState(true)
   const customerId= route.params.customerId
+  console.log( "cstmr id is ", customerId)
   const{showSnackbar}= useSnackbar();
     useEffect(()=>{
       const fetchDataHandler = async () => {

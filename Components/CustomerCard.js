@@ -1,14 +1,18 @@
 import React, { useState, useContext } from "react";
 import { Button, Card, Text } from "react-native-paper";
-import { IconButton, Icon, Avatar } from "react-native-paper";
+import { IconButton, Icon, AvatarMenu, Avatar, Menu} from "react-native-paper";
 import { StyleSheet, View, FlatList } from "react-native";
 import DeleteModal from "../UI/DeleteModal";
 import { useSnackbar } from "../Store/SnackbarContext";
 import { deleteApi } from "../Util/UtilApi";
+import { Feather } from "@expo/vector-icons";
+import { TouchableOpacity } from "react-native-gesture-handler";
+
 export default function CustomerCard({ customer, navigation, setCustomer }) {
   const [visible, setVisible] = useState(false);
   const [customerId, setCustomerId] = useState("");
   const [expandedId, setExpandedId] = useState(null);
+  const [currentItem, setCurrentItem] = useState(null);
   const { showSnackbar } = useSnackbar();
   function deleteCustomerDelete(id) {
     setCustomerId(id);
@@ -18,6 +22,19 @@ export default function CustomerCard({ customer, navigation, setCustomer }) {
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);
   };
+
+  const showMenu = (item) => {
+    setCurrentItem(item);
+    setVisible(true);
+    console.log("menu clicked");
+  };
+
+  const hideMenu = () => {
+    setVisible(false);
+    setCurrentItem(null); // Reset current item when hiding the menu
+    console.log("hide clicked");
+  };
+
   const handleDelete = async () => {
     const updateCustomer = customer.filter((item) => item._id !== customerId);
     setCustomer(updateCustomer);
@@ -44,30 +61,51 @@ export default function CustomerCard({ customer, navigation, setCustomer }) {
   const renderItem = ({ item }) => {
     const isExpanded = item._id === expandedId;
     return (
-      // <TouchableOpacity onPress={() => toggleExpand(item._id)} style={styles.item}>
-      <Card
-        // key={index}
-        style={styles.card}
+      
+      <TouchableOpacity
         onPress={() => {
           // customerDetail(item._id);
           toggleExpand(item._id);
         }}
       >
-        {/* <Card.Title title={item.created} titleStyle={styles.cardTitle} /> */}
-        <Card.Content style={styles.itemContent}>
-           <View style={styles.cardMainContent}>
-            {/*<View style={{alignItems:"flex-start"}}>
-              <Avatar.Text label={item.firstname.charAt(0)} size={40} />
-            <Text
-              style={styles.name}
-            >{`${item.firstname} ${item.lastname}`}</Text>
-            </View> */}
-            <Text
-              style={styles.name}
-            >{`${item.firstname} ${item.lastname}`}</Text>
-            <Text style={styles.phone}>{item.phone}</Text>
-          </View>
 
+        <View style={styles.itemContainer}>
+          <View style={styles.underItemContainer}>
+           <Avatar.Text label={item.firstname.charAt(0)} size={40} />
+           <View style={styles.itemContent}>
+             <Text style={styles.name}>{`${item.firstname} ${item.lastname}`}</Text>
+             <Text style={styles.phone}>{item.phone}</Text>
+            </View>
+
+            <Menu
+            visible={visible && currentItem?._id === item._id} // Check if currentItem matches the item
+            onDismiss={hideMenu}
+            anchor={
+              <TouchableOpacity
+                onPress={() => showMenu(item)}
+                style={styles.menuButton}
+              >
+                <Feather name="more-vertical" size={24} color="black" />
+              </TouchableOpacity>
+            }
+            anchorPosition="bottom"
+           >
+            <Menu.Item
+              style={{ color: "black" }}
+              onPress={() => customerDetail(item._id)}
+              title="View Customer"
+            />
+            <Menu.Item
+              style={{ color: "black" }}
+              onPress={() => editCustomerhandler(item._id)}
+              title="Edit Customer"
+            />
+            <Menu.Item
+              onPress={() => deleteCustomerDelete(item._id)}
+              title="Delete People"
+            />
+           </Menu>
+           </View>
           {isExpanded && (
             <View style={styles.extraInfo}>
               <Text>{item.email}</Text>
@@ -76,41 +114,8 @@ export default function CustomerCard({ customer, navigation, setCustomer }) {
               <Text>GST Number : {item?.gstnumber || "NA"}</Text>
             </View>
           )}
-        </Card.Content>
-        {isExpanded && (
-          <Card.Actions>
-            <View style={styles.actionBtnContainer}>
-              <Button
-                style={styles.actionBtns}
-                onPress={() => customerDetail(item._id)}
-              >
-                <Icon source="eye" color="white" size={20} />{" "}
-                <Text style={{ color: "white" }}>View</Text>
-              </Button>
-              <IconButton
-                icon="delete"
-                iconColor="#0c3b73"
-                size={20}
-                onPress={() => deleteCustomerDelete(item._id)}
-              />
-              {visible && (
-                <DeleteModal
-                  visible={visible}
-                  setVisible={setVisible}
-                  handleDelete={handleDelete}
-                />
-              )}
-              <Button
-                style={styles.actionBtns}
-                onPress={() => editCustomerhandler(item._id)}
-              >
-                <Icon source="pencil" color="white" size={20} /> 
-                <Text style={{color:"white"}}>Edit</Text>
-              </Button>
-            </View>
-          </Card.Actions>
-        )}
-      </Card>
+        </View>
+      </TouchableOpacity>
     );
   };
 
@@ -132,6 +137,12 @@ const styles = StyleSheet.create({
   card: {
     padding: 10,
     marginBottom: 10,
+  },
+  itemContainer: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    // backgroundColor:"orange"
   },
   cardMainContent: {
     // backgroundColor:"orange",
@@ -155,7 +166,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 20,
+    // padding: 20,
     backgroundColor: "#fff",
   },
   title: {
@@ -170,7 +181,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   itemContent: {
-    flexDirection: "column",
+    flex:1,
+    marginLeft:10
   },
   name: {
     fontSize: 18,
@@ -185,5 +197,11 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#eee",
     paddingTop: 10,
+  },
+  underItemContainer: {
+    flexDirection:"row"
+  },
+  menuButton: {
+    padding: 10,
   },
 });
