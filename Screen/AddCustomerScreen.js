@@ -5,7 +5,15 @@ import { useSnackbar } from '../Store/SnackbarContext'
 import { createApi } from '../Util/UtilApi'
 
 const AddCustomerScreen = ({navigation}) => {
- const initialValues={ firstname: '', lastname: '', email: '', phone: '', type: '' }
+ const initialValues={ 
+  firstname: '', 
+  lastname: '', 
+  gstnumber: '', 
+  address:'', 
+  email: '', 
+  phone: '', 
+  type: '' 
+}
  const{showSnackbar}= useSnackbar();
  const handleSubmit=async (values)=>{
   const postData={

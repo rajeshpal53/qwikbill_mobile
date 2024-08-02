@@ -54,6 +54,45 @@ const AddCustomer = ({navigation,initialValues,handleSubmit}) => {
                     position:'relative',
                   }}>
                 <TextInput
+                  label="first Name"
+                  mode="outlined"
+                  onChangeText={handleChange("firstname")}
+                  onBlur={handleBlur("firstname")}
+                  value={values.firstname}
+                  error={touched.firstname && errors.firstname ? true : false}
+                  style={{ width: "100%", marginBottom: 10 , overflow:'hidden'}}
+                />
+                {touched.firstname && errors.firstname && (
+                  <HelperText
+                    type="error"
+                    visible={touched.firstname && errors.firstname}
+                  >
+                    {errors.firstname}
+                  </HelperText>
+                )}
+              </View>
+         <View style={{ width: "100%", marginBottom: 10 }}>
+         <TextInput
+                  label="last Name"
+                  mode="outlined"
+                  onChangeText={handleChange("lastname")}
+                  onBlur={handleBlur("lastname")}
+                  value={values.lastname}
+                  error={touched.lastname && errors.lastname ? true : false}
+                  style={{ width: "100%", marginBottom: 10, overflow:'hidden' }}
+                />
+                {touched.lastname && errors.lastname && (
+                  <HelperText
+                    type="error"
+                    visible={touched.lastname && errors.lastname}
+                  >
+                    {errors.lastname}
+                  </HelperText>
+                )}
+                
+              </View>
+              <View style={{ width: "100%", marginBottom: 10 }}>
+              <TextInput
                   label="Phone"
                   
                   mode="outlined"
@@ -100,44 +139,56 @@ const AddCustomer = ({navigation,initialValues,handleSubmit}) => {
                   ))}
                   </ScrollView>
                   </View>}
-              </View>
-         <View style={{ width: "100%", marginBottom: 10 }}>
-                <TextInput
-                  label="first Name"
-                  mode="outlined"
-                  onChangeText={handleChange("firstname")}
-                  onBlur={handleBlur("firstname")}
-                  value={values.firstname}
-                  error={touched.firstname && errors.firstname ? true : false}
-                  style={{ width: "100%", marginBottom: 10 , overflow:'hidden'}}
-                />
-                {touched.firstname && errors.firstname && (
-                  <HelperText
-                    type="error"
-                    visible={touched.firstname && errors.firstname}
-                  >
-                    {errors.firstname}
-                  </HelperText>
-                )}
+                
               </View>
               <View style={{ width: "100%", marginBottom: 10 }}>
-                <TextInput
-                  label="last Name"
+              <TextInput
+                  label="Address"
+                  
                   mode="outlined"
-                  onChangeText={handleChange("lastname")}
-                  onBlur={handleBlur("lastname")}
-                  value={values.lastname}
-                  error={touched.lastname && errors.lastname ? true : false}
-                  style={{ width: "100%", marginBottom: 10, overflow:'hidden' }}
+                  onChangeText={async (text) => {
+                    handleChange("address")(text);
+                    if (text.length > 2) {
+                      const fetchedOptions = await fetchOptions(text);
+                      setOptions(fetchedOptions);
+                      setShowOptions(true);
+                    } else {
+                      setShowOptions(false);
+                    }
+                  }}
+                  onBlur={handleBlur("address")}
+                  value={values.address}
+                  error={touched.address && errors.address ? true : false}
+                  // style={{ width: "50%", marginVertical: 10, marginBottom: 10 }}
                 />
-                {touched.lastname && errors.lastname && (
+                {touched.address && errors.address && (
                   <HelperText
                     type="error"
-                    visible={touched.lastname && errors.lastname}
+                    visible={touched.address && errors.address}
                   >
-                    {errors.lastname}
+                    {errors.address}
                   </HelperText>
                 )}
+                {showOptions &&
+                <View style={styles.suggestionsContainer}>
+                <ScrollView style={styles.suggestionsList}>{
+                  options.map((option) => (
+                    <List.Item
+                    key={option._id}
+                    title={option.phone}
+                      onPress={async () => {
+                        setFieldValue("phone", option.phone)
+                        setFieldValue("firstname", option.firstname);
+                        setFieldValue("lastname", option.lastname);
+                        setFieldValue("email", option.email);
+                        setFieldValue('type',option.type)
+                        setShowOptions(false);
+                      }}
+                      />
+                  ))}
+                  </ScrollView>
+                  </View>}
+                
               </View>
               <View style={{ width: "100%", marginBottom: 10 }}>
                 <TextInput

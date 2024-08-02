@@ -5,10 +5,16 @@ import { ActivityIndicator, Button,FAB} from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
 import { readApi } from "../Util/UtilApi";
 import Icon from "react-native-vector-icons/Ionicons";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { AuthContext } from "../Store/AuthContext";
+
 export default function Products({ navigation }) {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { searchMode, setSearchMode } = useContext(AuthContext);
   const isFocused = useIsFocused();
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -23,12 +29,27 @@ export default function Products({ navigation }) {
     }
     fetchData();
   }, [isFocused]);
+
   if (isLoading) {
     return <ActivityIndicator size="large" />;
   }
+
+  const handleOutsidePress = () => {
+    setSearchMode(false);
+  };
   return (
     <View  style={styles.container}>
-      <FAB
+      <View style={{flex:1}}>
+      <TouchableWithoutFeedback onPress={handleOutsidePress} style={{height:"100%"}}>
+
+      {products ? (<ProductCard
+          products={products}
+          navigation={navigation}
+          setProducts={setProducts}
+        />) : (
+          <Text> no Product found</Text>
+        )}
+        <FAB
         icon={() => <Icon name="add-outline" size={20} color="white" />}
         theme={{ colors: { primary: '#fff' } }}
         color="white"
@@ -40,13 +61,9 @@ export default function Products({ navigation }) {
         label="Add New Product"
         labelStyle={{color:"#ffffff"}}
       />
-      <ScrollView contentContainerStyle={{paddingBottom:"20%"}}>
-        <ProductCard
-          products={products}
-          navigation={navigation}
-          setProducts={setProducts}
-        />
-      </ScrollView>
+      </TouchableWithoutFeedback>
+      </View>
+      
     </View>
   );
 }
@@ -70,7 +87,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     color: "floralwhite ",
     backgroundColor: "#96214e",
-    zIndex: 100,
+    // zIndex: 100,
     color: "white",
   },
 });

@@ -136,9 +136,15 @@ function DrawerNavigator() {
         name="Invoice"
         component={Invoice}
         options={{
+          headerShown:true,
           tabBarIcon: ({ color, size }) => (
             <Icon name="file-tray-full-outline" color="#0c3b73" size={size} />
           ),
+          headerTitle: ((!searchMode)? 
+             ((props) => (<WertoneLogoTitle {...props} />)):
+             ("")),
+             
+          headerTitleAlign:((!searchMode)?"center":"left"),
         }}
       />
       
@@ -146,27 +152,46 @@ function DrawerNavigator() {
         name="Products"
         component={Products}
         options={{
+          headerShown:true,
           tabBarIcon: ({ color, size }) => (
             <Icon name="pricetag-outline" color="#0c3b73" size={size} />
           ),
+          headerTitle: ((!searchMode)? 
+             ((props) => (<WertoneLogoTitle {...props} />)):
+             ("")),
+             
+          headerTitleAlign:((!searchMode)?"center":"left"),
         }}
       />
       <Tab.Screen
         name="Customer"
         component={Customer}
         options={{
+          headerShown:true,
+          tabBarLabel:"People",
           tabBarIcon: ({ color, size }) => (
             <Icon name="people-outline" color="#0c3b73" size={size} />
           ),
+          headerTitle: ((!searchMode)? 
+             ((props) => (<WertoneLogoTitle {...props} />)):
+             ("")),
+
+          headerTitleAlign:((!searchMode)?"center":"left"),
         }}
       />
       <Tab.Screen
         name="Profile Setting"
         component={ProfileSetting}
         options={{
+          headerShown:true,
           tabBarIcon: ({ color, size }) => (
             <Icon name="person-outline" color="#0c3b73" size={size} />
           ),
+          headerTitle: ((!searchMode)? 
+             ((props) => (<WertoneLogoTitle {...props} />)):
+             ("")),
+             
+          headerTitleAlign:((!searchMode)?"center":"left"),
         }}
       />
       <Tab.Screen
