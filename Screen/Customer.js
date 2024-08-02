@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect, useContext } from "react";
 import { ScrollView, Text, StyleSheet, View } from "react-native";
 import { ActivityIndicator, Button, FAB } from "react-native-paper";
@@ -5,10 +7,16 @@ import CustomerCard from "../Components/CustomerCard";
 import { useIsFocused } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { readApi } from "../Util/UtilApi";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { AuthContext } from "../Store/AuthContext";
+
 export default function Customer({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
   const [customer, setCustomer] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { searchMode, setSearchMode } = useContext(AuthContext);
   const isFocused = useIsFocused();
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -27,30 +35,16 @@ export default function Customer({ navigation }) {
   if (isLoading) {
     return <ActivityIndicator size="large" />;
   }
+
+  const handleOutsidePress = () => {
+    setSearchMode(false);
+  };
+
   return (
     <View style={styles.container}>
-      <FAB  icon={() => <Icon name="person-add" size={20} color="white" />}
-      theme={{ colors: { primary: '#fff' } }}
-      color="white"
-       onPress={() => {
-        navigation.navigate("AddCustomer");
-      }} style={styles.fab}
-      label="Add New Customer"
-      labelStyle={{color:"#ffffff"}}
-      />
-      <ScrollView contentContainerStyle={{ paddingBottom: "20%" }}>
-        {/* <Button
-          style={styles.addButton}
-          icon={() => <Icon name="person-add" size={20} color="white" />}
-          buttonColor="#ffffff"
-          textColor="white"
-          onPress={() => {
-            navigation.navigate("AddCustomer");
-          }}
-        >
-          {" "}
-          Add New Customer
-        </Button> */}
+      <View style={{flex:1}}>
+        <TouchableWithoutFeedback onPress={handleOutsidePress} style={{height:"100%"}}>
+  
         {customer ? (
           <CustomerCard
             customer={customer}
@@ -60,8 +54,22 @@ export default function Customer({ navigation }) {
         ) : (
           <Text> no Customer found</Text>
         )}
-      </ScrollView>
+
+        <FAB
+          icon={() => <Icon name="person-add" size={20} color="white" />}
+          theme={{ colors: { primary: "#fff" } }}
+          color="white"
+          onPress={() => {
+            navigation.navigate("AddCustomer");
+          }}
+          style={styles.fab}
+          label="Add New Customer"
+          labelStyle={{ color: "#ffffff" }}
+        />
+        </TouchableWithoutFeedback>
+      </View>
     </View>
+
   );
 }
 
@@ -84,7 +92,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     color: "floralwhite ",
     backgroundColor: "#96214e",
-    zIndex: 100,
+    // zIndex: 100,
     color: "white",
   },
 });
