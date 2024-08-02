@@ -44,11 +44,12 @@ const validationSchema = Yup.object().shape({
     .matches(/^[A-Z]{4}0[A-Z0-9]{6}$/, "Invalid IFSC code"),
 });
 
-export default function CreateShopScreen() {
+export default function CreateShopScreen({route}) {
   const navigation = useNavigation();
   const { showSnackbar } = useSnackbar();
 
-  const data = useRoute().params?.data;
+  const data = route?.params?.shop;
+  console.log("Route data is , ", data);
 
   console.log("routedata , ", data)
   return (
