@@ -4,7 +4,10 @@ import {
     FontAwesome5,
     Ionicons,
     AntDesign,
-    Entypo
+    Entypo,
+    MaterialIcons,
+    Octicons,
+    FontAwesome
   } from "@expo/vector-icons";
   
 export const services = [
@@ -21,20 +24,20 @@ export const services = [
       navigateTo:"AddCustomer"
     },
     {
-      name: "Add Product",
-      icon: <Ionicons name="bag" size={30} color="#0c3b73" />,
+      name: "Add Client",
+      icon: <Octicons name="person-add" size={30} color="#0c3b73" />,
       key: "3",
       navigateTo:"AddProduct"
     },
     {
-      name: "Add Vendor",
-      icon: <AntDesign name="adduser" size={30} color="#0c3b73" />,
+      name: "View Vendors",
+      icon: <FontAwesome name="group" size={30} color="#0c3b73" />,
       key: "4",
-      navigateTo:"AddVendor"
+      navigateTo:"ViewVendor"
     },
     {
       name: "Create New Shop",
-      icon: <FontAwesome5 name="store" size={30} color="#0c3b73" />,
+      icon:<MaterialIcons name="add-business" size={30} color="#0c3b73" />,
       key: "5",
       navigateTo:"CreateShopScreen"
     },

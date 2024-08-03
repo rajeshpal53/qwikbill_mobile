@@ -1,7 +1,7 @@
 // ViewShopsScreen.js
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { FAB } from "react-native-paper";
+import { FAB, Text } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import ItemList from "../../Components/Lists/ItemList";
 import { readApi } from "../../Util/UtilApi";
@@ -32,6 +32,22 @@ export default function ViewShopsScreen() {
     console.log(`Viewing shop with ID ${id}`);
   };
 
+  const renderExpandedContent = (item) => (
+    <View style={{
+      marginLeft:"14.5%"
+    }}>
+      <Text>Show Information</Text>
+      {/* <Button title="more" onPress ={() => handleView(item._id)} /> */}
+        
+    </View>
+  );
+
+  const menuItems = [
+    // { title: "View", onPress: (id) => handleView(id) },
+    { title: "Edit", onPress: (id) => handleEdit(item) },
+    // { title: "Delete", onPress: (id) => setModalVisible(id) },
+  ]
+
   return (
     <View style={styles.container}>
       <ItemList
@@ -41,6 +57,8 @@ export default function ViewShopsScreen() {
         onDelete={handleDelete}
         onEdit={handleEdit}
         onView={handleView}
+        expandedItems={renderExpandedContent}
+        menuItems={menuItems}
       />
       <FAB
         icon="plus"

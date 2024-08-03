@@ -58,6 +58,7 @@ import Forgetpasscode from "./Screen/ForgetPasscode/Forgetpasscode.js";
 import CreateNewPasscode from "./Screen/ForgetPasscode/CreateNewPasscode.js";
 import CreateShopScreen from "./Screen/Shops/CreateShopScreen.js";
 import ViewShopsScreen from "./Screen/Shops/ViewShopsScreen.js";
+import VendorListScreen from "./Screen/Vendors/VendorListScreen.js";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -262,8 +263,8 @@ function StackNavigator() {
         screenOptions={{}}
       />
       <Stack.Screen
-       name="AddVendor"
-       component={AddVendorScreen}
+       name="ViewVendor"
+       component={VendorListScreen}
        screenOptions={{}}
        />
       <Stack.Screen
