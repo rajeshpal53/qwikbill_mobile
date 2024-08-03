@@ -22,7 +22,7 @@ const Signup = ({navigation}) => {
     try{
     const response= await createApi("api/signup",values,{
       'Content-Type': 'application/json',
-    })
+    },false)
     console.log(response.result)
     showSnackbar("successfully create new user","success")
   }catch(error){
