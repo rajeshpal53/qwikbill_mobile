@@ -58,6 +58,7 @@ import Forgetpasscode from "./Screen/ForgetPasscode/Forgetpasscode.js";
 import CreateNewPasscode from "./Screen/ForgetPasscode/CreateNewPasscode.js";
 import CreateShopScreen from "./Screen/Shops/CreateShopScreen.js";
 import ViewShopsScreen from "./Screen/Shops/ViewShopsScreen.js";
+import VendorListScreen from "./Screen/Vendors/VendorListScreen.js";
 import { PasskeyProvider } from "./Store/PasskeyContext.js";
 import SignupScreen from "./Screen/SignupScreen.js"
 const Stack = createStackNavigator();
@@ -267,10 +268,10 @@ function StackNavigator() {
         screenOptions={{}}
       />
       <Stack.Screen
-        name="AddVendor"
-        component={AddVendorScreen}
-        screenOptions={{}}
-      />
+       name="ViewVendor"
+       component={VendorListScreen}
+       screenOptions={{}}
+       />
       <Stack.Screen
         name="InvoiceDetail"
         component={InvoiceDetailScreen}

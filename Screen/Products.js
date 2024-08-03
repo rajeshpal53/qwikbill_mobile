@@ -1,7 +1,7 @@
 // Products.js
 import React, { useEffect, useState, useContext } from "react";
-import { View, StyleSheet } from "react-native";
-import { ActivityIndicator, FAB } from "react-native-paper";
+import { View, StyleSheet, Button } from "react-native";
+import { ActivityIndicator, FAB , Portal, Provider as PaperProvider, Text } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
 import { readApi } from "../Util/UtilApi";
 import { AuthContext } from "../Store/AuthContext";
@@ -11,6 +11,8 @@ import { deleteApi } from "../Util/UtilApi";
 import { useSnackbar } from "../Store/SnackbarContext";
 import DeleteModal from "../UI/DeleteModal";
 import { ShopDetailContext } from "../Store/ShopDetailContext";
+import FabGroup from "../Components/FabGroup";
+import { TouchableOpacity } from "react-native-gesture-handler";
 export default function Products({ navigation }) {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -20,6 +22,12 @@ export default function Products({ navigation }) {
   const {shopDetails}= useContext(ShopDetailContext)
   const isFocused = useIsFocused();
   const { showSnackbar } = useSnackbar();
+
+  const [state, setState] = React.useState({ open: false });
+
+  const onStateChange = ({ open }) => setState({ open });
+
+  const { open } = state;
 
   useEffect(() => {
     async function fetchData() {
@@ -60,6 +68,7 @@ export default function Products({ navigation }) {
   };
 
   const handleView = (id) => {
+    
     navigation.navigate("ProductDetail", { productId: id });
   };
 
@@ -70,7 +79,38 @@ export default function Products({ navigation }) {
 
   }
 
+  const renderExpandedContent = (item) => (
+    <View style={{
+      marginLeft:"14.5%"
+    }}>
+      <Text>{`${item.customField[0].fieldName} : ${item.customField[0].fieldValue}`}</Text>
+      {/* <Button title="more" onPress ={() => handleView(item._id)} /> */}
+        
+    </View>
+  );
+
+  const fabActions = [
+    {
+      icon: 'plus',
+      label: 'Add New Product',
+      onPress: () => navigation.navigate("AddProduct"),
+    },
+    {
+      icon: 'pencil',
+      label: 'Add New Product',
+      onPress: () => navigation.navigate("AddProduct"),
+    },
+    // Add more actions as needed
+  ];
+
+  const menuItems = [
+    // { title: "View", onPress: (id) => handleView(id) },
+    { title: "Edit", onPress: (id) => handleEdit(id) },
+    { title: "Delete", onPress: (id) => setModalVisible(id) },
+  ]
+
   return (
+    <>
     <View style={styles.container}>
       <ItemList
         data={products}
@@ -79,13 +119,35 @@ export default function Products({ navigation }) {
         onDelete={setModalVisible}
         onEdit={handleEdit}
         onView={handleView}
+        expandedItems={renderExpandedContent}
+        menuItems={menuItems}
       />
-      <FAB
+      <PaperProvider>
+      <Portal>
+        <FAB.Group
+          open={open}
+          visible
+          icon={"plus" || (open ? 'calendar-today' : 'plus')}
+          actions={fabActions}
+          onStateChange={onStateChange}
+          onPress={() => {
+            if (open) {
+              // Optional: Handle additional actions when FAB is open
+            }
+          }}
+        />
+      </Portal>
+    </PaperProvider>
+      {/* <FAB
         icon={() => <Icon name="add-outline" size={20} color="white" />}
         style={styles.fab}
         onPress={() => navigation.navigate("AddProduct")}
         label="Add New Product"
-      />
+      /> */}
+      
+      {/* <View style={styles.fab}>
+    <FabGroup actions={fabActions} icon="plus"/>
+    </View> */}
       {isModalVisible && (
         <DeleteModal
           visible={isModalVisible}
@@ -94,6 +156,9 @@ export default function Products({ navigation }) {
         />
       )}
     </View>
+    
+    
+    </>
   );
 }
 
@@ -102,11 +167,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   fab: {
+    // width:50,
+    // height:50,    
     position: "absolute",
-    margin: 13,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "#96214e",
-    color: "white",
+    // margin: 16,
+    right: 4,
+    bottom: "15%",
+    // backgroundColor: "#96214e",
+    color: "white"
+    // backgroundColor:"blue"
   },
 });
