@@ -85,6 +85,7 @@ export default function HomeScreen({ navigation, route }) {
   );
 
   const handleOutsidePress = () => {
+    console.log("outside pressed");
     setSearchMode(false);
   };
 
@@ -109,15 +110,17 @@ export default function HomeScreen({ navigation, route }) {
       ></View>
 
       <ScrollView style={styles.scrollView}>
-        <TouchableWithoutFeedback onPress={handleOutsidePress}>
+        
           <View style={[styles.container, { height: windowHeight - 142 }]}>
             <View style={styles.header}>
               {/* <TextInput></TextInput> */}
               {/* <SearchHeader onSearch={handleSearch}/> */}
+              <TouchableWithoutFeedback style={{gap:5}} onPress={handleOutsidePress}>
               <Text style={styles.headerText}>{`Welcome ${loginDetail.name} ${loginDetail.surname}`}</Text>
               <Text style={styles.subHeaderText}>
                 Last Login: {lastLoginTime}
               </Text>
+              </TouchableWithoutFeedback>
             </View>
             <View style={{ flex: 0.7, marginBottom: 5 }}>
               <Card style={styles.card}>
@@ -174,7 +177,7 @@ export default function HomeScreen({ navigation, route }) {
               />
             </View>
           </View>
-        </TouchableWithoutFeedback>
+        {/* </TouchableWithoutFeedback> */}
       </ScrollView>
     </SafeAreaView>
   );

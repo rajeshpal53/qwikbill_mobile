@@ -59,8 +59,8 @@ export default function Products({ navigation }) {
     }
   };
 
-  const handleEdit = (id) => {
-    navigation.navigate("EditProduct", { productId: id });
+  const handleEdit = (item) => {
+    navigation.navigate("EditProduct", { productId: item._id });
   };
 
   const handleView = (id) => {
@@ -68,9 +68,9 @@ export default function Products({ navigation }) {
     navigation.navigate("ProductDetail", { productId: id });
   };
 
-  const setModalVisible = (id) => {
+  const setModalVisible = (item) => {
 
-    setDeleteId(id);
+    setDeleteId(item._id);
     setIsModalVisible(true);
 
   }
@@ -101,8 +101,8 @@ export default function Products({ navigation }) {
 
   const menuItems = [
     // { title: "View", onPress: (id) => handleView(id) },
-    { title: "Edit", onPress: (id) => handleEdit(id) },
-    { title: "Delete", onPress: (id) => setModalVisible(id) },
+    { title: "Edit", onPress: (item) => handleEdit(item) },
+    { title: "Delete", onPress: (item) => setModalVisible(item) },
   ]
 
   return (

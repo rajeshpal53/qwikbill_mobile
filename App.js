@@ -62,6 +62,7 @@ import VendorListScreen from "./Screen/Vendors/VendorListScreen.js";
 import { PasskeyProvider } from "./Store/PasskeyContext.js";
 import SignupScreen from "./Screen/SignupScreen.js"
 import ViewClientScreen from "./Screen/Client/ViewClientScreen.js";
+import VendorFormScreen from "./Screen/Vendors/VendorFormScreen.js";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -273,9 +274,14 @@ function StackNavigator() {
        component={VendorListScreen}
        screenOptions={{}}
        />
-         <Stack.Screen
+
+        <Stack.Screen
        name="viewClient"
        component={ViewClientScreen}
+        />
+       <Stack.Screen
+       name="VendorForm"
+       component={VendorFormScreen}
        screenOptions={{}}
        />
       <Stack.Screen

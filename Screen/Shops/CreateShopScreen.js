@@ -28,20 +28,20 @@ const validationSchema = Yup.object().shape({
     .required("Phone number is required")
     .min(10, "Phone number must be at least 10 digits")
     .max(15, "Phone number must be at most 15 digits"),
-  gstNumber: Yup.string()
-    .required("GST number is required")
-    .matches(
-      /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z0-9]{1}Z[0-9A-Z]{1}$/,
-      "Invalid GST number"
-    ),
+  // gstNumber: Yup.string()
+  //   .required("GST number is required")
+  //   .matches(
+  //     /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z0-9]{1}Z[0-9A-Z]{1}$/,
+  //     "Invalid GST number"
+  //   ),
   accountNumber: Yup.string()
     .required("Account number is required")
     .matches(/^[0-9]+$/, "Account number must contain only digits")
     .min(9, "Account number must be at least 9 digits long")
     .max(18, "Account number must be at most 18 digits long"),
-  ifscCode: Yup.string()
-    .required("IFSC code is required")
-    .matches(/^[A-Z]{4}0[A-Z0-9]{6}$/, "Invalid IFSC code"),
+  // ifscCode: Yup.string()
+  //   .required("IFSC code is required")
+  //   .matches(/^[A-Z]{4}0[A-Z0-9]{6}$/, "Invalid IFSC code"),
 });
 
 export default function CreateShopScreen({route}) {
@@ -112,7 +112,7 @@ export default function CreateShopScreen({route}) {
   
               console.log("response is , ", response)
               showSnackbar("shop updated successfully", "success");
-              resetForm();
+              navigation.navigate("ViewShops")
             } catch (error) {
               console.log("error is ", error);
               showSnackbar("error to create new product", "error");
@@ -130,7 +130,8 @@ export default function CreateShopScreen({route}) {
   
               console.log("response is , ", response)
               showSnackbar("shop created successfully", "success");
-              resetForm();
+              // resetForm();
+              navigation.navigate("ViewShops")
             } catch (error) {
               console.log("error is ", error);
               showSnackbar("error to create new product", "error");

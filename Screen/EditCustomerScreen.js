@@ -19,6 +19,7 @@ function EditCustomerScreen({route,navigation}) {
           setInitialValues({
             firstname: customerData.firstname,
             lastname: customerData.lastname,
+            address: customerData.address,
             phone: customerData.phone,
             email: customerData.email,
             type: customerData.type || "",
