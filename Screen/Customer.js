@@ -1,7 +1,7 @@
 // Customer.js
 import React, { useState, useEffect, useContext } from "react";
 import { View, StyleSheet } from "react-native";
-import { ActivityIndicator, FAB } from "react-native-paper";
+import { ActivityIndicator, FAB, Text } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
 import { readApi } from "../Util/UtilApi";
 import { AuthContext } from "../Store/AuthContext";
@@ -10,6 +10,8 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { useSnackbar } from "../Store/SnackbarContext";
 import DeleteModal from "../UI/DeleteModal";
 import { deleteApi } from "../Util/UtilApi";
+import { ShopDetailContext } from "../Store/ShopDetailContext";
+import FabGroup from "../Components/FabGroup";
 
 export default function Customer({ navigation }) {
   const [customers, setCustomers] = useState([])
@@ -20,12 +22,15 @@ export default function Customer({ navigation }) {
   const { setSearchMode } = useContext(AuthContext);
   const isFocused = useIsFocused();
   const { showSnackbar } = useSnackbar();
+  const shopDetails = useContext(ShopDetailContext).shopDetails;
 
+  console.log("id sis", shopDetails)
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await readApi("api/people/list");
+        const response = await readApi(`api/people/list?shop=${shopDetails._id}`);
         setCustomers(response.result);
+        console.log("response in cusstomer , ", response);
       } catch (error) {
         console.error("error", error);
       } finally {
@@ -69,6 +74,31 @@ export default function Customer({ navigation }) {
 
   }
 
+  const renderExpandedContent = (item) => (
+    <View style={{
+      marginLeft:"14.5%"
+    }}>
+      <Text>{item.email}</Text>
+      <Text>{(item.isClient)?"Client" : "not a Client"}</Text>
+        
+    </View>
+  );
+
+  const fabActions = [
+    {
+      icon: 'plus',
+      label: 'Add New Product',
+      onPress: () => navigation.navigate("AddProduct"),
+    },
+    // Add more actions as needed
+  ];
+
+  const menuItems = [
+    // { title: "View", onPress: (id) => handleView(id) },
+    { title: "Edit", onPress: (id) => handleEdit(id) },
+    { title: "Delete", onPress: (id) => setModalVisible(id) },
+  ]
+
   return (
     <View style={styles.container}>
       <ItemList
@@ -78,13 +108,16 @@ export default function Customer({ navigation }) {
         onDelete={setModalVisible}
         onEdit={handleEdit}
         onView={handleView}
+        expandedItems={renderExpandedContent}
+        menuItems={menuItems}
       />
-      <FAB
+      {/* <FAB
         icon={() => <Icon name="person-add" size={20} color="white" />}
         style={styles.fab}
         onPress={() => navigation.navigate("AddCustomer")}
         label="Add New Customer"
-      />
+      /> */}
+      <FabGroup actions={fabActions} icon="plus"/>
       {isModalVisible && (
         <DeleteModal
           visible={isModalVisible}

@@ -11,6 +11,8 @@ export default function ItemList({
   onDelete,
   onEdit,
   onView,
+  expandedItems,
+  menuItems
 }) {
   const [visible, setVisible] = useState(false);
   const [expandedId, setExpandedId] = useState(null);
@@ -32,17 +34,20 @@ export default function ItemList({
   const renderInternalItem = ({ item }) => {
     const isExpanded = item._id === expandedId;
     return (
-    
+    <>
     <TouchableOpacity
      onPress={() => toggleExpand(item._id)}
     //  onPress={() => onView(item._id)}
      >
-      <View style={styles.itemContainer}>
+      <View style={[
+        styles.itemContainer,
+        {borderBottomWidth: (isExpanded)? 0 : 1 }
+        ]}>
         <View style={styles.underItemContainer}>
           <Avatar.Text label={item[titleKey].charAt(0)} size={40} />
           <View style={styles.itemContent}>
             <Text style={styles.title}>{item[titleKey]}</Text>
-            <Text style={styles.subtitle}>{item[subtitleKey]}</Text>
+            <Text style={styles.subtitle}>₹{item[subtitleKey]}</Text>
           </View>
          
           <Menu
@@ -54,32 +59,60 @@ export default function ItemList({
               </TouchableOpacity>
             }
           >
-            <Menu.Item 
+            {menuItems.map((menuItem, index) => (
+                  <Menu.Item
+                    key={index}
+                    onPress={() => {
+                      hideMenu();
+                      menuItem.onPress(item._id);
+                    }}
+                    title={menuItem.title}
+                  />
+                ))}
+            {/* <Menu.Item 
             onPress={() => {
                 hideMenu()
                 onView(item._id)
             }} 
             title="View" />
+
             <Menu.Item onPress={() => {
                 hideMenu()
                 onEdit(item._id)
             }} 
             title="Edit" />
+
             <Menu.Item onPress={() => {
                 hideMenu()
                 onDelete(item._id)
                 
             }} 
-            title="Delete" />
-          </Menu>
+            title="Delete" /> */}
+          </Menu> 
         </View>
         {isExpanded && (
-            <View>
-                <Text>More items</Text>
-            </View>
+            // <View>
+            //     <Text>More items</Text>
+            // </View>
+            expandedItems(item)
         )}
       </View>
     </TouchableOpacity>
+    {isExpanded && (
+      <TouchableOpacity 
+      style={{
+       borderBottomWidth:1,
+       borderBottomColor: "#ccc",
+       paddingLeft:"17%",
+       paddingBottom:5
+       }} 
+       onPress={() => onView(item._id)
+
+       }>
+        <Text style={{color:"blue"}}>more</Text>
+      </TouchableOpacity>
+    )}
+    </>
   );
 
 }
@@ -95,7 +128,7 @@ export default function ItemList({
 const styles = StyleSheet.create({
   itemContainer: {
     padding: 10,
-    borderBottomWidth: 1,
+    // borderBottomWidth: 1,
     borderBottomColor: "#ccc",
   },
   itemContent: {
