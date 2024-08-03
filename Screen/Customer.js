@@ -11,8 +11,8 @@ import { useSnackbar } from "../Store/SnackbarContext";
 import DeleteModal from "../UI/DeleteModal";
 import { deleteApi } from "../Util/UtilApi";
 import { ShopDetailContext } from "../Store/ShopDetailContext";
-import FabGroup from "../Components/FabGroup";
 
+import FabGroup from "../Components/FabGroup";
 export default function Customer({ navigation }) {
   const [customers, setCustomers] = useState([])
   const [isLoading, setIsLoading] = useState(true);
@@ -23,8 +23,7 @@ export default function Customer({ navigation }) {
   const isFocused = useIsFocused();
   const { showSnackbar } = useSnackbar();
   const shopDetails = useContext(ShopDetailContext).shopDetails;
-
-  console.log("id sis", shopDetails)
+  const {shopDetails}= useContext(ShopDetailContext)
   useEffect(() => {
     async function fetchData() {
       try {

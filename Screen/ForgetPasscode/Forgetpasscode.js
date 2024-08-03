@@ -19,15 +19,21 @@ import {
 } from "react-native-paper";
 import { useContext, useState,useEffect } from "react";
 import { AuthContext } from "../../Store/AuthContext";
+import { createApi } from "../../Util/UtilApi";
 
 
-function CustomerVerification({loginDetail1,setIsOtp}){
+function CustomerVerification({loginDetail1,setIsOtp,setOtpValue}){
     const [text,setText]=useState('');
-    const genrateOTP=()=>{
-        console.log(text)
+    const genrateOTP=async()=>{
+       
+        const obj= {email:text}
+        console.log(obj)
             if(text===loginDetail1.email){
-                console.log("genrateOTP")
+               const response=await createApi("api/sendotp",obj,{'Content-Type': 'application/json',})
+               setOtpValue(response.result)
+               console.log(response.result)
                 setIsOtp(true)
+                
             }
     }   
     return( <View style={styles.scrollViewChild}>   
@@ -52,20 +58,26 @@ function CustomerVerification({loginDetail1,setIsOtp}){
             </Card>
             </View>)
 }
-function ValidateOTP({navigation}){
+function ValidateOTP({navigation,otpValue}){
     const [otp, setOtp] = useState('');
     const [counter, setCounter] = useState(30);
-  
+
     useEffect(() => {
       if (counter > 0) {
         const timer = setTimeout(() => setCounter(counter - 1), 1000);
         return () => clearTimeout(timer);
       }
     }, [counter]);
-  
+
     const handleVerifyOtp = () => {
-        navigation.navigate("CreateNewPasscode")
-      console.log('OTP entered:', otp);
+        if(otpValue===otp){
+          navigation.navigate("CreateNewPasscode")
+          console.log('OTP entered:', otp);
+        }else{
+          Alert.alert("not a valid otp")
+        }
+
+       
     };
   
     const handleResendOtp = () => {
@@ -112,7 +124,7 @@ function Forgetpasscode({navigation}) {
     const [loginDetail1,setLoginDetail1]=useState(loginDetail)
     const {loginDetail,getData}=useContext(AuthContext)
     const [finalScreen,setFinalScreen]=useState(false)
-
+    const[otpValue,setOtpValue]= useState()
     useEffect(() => {
         async function loginDetailHandler() {
           try {
@@ -166,7 +178,7 @@ function Forgetpasscode({navigation}) {
                 </Text>
               </View> 
             </View>
-               {isOtp?(<ValidateOTP navigation={navigation}/>):(<CustomerVerification loginDetail1={loginDetail1} setIsOtp={setIsOtp}/>)}
+               {isOtp?(<ValidateOTP navigation={navigation} otpValue={otpValue} />):(<CustomerVerification loginDetail1={loginDetail1} setIsOtp={setIsOtp} setOtpValue={setOtpValue}/>)}
           </View>
           
         </KeyboardAvoidingView>

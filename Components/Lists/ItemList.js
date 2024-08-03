@@ -120,7 +120,7 @@ export default function ItemList({
     <FlatList
       data={data}
       renderItem={renderInternalItem}
-      keyExtractor={(item) => item._id}
+      keyExtractor={(item,index) => index}
     />
   );
 }
