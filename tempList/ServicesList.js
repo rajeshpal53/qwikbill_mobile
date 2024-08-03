@@ -24,16 +24,16 @@ export const services = [
       navigateTo:"AddCustomer"
     },
     {
-      name: "Add Client",
-      icon: <Octicons name="person-add" size={30} color="#0c3b73" />,
-      key: "3",
-      navigateTo:"AddProduct"
-    },
-    {
       name: "View Vendors",
       icon: <FontAwesome name="group" size={30} color="#0c3b73" />,
       key: "4",
       navigateTo:"ViewVendor"
+    },
+    {
+      name: " View Client",
+      icon: <FontAwesome5 name="user" size={30} color="#0c3b73" />,
+      key: "6",
+      navigateTo:"viewClient"
     },
     {
       name: "Create New Shop",
@@ -47,6 +47,7 @@ export const services = [
       key: "6",
       navigateTo:"ViewShops"
     },
+
     {
       name: "Cheque Services",
       icon: (

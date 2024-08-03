@@ -6,10 +6,11 @@ import * as Yup from 'yup';
 import { AuthContext } from '../Store/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createApi } from '../Util/UtilApi';
+import { usePasskey } from '../Store/PasskeyContext';
 
  const LoginScreen = ({navigation}) => {
   const{login,isAuthenticated,isLoading,storeData,setLoginDetail}= useContext(AuthContext)
-
+  const{isPasskey}=usePasskey();
   const validationSchema = Yup.object().shape({
     email: Yup.string()
       .email('Invalid email address')
@@ -39,7 +40,12 @@ import { createApi } from '../Util/UtilApi';
        }
       if(isAuthenticated){
         // navigation.navigate("wertone",{screen:'invoice'})
-        navigation.navigate('CreateNewPasscode');
+        if(isPasskey){
+          navigation.navigate('Passcode');
+        }else{
+          navigation.navigate('CreateNewPasscode');
+
+        }
         resetForm();
       }      
 }
