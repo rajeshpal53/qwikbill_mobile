@@ -40,6 +40,7 @@ export default function HomeScreen({ navigation, route }) {
   const pickerRef = useRef();
   const windowWidth = useWindowDimensions().width;
   const windowHeight = useWindowDimensions().height;
+  console.log(windowHeight)
 
   useEffect(() => {
     const getItem = async () => {

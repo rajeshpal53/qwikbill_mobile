@@ -1,7 +1,7 @@
 // Customer.js
 import React, { useState, useEffect, useContext } from "react";
 import { View, StyleSheet } from "react-native";
-import { ActivityIndicator, FAB, Text } from "react-native-paper";
+import { ActivityIndicator, FAB, Portal, Provider, Text } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
 import { readApi } from "../Util/UtilApi";
 import { AuthContext } from "../Store/AuthContext";
@@ -11,6 +11,8 @@ import { useSnackbar } from "../Store/SnackbarContext";
 import DeleteModal from "../UI/DeleteModal";
 import { deleteApi } from "../Util/UtilApi";
 import { ShopDetailContext } from "../Store/ShopDetailContext";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+
 
 import FabGroup from "../Components/FabGroup";
 export default function Customer({ navigation }) {
@@ -22,8 +24,9 @@ export default function Customer({ navigation }) {
   const { setSearchMode } = useContext(AuthContext);
   const isFocused = useIsFocused();
   const { showSnackbar } = useSnackbar();
-  const shopDetails = useContext(ShopDetailContext).shopDetails;
   const {shopDetails}= useContext(ShopDetailContext)
+  const [open, setOpen] = useState(false);
+  const onStateChange = ({ open }) => setOpen(open);
   useEffect(() => {
     async function fetchData() {
       try {
@@ -99,6 +102,9 @@ export default function Customer({ navigation }) {
   ]
 
   return (
+    <SafeAreaProvider>
+      <Provider>
+        <Portal>
     <View style={styles.container}>
       <ItemList
         data={customers}
@@ -116,7 +122,39 @@ export default function Customer({ navigation }) {
         onPress={() => navigation.navigate("AddCustomer")}
         label="Add New Customer"
       /> */}
-      <FabGroup actions={fabActions} icon="plus"/>
+       <FAB.Group
+              open={open}
+              fabStyle={styles.actionStyle}
+              icon={() => (
+                <Icon
+                  name={open ? "close-outline" : "add-outline"}
+                  size={20}
+                  color="white"
+                />
+              )}
+              actions={[
+                {
+                  color: "white",
+                  style: styles.actionStyle,
+                  icon: "account-plus",
+                  label: "Add Customer",
+                  onPress: () => {
+                    navigation.navigate("AddCustomer");
+                  },
+                },
+                {
+                  color: "white",
+                  style: styles.actionStyle,
+                  icon: "file-upload",
+                  label: "Add Customer from File",
+                  onPress: ()=>{},
+                },
+              ]}
+              onStateChange={onStateChange}
+              onPress={() => {
+                open && setOpen(false);
+              }}
+            />
       {isModalVisible && (
         <DeleteModal
           visible={isModalVisible}
@@ -125,6 +163,9 @@ export default function Customer({ navigation }) {
         />
       )}
     </View>
+    </Portal>
+    </Provider>
+    </SafeAreaProvider>
   );
 }
 
@@ -139,5 +180,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: "#96214e",
     color: "white",
+  },
+  actionStyle: {
+    backgroundColor: "#96214e",
+    color: "floralwhite ",
   },
 });

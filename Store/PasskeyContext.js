@@ -7,6 +7,7 @@ const PasskeyContext = createContext();
 // Create a provider component
 export const PasskeyProvider = ({ children }) => {
   const [passkey, setPasskey] = useState(null);
+  const [isPasskey,setIsPasskey]=useState(false)
 
   // Function to load passkey from AsyncStorage
   const loadPasskey = async () => {
@@ -14,6 +15,7 @@ export const PasskeyProvider = ({ children }) => {
       const storedPasskey = await AsyncStorage.getItem('passkey');
       if (storedPasskey) {
         setPasskey(storedPasskey);
+        setIsPasskey(true)
       }
     } catch (error) {
       console.error('Failed to load passkey', error);
@@ -35,6 +37,7 @@ export const PasskeyProvider = ({ children }) => {
     try {
       await AsyncStorage.removeItem('passkey');
       setPasskey(null);
+      setIsPasskey(false)
     } catch (error) {
       console.error('Failed to remove passkey', error);
     }
@@ -46,7 +49,7 @@ export const PasskeyProvider = ({ children }) => {
   }, []);
 
   return (
-    <PasskeyContext.Provider value={{ passkey, savePasskey, removePasskey }}>
+    <PasskeyContext.Provider value={{ passkey, savePasskey, removePasskey,isPasskey}}>
       {children}
     </PasskeyContext.Provider>
   );
