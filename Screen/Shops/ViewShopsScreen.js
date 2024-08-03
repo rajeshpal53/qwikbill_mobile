@@ -1,36 +1,75 @@
 // ViewShopsScreen.js
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { FAB, Text } from "react-native-paper";
+import { FAB, Text, ActivityIndicator } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import ItemList from "../../Components/Lists/ItemList";
 import { readApi } from "../../Util/UtilApi";
+import { useIsFocused } from "@react-navigation/native";
+import { useSnackbar } from "../../Store/SnackbarContext";
+import { deleteApi } from "../../Util/UtilApi";
+import DeleteModal from "../../UI/DeleteModal";
 
 export default function ViewShopsScreen() {
   const navigation = useNavigation();
   const [shopData, setShopData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [deleteId, setDeleteId] = useState();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const {showSnackbar} = useSnackbar();
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     const getShopData = async () => {
+
+      try{
       const response = await readApi(`api/shop/list`);
       setShopData(response.result);
+
+      }catch(error){
+        console.error("error", error)
+      }finally{
+        setIsLoading(false);
+      }
     };
     getShopData();
-  }, []);
+  }, [isFocused]);
 
-  const handleDelete = (id) => {
-    console.log(`Shop with ID ${id} deleted`);
+  if (isLoading) {
+    return <ActivityIndicator size="large" />;
+  }
+
+  const handleDelete = async() => {
+    // console.log(`Shop with ID ${item._id} deleted`);
+    const updatedShops = shopData.filter((item) => item._id !== deleteId);
+    
+    try {
+      const response = await deleteApi(`api/shop/delete/${deleteId}`);
+      setIsModalVisible(false);
+      showSnackbar("Shop deleted successfully", "success");
+      setShopData(updatedShops);
+    } catch (error) {
+      console.error("Error:", error);
+      showSnackbar("Failed to delete the Shop", "error");
+    }
   };
 
   const handleEdit = (item) => {
     // console.log(`Editing shop with ID ${id}`);
-    console.log("item under viewshop , ", item);
+    // console.log("item under viewshop , ", item);
     navigation.navigate("CreateShopScreen", { shop: item });
   };
 
   const handleView = (id) => {
     console.log(`Viewing shop with ID ${id}`);
   };
+
+  const setModalVisible = (item) => {
+
+    setDeleteId(item._id);
+    setIsModalVisible(true);
+
+  }
 
   const renderExpandedContent = (item) => (
     <View style={{
@@ -44,8 +83,8 @@ export default function ViewShopsScreen() {
 
   const menuItems = [
     // { title: "View", onPress: (id) => handleView(id) },
-    { title: "Edit", onPress: (id) => handleEdit(item) },
-    // { title: "Delete", onPress: (id) => setModalVisible(id) },
+    { title: "Edit", onPress: (item) => handleEdit(item) },
+    { title: "Delete", onPress: (item) => setModalVisible(item) },
   ]
 
   return (
@@ -63,8 +102,15 @@ export default function ViewShopsScreen() {
       <FAB
         icon="plus"
         style={styles.fab}
-        onPress={() => navigation.navigate("AddShop")}
+        onPress={() => navigation.navigate("CreateShopScreen")}
       />
+      {isModalVisible && (
+        <DeleteModal
+          visible={isModalVisible}
+          setVisible={setIsModalVisible}
+          handleDelete={handleDelete}
+        />
+      )}
     </View>
   );
 }

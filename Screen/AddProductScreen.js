@@ -3,7 +3,12 @@ import AddProduct from '../Components/AddProduct'
 import { StyleSheet ,ScrollView} from 'react-native'
 import { useSnackbar } from '../Store/SnackbarContext'
 import { createApi } from '../Util/UtilApi'
+import { ShopDetailContext } from '../Store/ShopDetailContext'
+import { useContext } from 'react'
+
 const AddProductScreen = ({navigation}) => {
+
+  const {shopDetails} = useContext(ShopDetailContext);
   const {showSnackbar}=useSnackbar();
   const initialValues={
     name: "",
@@ -18,6 +23,7 @@ const AddProductScreen = ({navigation}) => {
     name: values.name,
     price: values.sellingPrice,
     productCategory: "66541ab2e30f1c041bd776e8", //:values.productCategory,,
+    shop: shopDetails._id,
     currency: "USD",
     customField: [
       {

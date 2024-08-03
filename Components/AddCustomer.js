@@ -37,6 +37,8 @@ const AddCustomer = ({navigation,initialValues,handleSubmit}) => {
   initialValues={initialValues}
     validationSchema={validationSchema}
     onSubmit={(values)=>{
+
+      console.log("valusea are , ", values)
       handleSubmit(values);
     }
 

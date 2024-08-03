@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Text, ActivityIndicator } from "react-native-paper";
-import { FAB, View, StyleSheet } from "react-native";
+import { Text, ActivityIndicator, FAB } from "react-native-paper";
+import Icon from "react-native-vector-icons/Ionicons";
+import { View, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useIsFocused } from "@react-navigation/native";
 import { AuthContext } from "../../Store/AuthContext";
@@ -8,6 +9,7 @@ import ItemList from "../../Components/Lists/ItemList";
 import { readApi, deleteApi } from "../../Util/UtilApi";
 import { ShopDetailContext } from "../../Store/ShopDetailContext";
 import { useSnackbar } from "../../Store/SnackbarContext";
+import DeleteModal from "../../UI/DeleteModal";
 
 export default function VendorListScreen() {
   const navigation = useNavigation();
@@ -19,19 +21,23 @@ export default function VendorListScreen() {
   const { showSnackbar } = useSnackbar();
   const { shopDetails } = useContext(ShopDetailContext);
 
+
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
       try {
-        const response = await readApi(
-          `api/company/list?shop=${shopDetails._id}`
-        );
-        setVendors(response.result);
+          const response = await readApi(
+            `api/company/list`
+          );
+          setVendors(response.result);
+          console.log(response.result, "   res")
+
       } catch (error) {
         console.error("error", error);
       } finally {
         setIsLoading(false);
       }
+
     }
     fetchData();
   }, [isFocused]);
@@ -46,18 +52,92 @@ export default function VendorListScreen() {
     try {
       const response = await deleteApi(`api/company/delete/${deleteId}`);
       setIsModalVisible(false);
-      showSnackbar(" delete successfully", "success");
-      setCustomers(updatedCustomers);
+      showSnackbar("Vendor delete successfully", "success");
+      setVendors(updatedVendors);
     } catch (error) {
       console.error("Error:", error);
-      showSnackbar("Failed to delete the people", "error");
+      showSnackbar("Failed to delete the Vendor", "error");
     }
   };
 
-  return (
-    <View>
-      <Text>View vendors</Text>
- 
+  const handleEdit = (item) => {
+    // console.log("item under edit ", item)
+    navigation.navigate("VendorForm", { vendor: item });
+  };
+
+  const handleView = (id) => {
+
+    console.log("vendor Viewed ," , id);
+    // navigation.navigate("CustomerDetail", { customerId: id });
+  };
+
+  const setModalVisible = (item) => {
+
+    setDeleteId(item._id);
+    setIsModalVisible(true);
+
+  }
+
+  const renderExpandedContent = (item) => (
+    <View style={{
+      marginLeft:"14.5%"
+    }}>
+      {/* <Text>{item.email}</Text>
+      <Text>{(item.isClient)?"Client" : "not a Client"}</Text> */}
+      <Text>Hello this is Vendor</Text>
+        
     </View>
   );
+
+  const menuItems = [
+    // { title: "View", onPress: (id) => handleView(id) },
+    { title: "Edit", onPress: (item) => handleEdit(item) },
+    { title: "Delete", onPress: (item) => setModalVisible(item) },
+  ]
+
+  return (
+    <>
+    <View style={styles.container}>
+      <ItemList
+       data={vendors}
+       titleKey="name"
+       subtitleKey="phone"
+       onDelete={setIsModalVisible}
+       onEdit={handleEdit}
+       onView={handleView}
+       expandedItems={renderExpandedContent}
+       menuItems={menuItems}
+       />
+      
+    </View>
+    <FAB 
+    icon={() => <Icon name="add-outline" size={25}      color="black" />}
+    theme={{ colors: { primary: '#fff' } }}
+    style={styles.fab}
+    onPress={() => navigation.navigate("VendorForm")}
+   />
+   {isModalVisible && (
+        <DeleteModal
+          visible={isModalVisible}
+          setVisible={setIsModalVisible}
+          handleDelete={handleDelete}
+        />
+      )}
+   </>
+  );
 }
+
+
+const styles = StyleSheet.create({
+    fab: {
+        position: "absolute",
+        margin: 13,
+        right: 0,
+        bottom:0,
+        // padding:0,
+        color: "black",
+        // backgroundColor: "#96214e",
+        zIndex:100,
+        color:"white"
+      },
+});

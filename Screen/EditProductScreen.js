@@ -24,10 +24,10 @@ function EditProductScreen({route,navigation}) {
             const productData = data.result;
             setInitialValues({
               name: productData?.name || '',
-              productCategory: productData?.productCategory?.name || '',
+              productCategory: productData?.productCategory?.name || 'electrical',
               sellingPrice: productData?.price?.toString()|| '',
-              purchasePrice: productData?.customField[0]?.fieldValue || '',
-              hsncode: productData?.customField[1]?.fieldValue || "",
+              purchasePrice: productData?.customField[0]?.fieldValue?.toString() || '',
+              hsncode: productData?.customField[1]?.fieldValue?.toString() || "",
               taxValue: productData?.customField[2]?.fieldValue?.toString() || "",
             });
            

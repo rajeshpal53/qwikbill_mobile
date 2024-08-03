@@ -47,7 +47,7 @@ export default function ItemList({
           <Avatar.Text label={item[titleKey].charAt(0)} size={40} />
           <View style={styles.itemContent}>
             <Text style={styles.title}>{item[titleKey]}</Text>
-            <Text style={styles.subtitle}>₹{item[subtitleKey]}</Text>
+            <Text style={styles.subtitle}>{item[subtitleKey]}</Text>
           </View>
          
           <Menu
@@ -64,7 +64,7 @@ export default function ItemList({
                     key={index}
                     onPress={() => {
                       hideMenu();
-                      menuItem.onPress(item._id);
+                      menuItem.onPress(item);
                     }}
                     title={menuItem.title}
                   />

@@ -14,43 +14,21 @@ export default function HomeHeaderRight() {
 
     const { isLoading, isAuthenticated, logout } = useContext(AuthContext);
 
-    // const logoutHandler = () => {
-    //     console.log("Logging out");
-    //     logout();
-    //     if (isLoading) {
-    //       return (
-    //         <View
-    //           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-    //         >
-    //           <ActivityIndicator size="large" />
-    //         </View>
-    //       );
-    //     }
-    //     if (!isAuthenticated) {
-    //         console.log("logged out");
-    //       navigation.navigate("StackNavigator", { screen: "login" });
-    //     }
-    //   };
 
   return (
-    <View style={{flexDirection:"row-reverse"}}>
+    <View style={{marginRight:"10%"}}>
 
-      <View style={styles.pressablesContainer}>
-        {/* <Pressable
-          style={styles.justifyCenter}
-          onPress={logoutHandler}
-        >
-          <Ionicons name="log-out-outline" size={30} color="#ffffff" />
-        </Pressable> */}
-        <LogoutBtn/>
+      {/* <View style={styles.pressablesContainer}>
 
-        <Pressable
+        <LogoutBtn/> 
+
+         <Pressable
           style={styles.justifyCenter}
           onPress={() => console.log("bar Pressed")}
         >
           <Ionicons name="settings-outline" size={30} color="#ffffff" />
         </Pressable>
-      </View>
+      </View> */}
 
       <SearchBarComp/>
       {/* <SearchHeader onSearch={onSearch} /> */}

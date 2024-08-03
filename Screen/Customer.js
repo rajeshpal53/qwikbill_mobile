@@ -27,6 +27,7 @@ export default function Customer({ navigation }) {
   const {shopDetails}= useContext(ShopDetailContext)
   const [open, setOpen] = useState(false);
   const onStateChange = ({ open }) => setOpen(open);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -47,7 +48,7 @@ export default function Customer({ navigation }) {
   }
 
   const handleDelete = async () => {
-    console.log("delte id , ", deleteId);
+
     const updatedCustomers = customers.filter((item) => item._id !== deleteId);
     
     try {
@@ -61,17 +62,17 @@ export default function Customer({ navigation }) {
     }
   };
 
-  const handleEdit = (id) => {
-    navigation.navigate("EditCustomer", { customerId: id });
+  const handleEdit = (item) => {
+    navigation.navigate("EditCustomer", { customerId: item._id });
   };
 
   const handleView = (id) => {
     navigation.navigate("CustomerDetail", { customerId: id });
   };
 
-  const setModalVisible = (id) => {
+  const setModalVisible = (item) => {
 
-    setDeleteId(id);
+    setDeleteId(item._id);
     setIsModalVisible(true);
 
   }
@@ -89,16 +90,16 @@ export default function Customer({ navigation }) {
   const fabActions = [
     {
       icon: 'plus',
-      label: 'Add New Product',
-      onPress: () => navigation.navigate("AddProduct"),
+      label: 'Add New People',
+      onPress: () => navigation.navigate("AddCustomer"),
     },
     // Add more actions as needed
   ];
 
   const menuItems = [
     // { title: "View", onPress: (id) => handleView(id) },
-    { title: "Edit", onPress: (id) => handleEdit(id) },
-    { title: "Delete", onPress: (id) => setModalVisible(id) },
+    { title: "Edit", onPress: (item) => handleEdit(item) },
+    { title: "Delete", onPress: (item) => setModalVisible(item) },
   ]
 
   return (
