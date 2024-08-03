@@ -26,7 +26,7 @@ export default function InvoiceSuccessScreen({navigation}) {
     setLoading(true);
     try {
 
-      const response = await fetch(`http://192.168.15.33:8888/download/invoice/invoice-${dataId}.pdf`, {
+      const response = await fetch(`http://192.168.1.6:8888/download/invoice/invoice-${dataId}.pdf`, {
         credentials: "include",
       });
       const blob = await response.blob();

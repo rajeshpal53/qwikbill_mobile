@@ -33,6 +33,7 @@ import * as LocalAuthentication from "expo-local-authentication";
 import moment from "moment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Linking } from "react-native";
+import { usePasskey } from "../Store/PasskeyContext";
 
 
 export default function PasscodeScreen({ navigation }) {
@@ -43,7 +44,8 @@ export default function PasscodeScreen({ navigation }) {
     passcodeButtonMode: true,
     domainButtonMode: false,
   });
-
+  const{passkey}=usePasskey();
+  const [enteredPasscode,setenteredPasscode]=useState('')
   const [loginDetail1, setLoginDetail1] = useState(loginDetail);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [eyeOn, setEyeOn] = useState(false);
@@ -92,11 +94,16 @@ export default function PasscodeScreen({ navigation }) {
 
   const handleNavigation = async() => {
     const {previousLoginTime} = await storeTime();
+    if(enteredPasscode===passkey){
+      navigation.navigate("wertone", {
+        screen: "Home",
+        params : {previousLoginTime} 
+     });
+    }
+     else{
+      return(Alert.alert("failed to login use phone lock or retry"))
+     }
     
-    navigation.navigate("wertone", {
-     screen: "Home",
-     params : {previousLoginTime} 
-  });
   }
 
   useEffect(() => {
@@ -107,9 +114,11 @@ export default function PasscodeScreen({ navigation }) {
       });
 
       if (result.success) {
-        Alert.alert("Authenticated", "You have successfully authenticated");
-
-        handleNavigation();
+        const {previousLoginTime} = await storeTime();
+        navigation.navigate("wertone", {
+          screen: "Home",
+          params : {previousLoginTime} 
+       });
         
       } else {
         Alert.alert("Authentication Failed", "Please try again");
@@ -297,6 +306,7 @@ export default function PasscodeScreen({ navigation }) {
                               placeholder="Enter App Passcode"
                               keyboardType="numeric"
                               secureTextEntry={secureTextEntry}
+                              onChangeText={(value)=>{setenteredPasscode(value)}}
                             />
                           </View>
 
