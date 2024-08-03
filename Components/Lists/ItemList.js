@@ -127,7 +127,10 @@ export default function ItemList({
 
 const styles = StyleSheet.create({
   itemContainer: {
-    padding: 10,
+   paddingVertical:15,
+   paddingHorizontal:4,
+   marginVertical:6,
+
     // borderBottomWidth: 1,
     borderBottomColor: "#ccc",
   },

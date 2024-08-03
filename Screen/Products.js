@@ -1,7 +1,8 @@
 // Products.js
 import React, { useEffect, useState, useContext } from "react";
 import { View, StyleSheet, Button } from "react-native";
-import { ActivityIndicator, FAB , Portal, Provider as PaperProvider, Text } from "react-native-paper";
+import { ActivityIndicator, FAB , Portal, Provider, Text } from "react-native-paper";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useIsFocused } from "@react-navigation/native";
 import { readApi } from "../Util/UtilApi";
 import { AuthContext } from "../Store/AuthContext";
@@ -21,14 +22,9 @@ export default function Products({ navigation }) {
   const { setSearchMode } = useContext(AuthContext);
   const {shopDetails}= useContext(ShopDetailContext)
   const isFocused = useIsFocused();
+  const [open, setOpen] = useState(false);
   const { showSnackbar } = useSnackbar();
-
-  const [state, setState] = React.useState({ open: false });
-
-  const onStateChange = ({ open }) => setState({ open });
-
-  const { open } = state;
-
+  const onStateChange = ({ open }) => setOpen(open);
   useEffect(() => {
     async function fetchData() {
       console.log("pre")
@@ -111,6 +107,15 @@ export default function Products({ navigation }) {
 
   return (
     <>
+    <SafeAreaProvider>
+
+
+   
+    <Provider>
+      <Portal>
+
+
+      
     <View style={styles.container}>
       <ItemList
         data={products}
@@ -122,32 +127,39 @@ export default function Products({ navigation }) {
         expandedItems={renderExpandedContent}
         menuItems={menuItems}
       />
-      <PaperProvider>
-      <Portal>
-        <FAB.Group
-          open={open}
-          visible
-          icon={"plus" || (open ? 'calendar-today' : 'plus')}
-          actions={fabActions}
-          onStateChange={onStateChange}
-          onPress={() => {
-            if (open) {
-              // Optional: Handle additional actions when FAB is open
-            }
-          }}
-        />
-      </Portal>
-    </PaperProvider>
-      {/* <FAB
-        icon={() => <Icon name="add-outline" size={20} color="white" />}
-        style={styles.fab}
-        onPress={() => navigation.navigate("AddProduct")}
-        label="Add New Product"
-      /> */}
-      
-      {/* <View style={styles.fab}>
-    <FabGroup actions={fabActions} icon="plus"/>
-    </View> */}
+       <FAB.Group
+              open={open}
+              fabStyle={styles.actionStyle}
+              icon={() => (
+                <Icon
+                  name={open ? "close-outline" : "add-outline"}
+                  size={20}
+                  color="white"
+                />
+              )}
+              actions={[
+                {
+                  color: "white",
+                  style: styles.actionStyle,
+                  icon: "account-plus",
+                  label: "Add Product",
+                  onPress: () => {
+                    navigation.navigate("AddProduct");
+                  },
+                },
+                {
+                  color: "white",
+                  style: styles.actionStyle,
+                  icon: "file-upload",
+                  label: "Add Product from File",
+                  onPress: ()=>{},
+                },
+              ]}
+              onStateChange={onStateChange}
+              onPress={() => {
+                open && setOpen(false);
+              }}
+            />
       {isModalVisible && (
         <DeleteModal
           visible={isModalVisible}
@@ -156,8 +168,9 @@ export default function Products({ navigation }) {
         />
       )}
     </View>
-    
-    
+    </Portal>
+    </Provider>
+    </SafeAreaProvider> 
     </>
   );
 }
@@ -167,14 +180,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   fab: {
-    // width:50,
-    // height:50,    
     position: "absolute",
-    // margin: 16,
-    right: 4,
-    bottom: "15%",
-    // backgroundColor: "#96214e",
-    color: "white"
-    // backgroundColor:"blue"
+    right: 0,
+    bottom: 0,
+    color: "floralwhite ",
+    backgroundColor: "#96214e",
+    zIndex: 100,
+    color: "white",
+  },
+  actionStyle: {
+    backgroundColor: "#96214e",
+    color: "floralwhite ",
   },
 });
