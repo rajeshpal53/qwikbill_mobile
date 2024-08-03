@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -12,6 +12,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { HelperText, Button, Card,Text,TextInput} from "react-native-paper";
 import { useSnackbar } from "../../Store/SnackbarContext";
+import { usePasskey } from "../../Store/PasskeyContext";
 const PasscodeSchema = Yup.object().shape({
   passcode: Yup.string()
     .min(4, "Passcode is too short!")
@@ -24,6 +25,11 @@ const PasscodeSchema = Yup.object().shape({
 
 const CreateNewPasscode = ({ navigation }) => {
   const { showSnackbar } = useSnackbar();
+  const { passkey, savePasskey, removePasskey } = usePasskey()
+  const [newPasskey,setNewPasskey]=useState("")
+  useEffect(()=>{
+      savePasskey(newPasskey);
+  },[passkey])
   return (
     <>
     <StatusBar style="light" backgroundColor={"#0c3b73"} />
@@ -76,6 +82,8 @@ const CreateNewPasscode = ({ navigation }) => {
           validationSchema={PasscodeSchema}
           onSubmit={(values) => {
             console.log(values);
+            setNewPasskey(values.passcode)
+            savePasskey(values.passcode)
             showSnackbar("succesfully update new passcode", "success");
             navigation.navigate("Passcode");
           }}
