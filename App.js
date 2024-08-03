@@ -38,7 +38,7 @@ import HomeScreen from "./Screen/HomeScreen.js";
 import { useState } from "react";
 import { size } from "lodash";
 // import { Ionicons } from "@expo/vector-icons";
-import Ionicons from '@expo/vector-icons/Ionicons';
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Feather } from "@expo/vector-icons";
 import HomeHeaderRight from "./Components/HeaderComponents/HomeHeaderRight.js";
 import CreateInvoice from "./Components/CreateInvoice.js";
@@ -46,7 +46,7 @@ import LogoutBtn from "./Components/HeaderComponents/LogoutBtn.js";
 import ReviewAndPayScreen from "./Screen/ReviewAndPayScreen.js";
 import InvoiceSuccessScreen from "./Screen/InvoiceSuccessScreen.js";
 import AddVendorScreen from "./Screen/AddVendorScreen.js";
-import * as LocalAuthentication from 'expo-local-authentication';
+import * as LocalAuthentication from "expo-local-authentication";
 import LocalAuthScreen from "./LocalAuthScreen.js";
 import FilterInvoiceScreen from "./Screen/FilterInvoiceScreen.js";
 import ViewInvoiceScreen from "./Screen/Invoices/ViewInvoiceScreen.js";
@@ -59,6 +59,8 @@ import CreateNewPasscode from "./Screen/ForgetPasscode/CreateNewPasscode.js";
 import CreateShopScreen from "./Screen/Shops/CreateShopScreen.js";
 import ViewShopsScreen from "./Screen/Shops/ViewShopsScreen.js";
 import VendorListScreen from "./Screen/Vendors/VendorListScreen.js";
+import { PasskeyProvider } from "./Store/PasskeyContext.js";
+import SignupScreen from "./Screen/SignupScreen.js"
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -67,68 +69,64 @@ const customTheme = {
   colors: {
     ...DefaultTheme.colors,
     primary: "#0c3b73",
-    accent:"#fff",
+    accent: "#fff",
     secondry: "#96214e",
     // Set your custom primary color here
   },
 };
 function DrawerNavigator() {
-
-  const [searchQuery, setSearchQuery] = useState('');
-  const {searchMode} = useContext(AuthContext);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { searchMode } = useContext(AuthContext);
 
   const handleSearch = (query) => {
-    console.log("seravj")
+    console.log("seravj");
     setSearchQuery(query);
     // Handle search logic here
     console.log(query);
   };
 
   return (
-    <Tab.Navigator 
-    initialRouteName="Home"
+    <Tab.Navigator
+      initialRouteName="Home"
       screenOptions={{
-      headerShown:false,
-      headerStyle: {
-        // backgroundColor: `#262580`, // Set your desired header background color here
-        backgroundColor:"#0c3b73",
-        shadowColor: 'transparent', // This removes the shadow on iOS
-        elevation: 0,               // This removes the shadow on Android
-      },
-      tabBarHideOnKeyboard:true,
-      headerTintColor: 'white', // Set your desired header text color here
-      headerTitleStyle: {
-        fontWeight: 'bold', // Optional: Set your desired font weight
-      },  
-      headerLeft:() => (
-        <Pressable onPress={()=> console.log("bar Pressed")}>
-          <Ionicons name="person-circle-outline" size={40} color="#ffffff" />
-        </Pressable>
-      ),
-      headerRight:() => (
-        <HomeHeaderRight onSearch={handleSearch} />
-
-      ),
-
-    }}>
+        headerShown: false,
+        headerStyle: {
+          // backgroundColor: `#262580`, // Set your desired header background color here
+          backgroundColor: "#0c3b73",
+          shadowColor: "transparent", // This removes the shadow on iOS
+          elevation: 0, // This removes the shadow on Android
+        },
+        tabBarHideOnKeyboard: true,
+        headerTintColor: "white", // Set your desired header text color here
+        headerTitleStyle: {
+          fontWeight: "bold", // Optional: Set your desired font weight
+        },
+        headerLeft: () => (
+          <Pressable onPress={() => console.log("bar Pressed")}>
+            <Ionicons name="person-circle-outline" size={40} color="#ffffff" />
+          </Pressable>
+        ),
+        headerRight: () => <HomeHeaderRight onSearch={handleSearch} />,
+      }}
+    >
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarIcon: ({color, size}) => (
-            <Icon name="home-outline" color = "#0c3b73" size={size} />
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="home-outline" color="#0c3b73" size={size} />
           ),
-          headerShown:true,
+          headerShown: true,
           // title:"myHome",
-          headerTitle: ((!searchMode)? 
-             ((props) => (<WertoneLogoTitle {...props} />)):
-             ("")),
-          headerTitleStyle:{
-            backgroundColor:"white",
+          headerTitle: !searchMode
+            ? (props) => <WertoneLogoTitle {...props} />
+            : "",
+          headerTitleStyle: {
+            backgroundColor: "white",
           },
           // headerTitle:"",
-          headerTitleAlign:((!searchMode)?"center":"left"),
-          tabBarLabel:"Home", 
+          headerTitleAlign: !searchMode ? "center" : "left",
+          tabBarLabel: "Home",
           // tabBarVisible:false,
           // tabBarButton: () => null
         }}
@@ -137,62 +135,62 @@ function DrawerNavigator() {
         name="Invoice"
         component={Invoice}
         options={{
-          headerShown:true,
+          headerShown: true,
           tabBarIcon: ({ color, size }) => (
             <Icon name="file-tray-full-outline" color="#0c3b73" size={size} />
           ),
-          headerTitle: ((!searchMode)? 
-             ((props) => (<WertoneLogoTitle {...props} />)):
-             ("")),
-             
-          headerTitleAlign:((!searchMode)?"center":"left"),
+          headerTitle: !searchMode
+            ? (props) => <WertoneLogoTitle {...props} />
+            : "",
+
+          headerTitleAlign: !searchMode ? "center" : "left",
         }}
       />
-      
+
       <Tab.Screen
         name="Products"
         component={Products}
         options={{
-          headerShown:true,
+          headerShown: true,
           tabBarIcon: ({ color, size }) => (
             <Icon name="pricetag-outline" color="#0c3b73" size={size} />
           ),
-          headerTitle: ((!searchMode)? 
-             ((props) => (<WertoneLogoTitle {...props} />)):
-             ("")),
-             
-          headerTitleAlign:((!searchMode)?"center":"left"),
+          headerTitle: !searchMode
+            ? (props) => <WertoneLogoTitle {...props} />
+            : "",
+
+          headerTitleAlign: !searchMode ? "center" : "left",
         }}
       />
       <Tab.Screen
         name="Customer"
         component={Customer}
         options={{
-          headerShown:true,
-          tabBarLabel:"People",
+          headerShown: true,
+          tabBarLabel: "People",
           tabBarIcon: ({ color, size }) => (
             <Icon name="people-outline" color="#0c3b73" size={size} />
           ),
-          headerTitle: ((!searchMode)? 
-             ((props) => (<WertoneLogoTitle {...props} />)):
-             ("")),
+          headerTitle: !searchMode
+            ? (props) => <WertoneLogoTitle {...props} />
+            : "",
 
-          headerTitleAlign:((!searchMode)?"center":"left"),
+          headerTitleAlign: !searchMode ? "center" : "left",
         }}
       />
       <Tab.Screen
         name="Profile Setting"
         component={ProfileSetting}
         options={{
-          headerShown:true,
+          headerShown: true,
           tabBarIcon: ({ color, size }) => (
             <Icon name="person-outline" color="#0c3b73" size={size} />
           ),
-          headerTitle: ((!searchMode)? 
-             ((props) => (<WertoneLogoTitle {...props} />)):
-             ("")),
-             
-          headerTitleAlign:((!searchMode)?"center":"left"),
+          headerTitle: !searchMode
+            ? (props) => <WertoneLogoTitle {...props} />
+            : "",
+
+          headerTitleAlign: !searchMode ? "center" : "left",
         }}
       />
       <Tab.Screen
@@ -200,11 +198,10 @@ function DrawerNavigator() {
         component={ProfileSetting}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Feather name="more-horizontal" size={size} color="#0c3b73"/>
+            <Feather name="more-horizontal" size={size} color="#0c3b73" />
           ),
         }}
       />
-      
     </Tab.Navigator>
   );
 }
@@ -221,17 +218,20 @@ function StackNavigator() {
     );
   }
 
-  const {shopDetails} = useContext(ShopDetailContext);
+  const { shopDetails } = useContext(ShopDetailContext);
   return (
-    <Stack.Navigator initialRouteName={isAuthenticated ? "Passcode" : "login"}  screenOptions={{
-      headerStyle: {
-        backgroundColor: '#0c3b73', // Set your desired header background color here
-      },
-      headerTintColor: 'white', // Set your desired header text color here
-      headerTitleStyle: {
-        fontWeight: 'bold', // Optional: Set your desired font weight
-      },
-    }}>
+    <Stack.Navigator
+      initialRouteName={isAuthenticated ? "Passcode" : "login"}
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: "#0c3b73", // Set your desired header background color here
+        },
+        headerTintColor: "white", // Set your desired header text color here
+        headerTitleStyle: {
+          fontWeight: "bold", // Optional: Set your desired font weight
+        },
+      }}
+    >
       <Stack.Screen
         name="wertone"
         component={DrawerNavigator}
@@ -245,6 +245,11 @@ function StackNavigator() {
       <Stack.Screen
         name="login"
         component={LoginScreen}
+        screenOptions={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Signup"
+        component={SignupScreen}
         screenOptions={{ headerShown: false }}
       />
       <Stack.Screen
@@ -307,78 +312,69 @@ function StackNavigator() {
         component={Forgetpasscode}
         options={{ headerShown: false }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="CreateNewPasscode"
         component={CreateNewPasscode}
         options={{ headerShown: false }}
       />
       <Stack.Screen
-      name="CreateInvoice"
-      component={CreateInvoice}
-      options={{
-        headerRight:() => (
-          <LogoutBtn/>
-        ),
-      }}
-      />
-      <Stack.Screen 
-      name="CreateShopScreen"
-      component={CreateShopScreen}
-      options={{}}
+        name="CreateInvoice"
+        component={CreateInvoice}
+        options={{
+          headerRight: () => <LogoutBtn />,
+        }}
       />
       <Stack.Screen
-      name="genrateInvoice"
-      component={GenrateInvoiceScreen}
-      options={{
-        headerRight:() => (
-          <LogoutBtn/>
-        ),
-      }}
+        name="CreateShopScreen"
+        component={CreateShopScreen}
+        options={{}}
       />
       <Stack.Screen
-      name="ReviewAndPay"
-      component={ReviewAndPayScreen}
-      options={{
-        headerRight:() => (
-          <LogoutBtn/>
-        )
-      }}
+        name="genrateInvoice"
+        component={GenrateInvoiceScreen}
+        options={{
+          headerRight: () => <LogoutBtn />,
+        }}
       />
       <Stack.Screen
-      name="InvoiceSuccess"
-      component={InvoiceSuccessScreen}
-      options={{
-        headerRight:() => (
-          <LogoutBtn/>
-        )
-      }}
+        name="ReviewAndPay"
+        component={ReviewAndPayScreen}
+        options={{
+          headerRight: () => <LogoutBtn />,
+        }}
       />
       <Stack.Screen
-      name="Invoices"
-      component={FilterInvoiceScreen}
-      options={{
-        // headerTitle: ((false)? 
-        //      (() => ("")):
-        //      ("kunal store"))
-      }}
+        name="InvoiceSuccess"
+        component={InvoiceSuccessScreen}
+        options={{
+          headerRight: () => <LogoutBtn />,
+        }}
       />
       <Stack.Screen
-      name="ViewInvoices"
-      component={ViewInvoiceScreen}
-      options={({ route }) => ({
-        headerTitle: shopDetails.shopname,
-        headerRight:() => (
-           <RotateBtn />
-  
-        ),
-      })}
+        name="Invoices"
+        component={FilterInvoiceScreen}
+        options={
+          {
+            // headerTitle: ((false)?
+            //      (() => ("")):
+            //      ("kunal store"))
+          }
+        }
       />
       <Stack.Screen
-      name="ViewShops"
-      component={ViewShopsScreen}
-      options={{
-        headerTitle:"My Shops"
-      }}
+        name="ViewInvoices"
+        component={ViewInvoiceScreen}
+        options={({ route }) => ({
+          headerTitle: shopDetails.shopname,
+          headerRight: () => <RotateBtn />,
+        })}
+      />
+      <Stack.Screen
+        name="ViewShops"
+        component={ViewShopsScreen}
+        options={{
+          headerTitle: "My Shops",
+        }}
       />
     </Stack.Navigator>
   );
@@ -386,24 +382,31 @@ function StackNavigator() {
 export default function App() {
   return (
     <ShopDetailProvider>
-    <SafeAreaProvider>
-      <SnackbarProvider>
-        <Provider theme={customTheme}>
-          <NavigationContainer>
-            <AuthProvider>
-              <Stack.Navigator initialRouteName="StackNavigator"  optionScreen={{headerStyle:{backgroundColor:"black"},
-                  headerTintColor: 'white'}}>
-                <Stack.Screen
-                  name="StackNavigator"
-                  component={StackNavigator}
-                  options={{headerShown:false}}
-                />
-              </Stack.Navigator>
-            </AuthProvider>
-          </NavigationContainer>
-        </Provider>
-      </SnackbarProvider>
-    </SafeAreaProvider>
+      <SafeAreaProvider>
+        <PasskeyProvider>
+          <SnackbarProvider>
+            <Provider theme={customTheme}>
+              <NavigationContainer>
+                <AuthProvider>
+                  <Stack.Navigator
+                    initialRouteName="StackNavigator"
+                    optionScreen={{
+                      headerStyle: { backgroundColor: "black" },
+                      headerTintColor: "white",
+                    }}
+                  >
+                    <Stack.Screen
+                      name="StackNavigator"
+                      component={StackNavigator}
+                      options={{ headerShown: false }}
+                    />
+                  </Stack.Navigator>
+                </AuthProvider>
+              </NavigationContainer>
+            </Provider>
+          </SnackbarProvider>
+        </PasskeyProvider>
+      </SafeAreaProvider>
     </ShopDetailProvider>
   );
 }

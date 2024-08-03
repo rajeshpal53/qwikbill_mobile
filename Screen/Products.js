@@ -13,16 +13,13 @@ import DeleteModal from "../UI/DeleteModal";
 import { ShopDetailContext } from "../Store/ShopDetailContext";
 import FabGroup from "../Components/FabGroup";
 import { TouchableOpacity } from "react-native-gesture-handler";
-
 export default function Products({ navigation }) {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deleteId, setDeleteId] = useState();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { setSearchMode } = useContext(AuthContext);
-  const shopDetails = useContext(ShopDetailContext).shopDetails;
-  console.log("shop details are , ", shopDetails);
-
+  const {shopDetails}= useContext(ShopDetailContext)
   const isFocused = useIsFocused();
   const { showSnackbar } = useSnackbar();
 
