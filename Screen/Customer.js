@@ -10,7 +10,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { useSnackbar } from "../Store/SnackbarContext";
 import DeleteModal from "../UI/DeleteModal";
 import { deleteApi } from "../Util/UtilApi";
-
+import { ShopDetailContext } from "../Store/ShopDetailContext";
 export default function Customer({ navigation }) {
   const [customers, setCustomers] = useState([])
   const [isLoading, setIsLoading] = useState(true);
@@ -20,11 +20,11 @@ export default function Customer({ navigation }) {
   const { setSearchMode } = useContext(AuthContext);
   const isFocused = useIsFocused();
   const { showSnackbar } = useSnackbar();
-
+  const {shopDetails}= useContext(ShopDetailContext)
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await readApi("api/people/list");
+        const response = await readApi(`api/people/list?shop=${shopDetails._id}`);
         setCustomers(response.result);
       } catch (error) {
         console.error("error", error);

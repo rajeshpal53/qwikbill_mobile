@@ -10,14 +10,14 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { deleteApi } from "../Util/UtilApi";
 import { useSnackbar } from "../Store/SnackbarContext";
 import DeleteModal from "../UI/DeleteModal";
-
+import { ShopDetailContext } from "../Store/ShopDetailContext";
 export default function Products({ navigation }) {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deleteId, setDeleteId] = useState();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { setSearchMode } = useContext(AuthContext);
-
+  const {shopDetails}= useContext(ShopDetailContext)
   const isFocused = useIsFocused();
   const { showSnackbar } = useSnackbar();
 
@@ -25,7 +25,7 @@ export default function Products({ navigation }) {
     async function fetchData() {
       console.log("pre")
       try {
-        const response = await readApi("api/product/list");
+        const response = await readApi(`api/product/list?shop=${shopDetails._id}`);
         setProducts(response.result);
       } catch (Error) {
         console.error("Error fetching products", Error);

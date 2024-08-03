@@ -1,6 +1,6 @@
 import {React ,useState,useContext} from 'react';
-import { View,StyleSheet, Alert,Image } from 'react-native';
-import{Text,TextInput,Button, Card} from 'react-native-paper'
+import { View,StyleSheet, Alert,Image,TouchableOpacity } from 'react-native';
+import{Text,TextInput,Button, Card,Divider} from 'react-native-paper'
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { AuthContext } from '../Store/AuthContext';
@@ -96,7 +96,16 @@ import { createApi } from '../Util/UtilApi';
           >
             Login with Facebook
           </Button>
+          <Divider/>
+  
+          <TouchableOpacity onPress={() =>navigation.navigate("Signup")}>
+        <Text style={styles.signup}>
+          Don't have an account? <Text style={styles.signupText}>Sign Up</Text>
+        </Text>
+      </TouchableOpacity>
+          
           </Card>
+
         </View>
       )}
     </Formik>
@@ -112,6 +121,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     elevation:12,
   },
+  signup:{alignSelf:"center",marginVertical:10,color:"grey"},
   input: {
     marginBottom: 16,
     paddingHorizontal: 8,
@@ -119,6 +129,10 @@ const styles = StyleSheet.create({
     width:'90%',
     alignSelf:"center"
 
+  },
+  signupText: {
+    color: '#1e90ff', 
+    fontWeight: 'bold',
   },
   img:{
       height:100,
