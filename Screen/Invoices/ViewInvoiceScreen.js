@@ -187,14 +187,16 @@ const genrateInvoice=(item)=>{
         style={styles.fab}
         onPress={()=>{openModel()}}
       />
-      <InvoiceFilterModel isModalVisible = {isModalVisible} setModalVisible = {setModalVisible} toggleModal={toggleModal}/>
+      <InvoiceFilterModel style={{backgroundColor:"lightblue"}} isModalVisible = {isModalVisible} setModalVisible = {setModalVisible} toggleModal={toggleModal}/>
     </>
   );
 }
 
 const styles = StyleSheet.create({
   scrollView: {
+    height:"100%",
     backgroundColor: "#fff",
+    // backgroundColor:"orange"
   },
   container: {
     flex: 1,

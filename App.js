@@ -81,7 +81,6 @@ function DrawerNavigator() {
   const { searchMode } = useContext(AuthContext);
 
   const handleSearch = (query) => {
-    console.log("seravj");
     setSearchQuery(query);
     // Handle search logic here
     console.log(query);
@@ -135,7 +134,8 @@ function DrawerNavigator() {
       />
       <Tab.Screen
         name="Invoice"
-        component={Invoice}
+        component={FilterInvoiceScreen}
+        // component={Invoice}
         options={{
           headerShown: true,
           tabBarIcon: ({ color, size }) => (

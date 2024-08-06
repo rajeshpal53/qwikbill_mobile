@@ -1,10 +1,16 @@
 // Products.js
 import React, { useEffect, useState, useContext } from "react";
 import { View, StyleSheet, Button } from "react-native";
-import { ActivityIndicator, FAB , Portal, Provider, Text } from "react-native-paper";
+import {
+  ActivityIndicator,
+  FAB,
+  Portal,
+  Provider,
+  Text,
+} from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useIsFocused } from "@react-navigation/native";
-import { readApi } from "../Util/UtilApi";
+import { readApi, createApi } from "../Util/UtilApi";
 import { AuthContext } from "../Store/AuthContext";
 import ItemList from "../Components/Lists/ItemList";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -14,31 +20,40 @@ import DeleteModal from "../UI/DeleteModal";
 import { ShopDetailContext } from "../Store/ShopDetailContext";
 import FabGroup from "../Components/FabGroup";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import FileUploadModal from "../Components/BulkUpload/FileUploadModal";
+import axios from "axios";
+
 export default function Products({ navigation }) {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deleteId, setDeleteId] = useState();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isUploadModalVisible, setIsUploadModalVisible] = useState(false);
   const { setSearchMode } = useContext(AuthContext);
-  const {shopDetails}= useContext(ShopDetailContext)
+  const { shopDetails } = useContext(ShopDetailContext);
   const isFocused = useIsFocused();
   const [open, setOpen] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const { showSnackbar } = useSnackbar();
   const onStateChange = ({ open }) => setOpen(open);
+
   useEffect(() => {
     async function fetchData() {
-      console.log("pre")
       try {
-        const response = await readApi(`api/product/list?shop=${shopDetails._id}`);
+        const response = await readApi(
+          `api/product/list?shop=${shopDetails._id}`
+        );
         setProducts(response.result);
       } catch (Error) {
         console.error("Error fetching products", Error);
       } finally {
         setIsLoading(false);
+        setRefresh(false);
+        console.log("refressing 2")
       }
     }
     fetchData();
-  }, [isFocused]);
+  }, [isFocused, refresh]);
 
   if (isLoading) {
     return <ActivityIndicator size="large" />;
@@ -64,36 +79,67 @@ export default function Products({ navigation }) {
   };
 
   const handleView = (id) => {
-    
     navigation.navigate("ProductDetail", { productId: id });
   };
 
   const setModalVisible = (item) => {
-
     setDeleteId(item._id);
     setIsModalVisible(true);
+  };
 
-  }
+  const handleFileUpload = async (file) => {
+
+    const formData = new FormData();
+    formData.append('file',{
+      uri: file.uri,
+      name: file.name,
+      type : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    });
+
+    formData.append('shop',shopDetails._id);
+
+    try {
+      const response = await axios.post('http://192.168.1.3:8888/api/product/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        withCredentials: true
+      });
+  
+      console.log('Data uploaded successfully:', response.result);
+      showSnackbar("Products uploaded successfully", "success");
+    } catch (error) {
+      console.error("Error uploading file:", error.response ? error.response.result : error.message);
+      showSnackbar("Error uploading new products", "error");
+    } finally {
+      setIsUploadModalVisible(false);
+      setIsLoading(false);
+      setRefresh(true);
+      
+    }
+    
+  };
 
   const renderExpandedContent = (item) => (
-    <View style={{
-      marginLeft:"14.5%"
-    }}>
+    <View
+      style={{
+        marginLeft: "14.5%",
+      }}
+    >
       <Text>{`${item.customField[0].fieldName} : ${item.customField[0].fieldValue}`}</Text>
       {/* <Button title="more" onPress ={() => handleView(item._id)} /> */}
-        
     </View>
   );
 
   const fabActions = [
     {
-      icon: 'plus',
-      label: 'Add New Product',
+      icon: "plus",
+      label: "Add New Product",
       onPress: () => navigation.navigate("AddProduct"),
     },
     {
-      icon: 'pencil',
-      label: 'Add New Product',
+      icon: "pencil",
+      label: "Add New Product",
       onPress: () => navigation.navigate("AddProduct"),
     },
     // Add more actions as needed
@@ -103,74 +149,79 @@ export default function Products({ navigation }) {
     // { title: "View", onPress: (id) => handleView(id) },
     { title: "Edit", onPress: (item) => handleEdit(item) },
     { title: "Delete", onPress: (item) => setModalVisible(item) },
-  ]
+  ];
 
   return (
     <>
-    <SafeAreaProvider>
-
-
-   
-    <Provider>
-      <Portal>
-
-
-      
-    <View style={styles.container}>
-      <ItemList
-        data={products}
-        titleKey="name"
-        subtitleKey="price"
-        onDelete={setModalVisible}
-        onEdit={handleEdit}
-        onView={handleView}
-        expandedItems={renderExpandedContent}
-        menuItems={menuItems}
-      />
-       <FAB.Group
-              open={open}
-              fabStyle={styles.actionStyle}
-              icon={() => (
-                <Icon
-                  name={open ? "close-outline" : "add-outline"}
-                  size={20}
-                  color="white"
+      <SafeAreaProvider>
+        <Provider>
+          <Portal>
+            <View style={styles.container}>
+              <ItemList
+                data={products}
+                titleKey="name"
+                subtitleKey="price"
+                onDelete={setModalVisible}
+                onEdit={handleEdit}
+                onView={handleView}
+                expandedItems={renderExpandedContent}
+                menuItems={menuItems}
+              />
+              <FAB.Group
+                open={open}
+                fabStyle={styles.actionStyle}
+                icon={() => (
+                  <Icon
+                    name={open ? "close-outline" : "add-outline"}
+                    size={20}
+                    color="white"
+                  />
+                )}
+                actions={[
+                  {
+                    color: "white",
+                    style: styles.actionStyle,
+                    icon: "account-plus",
+                    label: "Add Product",
+                    onPress: () => {
+                      navigation.navigate("AddProduct");
+                    },
+                  },
+                  {
+                    color: "white",
+                    style: styles.actionStyle,
+                    icon: "file-upload",
+                    label: "Add Product from File",
+                    onPress: () => {
+                      setIsUploadModalVisible(true);
+                    },
+                  },
+                ]}
+                onStateChange={onStateChange}
+                onPress={() => {
+                  open && setOpen(false);
+                }}
+              />
+              {isModalVisible && (
+                <DeleteModal
+                  visible={isModalVisible}
+                  setVisible={setIsModalVisible}
+                  handleDelete={handleDelete}
                 />
               )}
-              actions={[
-                {
-                  color: "white",
-                  style: styles.actionStyle,
-                  icon: "account-plus",
-                  label: "Add Product",
-                  onPress: () => {
-                    navigation.navigate("AddProduct");
-                  },
-                },
-                {
-                  color: "white",
-                  style: styles.actionStyle,
-                  icon: "file-upload",
-                  label: "Add Product from File",
-                  onPress: ()=>{},
-                },
-              ]}
-              onStateChange={onStateChange}
-              onPress={() => {
-                open && setOpen(false);
-              }}
-            />
-      {isModalVisible && (
-        <DeleteModal
-          visible={isModalVisible}
-          setVisible={setIsModalVisible}
-          handleDelete={handleDelete}
-        />
-      )}
-    </View>
-    </Portal>
-    </Provider>
-    </SafeAreaProvider> 
+
+              {/* File Upload Modal */}
+              {isUploadModalVisible && (
+                <FileUploadModal
+                  isVisible={isUploadModalVisible}
+                  onClose={() => setIsUploadModalVisible(false)}
+                  onUpload={handleFileUpload}
+                />
+              )}
+            </View>
+          </Portal>
+        </Provider>
+      </SafeAreaProvider>
     </>
   );
 }

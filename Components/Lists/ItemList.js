@@ -1,6 +1,6 @@
 // ItemList.js
-import React, { useState } from "react";
-import { View, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState, useCallback } from "react";
+import { View, FlatList, TouchableOpacity, StyleSheet, RefreshControl } from "react-native";
 import { Avatar, Menu, Text } from "react-native-paper";
 import { Feather } from "@expo/vector-icons";
 
@@ -12,11 +12,12 @@ export default function ItemList({
   onEdit,
   onView,
   expandedItems,
-  menuItems
+  menuItems,
 }) {
   const [visible, setVisible] = useState(false);
   const [expandedId, setExpandedId] = useState(null);
   const [currentItem, setCurrentItem] = useState(null);
+  
 
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);
