@@ -7,16 +7,22 @@ import { ActivityIndicator } from "react-native-paper";
 import { useNavigation } from '@react-navigation/native';
 import LogoutBtn from "./LogoutBtn";
 import SearchBarComp from "../SearchBarComp";
+import { Entypo } from "@expo/vector-icons";
 // import {LogoutBtn} from "./LogoutBtn"
 
 export default function HomeHeaderRight() {
     const navigation = useNavigation();
 
-    const { isLoading, isAuthenticated, logout } = useContext(AuthContext);
+    const { isLoading, isAuthenticated, logout, searchMode, setSearchMode } = useContext(AuthContext);
 
 
   return (
-    <View style={{marginRight:"10%"}}>
+    <View style={{
+      // marginRight:"10%", 
+      paddingRight:"5%",
+      flexDirection:(searchMode) ? "row" : "column",
+      alignItems:"center",
+      }}>
 
       {/* <View style={styles.pressablesContainer}>
 
@@ -31,6 +37,8 @@ export default function HomeHeaderRight() {
       </View> */}
 
       <SearchBarComp/>
+
+      {(searchMode) && (<Entypo onPress={() => setSearchMode(false)} name="cross" size={30} color="#ffffff" />)}
       {/* <SearchHeader onSearch={onSearch} /> */}
     </View>
   );

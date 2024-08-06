@@ -12,6 +12,8 @@ import DeleteModal from "../UI/DeleteModal";
 import { deleteApi } from "../Util/UtilApi";
 import { ShopDetailContext } from "../Store/ShopDetailContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import FileUploadModal from "../Components/BulkUpload/FileUploadModal";
+import axios from "axios";
 
 
 import FabGroup from "../Components/FabGroup";
@@ -19,13 +21,14 @@ export default function Customer({ navigation }) {
   const [customers, setCustomers] = useState([])
   const [isLoading, setIsLoading] = useState(true);
   const [deleteId, setDeleteId] = useState();
-  // const [customer, setCustomer] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isUploadModalVisible, setIsUploadModalVisible] = useState(false);
   const { setSearchMode } = useContext(AuthContext);
   const isFocused = useIsFocused();
   const { showSnackbar } = useSnackbar();
   const {shopDetails}= useContext(ShopDetailContext)
   const [open, setOpen] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const onStateChange = ({ open }) => setOpen(open);
 
   useEffect(() => {
@@ -33,15 +36,15 @@ export default function Customer({ navigation }) {
       try {
         const response = await readApi(`api/people/list?shop=${shopDetails._id}`);
         setCustomers(response.result);
-        console.log("response in cusstomer , ", response);
       } catch (error) {
         console.error("error", error);
       } finally {
         setIsLoading(false);
+        setRefresh(false);
       }
     }
     fetchData();
-  }, [isFocused]);
+  }, [isFocused, refresh]);
 
   if (isLoading) {
     return <ActivityIndicator size="large" />;
@@ -76,6 +79,38 @@ export default function Customer({ navigation }) {
     setIsModalVisible(true);
 
   }
+
+  const handleFileUpload = async (file) => {
+
+    const formData = new FormData();
+    formData.append('file',{
+      uri: file.uri,
+      name: file.name,
+      type : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    });
+
+    formData.append('shop',shopDetails._id);
+
+    try {
+      const response = await axios.post('http://192.168.1.3:8888/api/people/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        withCredentials: true
+      });
+  
+      console.log('Data uploaded successfully:', response.result);
+      showSnackbar("Peoples uploaded successfully", "success");
+    } catch (error) {
+      console.error("Error uploading file:", error.response ? error.response.result : error.message);
+      showSnackbar("Error uploading new Peoples", "error");
+    } finally {
+      setIsUploadModalVisible(false);
+      setIsLoading(false);
+      setRefresh(true);
+    }
+    
+  };
 
   const renderExpandedContent = (item) => (
     <View style={{
@@ -148,7 +183,9 @@ export default function Customer({ navigation }) {
                   style: styles.actionStyle,
                   icon: "file-upload",
                   label: "Add Customer from File",
-                  onPress: ()=>{},
+                  onPress: () => {
+                    setIsUploadModalVisible(true);
+                  },
                 },
               ]}
               onStateChange={onStateChange}
@@ -163,6 +200,15 @@ export default function Customer({ navigation }) {
           handleDelete={handleDelete}
         />
       )}
+
+       {/* File Upload Modal */}
+       {isUploadModalVisible && (
+                <FileUploadModal
+                  isVisible={isUploadModalVisible}
+                  onClose={() => setIsUploadModalVisible(false)}
+                  onUpload={handleFileUpload}
+                />
+              )}
     </View>
     </Portal>
     </Provider>

@@ -3,12 +3,14 @@ import { ShopDetailContext } from "../Store/ShopDetailContext"
 import { Picker } from "@react-native-picker/picker";
 import { View,Text ,StyleSheet} from "react-native"
 import { readApi } from "../Util/UtilApi";
+
 function DropDownList() {
  const {addShopDetails,shopDetails}=useContext(ShopDetailContext)
  const [options, setOptions] = useState([]);
  const [selectedShop, setSelectedShop ] = useState("");
  console.log(shopDetails,"newShopDetails")
  const pickerRef = useRef();
+
  useEffect(() => {
     async function fetchOptions() {
       const response = await readApi(`api/shop/list`);
@@ -17,10 +19,12 @@ function DropDownList() {
     }
     fetchOptions();
   }, []);
+
   const getSelectedOption = () => {
     const selectedId = options.find(option => option.shopname === selectedShop);
     addShopDetails(selectedId)
   }
+  
   useEffect(() => {
     if (selectedShop) {
       getSelectedOption();
