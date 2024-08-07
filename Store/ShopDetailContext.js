@@ -39,9 +39,9 @@ const ShopDetailProvider = ({ children }) => {
     }
   }, [shopDetails]);
 
-  // Add shop detail function
-  const addShopDetails = (newShopDetail) => {
-    setShopDetails(newShopDetail);
+  // Replace shop details with the new array
+  const addShopDetails = (newShopDetailArray) => {
+    setShopDetails(newShopDetailArray);
   };
 
   return (

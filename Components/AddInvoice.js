@@ -19,7 +19,7 @@ const fetchOptions = async (input,shopDetails) => {
   const headers={
     "Content-Type": "application/json",
   }
-  const response = await readApi(`api/client/search?shop=${shopDetails}&fields=name&q=${input}&page=1&items=10`,headers);
+  const response = await readApi(`api/people/search?shop=${shopDetails}&fields=name&q=${input}&page=1&items=10`,headers);
   const data = await response;
   return data.result; // Adjust according to your API response
 };
@@ -164,8 +164,8 @@ const AddInvoice = ({ initialValues,submitHandler,shopDetails , invoiceType}) =>
                               "client",
                               option.name
                             );
-                            setFieldValue("gstnumber",option.people.gstnumber||'')
-                            setFieldValue("address",option.people.address||'')
+                            setFieldValue("gstnumber",option.gstnumber||'')
+                            setFieldValue("address",option.address||'')
                             setFieldValue("phone", option.phone);
                             setFetchData(option)
                             setShowOptions(false);

@@ -50,7 +50,7 @@ export default function ViewInvoiceScreen({navigation}) {
         );
         console.log("response length : ", response.result.length);
 
-        console.log("complete response \n  " , response.result[0].client)
+        console.log("complete response \n  " , response.result)
 
         setInvoiceData(response.result);
       } catch (error) {
@@ -82,8 +82,8 @@ export default function ViewInvoiceScreen({navigation}) {
   const InvoiceItem = ({ item }) => (
     <View style={styles.row}>
       <Text style={styles.date}>{formatDateHandler(item.updated)}</Text>
-      <Text style={styles.number}>{item.number}</Text>
-      <Text style={styles.clientName}>{item.client.name}</Text>
+      <Text style={styles.number}>{item.people.phone}</Text>
+      <Text style={styles.clientName}>{item.people.name}</Text>
       {/* <Text style={styles.paymentStatus}>{item.paymentStatus}</Text> */}
       <Text
         style={[
@@ -97,25 +97,34 @@ export default function ViewInvoiceScreen({navigation}) {
   );
 
   
-const toggleModal = (sortBy) => {
-  let  filterData=[]
-  if(sortBy==="paid"){
-    filterData=invoiceData.filter(item=>item.paymentStatus==="paid")
-    setInvoiceData(filterData)
-  }else if(sortBy==="unpaid"){
-     filterData=invoiceData.filter(item=>item.paymentStatus==="unpaid")
-     setInvoiceData(filterData)
-  }
-  else if(sortBy==="old to new"){
-      filterData=  invoiceData.sort((a, b) => new Date(a.date) - new Date(b.date))
-      setInvoiceData(filterData)
-  }
-  else {
-    filterData=  invoiceData.sort((a, b) => new Date(b.date) - new Date(a.date))
-    setInvoiceData(filterData)
-  }
-  setModalVisible(!isModalVisible);
-};
+  const toggleModal = (sortBy) => {
+    // Check if invoiceData is empty
+    if (invoiceData.length === 0) {
+      setModalVisible(!isModalVisible);
+      return;
+    }
+  
+    let filterData = [];
+    let noFound = <Text>NO Data found</Text>;
+  
+    if (sortBy === "paid") {
+      filterData = invoiceData.filter(item => item.paymentStatus === "paid");
+    } else if (sortBy === "unpaid") {
+      filterData = invoiceData.filter(item => item.paymentStatus === "unpaid");
+    } else if (sortBy === "old to new") {
+      filterData = [...invoiceData].sort((a, b) => new Date(a.date) - new Date(b.date));
+    } else {
+      filterData = [...invoiceData].sort((a, b) => new Date(b.date) - new Date(a.date));
+    }
+  
+    // Only update if filterData is not empty
+    if (filterData.length > 0) {
+      setInvoiceData(filterData);
+    }
+  
+    setModalVisible(!isModalVisible);
+  };
+  
 const openModel=()=>{
   setModalVisible(true);
 }
@@ -154,7 +163,7 @@ const genrateInvoice=(item)=>{
                   {formatDateHandler(item.updated)}
                 </Text>
                 <Text style={styles.number}>{item.number}</Text>
-                <Text style={styles.clientName}>{item.client.name}</Text>
+                <Text style={styles.clientName}>{item.people.name}</Text>
                 <Text
                   numeric
                   style={[
