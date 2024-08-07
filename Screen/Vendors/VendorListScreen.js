@@ -27,7 +27,7 @@ export default function VendorListScreen() {
       setIsLoading(true);
       try {
           const response = await readApi(
-            `api/company/list`
+            `api/vendor/list?shop=${shopDetails._id}`
           );
           setVendors(response.result);
           console.log(response.result, "   res")
@@ -50,7 +50,7 @@ export default function VendorListScreen() {
     const updatedVendors = vendors.filter((item) => item._id !== deleteId);
 
     try {
-      const response = await deleteApi(`api/company/delete/${deleteId}`);
+      const response = await deleteApi(`api/vendor/delete/${deleteId}`);
       setIsModalVisible(false);
       showSnackbar("Vendor delete successfully", "success");
       setVendors(updatedVendors);
@@ -79,13 +79,8 @@ export default function VendorListScreen() {
   }
 
   const renderExpandedContent = (item) => (
-    <View style={{
-      marginLeft:"14.5%"
-    }}>
-      {/* <Text>{item.email}</Text>
-      <Text>{(item.isClient)?"Client" : "not a Client"}</Text> */}
-      <Text>Hello this is Vendor</Text>
-        
+    <View style={{marginLeft:"14%"}}>
+      <Text>{item.people.name}</Text>    
     </View>
   );
 
@@ -100,8 +95,8 @@ export default function VendorListScreen() {
     <View style={styles.container}>
       <ItemList
        data={vendors}
-       titleKey="name"
-       subtitleKey="phone"
+       titleKey='paymentStatus'
+       subtitleKey="amount"
        onDelete={setIsModalVisible}
        onEdit={handleEdit}
        onView={handleView}

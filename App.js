@@ -63,6 +63,7 @@ import { PasskeyProvider } from "./Store/PasskeyContext.js";
 import SignupScreen from "./Screen/SignupScreen.js"
 import ViewClientScreen from "./Screen/Client/ViewClientScreen.js";
 import VendorFormScreen from "./Screen/Vendors/VendorFormScreen.js";
+import TaxScreen from "./Screen/hsncode/TaxScreen.js";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -278,6 +279,10 @@ function StackNavigator() {
         <Stack.Screen
        name="viewClient"
        component={ViewClientScreen}
+        />
+          <Stack.Screen
+       name="hsncode"
+       component={TaxScreen}
         />
        <Stack.Screen
        name="VendorForm"

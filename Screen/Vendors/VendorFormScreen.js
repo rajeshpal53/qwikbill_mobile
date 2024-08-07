@@ -1,6 +1,6 @@
 
 import { View, StyleSheet } from "react-native";
-import { Text, Button } from "react-native-paper";
+import { Text, Button,List } from "react-native-paper";
 import { createApi, updateApi } from "../../Util/UtilApi";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -9,40 +9,48 @@ import CustomTextInput from "../../Components/Custom/CustomTextInput";
 import { useSnackbar } from "../../Store/SnackbarContext";
 import { ScrollView } from "react-native-gesture-handler";
 import { ShopDetailContext } from "../../Store/ShopDetailContext";
-import { useContext } from "react";
-
+import { useContext,useState} from "react";
+import React from "react";
+import { readApi } from "../../Util/UtilApi";
 
 const validationSchema = Yup.object().shape({
-    name: Yup.string()
-      .required("name is required")
-      .min(2, "name must be at least 2 characters long"),
-    email: Yup.string()
-      .email("Invalid email format")
+    paymentStatus: Yup.string()
+      .required("paymentStatus is required"),
+    invoiceNumber: Yup.string()
       .required("Email is required"),
-    phone: Yup.string()
-      .required("Phone number is required")
-      .min(10, "Phone number must be at least 10 digits")
-      .max(15, "Phone number must be at most 15 digits"),
+    amount: Yup.string()
+      .required("amount number is required"),
     people: Yup.string()
       .required("people is required"),
   });
+  const fetchOptions = async (input,shopDetails) => {
+    const headers={
+      "Content-Type": "application/json",
+    }
+    const response = await readApi(`api/people/search?shop=${shopDetails}&fields=name&q=${input}&page=1&items=10`,headers);
+    const data = await response;
+    return data.result; // Adjust according to your API response
+  };
   
-export default function VendorFormScreen({route}) {
-    const navigation = useNavigation();
+export default function VendorFormScreen({route,navigation}) {
     const { showSnackbar } = useSnackbar();
+    const handlePress = () => setExpanded(!expanded);
     const {shopDetails} = useContext(ShopDetailContext);
-
-    console.log("shopDetails , ", shopDetails)
+    const [options, setOptions] = useState([]);
+    const [showOptions, setShowOptions] = useState(false);
+    const [fetchData,setFetchData]= useState([])
+    const [expanded, setExpanded] = React.useState(false);
+    const [selected, setSelected] = React.useState("");
     const data = route?.params?.vendor;
 
     return (
         <View contentContainerStyle={styles.container}>
            <Formik
              initialValues={{
-                name: data?.name || "",
-                email: data?.email || "",
-                phone: data?.phone || "",
-                people: "company"
+                paymentStatus: data?.paymentStatus || "",
+                invoiceNumber: data?.invoiceNumber || "",
+                amount: data?.amount || "",
+                people: data?.people.name||""
              }}
              validationSchema={validationSchema}
              onSubmit={async (values, {resetForm}) => {
@@ -54,7 +62,11 @@ export default function VendorFormScreen({route}) {
                 //     phone: values.phone,
                 //     people: values.people,
                 //   };
-
+                const postData= {
+                  ...values,
+                  people:fetchData._id,
+                  shop:shopDetails._id
+                }
                 if(data){
                     console.log("data is present")
                     try {
@@ -62,8 +74,8 @@ export default function VendorFormScreen({route}) {
                           "Content-Type": "application/json",
                         };
                         const response = await updateApi(
-                          `api/company/update/${data._id}`,
-                          values,
+                          `api/vendor/update/${data._id}`,
+                          postData,
                           headers
                         );
             
@@ -81,13 +93,14 @@ export default function VendorFormScreen({route}) {
                         "Content-Type": "application/json",
                       };
                       const response = await createApi(
-                        "api/company/create",
-                        values,
+                        "api/vendor/create",
+                        postData,
                         headers
                       );
           
                       console.log("response is , ", response)
                       showSnackbar("vendor created successfully", "success");
+                      navigation.navigate("ViewVendor")
                       resetForm();
                     } catch (error) {
                       console.log("error is ", error);
@@ -99,6 +112,7 @@ export default function VendorFormScreen({route}) {
                 {({
           handleChange,
           handleBlur,
+          setFieldValue,
           handleSubmit,
           values,
           errors,
@@ -112,40 +126,87 @@ export default function VendorFormScreen({route}) {
             </View>
             <View style={styles.form}>
              <View style={styles.vendorDetails}>
-                <CustomTextInput
-                  label="First Name"
-                  value={values.name}
-                  onChangeText={handleChange("name")}
-                  onBlur={handleBlur("name")}
-                  error={errors.name}
-                  touched={touched.name}
-                />
-                <CustomTextInput
-                  label="Phone"
-                  value={values.phone}
-                  onChangeText={handleChange("phone")}
-                  onBlur={handleBlur("phone")}
-                  error={errors.phone}
-                  touched={touched.phone}
-                  keyboardType="numeric"
-                />
-                <CustomTextInput
-                  label="Email ID"
-                  value={values.email}
-                  onChangeText={handleChange("email")}
-                  onBlur={handleBlur("email")}
-                  error={errors.email}
-                  touched={touched.email}
-                  keyboardType="email-address"
-                />
-                <CustomTextInput
-                  label="Type"
+             <CustomTextInput
+                  label="Vendor Name"
                   value={values.people}
-                  onChangeText={handleChange("people")}
                   onBlur={handleBlur("people")}
                   error={errors.people}
                   touched={touched.people}
+                  onChangeText={async (text) => {
+                    handleChange("people")(text);
+                    if (text.length > 1) {
+                      const fetchedOptions = await fetchOptions(text,shopDetails._id);
+                      setOptions(fetchedOptions);
+                      setShowOptions(true);
+                    } else {
+                      setShowOptions(false);
+                    }
+                  }}
                 />
+                 {showOptions && (
+                  <View style={styles.suggestionsContainer}>
+                  <ScrollView nestedScrollEnabled={true}  style={styles.suggestionsList} >
+                    {options.map((option) => (
+                        <List.Item
+                          key={option._id}
+                          title={option.name}
+                          onPress={async () => {
+                            setFieldValue(
+                              "people",
+                              option.name
+                            );
+                            setFetchData(option)
+                            setShowOptions(false);
+                          }}/>
+                          
+                    ))}
+                  </ScrollView>
+                  </View>
+                )}
+                <CustomTextInput
+                  label="amount"
+                  value={values.amount}
+                  onChangeText={handleChange("amount")}
+                  onBlur={handleBlur("amount")}
+                  error={errors.amount}
+                  touched={touched.amount}
+                  keyboardType="numeric"
+                />
+                <CustomTextInput
+                  label="Gst Invoice Number"
+                  value={values.invoiceNumber}
+                  onChangeText={handleChange("invoiceNumber")}
+                  onBlur={handleBlur("invoiceNumber")}
+                  error={errors.invoiceNumber}
+                  touched={touched.invoiceNumber}
+                  keyboardType="email-address"
+                />
+                 <View style={styles.modalContent}>
+
+                  <List.Accordion
+                    title={selected || "Select payamentStatus"}
+                    expanded={expanded}
+                    onPress={handlePress}
+                    left={(props) => <List.Icon {...props} icon="account" />}
+                  >
+                    <List.Item
+                      title="unpaid"
+                      onPress={() => {
+                        setSelected("unpaid");
+                        setFieldValue("paymentStatus", "unpaid");
+                        setExpanded(false);
+                      }}
+                    />
+                    <List.Item
+                      title="paid"
+                      onPress={() => {
+                        setSelected("paid");
+                        setFieldValue("paymentStatus", "paid");
+                        setExpanded(false);
+                      }}
+                    />
+                  </List.Accordion>
+                  </View>
              </View>
              <Button
                 mode="contained"
@@ -185,6 +246,12 @@ const styles = StyleSheet.create({
     },
     button: {
       marginTop: 10,
+    },
+    modalContent: {
+      width: 300,
+      padding: 10,
+      backgroundColor: "white",
+      borderRadius: 10,
     },
     vendorDetails: {
       flexDirection: "row",

@@ -23,18 +23,18 @@ export const services = [
       key: "2",
       navigateTo:"AddCustomer"
     },
-    // {
-    //   name: "View Vendors",
-    //   icon: <FontAwesome name="group" size={30} color="#0c3b73" />,
-    //   key: "4",
-    //   navigateTo:"ViewVendor"
-    // },
-    // {
-    //   name: " View Client",
-    //   icon: <FontAwesome5 name="user" size={30} color="#0c3b73" />,
-    //   key: "6",
-    //   navigateTo:"viewClient"
-    // },
+    {
+      name: "View Vendors",
+      icon: <FontAwesome name="group" size={30} color="#0c3b73" />,
+      key: "4",
+      navigateTo:"ViewVendor"
+    },
+    {
+      name: " Add HSN/SAC Code",
+      icon: <FontAwesome5 name="user" size={30} color="#0c3b73" />,
+      key: "6",
+      navigateTo:"hsncode"
+    },
     {
       name: "Create New Shop",
       icon:<MaterialIcons name="add-business" size={30} color="#0c3b73" />,
