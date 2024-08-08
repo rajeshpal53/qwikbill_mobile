@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const isFocused = useIsFocused();
   const [searchMode, setSearchMode] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedShop, setSelectedShop] = useState('');
   const [overlayHeight, setOverlayHeight] = useState('25%')
   // Check if user is logged in on app startup
@@ -106,7 +107,9 @@ export const AuthProvider = ({ children }) => {
            loginDetail,
            setLoginDetail,
            searchMode,
-           setSearchMode, 
+           setSearchMode,
+           searchQuery,
+           setSearchQuery,
            selectedShop, 
            setSelectedShop,
            overlayHeight,

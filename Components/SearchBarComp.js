@@ -8,13 +8,21 @@ import { StyleSheet, View } from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 const SearchBarComp = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const {searchQuery, setSearchQuery}  = useContext(AuthContext);
   const { searchMode, setSearchMode } = useContext(AuthContext);
   const { overlayHeight, setOverlayHeight } = useContext(AuthContext);
 
   useEffect(() => {
     console.log(searchQuery);
   }, [searchQuery]);
+
+  
+  useEffect(() => {
+
+    if(!searchMode){
+      setSearchQuery("");
+    }
+  }, [searchMode])
 
 
 
@@ -36,8 +44,8 @@ const SearchBarComp = () => {
         
         <View style={[styles.inputContainer]}>
           <Searchbar
-            style={{ width: "100%" }}
-            placeholder="Search"
+            style={{ width: "100%", height:50 }}
+            placeholder="Search..."
             onChangeText={setSearchQuery}
             value={searchQuery}
             mode="bar"
@@ -62,7 +70,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     flexGrow: 1,
-    marginLeft: "14%",
+    // marginVertical:
   },
   inputContainer: {
     width: "100%",
