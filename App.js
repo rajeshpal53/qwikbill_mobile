@@ -60,7 +60,7 @@ import CreateShopScreen from "./Screen/Shops/CreateShopScreen.js";
 import ViewShopsScreen from "./Screen/Shops/ViewShopsScreen.js";
 import VendorListScreen from "./Screen/Vendors/VendorListScreen.js";
 import { PasskeyProvider } from "./Store/PasskeyContext.js";
-import SignupScreen from "./Screen/SignupScreen.js"
+import SignupScreen from "./Screen/SignupScreen.js";
 import ViewClientScreen from "./Screen/Client/ViewClientScreen.js";
 import VendorFormScreen from "./Screen/Vendors/VendorFormScreen.js";
 import TaxScreen from "./Screen/hsncode/TaxScreen.js";
@@ -81,11 +81,11 @@ function DrawerNavigator() {
   const [searchQuery, setSearchQuery] = useState("");
   const { searchMode } = useContext(AuthContext);
 
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    // Handle search logic here
-    console.log(query);
-  };
+  // const handleSearch = (query) => {
+  //   setSearchQuery(query);
+  //   // Handle search logic here
+  //   console.log(query);
+  // };
 
   return (
     <Tab.Navigator
@@ -103,12 +103,12 @@ function DrawerNavigator() {
         headerTitleStyle: {
           fontWeight: "bold", // Optional: Set your desired font weight
         },
-        headerLeft: () => (
-          <Pressable onPress={() => console.log("bar Pressed")}>
-            <Ionicons name="person-circle-outline" size={40} color="#ffffff" />
-          </Pressable>
-        ),
-        headerRight: () => <HomeHeaderRight onSearch={handleSearch} />,
+        // headerLeft: () => (
+        //   <Pressable onPress={() => console.log("bar Pressed")}>
+        //     <Ionicons name="person-circle-outline" size={40} color="#ffffff" />
+        //   </Pressable>
+        // ),
+        headerRight: () => <HomeHeaderRight/>,
       }}
     >
       <Tab.Screen
@@ -209,7 +209,7 @@ function DrawerNavigator() {
   );
 }
 function StackNavigator() {
-  const { isAuthenticated, isLoading } = useContext(AuthContext);
+  const { isAuthenticated, isLoading,  searchMode  } = useContext(AuthContext);
   useEffect(() => {
     isAuthenticated;
   }, [isAuthenticated]);
@@ -233,6 +233,7 @@ function StackNavigator() {
         headerTitleStyle: {
           fontWeight: "bold", // Optional: Set your desired font weight
         },
+        headerLeft: searchMode ? () => null : undefined, // This removes the back button
       }}
     >
       <Stack.Screen
@@ -271,24 +272,35 @@ function StackNavigator() {
         screenOptions={{}}
       />
       <Stack.Screen
-       name="ViewVendor"
-       component={VendorListScreen}
-       screenOptions={{}}
-       />
+        name="ViewVendor"
+        component={VendorListScreen}
+        options={{
+          headerRight: () => <HomeHeaderRight />,
+          // headerStyle: {
+          //   backgroundColor: "#0c3b73", // Your desired background color
+          // },
+          headerTitle: (searchMode && ""),
+        }}
+      />
 
-        <Stack.Screen
-       name="viewClient"
-       component={ViewClientScreen}
-        />
-          <Stack.Screen
-       name="hsncode"
-       component={TaxScreen}
-        />
-       <Stack.Screen
-       name="VendorForm"
-       component={VendorFormScreen}
-       screenOptions={{}}
-       />
+      <Stack.Screen name="viewClient" component={ViewClientScreen} />
+
+      <Stack.Screen
+        name="hsncode"
+        component={TaxScreen}
+        options={{
+          headerRight: () => <HomeHeaderRight />,
+          headerStyle: {
+            backgroundColor: "#0c3b73", // Your desired background color
+          },
+          headerTitle: (searchMode && ""),
+        }}
+      />
+      <Stack.Screen
+        name="VendorForm"
+        component={VendorFormScreen}
+        screenOptions={{}}
+      />
       <Stack.Screen
         name="InvoiceDetail"
         component={InvoiceDetailScreen}

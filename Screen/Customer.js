@@ -1,5 +1,5 @@
 // Customer.js
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { ActivityIndicator, FAB, Portal, Provider, Text } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
@@ -17,13 +17,33 @@ import axios from "axios";
 
 
 import FabGroup from "../Components/FabGroup";
+
+
+const fetchSearchData = async (searchQuery, shopId) => {
+  try {
+    console.log("shopid , ,", shopId)
+    const response = readApi(
+      `api/people/list?shop=${shopId}&q=${searchQuery}&fields=name`
+    );
+    const result = await response;
+
+    console.log("searchResult is ", result.result);
+    console.log("searchResult length is ", result.result.length);
+    return result.result;
+    
+  } catch (error) {
+    console.error("error to search data", error);
+  }
+};
+
 export default function Customer({ navigation }) {
   const [customers, setCustomers] = useState([])
   const [isLoading, setIsLoading] = useState(true);
   const [deleteId, setDeleteId] = useState();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  
   const [isUploadModalVisible, setIsUploadModalVisible] = useState(false);
-  const { setSearchMode } = useContext(AuthContext);
+  const {searchQuery}  = useContext(AuthContext);
   const isFocused = useIsFocused();
   const { showSnackbar } = useSnackbar();
   const {shopDetails}= useContext(ShopDetailContext)
@@ -36,6 +56,7 @@ export default function Customer({ navigation }) {
       try {
         const response = await readApi(`api/people/list?shop=${shopDetails._id}`);
         setCustomers(response.result);
+        console.log("prea , ", response.result.length)
       } catch (error) {
         console.error("error", error);
       } finally {
@@ -45,6 +66,18 @@ export default function Customer({ navigation }) {
     }
     fetchData();
   }, [isFocused, refresh]);
+
+  useEffect(() => {
+
+    const fetchSearchingData = async() => {
+      const newData = await fetchSearchData(searchQuery, shopDetails._id);
+
+      //  setSearchedData(newData);
+      setCustomers(newData);
+    }
+    
+    fetchSearchingData();
+  }, [searchQuery])
 
   if (isLoading) {
     return <ActivityIndicator size="large" />;
@@ -92,7 +125,7 @@ export default function Customer({ navigation }) {
     formData.append('shop',shopDetails._id);
 
     try {
-      const response = await axios.post('http://192.168.1.6:8888/api/people/upload', formData, {
+      const response = await axios.post('http://192.168.1.4:8888/api/people/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -102,7 +135,7 @@ export default function Customer({ navigation }) {
       console.log('Data uploaded successfully:', response.result);
       showSnackbar("Peoples uploaded successfully", "success");
     } catch (error) {
-      console.error("Error uploading file:", error.response ? error.response.result : error.message);
+      console.error("Error uploading file:", error);
       showSnackbar("Error uploading new Peoples", "error");
     } finally {
       setIsUploadModalVisible(false);
