@@ -53,6 +53,7 @@ import ViewInvoiceScreen from "./Screen/Invoices/ViewInvoiceScreen.js";
 import RotateBtn from "./Components/HeaderComponents/RotateBtn.js";
 import { ShopDetailProvider } from "./Store/ShopDetailContext.js";
 import { ShopDetailContext } from "./Store/ShopDetailContext.js";
+import { LoginTimeProvider } from "./Store/LoginTimeContext.js";
 import GenrateInvoiceScreen from "./Screen/GenrateInvoiceScreen.js";
 import Forgetpasscode from "./Screen/ForgetPasscode/Forgetpasscode.js";
 import CreateNewPasscode from "./Screen/ForgetPasscode/CreateNewPasscode.js";
@@ -129,6 +130,7 @@ function DrawerNavigator() {
           // headerTitle:"",
           headerTitleAlign: !searchMode ? "center" : "left",
           tabBarLabel: "Home",
+          headerRight: () => null,
           // tabBarVisible:false,
           // tabBarButton: () => null
         }}
@@ -196,7 +198,7 @@ function DrawerNavigator() {
           headerTitleAlign: !searchMode ? "center" : "left",
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="more"
         component={ProfileSetting}
         options={{
@@ -204,7 +206,7 @@ function DrawerNavigator() {
             <Feather name="more-horizontal" size={size} color="#0c3b73" />
           ),
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 }
@@ -402,7 +404,8 @@ function StackNavigator() {
         name="ViewShops"
         component={ViewShopsScreen}
         options={{
-          headerTitle: "My Shops",
+          headerRight: () => <HomeHeaderRight />,
+          headerTitle: !searchMode ? "My Shops" : "", // Provide a default title
         }}
       />
     </Stack.Navigator>
@@ -417,6 +420,7 @@ export default function App() {
             <Provider theme={customTheme}>
               <NavigationContainer>
                 <AuthProvider>
+                  <LoginTimeProvider>
                   <Stack.Navigator
                     initialRouteName="StackNavigator"
                     optionScreen={{
@@ -430,6 +434,7 @@ export default function App() {
                       options={{ headerShown: false }}
                     />
                   </Stack.Navigator>
+                  </LoginTimeProvider>
                 </AuthProvider>
               </NavigationContainer>
             </Provider>

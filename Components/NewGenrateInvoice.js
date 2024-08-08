@@ -11,6 +11,7 @@ import { readApi } from "../Util/UtilApi";
 // import * as IntentLauncher from 'expo-intent-launcher';
 const NewGenrateInvoice = ({ data }) => {
   const [loading, setLoading] = useState(false);
+  console.log("new generate invoice data is ", data);
   // const [fileUri,setFileUri]=useState();
   let imgsrc = "";
   if (data.paymentStatus === "unpaid") {
@@ -126,7 +127,7 @@ const NewGenrateInvoice = ({ data }) => {
             <div class="header">
               <h1>Invoice</h1>
               <h3>${data.shop.shopname}</h3>
-              <p>Phone:${data.client.people.phone}</p>
+              <p>Phone:${data.people.phone}</p>
             </div>
             <div class="logoUnpaid">
              <img  src=${
@@ -139,10 +140,8 @@ const NewGenrateInvoice = ({ data }) => {
             
               <div> 
                 <p><strong>Bill and Ship To:</strong></p>
-                <p>${data.client.people.firstname} ${
-      data.client.people.lastname
-    }</p>
-                <p>Phone:${data.client.people.phone}</p>
+                <p>${data.people.name}</p>
+                <p>Phone:${data.people.phone}</p>
               </div>
               <div class="right-detail-div">
                 <p><strong>Invoice No. 1</strong></p>
