@@ -37,10 +37,9 @@ export default function ViewInvoiceScreen({navigation}) {
   const [itemsPerPage, onItemsPerPageChange] = useState(
     numberOfItemsPerPageList[0]
   );
-
-  // let formattedDate = "NA";
-
   const headline = headlineHandler(data.data);
+
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -79,22 +78,22 @@ export default function ViewInvoiceScreen({navigation}) {
     return formattedDate;
   };
 
-  const InvoiceItem = ({ item }) => (
-    <View style={styles.row}>
-      <Text style={styles.date}>{formatDateHandler(item.updated)}</Text>
-      <Text style={styles.number}>{item.people.phone}</Text>
-      <Text style={styles.clientName}>{item.people.name}</Text>
-      {/* <Text style={styles.paymentStatus}>{item.paymentStatus}</Text> */}
-      <Text
-        style={[
-          styles.total,
-          { color: item.paymentStatus === "unpaid" ? "red" : "green" },
-        ]}
-      >
-        {item.total}
-      </Text>
-    </View>
-  );
+  // const InvoiceItem = ({ item }) => (
+  //   <View style={styles.row}>
+  //     <Text style={styles.date}>{formatDateHandler(item.updated)}</Text>
+  //     <Text style={styles.number}>{item.people.phone}</Text>
+  //     <Text style={styles.clientName}>{item.people?.name}</Text>
+  //     {/* <Text style={styles.paymentStatus}>{item.paymentStatus}</Text> */}
+  //     <Text
+  //       style={[
+  //         styles.total,
+  //         { color: item.paymentStatus === "unpaid" ? "red" : "green" },
+  //       ]}
+  //     >
+  //       {item.total}
+  //     </Text>
+  //   </View>
+  // );
 
   
   const toggleModal = (sortBy) => {
@@ -163,7 +162,7 @@ const genrateInvoice=(item)=>{
                   {formatDateHandler(item.updated)}
                 </Text>
                 <Text style={styles.number}>{item.number}</Text>
-                <Text style={styles.clientName}>{item.people.name}</Text>
+                <Text style={styles.clientName}>{item.people?.name}</Text>
                 <Text
                   numeric
                   style={[

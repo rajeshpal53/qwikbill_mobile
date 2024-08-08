@@ -1,5 +1,5 @@
 // ViewShopsScreen.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import { FAB, Text, ActivityIndicator } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
@@ -9,12 +9,32 @@ import { useIsFocused } from "@react-navigation/native";
 import { useSnackbar } from "../../Store/SnackbarContext";
 import { deleteApi } from "../../Util/UtilApi";
 import DeleteModal from "../../UI/DeleteModal";
+import {AuthContext} from "../../Store/AuthContext"
+
+
+const fetchSearchData = async (searchQuery) => {
+  try {
+    // console.log("shopid , ,", shopId)
+    const response = readApi(
+      `api/shop/list?&q=${searchQuery}&fields=shopname`
+    );
+    const result = await response;
+
+    // console.log("searchResult is ", result.result);
+    // console.log("searchResult length is ", result.result.length);
+    return result.result;
+    
+  } catch (error) {
+    console.error("error to search data", error);
+  }
+};
 
 export default function ViewShopsScreen() {
   const navigation = useNavigation();
   const [shopData, setShopData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deleteId, setDeleteId] = useState();
+  const {searchQuery} = useContext(AuthContext);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const {showSnackbar} = useSnackbar();
   const isFocused = useIsFocused();
@@ -34,6 +54,19 @@ export default function ViewShopsScreen() {
     };
     getShopData();
   }, [isFocused]);
+
+
+  useEffect(() => {
+
+    const fetchSearchingData = async() => {
+      const newData = await fetchSearchData(searchQuery);
+
+      //  setSearchedData(newData);
+      setShopData(newData);
+    }
+    
+    fetchSearchingData();
+  }, [searchQuery])
 
   if (isLoading) {
     return <ActivityIndicator size="large" />;

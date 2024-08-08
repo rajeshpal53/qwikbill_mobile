@@ -34,10 +34,12 @@ import moment from "moment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Linking } from "react-native";
 import { usePasskey } from "../Store/PasskeyContext";
+import { LoginTimeContext } from "../Store/LoginTimeContext";
 
 
 export default function PasscodeScreen({ navigation }) {
   // const navigation = useNavigation();
+  const { currentLoginTime, lastLoginTime, storeTime } = useContext(LoginTimeContext);
   const { loginDetail, getData } = useContext(AuthContext);
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [buttonsModes, setButtonsModes] = useState({
@@ -73,31 +75,32 @@ export default function PasscodeScreen({ navigation }) {
     };
   }, []);
  
-  const storeTime = async() => {
-    const previousLoginTime = await AsyncStorage.getItem("currentLoginTime");
+  // const storeTimes = async() => {
+  //   const previousLoginTime = await AsyncStorage.getItem("currentLoginTime");
  
     
-    if(previousLoginTime){
-      await AsyncStorage.setItem("lastLoginTime", previousLoginTime);
-      console.log("previousTime , " , await AsyncStorage.getItem("lastLoginTime"));
-    }
-   const currentLoginTime = moment().format('D MMM YYYY, h:mm A');
-   await AsyncStorage.setItem("currentLoginTime", currentLoginTime);
+  //   if(previousLoginTime){
+  //     await AsyncStorage.setItem("lastLoginTime", previousLoginTime);
+  //     console.log("previousTime , " , await AsyncStorage.getItem("lastLoginTime"));
+  //   }
+  //  const currentLoginTime = moment().format('D MMM YYYY, h:mm A');
+  //  await AsyncStorage.setItem("currentLoginTime", currentLoginTime);
 
-   console.log("currentTime , " , await AsyncStorage.getItem("currentLoginTime")); 
+  //  console.log("currentTime , " , await AsyncStorage.getItem("currentLoginTime")); 
 
-   return {
-    previousLoginTime: (previousLoginTime || currentLoginTime)
-  }
+  //  return {
+  //   previousLoginTime: (previousLoginTime || currentLoginTime)
+  // }
     
-  }
+  // }
 
   const handleNavigation = async() => {
-    const {previousLoginTime} = await storeTime();
+    // const {previousLoginTime} = await storeTime();
+    storeTime();
     if(enteredPasscode===passkey){
       navigation.navigate("wertone", {
         screen: "Home",
-        params : {previousLoginTime} 
+        // params : {previousLoginTime} 
      });
     }
      else{
@@ -113,11 +116,13 @@ export default function PasscodeScreen({ navigation }) {
         fallbackLabel: "Enter Passcode",
       });
 
+      
       if (result.success) {
-        const {previousLoginTime} = await storeTime();
+        // const {previousLoginTime} = await storeTimes();
+        storeTime();
         navigation.navigate("wertone", {
           screen: "Home",
-          params : {previousLoginTime} 
+          // params : {previousLoginTime} 
        });
         
       } else {

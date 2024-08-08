@@ -23,7 +23,7 @@ function DropDownList() {
   const getSelectedOption = () => {
     const selectedId = options.find(option => option.shopname === selectedShop);
     addShopDetails(selectedId)
-  }
+  } 
   
   useEffect(() => {
     if (selectedShop) {
