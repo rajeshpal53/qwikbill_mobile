@@ -49,7 +49,7 @@ const TaxModel = ({ visible, close }) => {
         onSubmit={handleSubmit}
       >
         {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-          <Card style={{width:"90%",paddingVertical:15,marginHorizontal:10}}>
+          <Card style={ styles.card}>
             <TextInput
               label="Hsn Code"
               value={values.taxName}
@@ -115,6 +115,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+  },
+  card:{
+    width:"90%",
+    paddingVertical:15,
+    paddingHorizontal:10,
+    marginHorizontal:10,
   },
   modalContent: {
     width: 300,
