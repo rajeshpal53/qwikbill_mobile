@@ -27,8 +27,6 @@ const fetchSearchData = async (searchQuery, shopId) => {
     );
     const result = await response;
 
-    console.log("searchResult is ", result.result);
-    console.log("searchResult length is ", result.result.length);
     return result.result;
     
   } catch (error) {

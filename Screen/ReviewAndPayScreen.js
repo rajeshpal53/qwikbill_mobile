@@ -56,7 +56,7 @@ export default function ReviewAndPayScreen({ navigation }) {
         newData: newData,
         formData: formData,
         paymentMode: buttonName,
-        submitHandler: submitHandler,
+        // submitHandler: submitHandler,
       },
     });
   };

@@ -7,7 +7,7 @@ export default function wertoneLogoTitle() {
           style={{ width: 40, height: 40 }}
           source={require("../../assets/logo-wertone.png")}
         />
-        <Text style={styles.whiteColor}>WERTONE</Text>
+        {/* <Text style={styles.whiteColor}>WERTONE</Text> */}
       </View>
 
       <View>

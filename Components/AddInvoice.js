@@ -155,9 +155,9 @@ const AddInvoice = ({ initialValues,submitHandler,shopDetails , invoiceType}) =>
                   {showOptions && (
                   <View style={styles.suggestionsContainer}>
                   <ScrollView nestedScrollEnabled={true}  style={styles.suggestionsList} >
-                    {options.map((option) => (
+                    {options.map((option, index) => (
                         <List.Item
-                          key={option._id}
+                          key={index}
                           title={option.name}
                           onPress={async () => {
                             setFieldValue(
@@ -339,9 +339,9 @@ const AddInvoice = ({ initialValues,submitHandler,shopDetails , invoiceType}) =>
                         {showItemOptions && (
                           <View  style={styles.suggestionsContainer} >
                           <ScrollView nestedScrollEnabled={true}  style={styles.suggestionsList}>
-                            {options.map((option) => (
+                            {options.map((option, index) => (
                               <List.Item
-                                key={option._id}
+                                key={index}
                                 title={option.name}
                                 onPress={async () => {
                                   setFieldValue(

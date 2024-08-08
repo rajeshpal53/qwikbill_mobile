@@ -28,9 +28,11 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { readApi } from "../Util/UtilApi";
 import DropDownList from "../UI/DropDownList";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { LoginTimeContext } from "../Store/LoginTimeContext";
 
-export default function HomeScreen({ navigation, route }) {
-  const [lastLoginTime, setLastLoginTime] = useState(route.params.previousLoginTime);
+export default function HomeScreen({ navigation }) {
+  const { currentLoginTime, lastLoginTime, storeTime } = useContext(LoginTimeContext);
+  // const [lastLoginTime, setLastLoginTime] = useState(route.params.previousLoginTime);
   // const { getData } = useContext(AuthContext);
   const [loginDetail, setLoginDetail] = useState({});
 
@@ -41,6 +43,7 @@ export default function HomeScreen({ navigation, route }) {
   const windowWidth = useWindowDimensions().width;
   const windowHeight = useWindowDimensions().height;
   console.log(windowHeight)
+  const overlayHeight = (0.20*windowHeight);
 
   useEffect(() => {
     const getItem = async () => {
@@ -65,35 +68,35 @@ export default function HomeScreen({ navigation, route }) {
     pickerRef.current.blur();
   }
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const onBackPress = () => {
-        console.log("backPressed");
-        if (searchMode) {
-          setSearchMode(false);
-          return true; // Prevent default back button behavior
-        }
-        return false; // Allow default back button behavior
-      };
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     const onBackPress = () => {
+  //       console.log("backPressed");
+  //       if (searchMode) {
+  //         setSearchMode(false);
+  //         return true; // Prevent default back button behavior
+  //       }
+  //       return false; // Allow default back button behavior
+  //     };
 
-      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+  //     BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
-      return () => {
-        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-      };
-    }, [searchMode])
-  );
+  //     return () => {
+  //       BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+  //     };
+  //   }, [searchMode])
+  // );
 
-  const handleOutsidePress = () => {
-    console.log("outside pressed");
-    setSearchMode(false);
-  };
+  // const handleOutsidePress = () => {
+  //   console.log("outside pressed");
+  //   setSearchMode(false);
+  // };
 
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    // Handle search logic here
-    console.log(query);
-  };
+  // const handleSearch = (query) => {
+  //   setSearchQuery(query);
+  //   // Handle search logic here
+  //   console.log(query);
+  // };
 
   const goToHandler = (Screen) => {
     // navigation.navigate("wertone", {screen:'CreateInvoice'});
@@ -105,26 +108,23 @@ export default function HomeScreen({ navigation, route }) {
       <View
         style={[
           styles.overlay,
-          // {height:overlayHeight}
+          {height:overlayHeight}
         ]}
       ></View>
 
-      <ScrollView style={styles.scrollView}>
+      <View style={styles.scrollView}>
         
           <View style={[styles.container, { height: windowHeight - 142 }]}>
             <View style={styles.header}>
-              {/* <TextInput></TextInput> */}
-              {/* <SearchHeader onSearch={handleSearch}/> */}
-              <TouchableWithoutFeedback style={{gap:5}} onPress={handleOutsidePress}>
               <Text style={styles.headerText}>{`Welcome ${loginDetail.name} ${loginDetail.surname}`}</Text>
               <Text style={styles.subHeaderText}>
                 Last Login: {lastLoginTime}
               </Text>
-              </TouchableWithoutFeedback>
             </View>
-            <View style={{ flex: 0.7, marginBottom: 5 }}>
+            <View style={{ flex: 0.6, marginBottom:10 }}>
               <Card style={styles.card}>
                 <View>
+
                   <Card.Content style={styles.cardContent}>
                          <DropDownList/>
                     <View style={styles.viewsContainer}>
@@ -144,9 +144,6 @@ export default function HomeScreen({ navigation, route }) {
                       </Pressable>
                   </View>
 
-
-                    {/* <Text style={styles.accountNumber}>2070100000085650</Text>
-           <Text style={styles.balance}>₹ 924.56</Text> */}
                   </Card.Content>
                 </View>
               </Card>
@@ -178,7 +175,7 @@ export default function HomeScreen({ navigation, route }) {
             </View>
           </View>
         {/* </TouchableWithoutFeedback> */}
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -193,7 +190,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   container: { 
-    marginHorizontal: 10,
+    marginHorizontal: 20,
+    // backgroundColor:"orange",
   },
   header: {
     flex: 0.2,
@@ -202,34 +200,38 @@ const styles = StyleSheet.create({
   },
   headerText: {
     color: "#fff",
-    fontSize: 20,
+    fontSize: 19,
     fontWeight: "bold",
   },
   subHeaderText: {
     color: "#fff",
-    fontSize: 14,
+    fontSize: 16,
   },
   card: {
     flex: 1,
+    paddingVertical:5,
+    // alignItems:"center"
   },
   cardContent: {
     width: "100%",
     height: "100%",
     borderRadius: 10,
     justifyContent: "space-around",
+    // paddingHorizontal:30
   },
   pickerContainer: {
     borderWidth: 1,
     borderColor: "#0c3b73",
     borderRadius: 10,
     width: "100%",
-    paddingHorizontal: 10,
+    // paddingHorizontal: 10,
   },
   viewsContainer: {
-    height: "50%",
+    height: "54%",
     flexDirection: "row",
     justifyContent: "space-between",
     borderRadius: 10,
+    // backgroundColor:"orange"
   },
   allThreeViews: {
     width: "30%",
