@@ -35,7 +35,7 @@ const handleUpload = async (uri, name) => {
 
   try {
     const response = await axios.post(
-      "http://192.168.1.6:8888/api/product/upload",
+      "http://192.168.1.5:8888/api/product/upload",
       formData,
       {
         headers: {
