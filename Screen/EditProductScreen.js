@@ -26,9 +26,9 @@ function EditProductScreen({route,navigation}) {
               name: productData?.name || '',
               productCategory: productData?.productCategory?.name || 'electrical',
               sellingPrice: productData?.price?.toString()|| '',
-              purchasePrice: productData?.customField[0]?.fieldValue?.toString() || '',
-              hsncode: productData?.customField[1]?.fieldValue?.toString() || "",
-              taxValue: productData?.customField[2]?.fieldValue?.toString() || "",
+              purchasePrice: productData?.costprice?.toString() || '',
+              hsncode: productData?.hsncode?.toString() || "",
+              taxValue: productData?.taxvalue?.toString() || "",
             });
            
           } catch (Error) {

@@ -110,8 +110,7 @@ const AddCustomer = ({navigation,initialValues,handleSubmit}) => {
                     title={option.phone}
                       onPress={async () => {
                         setFieldValue("phone", option.phone)
-                        setFieldValue("firstname", option.firstname);
-                        setFieldValue("lastname", option.lastname);
+                        setFieldValue("name", option.name);
                         setFieldValue("email", option.email);
                         setFieldValue('type',option.type)
                         setShowOptions(false);

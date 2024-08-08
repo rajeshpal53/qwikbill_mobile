@@ -154,7 +154,8 @@ export default function Products({ navigation }) {
         marginLeft: "14.5%",
       }}
     >
-      <Text>{`${item.customField[0].fieldName} : ${item.customField[0].fieldValue}`}</Text>
+      <Text> Cost price:{item.costprice}</Text>
+      <Text> hsn code:{item.hsncode}</Text>
       {/* <Button title="more" onPress ={() => handleView(item._id)} /> */}
     </View>
   );

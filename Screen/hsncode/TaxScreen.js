@@ -47,8 +47,7 @@ const fetchSearchData = async (searchQuery) => {
 };
 
 
-export default function TaxScreen() {
-  const navigation = useNavigation();
+export default function TaxScreen({navigation}) {
   const [taxes, setTaxes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [deleteId, setDeleteId] = useState();
@@ -58,7 +57,8 @@ export default function TaxScreen() {
   const { searchQuery } = useContext(AuthContext);
   const { shopDetails } = useContext(ShopDetailContext);
   const [openTax,setOpenTax]=useState(false)
-
+  const [editData,setEditData]=useState()
+  const [refresh, setRefresh] = useState(false);
 
   const handleOpen=()=> setOpenTax(true) 
   const handleClose = () => setOpenTax(false);
@@ -69,20 +69,21 @@ export default function TaxScreen() {
       setIsLoading(true);
       try {
           const response = await readApi(
-            `api/taxes/list/`
+            `api/taxes/list?shop=${shopDetails._id}`
           );
           setTaxes(response.result);
-          console.log(response.result, "   res")
+
 
       } catch (error) {
         console.error("error", error);
       } finally {
         setIsLoading(false);
+        setRefresh(false)
       }
 
     }
     fetchData();
-  }, [isFocused]);
+  }, [isFocused,refresh]);
 
   useEffect(() => {
     
@@ -98,8 +99,7 @@ export default function TaxScreen() {
   if (isLoading) {
     return <ActivityIndicator size="large" />;
   }
-  console.log(taxes, "taxes");
-  const handleDelete = async () => {
+  const handleDelete = async (item) => {
     const updatedtaxes = taxes.filter((item) => item._id !== deleteId);
 
     try {
@@ -115,17 +115,15 @@ export default function TaxScreen() {
 
   const handleEdit = (item) => {
     // console.log("item under edit ", item)
+    setEditData(item)
     handleOpen()
   };
 
   const handleView = (id) => {
-
-    console.log("Tax Viewed ," , id);
     // navigation.navigate("CustomerDetail", { customerId: id });
   };
 
   const setModalVisible = (item) => {
-
     setDeleteId(item._id);
     setIsModalVisible(true);
 
@@ -136,6 +134,11 @@ export default function TaxScreen() {
       <Text> Default :{item.isDefault?"Yes":"No"}</Text>    
     </View>
   );
+  
+  // const setModalVisible = (item) => {
+  //   setDeleteId(item._id);
+  //   setIsModalVisible(true);
+  // };
 
   const menuItems = [
     // { title: "View", onPress: (id) => handleView(id) },
@@ -146,7 +149,7 @@ export default function TaxScreen() {
   return (
     <>
     <View style={styles.container}>
-        <TaxModel visible={openTax} close={handleClose}/>
+        <TaxModel visible={openTax} close={handleClose} data={editData} navigation={navigation} setRefresh={setRefresh}/>
       <ItemList
        data={taxes}
        titleKey='taxName'

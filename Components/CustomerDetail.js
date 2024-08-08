@@ -6,7 +6,7 @@ function CustomerDetail({detail}) {
     <View style={styles.container}>
     <Card style={styles.card}>
         <Card.Content>
-          <Title style={styles.titleStyle}>{`${detail.firstname} ${detail.lastname}`}</Title>
+          <Title style={styles.titleStyle}>{detail.name}</Title>
           <Paragraph style={styles.paragraph}>ID: {detail._id}</Paragraph>
           <Paragraph style={styles.paragraph}>Email: {detail.email}</Paragraph>
           <Paragraph style={styles.paragraph}>Phone: {detail.phone}</Paragraph>

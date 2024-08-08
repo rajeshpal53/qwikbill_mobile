@@ -1,10 +1,11 @@
 import React,{useState} from 'react';
 import { View, StyleSheet,TouchableOpacity} from 'react-native';
-import { TextInput, Button, Text ,Card,Divider,Menu,useTheme,HelperText} from 'react-native-paper';
+import { TextInput, Button, Text ,Card,Divider,Menu,useTheme,HelperText,List} from 'react-native-paper';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { createApi } from '../Util/UtilApi';
 import { useSnackbar } from '../Store/SnackbarContext';
+import axios from 'axios';
 const SignupSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
   surname: Yup.string().required('Surname is required'),
@@ -17,14 +18,19 @@ const SignupSchema = Yup.object().shape({
 
 const Signup = ({navigation}) => {
   const { showSnackbar } = useSnackbar();
+  const [expanded, setExpanded] = React.useState(false);
+  const handlePress = () => setExpanded(!expanded);
+  const [selected, setSelected] = React.useState("");
   const handleSignup = async (values) => {
     console.log(values);
     try{
-    const response= await createApi("api/signup",values,{
-      'Content-Type': 'application/json',
-    },false)
-    console.log(response.result)
+    const response= await axios.post("http://192.168.1.5:8888/api/signup", JSON.stringify(values),{
+      headers:{'Content-Type': 'application/json'},
+    })
+    const data= await response.data
+    console.log(data)
     showSnackbar("successfully create new user","success")
+    navigation.navigate("login")
   }catch(error){
     console.error("failed to signup",error)
     showSnackbar("failed to singup","error")
@@ -33,7 +39,6 @@ const Signup = ({navigation}) => {
     // Handle signup logic here
   };
   const theme = useTheme();
-  const [menuVisible, setMenuVisible] = useState(false);
   const roleOptions= ["admin", "owner", "employee", "manager", "create_only", "read_only"];
   return (
     <Formik
@@ -82,6 +87,7 @@ const Signup = ({navigation}) => {
             value={values.email}
             error={touched.email && errors.email}
             keyboardType="email-address"
+            autoCapitalize="none"
           />
           {touched.email && errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
@@ -94,30 +100,28 @@ const Signup = ({navigation}) => {
             value={values.password}
             error={touched.password && errors.password}
             secureTextEntry
+            autoCapitalize="none"
           />
           {touched.password && errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
-          <Menu
-          
-            visible={menuVisible}
-            onDismiss={() => setMenuVisible(false)}
-            anchor={
-              <TextInput mode="outlined" onPress={() => setMenuVisible(true)} style={styles.input}>
-                {values.role || 'Select Role'}
-              </TextInput>
-            }
-          >
+          <List.Accordion
+                  style={{ paddingHorizontal: 8}}
+                    title={selected || "Select Role"}
+                    expanded={expanded}
+                    onPress={handlePress}
+                    left={(props) => <List.Icon {...props} icon="account" />}
+                  >
             {roleOptions.map((role) => (
-              <Menu.Item
+              <List.Item
                 key={role}
                 onPress={() => {
                   setFieldValue('role', role);
-                  setMenuVisible(false);
+                  setExpanded(false)
+                  setSelected(role)
                 }}
                 title={role}
               />
             ))}
-          </Menu>
-
+          </List.Accordion>
           {touched.role && errors.role && (
             <Text style={{ color: 'red', marginTop: 10 }}>{errors.role}</Text>
           )}

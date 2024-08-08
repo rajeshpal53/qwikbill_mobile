@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View,StyleSheet,Modal } from 'react-native';
 import {  TextInput, Button, RadioButton, Text, HelperText,Portal,Provider, Card } from 'react-native-paper';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useSnackbar } from '../../Store/SnackbarContext';
-import { createApi } from '../../Util/UtilApi';
+import { createApi,updateApi } from '../../Util/UtilApi';
 const validationSchema = Yup.object({
   taxName: Yup.string().required('Hsn Code is required'),
   taxValue: Yup.number()
@@ -13,12 +13,12 @@ const validationSchema = Yup.object({
   enable: Yup.string().required('Enable status is required'),
 });
 
-const TaxModel = ({ visible, close }) => {
+const TaxModel = ({ visible, close,data,navigation,setRefresh}) => {
   const { showSnackbar } = useSnackbar();
   const initialValues = {
-    taxName: '',
-    taxValue: '',
-    enable: 'enabled',
+    taxName: data?.taxName|| '',
+    taxValue:data?.taxValue.toString()|| '',
+    enable:data?.enable|| 'enabled',
   };
   const handleSubmit = async (values) => {
     console.log('Form Data:', values);
@@ -26,16 +26,43 @@ const TaxModel = ({ visible, close }) => {
       ...values,
       isDefault: false,
     };
+    if(data){
+      try {
+          headers = {
+            "Content-Type": "application/json",
+          };
+          const response = await updateApi(
+            `api/taxes/update/${data._id}`,
+            postData,
+            headers
+       );            
+          console.log("response is , ", response)
+          showSnackbar("HSNCODE updated successfully", "success");
+          navigation.navigate("hsncode")
+          close()
+        } catch (error) {
+          console.log("error is ", error);
+          showSnackbar("error to update  taxes", "error");
+        }
+        finally{
+          setRefresh(true)
+        }
+      }else{
     try {
       const response= await createApi("api/taxes/create",postData)
-        console.log('HSNCODE added successfully',response);
+        navigation.navigate("hsncode")
         showSnackbar('HSNCODE added successfully', 'success');
         
     } catch (error) {
       console.error('Failed to add HSNCODE', error);
       showSnackbar('Failed to add HSNCODE', 'error');
     }
-    close();
+    finally{
+      setRefresh(true)
+    }
+   
+  }
+  close();
   };
 
   return (

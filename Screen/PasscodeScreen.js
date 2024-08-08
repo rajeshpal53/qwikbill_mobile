@@ -95,10 +95,17 @@ export default function PasscodeScreen({ navigation }) {
   const handleNavigation = async() => {
     const {previousLoginTime} = await storeTime();
     if(enteredPasscode===passkey){
+      if(loginDetail1.isshop===false){
+        navigation.navigate("createshop")
+      }
+      else{
+
+      
       navigation.navigate("wertone", {
         screen: "Home",
         params : {previousLoginTime} 
      });
+    }
     }
      else{
       return(Alert.alert("failed to login use phone lock or retry"))

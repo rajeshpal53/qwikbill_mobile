@@ -7,6 +7,7 @@ import { AuthContext } from '../Store/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createApi } from '../Util/UtilApi';
 import { usePasskey } from '../Store/PasskeyContext';
+import axios from 'axios';
 
  const LoginScreen = ({navigation}) => {
   const{login,isAuthenticated,isLoading,storeData,setLoginDetail}= useContext(AuthContext)
@@ -21,12 +22,11 @@ import { usePasskey } from '../Store/PasskeyContext';
   });
 
   const handleLogin = async (values,{resetForm} ) => {
-    const headers={
+    const response= await axios.post("http://192.168.1.5:8888/api/login",JSON.stringify(values),{headers:{
       'Content-Type': 'application/json',
-    }
-    const response= await createApi("api/login",values,headers)
-    console.log(response,"newResponse")
-      const data = await response
+    }})
+    console.log(response.data,"newResponse")
+      const data = await response.data
        await storeData("loginDetail",data.result);  
       setLoginDetail(data.result) ;    
      const token='dummyToken'

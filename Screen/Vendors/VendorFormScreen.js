@@ -1,7 +1,7 @@
 
 import { View, StyleSheet } from "react-native";
 import { Text, Button,List } from "react-native-paper";
-import { createApi, updateApi } from "../../Util/UtilApi";
+import { readApi,createApi,updateApi } from "../../Util/UtilApi";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useNavigation } from "@react-navigation/native";
@@ -11,7 +11,6 @@ import { ScrollView } from "react-native-gesture-handler";
 import { ShopDetailContext } from "../../Store/ShopDetailContext";
 import { useContext,useState} from "react";
 import React from "react";
-import { readApi } from "../../Util/UtilApi";
 
 const validationSchema = Yup.object().shape({
     paymentStatus: Yup.string()
@@ -30,7 +29,7 @@ const validationSchema = Yup.object().shape({
     const response = await readApi(`api/people/search?shop=${shopDetails}&fields=name&q=${input}&page=1&items=10`,headers);
     const data = await response;
     return data.result; // Adjust according to your API response
-  };
+  }; 
   
 export default function VendorFormScreen({route,navigation}) {
     const { showSnackbar } = useSnackbar();
@@ -42,19 +41,18 @@ export default function VendorFormScreen({route,navigation}) {
     const [expanded, setExpanded] = React.useState(false);
     const [selected, setSelected] = React.useState("");
     const data = route?.params?.vendor;
-
     return (
         <View contentContainerStyle={styles.container}>
            <Formik
              initialValues={{
-                paymentStatus: data?.paymentStatus || "",
-                invoiceNumber: data?.invoiceNumber || "",
-                amount: data?.amount || "",
+                paymentStatus: data?.paymentStatus|| "",
+                invoiceNumber: data?.invoiceNumber.toString() || "",
+                amount: data?.amount.toString() || "",
                 people: data?.people.name||""
              }}
              validationSchema={validationSchema}
              onSubmit={async (values, {resetForm}) => {
-                console.log("form values are ", values);
+
 
                 // const vendorData = {
                 //     name: values.firstName, // Map 'firstName' to 'name'
@@ -64,11 +62,10 @@ export default function VendorFormScreen({route,navigation}) {
                 //   };
                 const postData= {
                   ...values,
-                  people:fetchData._id,
+                  people:data.people._id,
                   shop:shopDetails._id
                 }
                 if(data){
-                    console.log("data is present")
                     try {
                         headers = {
                           "Content-Type": "application/json",
@@ -77,8 +74,7 @@ export default function VendorFormScreen({route,navigation}) {
                           `api/vendor/update/${data._id}`,
                           postData,
                           headers
-                        );
-            
+                     );            
                         console.log("response is , ", response)
                         showSnackbar("vendor updated successfully", "success");
                         navigation.navigate("ViewVendor")
@@ -87,7 +83,6 @@ export default function VendorFormScreen({route,navigation}) {
                         showSnackbar("error to create new vedor", "error");
                       }
                 }else{
-                    console.log("data is not present")
                     try {
                       headers = {
                         "Content-Type": "application/json",

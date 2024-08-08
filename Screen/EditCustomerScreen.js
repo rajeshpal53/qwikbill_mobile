@@ -5,7 +5,7 @@ import AddCustomer from "../Components/AddCustomer"
 import { useSnackbar } from '../Store/SnackbarContext'
 import { readApi, updateApi } from "../Util/UtilApi"
 function EditCustomerScreen({route,navigation}) {
-  const[initialValues,setInitialValues]=useState({firstname: '', lastname: '', email: '', phone: '', type: ''})
+  const[initialValues,setInitialValues]=useState({name: '', email: '', phone: '', type: ''})
   const [isLoading,setIsLoading]=useState(true)
   const customerId= route.params.customerId
   console.log( "cstmr id is ", customerId)
@@ -16,9 +16,10 @@ function EditCustomerScreen({route,navigation}) {
           const response = await readApi(`api/people/read/${customerId}`);
           const data = await response;
           const customerData = data.result;
+          console.log(customerData)
           setInitialValues({
-            firstname: customerData.firstname,
-            lastname: customerData.lastname,
+            name: customerData.name,
+            gstnumber: customerData.gstnumber,
             address: customerData.address,
             phone: customerData.phone,
             email: customerData.email,
@@ -43,7 +44,7 @@ function EditCustomerScreen({route,navigation}) {
             const postData={
               ...values,
               country: "USA",
-          people: "6655af58afe60865000019cc",
+          people: customerId,
           }
             try{
               const headers={

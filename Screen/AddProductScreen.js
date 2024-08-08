@@ -25,20 +25,9 @@ const AddProductScreen = ({navigation}) => {
     productCategory: "66541ab2e30f1c041bd776e8", //:values.productCategory,,
     shop: shopDetails._id,
     currency: "USD",
-    customField: [
-      {
-        fieldName: "costPrice",
-        fieldValue: values.purchasePrice,
-      },
-      {
-        fieldName: "hsncode",
-        fieldValue: values.hsncode,
-      },
-      {
-        fieldName: "taxvalue",
-        fieldValue: values.taxValue,
-      },
-    ],
+    costprice:values.purchasePrice,
+    hsncode:values.hsncode,
+    taxvalue:values.taxValue
   };
   try{
     headers={
@@ -46,6 +35,7 @@ const AddProductScreen = ({navigation}) => {
     }
   const response = await createApi("api/product/create",postData,headers);
     showSnackbar("product added successfully","success")
+    console.log(response.result)
     navigation.navigate("wertone", { screen: "Products" });
 } catch(error) {
     console.error("errror to create new product", response);
