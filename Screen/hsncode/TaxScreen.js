@@ -30,6 +30,23 @@ import { useSnackbar } from "../../Store/SnackbarContext";
 import DeleteModal from "../../UI/DeleteModal";
 import TaxModel from "./TaxModel";
 
+
+
+const fetchSearchData = async (searchQuery) => {
+  try {
+    const response = readApi(
+      `api/taxes/list?&q=${searchQuery}&fields=taxName`
+    );
+    const result = await response;
+
+    return result.result;
+    
+  } catch (error) {
+    console.error("error to search data", error);
+  }
+};
+
+
 export default function TaxScreen() {
   const navigation = useNavigation();
   const [taxes, setTaxes] = useState([]);
@@ -38,10 +55,15 @@ export default function TaxScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const isFocused = useIsFocused();
   const { showSnackbar } = useSnackbar();
+  const { searchQuery } = useContext(AuthContext);
   const { shopDetails } = useContext(ShopDetailContext);
   const [openTax,setOpenTax]=useState(false)
+
+
   const handleOpen=()=> setOpenTax(true) 
   const handleClose = () => setOpenTax(false);
+
+
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
@@ -62,6 +84,17 @@ export default function TaxScreen() {
     fetchData();
   }, [isFocused]);
 
+  useEffect(() => {
+    
+    const fetchSearchingData = async() => {
+      const newData = await fetchSearchData(searchQuery);
+
+      setTaxes(newData);
+    }
+    
+    fetchSearchingData();
+  }, [searchQuery])
+
   if (isLoading) {
     return <ActivityIndicator size="large" />;
   }
@@ -72,11 +105,11 @@ export default function TaxScreen() {
     try {
       const response = await deleteApi(`api/taxes/delete/${deleteId}`);
       setIsModalVisible(false);
-      showSnackbar("Vendor delete successfully", "success");
+      showSnackbar("Tax delete successfully", "success");
       setTaxes(updatedtaxes);
     } catch (error) {
       console.error("Error:", error);
-      showSnackbar("Failed to delete the Vendor", "error");
+      showSnackbar("Failed to delete the Tax", "error");
     }
   };
 
@@ -87,7 +120,7 @@ export default function TaxScreen() {
 
   const handleView = (id) => {
 
-    console.log("vendor Viewed ," , id);
+    console.log("Tax Viewed ," , id);
     // navigation.navigate("CustomerDetail", { customerId: id });
   };
 

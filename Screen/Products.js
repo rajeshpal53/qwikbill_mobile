@@ -23,13 +23,30 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import FileUploadModal from "../Components/BulkUpload/FileUploadModal";
 import axios from "axios";
 
+
+
+const fetchSearchData = async (searchQuery, shopId) => {
+  try {
+    const response = readApi(
+      `api/product/list?shop=${shopId}&q=${searchQuery}&fields=name`
+    );
+    const result = await response;
+
+    return result.result;
+    
+  } catch (error) {
+    console.error("error to search data", error);
+  }
+};
+
+
 export default function Products({ navigation }) {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deleteId, setDeleteId] = useState();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isUploadModalVisible, setIsUploadModalVisible] = useState(false);
-  const { setSearchMode } = useContext(AuthContext);
+  const { searchQuery } = useContext(AuthContext);
   const { shopDetails } = useContext(ShopDetailContext);
   const isFocused = useIsFocused();
   const [open, setOpen] = useState(false);
@@ -54,6 +71,17 @@ export default function Products({ navigation }) {
     }
     fetchData();
   }, [isFocused, refresh]);
+
+  useEffect(() => {
+    
+    const fetchSearchingData = async() => {
+      const newData = await fetchSearchData(searchQuery, shopDetails._id);
+
+      setProducts(newData);
+    }
+    
+    fetchSearchingData();
+  }, [searchQuery])
 
   if (isLoading) {
     return <ActivityIndicator size="large" />;
@@ -99,7 +127,7 @@ export default function Products({ navigation }) {
     formData.append('shop',shopDetails._id);
 
     try {
-      const response = await axios.post('http://192.168.1.6:8888/api/product/upload', formData, {
+      const response = await axios.post('http://192.168.1.4:8888/api/product/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
