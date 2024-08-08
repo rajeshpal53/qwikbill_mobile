@@ -25,7 +25,6 @@ const fetchHsnOptions = async (input) => {
 };
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
-  productCategory: Yup.string().required("Product category is required"),
   sellingPrice: Yup.number()
     .required("Selling price is required")
     .typeError("Selling price must be a number"),
@@ -73,47 +72,7 @@ const AddProduct = ({ navigation,initialValues,handleSubmit }) => {
           <HelperText type="error" visible={touched.name && !!errors.name}>
             {errors.name}
           </HelperText>
-          <View style={{ position: "relative" }}>
-            <TextInput
-              label="Product Category"
-              mode="outlined"
-              onChangeText={async (text) => {
-                handleChange("productCategory")(text);
-                if (text.length > 2) {
-                  const fetchedOptions = await fetchOptions(text);
-                  setOptions(fetchedOptions);
-                  setShowOptions(true);
-                } else {
-                  setShowOptions(false);
-                }
-              }}
-              onBlur={handleBlur("productCategory")}
-              value={values.productCategory}
-              style={styles.input}
-              error={touched.productCategory && !!errors.productCategory}
-            />
-            <HelperText
-              type="error"
-              visible={touched.productCategory && !!errors.productCategory}
-            >
-              {errors.productCategory}
-            </HelperText>
-            {showOptions && (
-              <View style={styles.suggestionsContainer}>
-                <ScrollView style={styles.suggestionsList}>
-                  {options.map((option, index) => (
-                    <List.Item
-                      key={index}
-                      title={option.name}
-                      onPress={async () => {
-                        setFieldValue("productCategory", option.name);
-                        setShowOptions(false);
-                      }}> </List.Item>
-                  ))}
-                </ScrollView>
-              </View>
-            )}
-          </View>
+         
           <TextInput
             label="Purchase Price"
             keyboardType="phone-pad"

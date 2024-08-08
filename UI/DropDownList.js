@@ -14,11 +14,15 @@ function DropDownList() {
  useEffect(() => {
     async function fetchOptions() {
       const response = await readApi(`api/shop/list`);
-      setOptions(response.result); // Adjust according to your API respons
+      setOptions(response.result);
+      addShopDetails(response.result[0])
+      // Adjust according to your API respons
       // setSelectedOption(data.result[0].shopname)
     }
     fetchOptions();
   }, []);
+
+
 
   const getSelectedOption = () => {
     const selectedId = options.find(option => option.shopname === selectedShop);

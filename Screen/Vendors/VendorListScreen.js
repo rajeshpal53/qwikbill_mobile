@@ -45,8 +45,8 @@ export default function VendorListScreen() {
           const response = await readApi(
             `api/vendor/list?shop=${shopDetails._id}`
           );
-          setVendors(response.result);
-          console.log(response.result, "   res")
+          setVendors(response.result)
+
 
       } catch (error) {
         console.error("error", error);
@@ -72,7 +72,6 @@ export default function VendorListScreen() {
   if (isLoading) {
     return <ActivityIndicator size="large" />;
   }
-  console.log(vendors, "vendors");
   const handleDelete = async () => {
     const updatedVendors = vendors.filter((item) => item._id !== deleteId);
 
