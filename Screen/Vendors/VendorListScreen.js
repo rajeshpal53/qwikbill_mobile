@@ -11,6 +11,21 @@ import { ShopDetailContext } from "../../Store/ShopDetailContext";
 import { useSnackbar } from "../../Store/SnackbarContext";
 import DeleteModal from "../../UI/DeleteModal";
 
+
+const fetchSearchData = async (searchQuery) => {
+  try {
+    const response = readApi(
+      `api/vendor/list?&q=${searchQuery}&fields=name`
+    );
+    const result = await response;
+
+    return result.result;
+    
+  } catch (error) {
+    console.error("error to search data", error);
+  }
+};
+
 export default function VendorListScreen() {
   const navigation = useNavigation();
   const [vendors, setVendors] = useState([]);
@@ -20,6 +35,7 @@ export default function VendorListScreen() {
   const isFocused = useIsFocused();
   const { showSnackbar } = useSnackbar();
   const { shopDetails } = useContext(ShopDetailContext);
+  const { searchQuery } = useContext(AuthContext);
 
 
   useEffect(() => {
@@ -41,6 +57,17 @@ export default function VendorListScreen() {
     }
     fetchData();
   }, [isFocused]);
+
+  useEffect(() => {
+    
+    const fetchSearchingData = async() => {
+      const newData = await fetchSearchData(searchQuery);
+
+      setVendors(newData);
+    }
+    
+    fetchSearchingData();
+  }, [searchQuery])
 
   if (isLoading) {
     return <ActivityIndicator size="large" />;

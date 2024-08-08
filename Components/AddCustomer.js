@@ -12,10 +12,8 @@ const fetchOptions = async (input) => {
   };
 
 const validationSchema = Yup.object().shape({
-  firstname: Yup.string()
-    .required('First name is required'),
-  lastname: Yup.string()
-    .required('Last name is required'),
+  name: Yup.string()
+    .required('name is required'),
   email: Yup.string()
     .email('Invalid email')
     .required('Email is required'),
@@ -56,43 +54,24 @@ const AddCustomer = ({navigation,initialValues,handleSubmit}) => {
                     position:'relative',
                   }}>
                 <TextInput
-                  label="first Name"
+                  label="Name"
                   mode="outlined"
-                  onChangeText={handleChange("firstname")}
-                  onBlur={handleBlur("firstname")}
-                  value={values.firstname}
-                  error={touched.firstname && errors.firstname ? true : false}
+                  onChangeText={handleChange("name")}
+                  onBlur={handleBlur("name")}
+                  value={values.name}
+                  error={touched.name && errors.name ? true : false}
                   style={{ width: "100%", marginBottom: 10 , overflow:'hidden'}}
                 />
-                {touched.firstname && errors.firstname && (
+                {touched.name && errors.name && (
                   <HelperText
                     type="error"
-                    visible={touched.firstname && errors.firstname}
+                    visible={touched.name && errors.name}
                   >
-                    {errors.firstname}
+                    {errors.name}
                   </HelperText>
                 )}
               </View>
-         <View style={{ width: "100%", marginBottom: 10 }}>
-         <TextInput
-                  label="last Name"
-                  mode="outlined"
-                  onChangeText={handleChange("lastname")}
-                  onBlur={handleBlur("lastname")}
-                  value={values.lastname}
-                  error={touched.lastname && errors.lastname ? true : false}
-                  style={{ width: "100%", marginBottom: 10, overflow:'hidden' }}
-                />
-                {touched.lastname && errors.lastname && (
-                  <HelperText
-                    type="error"
-                    visible={touched.lastname && errors.lastname}
-                  >
-                    {errors.lastname}
-                  </HelperText>
-                )}
-                
-              </View>
+         
               <View style={{ width: "100%", marginBottom: 10 }}>
               <TextInput
                   label="Phone"
@@ -141,6 +120,26 @@ const AddCustomer = ({navigation,initialValues,handleSubmit}) => {
                   ))}
                   </ScrollView>
                   </View>}
+                
+              </View>
+              <View style={{ width: "100%", marginBottom: 10 }}>
+                <TextInput
+                  label="GST No."
+                  mode="outlined"
+                  onChangeText={handleChange("gstnumber")}
+                  onBlur={handleBlur("gstnumber")}
+                  value={values.gstnumber}
+                  error={touched.gstnumber && errors.gstnumber ? true : false}
+                  style={{ width: "100%", marginBottom: 10, overflow:'hidden' }}
+                />
+                {touched.gstnumber && errors.gstnumber && (
+                  <HelperText
+                    type="error"
+                    visible={touched.gstnumber && errors.gstnumber}
+                  >
+                    {errors.gstnumber}
+                  </HelperText>
+                )}
                 
               </View>
               <View style={{ width: "100%", marginBottom: 10 }}>

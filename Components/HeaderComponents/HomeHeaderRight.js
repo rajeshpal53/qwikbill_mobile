@@ -22,6 +22,8 @@ export default function HomeHeaderRight() {
       paddingRight:"5%",
       flexDirection:(searchMode) ? "row" : "column",
       alignItems:"center",
+      // backgroundColor:"orange",
+      // paddingBottom:10
       }}>
 
       {/* <View style={styles.pressablesContainer}>

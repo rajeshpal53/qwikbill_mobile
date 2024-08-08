@@ -9,8 +9,7 @@ const AddCustomerScreen = ({navigation}) => {
 
   const {shopDetails} = useContext(ShopDetailContext);
  const initialValues={ 
-  firstname: '', 
-  lastname: '', 
+  name: '', 
   gstnumber: '', 
   address:'', 
   email: '', 
@@ -18,6 +17,7 @@ const AddCustomerScreen = ({navigation}) => {
   type: '' 
 }
  const{showSnackbar}= useSnackbar();
+
  const handleSubmit=async (values)=>{
   const postData={
     ...values,
