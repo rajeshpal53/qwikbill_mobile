@@ -47,9 +47,7 @@ export default function ItemList({
      >
       <View style={[
         styles.itemContainer,
-        {
-          borderBottomWidth: (isExpanded)? 0 : 1 
-        }
+        {borderBottomWidth: (isExpanded)? 0 : 1 }
         ]}>
         <View style={styles.underItemContainer}>
           <Avatar.Text label={item[titleKey]?.charAt(0)} size={40} />
@@ -136,12 +134,11 @@ export default function ItemList({
 const styles = StyleSheet.create({
   itemContainer: {
    paddingVertical:15,
-  //  marginHorizontal:10,
-   paddingHorizontal:5,
-   marginVertical:10,
+  //  paddingHorizontal:4,
+   marginVertical:6,
   //  elevation:2,
 
-    borderBottomWidth: 1,
+    // borderBottomWidth: 1,
     borderBottomColor: "#ccc",
   },
   itemContent: {

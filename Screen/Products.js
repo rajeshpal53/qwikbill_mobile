@@ -1,6 +1,6 @@
 // Products.js
 import React, { useEffect, useState, useContext } from "react";
-import { View, StyleSheet, Button } from "react-native";
+import { View, StyleSheet, Button, TouchableWithoutFeedback } from "react-native";
 import {
   ActivityIndicator,
   FAB,
@@ -127,7 +127,7 @@ export default function Products({ navigation }) {
     formData.append('shop',shopDetails._id);
 
     try {
-      const response = await axios.post('http://192.168.1.5:8888/api/product/upload', formData, {
+      const response = await axios.post('http://192.168.43.15:8888/api/product/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -180,12 +180,17 @@ export default function Products({ navigation }) {
     { title: "Delete", onPress: (item) => setModalVisible(item) },
   ];
 
+  const handleOutsidePress = () => {
+    console.log("out pressed")
+  }
+
   return (
     <>
       <SafeAreaProvider>
         <Provider>
           <Portal>
             <View style={styles.container}>
+              
               <ItemList
                 data={products}
                 titleKey="name"

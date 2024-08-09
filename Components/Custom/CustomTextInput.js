@@ -16,7 +16,7 @@ const CustomTextInput = ({
     <View style={styles.container}>
       <TextInput
         label={label}
-        mode="outlined"
+        mode="flat"
         value={value}
         onChangeText={onChangeText}
         onBlur={onBlur}
@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
   textInput: {
     width: '100%',
     marginBottom: 10,
+    backgroundColor:"rgba(0,0,0,0)"
   },
 });
 
