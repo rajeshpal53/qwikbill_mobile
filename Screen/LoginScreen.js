@@ -22,7 +22,8 @@ import axios from 'axios';
   });
 
   const handleLogin = async (values,{resetForm} ) => {
-    const response= await axios.post("http://192.168.1.4:8888/api/login",JSON.stringify(values),{headers:{
+    const response= await axios.post("http://192.168.1.3:8888/api/login",JSON.stringify(values),{headers:{
+
       'Content-Type': 'application/json',
     }})
     console.log(response.data,"newResponse")
@@ -57,7 +58,7 @@ import axios from 'axios';
     >
       {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
         <View style={styles.container}>
-          <Card >
+          <Card style={{backgroundColor:"#ffffff"}}>
           <Image source={require('../assets/logo-wertone.png')} style={styles.img} />
           <Text variant='labelMedium' style={styles.wertoneTag}> wertone billing center</Text>
           <Text variant='bodyLarge' style={{alignSelf:"center"}}> Login</Text>
@@ -65,7 +66,8 @@ import axios from 'axios';
           label='email'
             style={styles.input}
             autoCorrect={false}
-             mode="outlined"
+             mode="flat"
+             
             onChangeText={handleChange('email')}
             onBlur={handleBlur('email')}
             value={values.email}
@@ -74,7 +76,8 @@ import axios from 'axios';
           />
           {touched.email && errors.email && <Text style={styles.error}>{errors.email}</Text>}
           <TextInput
-           mode="outlined"
+           mode="flat"
+           
            label='password'
             style={styles.input}
             onChangeText={handleChange('password')}
@@ -131,9 +134,9 @@ const styles = StyleSheet.create({
   input: {
     marginBottom: 16,
     paddingHorizontal: 8,
-    borderRadius:50,
     width:'90%',
-    alignSelf:"center"
+    alignSelf:"center",
+    backgroundColor:"#ffffff"
 
   },
   signupText: {

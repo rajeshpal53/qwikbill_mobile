@@ -10,6 +10,7 @@ import { readApi, deleteApi } from "../../Util/UtilApi";
 import { ShopDetailContext } from "../../Store/ShopDetailContext";
 import { useSnackbar } from "../../Store/SnackbarContext";
 import DeleteModal from "../../UI/DeleteModal";
+import InvoiceFilterModel from "../../Components/Modal/InvoiceFilterModel";
 
 
 const fetchSearchData = async (searchQuery) => {
@@ -36,15 +37,14 @@ export default function VendorListScreen() {
   const { showSnackbar } = useSnackbar();
   const { shopDetails } = useContext(ShopDetailContext);
   const { searchQuery } = useContext(AuthContext);
-
+  const [filterModal,setFilterModal]=useState(false)
+  const [fetchingUrl,setFetchingurl]=useState(`api/vendor/list?shop=`)
 
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
       try {
-          const response = await readApi(
-            `api/vendor/list?shop=${shopDetails._id}`
-          );
+          const response = await readApi(fetchingUrl+shopDetails._id);
           setVendors(response.result)
 
 
@@ -56,7 +56,7 @@ export default function VendorListScreen() {
 
     }
     fetchData();
-  }, [isFocused]);
+  }, [isFocused,fetchingUrl]);
 
   useEffect(() => {
     
@@ -109,6 +109,34 @@ export default function VendorListScreen() {
       <Text>{item.people.name}</Text>    
     </View>
   );
+  const toggleModal = (sortBy) => {
+    // Check if invoiceData is empty
+    if (vendors.length === 0) {
+      setModalVisible(!isModalVisible);
+      return;
+    }
+  
+    let filterData = [];
+    let noFound = <Text>NO Data found</Text>;
+  
+    if (sortBy === "paid") {
+     setFetchingurl(`api/vendor/filter?filter=paymentStatus&equal=paid&shop=`)
+    } else if (sortBy === "unpaid") {
+     setFetchingurl(`api/vendor/filter?filter=paymentStatus&equal=unpaid&shop=`)
+
+    } else {
+      setFetchingurl(`api/vendor/list?shop=`)
+    }
+  
+    // Only update if filterData is not empty
+    if (filterData.length > 0) {
+    }
+    setFilterModal(!filterModal);
+  };
+  const openModel=()=>{
+    setFilterModal(true);
+  }
+  
 
   const menuItems = [
     // { title: "View", onPress: (id) => handleView(id) },
@@ -137,6 +165,12 @@ export default function VendorListScreen() {
     style={styles.fab}
     onPress={() => navigation.navigate("VendorForm")}
    />
+    <FAB
+        icon="filter"
+        style={styles.filterfab}
+        onPress={()=>{openModel()}}
+      />
+      <InvoiceFilterModel style={{backgroundColor:"lightblue"}} isModalVisible = {filterModal} setModalVisible = {setFilterModal} toggleModal={toggleModal}/>
    {isModalVisible && (
         <DeleteModal
           visible={isModalVisible}
@@ -161,4 +195,16 @@ const styles = StyleSheet.create({
         zIndex:100,
         color:"white"
       },
+      filterfab:{
+        position: "absolute",
+        margin: 13,
+        right: 0,
+        bottom:70,
+        // padding:0,
+        color: "black",
+        // backgroundColor: "#96214e",
+        zIndex:100,
+        color:"white"
+
+      }
 });
