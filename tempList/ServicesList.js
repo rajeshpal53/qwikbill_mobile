@@ -9,6 +9,7 @@ import {
     Octicons,
     FontAwesome
   } from "@expo/vector-icons";
+import { responsiveFontSize } from "react-native-responsive-dimensions";
   
 export const services = [
     {
@@ -17,12 +18,12 @@ export const services = [
       key: "1",
       navigateTo:"CreateInvoice"
     },
-    {
-      name: "Add Customer",
-      icon: <AntDesign name="adduser" size={30} color="#0c3b73" />,
-      key: "2",
-      navigateTo:"AddCustomer"
-    },
+    // {
+    //   name: "Add Customer",
+    //   icon: <AntDesign name="adduser" size={30} color="#0c3b73" />,
+    //   key: "2",
+    //   navigateTo:"AddCustomer"
+    // },
     {
       name: "View Vendors",
       icon: <FontAwesome name="group" size={30} color="#0c3b73" />,

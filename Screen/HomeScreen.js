@@ -29,8 +29,24 @@ import { readApi } from "../Util/UtilApi";
 import DropDownList from "../UI/DropDownList";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LoginTimeContext } from "../Store/LoginTimeContext";
+import {
+  responsiveHeight,
+  responsiveWidth,
+  responsiveFontSize
+} from "react-native-responsive-dimensions";
+import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
+import { useFonts } from "expo-font";
+import { Roboto_400Regular, Roboto_700Bold, Roboto_300Light_Italic } from "@expo-google-fonts/roboto";
+import AppLoading from "expo-app-loading";
 
 export default function HomeScreen({ navigation }) {
+
+  let [fontsLoaded] = useFonts({
+    Roboto_400Regular,
+    Roboto_700Bold,
+    Roboto_300Light_Italic,
+  });
+
   const { currentLoginTime, lastLoginTime, storeTime } = useContext(LoginTimeContext);
   // const [lastLoginTime, setLastLoginTime] = useState(route.params.previousLoginTime);
   // const { getData } = useContext(AuthContext);
@@ -44,6 +60,8 @@ export default function HomeScreen({ navigation }) {
   const windowHeight = useWindowDimensions().height;
   console.log(windowHeight)
   const overlayHeight = (0.20*windowHeight);
+  console.log(responsiveHeight(80), "    --- responsiveHeight");
+  console.log(verticalScale(700), "    --- verticalscale");
 
   useEffect(() => {
     const getItem = async () => {
@@ -87,46 +105,41 @@ export default function HomeScreen({ navigation }) {
   //   }, [searchMode])
   // );
 
-  // const handleOutsidePress = () => {
-  //   console.log("outside pressed");
-  //   setSearchMode(false);
-  // };
-
-  // const handleSearch = (query) => {
-  //   setSearchQuery(query);
-  //   // Handle search logic here
-  //   console.log(query);
-  // };
-
   const goToHandler = (Screen) => {
     // navigation.navigate("wertone", {screen:'CreateInvoice'});
     // console.log("Pra ", item)
     navigation.navigate("StackNavigator", { screen: Screen });
   };
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
+
   return (
     <SafeAreaView style={styles.safeContainer}>
       <View
-        style={[
-          styles.overlay,
-          {height:overlayHeight}
-        ]}
+        style={styles.overlay}
       ></View>
 
       <View style={styles.scrollView}>
         
-          <View style={[styles.container, { height: windowHeight - 142 }]}>
+          <View style={styles.container}>
             <View style={styles.header}>
               <Text style={styles.headerText}>{`Welcome ${loginDetail.name} ${loginDetail.surname}`}</Text>
+              {/* <Text style={styles.headerText1}>{`Welcome ${loginDetail.name} ${loginDetail.surname}`}</Text> */}
               <Text style={styles.subHeaderText}>
                 Last Login: {lastLoginTime}
               </Text>
             </View>
-            <View style={{ flex: 0.6, marginBottom:10 }}>
+            <View style={{ flex: 0.6, marginBottom:responsiveHeight(1) }}>
               <Card style={styles.card}>
                 <View>
-
+ 
                   <Card.Content style={styles.cardContent}>
-                         <DropDownList/>
+                    <View style={styles.dropDownContainer}>
+                    <DropDownList/>
+                    </View>
+                         
                     <View style={styles.viewsContainer}>
                     <Pressable style={styles.allThreeViews}>
                       <Text style={styles.whiteColor}>View</Text>
@@ -184,54 +197,64 @@ const styles = StyleSheet.create({
   safeContainer: {
     // flex: 1,
     // paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-    paddingTop: 0,
   },
   scrollView: {
     height: "100%",
   },
   container: { 
-    marginHorizontal: 20,
+    marginHorizontal: responsiveWidth(5),
     // backgroundColor:"orange",
+    height: verticalScale(578)
   },
   header: {
     flex: 0.2,
-    padding: 15,
-    gap: 4,
+    // padding: 15,
+    padding: responsiveWidth(4),
+    gap: responsiveHeight(1),
+
   },
   headerText: {
     color: "#fff",
-    fontSize: 19,
+    fontSize: responsiveFontSize(2.5),
     fontWeight: "bold",
+    //  fontFamily:'Roboto_700Bold'
+    
   },
+  // headerText1: {
+  //   color: "#fff",
+  //   fontSize: responsiveFontSize(2.5),
+  //   // fontWeight: "bold",
+  //   fontFamily:"Roboto_300Light_Italic"
+    
+  // },
   subHeaderText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: responsiveFontSize(2),
   },
   card: {
     flex: 1,
-    paddingVertical:5,
-    // alignItems:"center"
+    borderRadius: responsiveWidth(3),
   },
   cardContent: {
     width: "100%",
     height: "100%",
-    borderRadius: 10,
+    // borderRadius: 10,
+    borderRadius: responsiveWidth(3),
     justifyContent: "space-around",
-    // paddingHorizontal:30
+    paddingVertical:responsiveHeight(1),
   },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: "#0c3b73",
-    borderRadius: 10,
-    width: "100%",
-    // paddingHorizontal: 10,
+  dropDownContainer: {
+    paddingVertical:10,
+    paddingHorizontal:20,
   },
   viewsContainer: {
     height: "54%",
     flexDirection: "row",
     justifyContent: "space-between",
     borderRadius: 10,
-    // backgroundColor:"orange"
+    // backgroundColor:"orange",
+    paddingVertical:10,
+    paddingHorizontal:20,
   },
   allThreeViews: {
     width: "30%",
@@ -246,7 +269,7 @@ const styles = StyleSheet.create({
   item: {
     flex: 1,
     margin: 5,
-    padding: 10,
+    padding: 2,
     backgroundColor: "#fff",
     alignItems: "center",
     borderRadius: 10,
@@ -258,24 +281,19 @@ const styles = StyleSheet.create({
   },
   itemText: {
     marginTop: 5,
-    fontSize: 10,
+    fontSize: responsiveFontSize(1.3),
     textAlign: "center",
     color: "#0c3b73",
-  },
-  listHeader: {
-    textAlign: "center",
-    marginBottom: 5,
-    fontSize: 10,
   },
   overlay: {
     position: "absolute",
     top: 0, // Adjust the top value as needed
     width: "100%",
-    height: "20%",
+    height: responsiveHeight(20),
     backgroundColor: "#0c3b73",
     zIndex: 0,
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
+    borderBottomLeftRadius: responsiveWidth(3),
+    borderBottomRightRadius: responsiveWidth(3),
   },
   whiteColor: {
     color: "white",

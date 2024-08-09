@@ -261,7 +261,7 @@ export default function PasscodeScreen({ navigation }) {
                       style={{
                         width: "50%",
                         backgroundColor: buttonsModes.passcodeButtonMode
-                          ? "#6dbbc7"
+                          ? "#26a0df"
                           : "transparent",
                       }}
                       mode={
@@ -315,6 +315,7 @@ export default function PasscodeScreen({ navigation }) {
                           {/* first */}
                           <View style={{ width: "72%" }}>
                             <TextInput
+                            style={{backgroundColor:"#f4f4f9"}}
                               placeholder="Enter App Passcode"
                               keyboardType="numeric"
                               secureTextEntry={secureTextEntry}
@@ -410,13 +411,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1,
-    marginHorizontal: 20,
+    marginHorizontal: 9,
     // backgroundColor: "yellow",
     borderRadius: 0,
   },
   img: {
-    height: 100,
-    width: 100,
+    height: 75,
+    width: 75,
     elevation: 2,
     alignSelf: "center",
     marginVertical: 10,
@@ -445,6 +446,7 @@ const styles = StyleSheet.create({
   myShopeImage: {
     width: "100%",
     height: "100%",
+    objectFit:"fill",
   },
   myShopImageContainer: 
   { width: "30%", height: "20%", marginVertical:5},
@@ -501,7 +503,7 @@ const styles1 = StyleSheet.create({
     // transform: [{ translateX: -75 }, { translateY: -75 }], // Center the overlay
     width: "100%",
     // height: 250,
-    height: "45%",
+    height: "35%",
     backgroundColor: "#0c3b73",
     zIndex: 0,
     borderBottomLeftRadius: 10,
