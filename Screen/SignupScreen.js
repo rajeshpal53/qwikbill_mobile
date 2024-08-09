@@ -27,9 +27,7 @@ const Signup = ({navigation}) => {
   const handleSignup = async (values) => {
     console.log(values);
     try{
-
-
-    const response= await axios.post("http://192.168.1.3:8888/api/signup", JSON.stringify(values),{
+    const response= await axios.post("http://192.168.1.4:8888/api/signup", JSON.stringify(values),{
       headers:{'Content-Type': 'application/json'},
     })
     const data= await response.data

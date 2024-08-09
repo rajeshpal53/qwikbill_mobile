@@ -18,7 +18,7 @@ import {
 export default function InvoiceSuccessScreen({navigation}) {
   const route = useRoute();
 
-  const { formData,newData } = route.params;
+  const { formData,newData, paymentMode } = route.params;
 
   const [loading,setLoading]=useState(false)
 
@@ -101,8 +101,8 @@ export default function InvoiceSuccessScreen({navigation}) {
             <View style={styles.header}>
               <Avatar.Icon
                 size={80}
-                icon="check-circle"
-                style={styles.avatar}
+                icon= { (paymentMode=== "unpaid") ? "alert-circle" : "check-circle" }
+                style={[styles.avatar, {backgroundColor:(paymentMode === "unpaid") ? "red" : "green" }]}
                 color="white"
               />
               <Text style={styles.title}>Invoice Generated Successfully</Text>
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
   },
   avatar: {
     marginBottom: 5,
-    backgroundColor:"green",
+    
   },
   title: {
     fontSize: 30,
