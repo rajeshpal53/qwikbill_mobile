@@ -17,6 +17,11 @@ const getYear = (date) => {
      return nextMonth.toISOString().substring(0, 10);
    };
 
+   const formatDate = (isoDateString) => {
+    const [year, month, day] = isoDateString.split('-');
+    return `${day}-${month}-${year}`;
+  };
+  
 const AddInvoiceScreen=({navigation,invoiceType})=>{
      const{showSnackbar}= useSnackbar();
      const {shopDetails}=useContext(ShopDetailContext)
@@ -26,7 +31,7 @@ const AddInvoiceScreen=({navigation,invoiceType})=>{
           people:"",
           address:"",
           gstnumber:"",
-          date: new Date().toISOString().split('T')[0],
+          date: formatDate(new Date().toISOString().split('T')[0]),
           items: [{ itemName: "", price: "", quantity: "", total: "" }],
         })
 const submitHandler= async( values,fetchDataId)=>{

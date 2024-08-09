@@ -82,9 +82,9 @@ const TaxModel = ({ visible, close,data,navigation,setRefresh}) => {
               value={values.taxName}
               onChangeText={handleChange('taxName')}
               onBlur={handleBlur('taxName')}
-              style={{ width: "100%", marginBottom: 10 }}
+              style={{ width: "100%", marginBottom: 10, backgroundColor: "rgba(0, 0, 0, 0)" }}
               error={touched.taxName && Boolean(errors.taxName)}
-              mode="outlined"
+              mode="flat"
             />
             {touched.taxName && errors.taxName && (
               <HelperText type="error">{errors.taxName}</HelperText>
@@ -97,8 +97,8 @@ const TaxModel = ({ visible, close,data,navigation,setRefresh}) => {
               onBlur={handleBlur('taxValue')}
               keyboardType="numeric"
               error={touched.taxValue && Boolean(errors.taxValue)}
-              mode="outlined"
-              style={{ width: "100%", marginBottom: 0 }}
+              mode="flat"
+              style={{ width: "100%", marginBottom: 0, backgroundColor: "rgba(0, 0, 0, 0)" }}
             />
             {touched.taxValue && errors.taxValue && (
               <HelperText type="error">{errors.taxValue}</HelperText>
