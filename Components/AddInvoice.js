@@ -1,5 +1,5 @@
 import { Directions } from "react-native-gesture-handler";
-import React, { useState,useId,useContext} from "react";
+import React, { useState, useId, useContext } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import {
   TextInput,
@@ -15,19 +15,25 @@ import * as Yup from "yup";
 import { readApi } from "../Util/UtilApi";
 import { useNavigation } from "@react-navigation/native";
 
-const fetchOptions = async (input,shopDetails) => {
-  const headers={
+const fetchOptions = async (input, shopDetails) => {
+  const headers = {
     "Content-Type": "application/json",
-  }
-  const response = await readApi(`api/people/search?shop=${shopDetails}&fields=name&q=${input}&page=1&items=10`,headers);
+  };
+  const response = await readApi(
+    `api/people/search?shop=${shopDetails}&fields=name&q=${input}&page=1&items=10`,
+    headers
+  );
   const data = await response;
   return data.result; // Adjust according to your API response
 };
-const fetchItemOptions = async (input,shopDetails) => {
-  const headers={
+const fetchItemOptions = async (input, shopDetails) => {
+  const headers = {
     "Content-Type": "application/json",
-  }
-  const response = await readApi(`api/product/search?shop=${shopDetails}&fields=name&q=${input}&page=1&items=10`,headers);
+  };
+  const response = await readApi(
+    `api/product/search?shop=${shopDetails}&fields=name&q=${input}&page=1&items=10`,
+    headers
+  );
   const data = await response;
 
   return data.result; // Adjust according to your API response
@@ -37,7 +43,7 @@ const validationSchema = Yup.object().shape({
   client: Yup.string()
     .required("client is required")
     .min(2, "client must be at least 2 characters long"),
-  address:Yup.string().required("Address is required"),
+  address: Yup.string().required("Address is required"),
   date: Yup.string()
     .required("date is required")
     .min(2, "date must be at least 2 characters long"),
@@ -64,55 +70,71 @@ const validationSchema = Yup.object().shape({
     .required("Must have items")
     .min(1, "Minimum of 1 item"),
 });
-const AddInvoice = ({ initialValues,submitHandler,shopDetails , invoiceType}) => {
+const AddInvoice = ({
+  initialValues,
+  submitHandler,
+  shopDetails,
+  invoiceType,
+}) => {
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [showItemOptions, setShowItemOptions] = useState(false);
-  const [fetchData,setFetchData]= useState([])
+  const [fetchData, setFetchData] = useState([]);
   const navigation = useNavigation();
+
+  const showDatePicker = (setFieldValue) => {
+    DateTimePickerAndroid.open({
+      value: new Date(),
+      onChange: (event, selectedDate) => {
+        const currentDate = selectedDate || new Date();
+        const day = currentDate.getDate().toString().padStart(2, "0");
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+        const year = currentDate.getFullYear();
+        const formattedDate = `${day}-${month}-${year}`;
+        setFieldValue("date", formattedDate);
+      },
+      mode: "date",
+      is24Hour: true,
+    });
+  };
+
   return (
     <View contentContainerStyle={styles.container}>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={async (values, { resetForm }) => {
-
-          // navigation.navigate("StackNavigator", { 
-          //   screen: "ReviewAndPay", 
-          //   params: { formData: values } 
+          // navigation.navigate("StackNavigator", {
+          //   screen: "ReviewAndPay",
+          //   params: { formData: values }
           // });
-          
-          if(fetchData._id){
-          const fetchDataId=fetchData._id
-       
 
-          navigation.navigate("StackNavigator", { 
-            screen: "ReviewAndPay", 
-            params: { 
-              formData: values,
-              submitHandler: submitHandler,
-              fetchDataId: fetchDataId
-            },
-            
-            
-          });
+          if (fetchData._id) {
+            const fetchDataId = fetchData._id;
 
-          // submitHandler(values,fetchDataId);
-          }
-          else{
-            navigation.navigate("StackNavigator", { 
-              screen: "ReviewAndPay", 
-              params: { 
+            navigation.navigate("StackNavigator", {
+              screen: "ReviewAndPay",
+              params: {
+                formData: values,
+                submitHandler: submitHandler,
+                fetchDataId: fetchDataId,
+              },
+            });
+
+            // submitHandler(values,fetchDataId);
+          } else {
+            navigation.navigate("StackNavigator", {
+              screen: "ReviewAndPay",
+              params: {
                 formData: values,
                 submitHandler: submitHandler,
               },
-              
             });
             // submitHandler(values);
           }
-          
-          resetForm(); 
-        }}  
+
+          resetForm();
+        }}
       >
         {({
           handleChange,
@@ -128,11 +150,14 @@ const AddInvoice = ({ initialValues,submitHandler,shopDetails , invoiceType}) =>
               <View style={{ width: "100%", marginBottom: 10 }}>
                 <TextInput
                   label="client Name"
-                  mode="outlined"
+                  mode="flat"
                   onChangeText={async (text) => {
                     handleChange("client")(text);
                     if (text.length > 1) {
-                      const fetchedOptions = await fetchOptions(text,shopDetails._id);
+                      const fetchedOptions = await fetchOptions(
+                        text,
+                        shopDetails._id
+                      );
                       setOptions(fetchedOptions);
                       setShowOptions(true);
                     } else {
@@ -142,7 +167,11 @@ const AddInvoice = ({ initialValues,submitHandler,shopDetails , invoiceType}) =>
                   onBlur={handleBlur("client")}
                   value={values.client}
                   error={touched.client && errors.client ? true : false}
-                  style={{ width: "100%", marginBottom: 10 }}
+                  style={{
+                    width: "100%",
+                    marginBottom: 10,
+                    backgroundColor: "#fff",
+                  }}
                 />
                 {touched.client && errors.client && (
                   <HelperText
@@ -152,39 +181,43 @@ const AddInvoice = ({ initialValues,submitHandler,shopDetails , invoiceType}) =>
                     {errors.client}
                   </HelperText>
                 )}
-                  {showOptions && (
+                {showOptions && (
                   <View style={styles.suggestionsContainer}>
-                  <ScrollView nestedScrollEnabled={true}  style={styles.suggestionsList} >
-                    {options.map((option, index) => (
+                    <ScrollView
+                      nestedScrollEnabled={true}
+                      style={styles.suggestionsList}
+                    >
+                      {options.map((option, index) => (
                         <List.Item
                           key={index}
                           title={option.name}
                           onPress={async () => {
-                            setFieldValue(
-                              "client",
-                              option.name
-                            );
-                            setFieldValue("gstnumber",option.gstnumber||'')
-                            setFieldValue("address",option.address||'')
+                            setFieldValue("client", option.name);
+                            setFieldValue("gstnumber", option.gstnumber || "");
+                            setFieldValue("address", option.address || "");
                             setFieldValue("phone", option.phone);
-                            setFetchData(option)
+                            setFetchData(option);
                             setShowOptions(false);
-                          }}/>
-                          
-                    ))}
-                  </ScrollView>
+                          }}
+                        />
+                      ))}
+                    </ScrollView>
                   </View>
                 )}
               </View>
               <View style={{ width: "100%", marginBottom: 10 }}>
                 <TextInput
                   label="Address"
-                  mode="outlined"
+                  mode="flat"
                   onChangeText={handleChange("address")}
                   onBlur={handleBlur("address")}
                   value={values.address}
                   error={touched.address && errors.address ? true : false}
-                  style={{ width: "100%", marginBottom: 10 }}
+                  style={{
+                    width: "100%",
+                    marginBottom: 10,
+                    backgroundColor: "#fff",
+                  }}
                 />
                 {touched.address && errors.address && (
                   <HelperText
@@ -194,16 +227,18 @@ const AddInvoice = ({ initialValues,submitHandler,shopDetails , invoiceType}) =>
                     {errors.address}
                   </HelperText>
                 )}
-                 {invoiceType==='gstInvoice'&&(<TextInput
-                  label="GST Number"
-                  mode="outlined"
-                  onChangeText={handleChange("gstnumber")}
-                  onBlur={handleBlur("gstnumber")}
-                  value={values.gstnumber}
-                  error={touched.gstnumber && errors.gstnumber ? true : false}
-                  style={{ width: "100%", marginBottom: 10 }}
-                />)}
-                 
+                {invoiceType === "gstInvoice" && (
+                  <TextInput
+                    label="GST Number"
+                    mode="outlined"
+                    onChangeText={handleChange("gstnumber")}
+                    onBlur={handleBlur("gstnumber")}
+                    value={values.gstnumber}
+                    error={touched.gstnumber && errors.gstnumber ? true : false}
+                    style={{ width: "100%", marginBottom: 10 }}
+                  />
+                )}
+
                 {touched.gstnumber && errors.gstnumber && (
                   <HelperText
                     type="error"
@@ -212,7 +247,6 @@ const AddInvoice = ({ initialValues,submitHandler,shopDetails , invoiceType}) =>
                     {errors.gstnumber}
                   </HelperText>
                 )}
-                 
               </View>
               <View
                 style={{
@@ -220,18 +254,18 @@ const AddInvoice = ({ initialValues,submitHandler,shopDetails , invoiceType}) =>
                   marginVertical: 10,
                   marginHorizontal: 2,
                   marginBottom: 10,
-                  position:'relative'
-
+                  position: "relative",
                 }}
               >
                 <TextInput
                   label="Phone"
                   onChangeText={handleChange("phone")}
-                  mode="outlined"
+                  mode="flat"
                   keyboardType="phone-pad"
                   onBlur={handleBlur("phone")}
                   value={values.phone}
                   error={touched.phone && errors.phone ? true : false}
+                  style={{ backgroundColor: "#fff" }}
                   // style={{ width: "50%", marginVertical: 10, marginBottom: 10 }}
                 />
 
@@ -243,7 +277,6 @@ const AddInvoice = ({ initialValues,submitHandler,shopDetails , invoiceType}) =>
                     {errors.phone}
                   </HelperText>
                 )}
-               
               </View>
               <View
                 style={{
@@ -253,20 +286,16 @@ const AddInvoice = ({ initialValues,submitHandler,shopDetails , invoiceType}) =>
                   marginBottom: 10,
                 }}
               >
-                <TextInput
-                  label="date"
-                  // style={{
-                  //   width: "45%",
-                  //   marginVertical: 10,
-                  //   marginHorizontal: 2,
-                  //   marginBottom: 10,
-                  // }}
-                  mode="outlined"
-                  onChangeText={handleChange("date")}
-                  onBlur={handleBlur("date")}
-                  value={values.date}
-                  error={touched.date && errors.date ? true : false}
-                />
+                <TouchableOpacity onPress={() => showDatePicker(setFieldValue)}>
+                  <TextInput
+                    label="Date"
+                    style={{ backgroundColor: "#fff" }}
+                    mode="flat"
+                    value={values.date}
+                    error={touched.date && errors.date ? true : false}
+                    editable={false} // Make the TextInput non-editable
+                  />
+                </TouchableOpacity>
                 {touched.date && errors.date && (
                   <HelperText
                     type="error"
@@ -277,189 +306,194 @@ const AddInvoice = ({ initialValues,submitHandler,shopDetails , invoiceType}) =>
                 )}
               </View>
             </View>
-            {/* <Divider style={{ marginVertical: 10 }} /> */}
 
             <FieldArray name="items">
               {({ insert, remove, push }) => (
-                <View >
+                <View>
+                  <Divider style={{ marginVertical: 10 }} />
                   <Text variant="titleMedium">add new Items</Text>
                   {values.items.map((item, index) => {
                     return (
                       <>
-                      <Divider style={{ marginVertical: 10 }} />
-                      <View key={index} style={styles.itemContainer}>
-                        <View style={{position:'relative'}}>
-                        <TextInput
-                          label={`Item ${index + 1} Name`}
-                          mode="outlined"
-                          onChangeText={async (text) => {
-                            handleChange(`items[${index}].itemName`)(text);
-                            if (text.length > 1) {
-                              const fetchedOptions = await fetchItemOptions(
-                                text,shopDetails._id
-                              );
-                              setOptions(fetchedOptions);
-                              setShowItemOptions(true);
-                            } else {
-                              setShowItemOptions(false);
-                            }
-                          }}
-                          onBlur={handleBlur(`items[${index}].itemName`)}
-                          value={item.itemName}
-                          error={
-                            touched.items &&
-                            touched.items[index] &&
-                            errors.items &&
-                            errors.items[index] &&
-                            errors.items[index].itemName
-                              ? true
-                              : false
-                          }
-                          style={styles.input}
-                        />
-                        {touched.items &&
-                          touched.items[index] &&
-                          errors.items &&
-                          errors.items[index] &&
-                          errors.items[index].itemName && (
-                            <HelperText
-                              type="error"
-                              visible={
+                        <View key={index} style={styles.itemContainer}>
+                          <View style={{ position: "relative" }}>
+                            <TextInput
+                              label={`Item ${index + 1} Name`}
+                              mode="flat"
+                              onChangeText={async (text) => {
+                                handleChange(`items[${index}].itemName`)(text);
+                                if (text.length > 1) {
+                                  const fetchedOptions = await fetchItemOptions(
+                                    text,
+                                    shopDetails._id
+                                  );
+                                  setOptions(fetchedOptions);
+                                  setShowItemOptions(true);
+                                } else {
+                                  setShowItemOptions(false);
+                                }
+                              }}
+                              onBlur={handleBlur(`items[${index}].itemName`)}
+                              value={item.itemName}
+                              error={
                                 touched.items &&
                                 touched.items[index] &&
                                 errors.items &&
                                 errors.items[index] &&
                                 errors.items[index].itemName
+                                  ? true
+                                  : false
                               }
-                            >
-                              {errors.items[index].itemName}
-                            </HelperText>
-                          )}
+                              style={styles.input}
+                            />
+                            {touched.items &&
+                              touched.items[index] &&
+                              errors.items &&
+                              errors.items[index] &&
+                              errors.items[index].itemName && (
+                                <HelperText
+                                  type="error"
+                                  visible={
+                                    touched.items &&
+                                    touched.items[index] &&
+                                    errors.items &&
+                                    errors.items[index] &&
+                                    errors.items[index].itemName
+                                  }
+                                >
+                                  {errors.items[index].itemName}
+                                </HelperText>
+                              )}
 
-                        {showItemOptions && (
-                          <View  style={styles.suggestionsContainer} >
-                          <ScrollView nestedScrollEnabled={true}  style={styles.suggestionsList}>
-                            {options.map((option, index) => (
-                              <List.Item
-                                key={index}
-                                title={option.name}
-                                onPress={async () => {
-                                  setFieldValue(
-                                    `items[${index}].itemName`,
-                                    option.name
-                                  );
-                                  setFieldValue(
-                                    `items[${index}].price`,
-                                    option.price.toString()
-                                  );
-                                  setShowItemOptions(false);
-                                }}
-                              >
-                                {" "}
-                                {option.name}
-                              </List.Item>
-                            ))}
-                          </ScrollView>
+                            {showItemOptions && (
+                              <View style={styles.suggestionsContainer}>
+                                <ScrollView
+                                  nestedScrollEnabled={true}
+                                  style={styles.suggestionsList}
+                                >
+                                  {options.map((option, index) => (
+                                    <List.Item
+                                      key={index}
+                                      title={option.name}
+                                      onPress={async () => {
+                                        setFieldValue(
+                                          `items[${index}].itemName`,
+                                          option.name
+                                        );
+                                        setFieldValue(
+                                          `items[${index}].price`,
+                                          option.price.toString()
+                                        );
+                                        setShowItemOptions(false);
+                                      }}
+                                    >
+                                      {" "}
+                                      {option.name}
+                                    </List.Item>
+                                  ))}
+                                </ScrollView>
+                              </View>
+                            )}
                           </View>
-                        )}
+
+                          <TextInput
+                            label={`Item ${index + 1} Price`}
+                            mode="flat"
+                            keyboardType="numeric"
+                            onChangeText={handleChange(`items[${index}].price`)}
+                            onBlur={handleBlur(`items[${index}].price`)}
+                            value={item.price}
+                            error={
+                              touched.items &&
+                              touched.items[index] &&
+                              errors.items &&
+                              errors.items[index] &&
+                              errors.items[index].price
+                                ? true
+                                : false
+                            }
+                            style={styles.input}
+                          />
+                          {touched.items &&
+                            touched.items[index] &&
+                            errors.items &&
+                            errors.items[index] &&
+                            errors.items[index].price && (
+                              <HelperText
+                                type="error"
+                                visible={
+                                  touched.items &&
+                                  touched.items[index] &&
+                                  errors.items &&
+                                  errors.items[index] &&
+                                  errors.items[index].price
+                                }
+                              >
+                                {errors.items[index].price}
+                              </HelperText>
+                            )}
+                          <TextInput
+                            label={`Item ${index + 1} quantity`}
+                            mode="flat"
+                            keyboardType="numeric"
+                            onChangeText={async (text) => {
+                              handleChange(`items[${index}].quantity`)(text);
+                              setFieldValue(
+                                `items[${index}].total`,
+                                (
+                                  values.items[index].price *
+                                  (text ? parseFloat(text) : 0)
+                                ).toString()
+                              );
+                            }}
+                            onBlur={handleBlur(`items[${index}].quantity`)}
+                            value={item.quantity}
+                            error={
+                              touched.items &&
+                              touched.items[index] &&
+                              errors.items &&
+                              errors.items[index] &&
+                              errors.items[index].quantity
+                                ? true
+                                : false
+                            }
+                            style={styles.input}
+                          />
+                          {touched.items &&
+                            touched.items[index] &&
+                            errors.items &&
+                            errors.items[index] &&
+                            errors.items[index].quantity && (
+                              <HelperText
+                                type="error"
+                                visible={
+                                  touched.items &&
+                                  touched.items[index] &&
+                                  errors.items &&
+                                  errors.items[index] &&
+                                  errors.items[index].quantity
+                                }
+                              >
+                                {errors.items[index].quantity}
+                              </HelperText>
+                            )}
+                          <TextInput
+                            mode="flat"
+                            label="Total"
+                            value={item.total}
+                            editable={false}
+                            style={styles.input}
+                          />
+
+                          <Button
+                            mode="outlined"
+                            onPress={() => remove(index)}
+                            disabled={values.items.length === 1}
+                            style={styles.button}
+                          >
+                            Remove
+                          </Button>
                         </View>
-
-                        <TextInput
-                          label={`Item ${index + 1} Price`}
-                          mode="outlined"
-                          keyboardType="numeric"
-                          onChangeText={handleChange(`items[${index}].price`)}
-                          onBlur={handleBlur(`items[${index}].price`)}
-                          value={item.price}
-                          error={
-                            touched.items &&
-                            touched.items[index] &&
-                            errors.items &&
-                            errors.items[index] &&
-                            errors.items[index].price
-                              ? true
-                              : false
-                          }
-                          style={styles.input}
-                        />
-                        {touched.items &&
-                          touched.items[index] &&
-                          errors.items &&
-                          errors.items[index] &&
-                          errors.items[index].price && (
-                            <HelperText
-                              type="error"
-                              visible={
-                                touched.items &&
-                                touched.items[index] &&
-                                errors.items &&
-                                errors.items[index] &&
-                                errors.items[index].price
-                              }
-                            >
-                              {errors.items[index].price}
-                            </HelperText>
-                          )}
-                        <TextInput
-                          label={`Item ${index + 1} quantity`}
-                          mode="outlined"
-                          keyboardType="numeric"
-                          onChangeText={async (text) => {
-                            handleChange(`items[${index}].quantity`)(text);
-                               setFieldValue(
-                                  `items[${index}].total`,
-                                  (values.items[index].price * (text ? parseFloat(text) : 0)).toString()
-                                )
-                             
-                          }}
-                          onBlur={handleBlur(`items[${index}].quantity`)}
-                          value={item.quantity}
-                          error={
-                            touched.items &&
-                            touched.items[index] &&
-                            errors.items &&
-                            errors.items[index] &&
-                            errors.items[index].quantity
-                              ? true
-                              : false
-                          }
-                          style={styles.input}
-                        />
-                        {touched.items &&
-                          touched.items[index] &&
-                          errors.items &&
-                          errors.items[index] &&
-                          errors.items[index].quantity && (
-                            <HelperText
-                              type="error"
-                              visible={
-                                touched.items &&
-                                touched.items[index] &&
-                                errors.items &&
-                                errors.items[index] &&
-                                errors.items[index].quantity
-                              }
-                            >
-                              {errors.items[index].quantity}
-                            </HelperText>
-                          )}
-                        <TextInput
-                          mode="outlined"
-                          label="Total"
-                          value={item.total}
-                          editable={false}
-                          style={styles.input}
-                        />
-
-                        <Button
-                          mode="outlined"
-                          onPress={() => remove(index)}
-                          disabled={values.items.length === 1}
-                          style={styles.button}
-                        >
-                          Remove
-                        </Button>
-                      </View>
                       </>
                     );
                   })}
@@ -472,6 +506,7 @@ const AddInvoice = ({ initialValues,submitHandler,shopDetails , invoiceType}) =>
                   >
                     Add Item
                   </Button>
+                  <Divider style={{ marginVertical: 10 }} />
                 </View>
               )}
             </FieldArray>
@@ -497,21 +532,21 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#f5f5f5",
     marginVertical: 20,
-    position:'relative'
+    position: "relative",
   },
   suggestionsContainer: {
-    position: 'absolute',
+    position: "absolute",
     top: 55, // Adjust based on your input height and margin
-    width: '100%',
+    width: "100%",
     maxHeight: 200, // Adjust height as needed
     zIndex: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderRadius: 4,
   },
   suggestionsList: {
-    width: '100%',
+    width: "100%",
   },
   form: {
     backgroundColor: "#fff",
@@ -526,13 +561,16 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 10,
-    overflow:"hidden"
+    overflow: "hidden",
+    backgroundColor: "#fff",
   },
   button: {
     marginTop: 10,
   },
   itemContainer: {
     marginBottom: 10,
+    gap:15,
+    // backgroundColor:"orange"
   },
   customerDetail: {
     flexDirection: "row",

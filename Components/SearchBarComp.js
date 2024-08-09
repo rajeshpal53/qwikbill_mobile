@@ -24,6 +24,12 @@ const SearchBarComp = () => {
     }
   }, [searchMode])
 
+  // const handleOutsidePress = () => {
+  //   if (isSearchBarVisible) {
+  //     setIsSearchBarVisible(false);
+  //     Keyboard.dismiss(); // This will dismiss the keyboard as well
+  //   }
+  // };
 
 
   const toggleSearch = () => {
@@ -37,6 +43,16 @@ const SearchBarComp = () => {
       setOverlayHeight("25%");
     }
   };
+
+  const handleFocus = () => {
+    console.log("focused")
+  }
+  const handleBlur = () => {
+    console.log("blured")
+  }
+  const handle = () => {
+    console.log("trailing")
+  }
   return (
     
     <View style={styles.container}>
@@ -49,6 +65,9 @@ const SearchBarComp = () => {
             onChangeText={setSearchQuery}
             value={searchQuery}
             mode="bar"
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onTraileringIconPress={handle}
           />
         </View>
       ) : (

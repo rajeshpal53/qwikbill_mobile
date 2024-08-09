@@ -3,6 +3,12 @@ import { ShopDetailContext } from "../Store/ShopDetailContext"
 import { Picker } from "@react-native-picker/picker";
 import { View,Text ,StyleSheet} from "react-native"
 import { readApi } from "../Util/UtilApi";
+import {
+  responsiveHeight,
+  responsiveWidth,
+  responsiveFontSize,
+  responsiveScreenFontSize
+} from "react-native-responsive-dimensions";
 
 function DropDownList() {
  const {addShopDetails,shopDetails}=useContext(ShopDetailContext)
@@ -61,12 +67,8 @@ const styles= StyleSheet.create({
     pickerContainer: {
         borderWidth: 1,
         borderColor: "#0c3b73",
-        borderRadius: 10,
-        // backgroundColor: "#0c3b73",
-        // backgroundColor:"orange",
+        borderRadius: responsiveWidth(3),
         width: "100%",
-        // height:"50%",
-        paddingHorizontal: 10,
       },
 })
 

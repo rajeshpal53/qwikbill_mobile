@@ -62,7 +62,7 @@ const AddProduct = ({ navigation,initialValues,handleSubmit }) => {
         <View style={styles.container}>
           <TextInput
             label=" Product Name"
-            mode="outlined"
+            mode="flat"
             onChangeText={handleChange("name")}
             onBlur={handleBlur("name")}
             value={values.name}
@@ -76,7 +76,7 @@ const AddProduct = ({ navigation,initialValues,handleSubmit }) => {
           <TextInput
             label="Purchase Price"
             keyboardType="phone-pad"
-            mode="outlined"
+            mode="flat"
             onChangeText={handleChange("purchasePrice")}
             onBlur={handleBlur("purchasePrice")}
             value={values.purchasePrice}
@@ -93,7 +93,7 @@ const AddProduct = ({ navigation,initialValues,handleSubmit }) => {
           <TextInput
             label="Selling Price"
             keyboardType="phone-pad"
-            mode="outlined"
+            mode="flat"
             onChangeText={handleChange("sellingPrice")}
             onBlur={handleBlur("sellingPrice")}
             value={values.sellingPrice}
@@ -109,7 +109,7 @@ const AddProduct = ({ navigation,initialValues,handleSubmit }) => {
           <View>
           <TextInput
             label="HSN Code"
-            mode="outlined"
+            mode="flat"
             onChangeText={async (text) => {
               handleChange("hsncode")(text);
               if (text.length > 1) {
@@ -150,7 +150,7 @@ const AddProduct = ({ navigation,initialValues,handleSubmit }) => {
           <TextInput
             label="Tax Value"
             keyboardType="phone-pad"
-            mode="outlined"
+            mode="flat"
             onChangeText={handleChange("taxValue")}
             onBlur={handleBlur("taxValue")}
             value={values.taxValue}
@@ -213,10 +213,11 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 5,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 4,
+    backgroundColor:"#fff",
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.8,
+    // shadowRadius: 2,
+    // elevation: 4,
     overflow: "hidden",
   },
   error: {
