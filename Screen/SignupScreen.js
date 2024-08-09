@@ -1,10 +1,11 @@
 import React,{useState} from 'react';
-import { View, StyleSheet,TouchableOpacity} from 'react-native';
+import { View, StyleSheet,TouchableOpacity,Image} from 'react-native';
 import { TextInput, Button, Text ,Card,Divider,Menu,useTheme,HelperText,List} from 'react-native-paper';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { createApi } from '../Util/UtilApi';
 import { useSnackbar } from '../Store/SnackbarContext';
+import { Feather } from "@expo/vector-icons";
 import axios from 'axios';
 const SignupSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
@@ -21,10 +22,12 @@ const Signup = ({navigation}) => {
   const [expanded, setExpanded] = React.useState(false);
   const handlePress = () => setExpanded(!expanded);
   const [selected, setSelected] = React.useState("");
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [eyeOn, setEyeOn] = useState(false);
   const handleSignup = async (values) => {
     console.log(values);
     try{
-    const response= await axios.post("http://192.168.1.5:8888/api/signup", JSON.stringify(values),{
+    const response= await axios.post("http://192.168.1.3:8888/api/signup", JSON.stringify(values),{
       headers:{'Content-Type': 'application/json'},
     })
     const data= await response.data
@@ -37,6 +40,11 @@ const Signup = ({navigation}) => {
   }
     
     // Handle signup logic here
+  };
+
+  const handleEyePress = () => {
+    setSecureTextEntry(!secureTextEntry);
+    setEyeOn(!eyeOn);
   };
   const theme = useTheme();
   const roleOptions= ["admin", "owner", "employee", "manager", "create_only", "read_only"];
@@ -53,13 +61,14 @@ const Signup = ({navigation}) => {
       onSubmit={handleSignup}
     >
       {({ handleChange, handleBlur, handleSubmit, values, errors, touched,setFieldValue }) => (
-        <View style={styles.container}>
-          <Text variant='headlineMedium' style={{textAlign:'center', marginBottom:10}}> Signup Form </Text>
-          <Card style={{paddingVertical:10}}>       
+          <Card style={styles.container}>     
+           <Image source={require('../assets/logo-wertone.png')} style={styles.img} />
+           <Text variant='labelMedium' style={styles.wertoneTag}> wertone billing center</Text>  
+            <Text variant='headlineMedium' style={{textAlign:'center', marginBottom:10}}> Signup Form </Text>
           <TextInput
             style={styles.input}
             label="Name"
-             mode="outlined"
+             mode="flat"
             onChangeText={handleChange('name')}
             onBlur={handleBlur('name')}
             value={values.name}
@@ -68,7 +77,7 @@ const Signup = ({navigation}) => {
           {touched.name && errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
 
           <TextInput
-            mode="outlined"
+            mode="flat"
             style={styles.input}
             label="Surname"
             onChangeText={handleChange('surname')}
@@ -79,7 +88,7 @@ const Signup = ({navigation}) => {
           {touched.surname && errors.surname && <Text style={styles.errorText}>{errors.surname}</Text>}
 
           <TextInput
-            mode="outlined"
+            mode="flat"
             style={styles.input}
             label="Email"
             onChangeText={handleChange('email')}
@@ -90,19 +99,31 @@ const Signup = ({navigation}) => {
             autoCapitalize="none"
           />
           {touched.email && errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
-
+          <View style={{flexDirection:"row",alignItems:"center",paddingHorizontal:5}}>
           <TextInput
-            mode="outlined"
+            mode="flat"
             style={styles.input}
             label="Password"
             onChangeText={handleChange('password')}
             onBlur={handleBlur('password')}
             value={values.password}
             error={touched.password && errors.password}
-            secureTextEntry
+            secureTextEntry={secureTextEntry}
             autoCapitalize="none"
           />
-          {touched.password && errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+          <TouchableOpacity onPress={handleEyePress}>
+                              {eyeOn ? (
+                                <Feather name="eye" size={25} color="#0c3b73"  />
+                              ) : (
+                                <Feather
+                                  name="eye-off"
+                                  size={25}
+                                  color="#0c3b73"
+                                />
+                              )}
+                            </TouchableOpacity>
+                            </View>
+                            {touched.password && errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
           <List.Accordion
                   style={{ paddingHorizontal: 8}}
                     title={selected || "Select Role"}
@@ -135,7 +156,6 @@ const Signup = ({navigation}) => {
         </Text>
       </TouchableOpacity>
           </Card>
-        </View>
       )}
     </Formik>
   );
@@ -143,12 +163,13 @@ const Signup = ({navigation}) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical:"30%",
+  
     marginVertical:10,
     flex:1,
     justifyContent :"center", 
     paddingHorizontal: 16,
     elevation:12,
+    backgroundColor:"#ffffff"
   },
   signup:{alignSelf:"center",marginVertical:10,color:"grey"},
   signupText: {
@@ -163,14 +184,29 @@ const styles = StyleSheet.create({
   input: {
     marginBottom: 16,
     paddingHorizontal: 8,
-    borderRadius:50,
+
+    border:"none",
     width:'90%',
-    alignSelf:"center"
+    alignSelf:"flexStart",
+    marginHorizontal:6,
+     backgroundColor:"#ffffff"
 
   },
   button: {
     marginTop: 20,
   },
+  img:{
+    height:60,
+    width:60,
+    elevation:2,
+    alignSelf:"center",
+    marginVertical:10,
+},
+wertoneTag:{
+  color:'gray',
+  alignSelf:'center',
+  marginVertical:5,
+},
 });
 
 export default Signup;
