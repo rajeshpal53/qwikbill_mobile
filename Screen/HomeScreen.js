@@ -125,13 +125,13 @@ export default function HomeScreen({ navigation }) {
         
           <View style={styles.container}>
             <View style={styles.header}>
-              <Text style={styles.headerText}>{`Welcome ${loginDetail.name} ${loginDetail.surname}`}</Text>
+              <Text style={styles.headerText}>{`Welcome, ${loginDetail.name} ${loginDetail.surname}`}</Text>
               {/* <Text style={styles.headerText1}>{`Welcome ${loginDetail.name} ${loginDetail.surname}`}</Text> */}
               <Text style={styles.subHeaderText}>
                 Last Login: {lastLoginTime}
               </Text>
             </View>
-            <View style={{ flex: 0.6, marginBottom:responsiveHeight(1) }}>
+            <View style={{ flex: 0.6 }}>
               <Card style={styles.card}>
                 <View>
  
@@ -141,31 +141,39 @@ export default function HomeScreen({ navigation }) {
                     </View>
                          
                     <View style={styles.viewsContainer}>
-                    <Pressable style={styles.allThreeViews}>
-                      <Text style={styles.whiteColor}>View</Text>
-                      <Text style={styles.whiteColor}>Customer</Text>
-                      </Pressable>
-                      <Pressable style={styles.allThreeViews} 
-                      onPress={() => goToHandler("Invoices")}>
-                      <Text style={styles.whiteColor}>View</Text>
-                      <Text style={styles.whiteColor}>Invoices</Text>
+                      <Pressable style={styles.allThreeViews}>
+                      <Text style={[styles.whiteColor]}>View Customers</Text>
+                      {/* <Text style={styles.whiteColor}></Text> */}
                       </Pressable>
 
-                      <Pressable style={styles.allThreeViews}>
+                      <View style={{
+                        backgroundColor:"#777",
+                        width:1,
+                        height:"80%"
+                        }}></View>
+
+                      <Pressable style={styles.allThreeViews} 
+                      onPress={() => goToHandler("Invoices")}>
+
+                      <Text style={styles.whiteColor}>View Invoices</Text>
+                      {/* <Text style={styles.whiteColor}></Text> */}
+                      </Pressable>
+
+                      {/* <Pressable style={styles.allThreeViews}>
                       <Text style={styles.whiteColor}>View</Text>
                       <Text style={styles.whiteColor}>Stocks</Text>
-                      </Pressable>
+                      </Pressable> */}
                   </View>
 
                   </Card.Content>
                 </View>
               </Card>
             </View>
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 2 }}>
               <FlatList
                 style={styles.flatList}
                 data={services}
-                numColumns={3}
+                numColumns={4}
                 renderItem={({ item ,index}) => (
                   <TouchableOpacity
                     style={styles.item}
@@ -205,17 +213,24 @@ const styles = StyleSheet.create({
     marginHorizontal: responsiveWidth(5),
     // backgroundColor:"orange",
     height: verticalScale(578)
+    // height:713,
+    // height:"100%",
+    // backgroundColor:"lightblue"
   },
   header: {
-    flex: 0.2,
+    flex: 0.3,
     // padding: 15,
-    padding: responsiveWidth(4),
+    // padding: responsiveWidth(4),
+
+    marginTop:4,
+    marginLeft:10,
+    // paddingBottom:0,
     gap: responsiveHeight(1),
 
   },
   headerText: {
     color: "#fff",
-    fontSize: responsiveFontSize(2.5),
+    fontSize: 18,
     fontWeight: "bold",
     //  fontFamily:'Roboto_700Bold'
     
@@ -229,7 +244,7 @@ const styles = StyleSheet.create({
   // },
   subHeaderText: {
     color: "#fff",
-    fontSize: responsiveFontSize(2),
+    fontSize: 13,
   },
   card: {
     flex: 1,
@@ -252,13 +267,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     borderRadius: 10,
-    // backgroundColor:"orange",
     paddingVertical:10,
+    alignItems:"center",
     paddingHorizontal:20,
+    // backgroundColor:"orange"
   },
   allThreeViews: {
-    width: "30%",
-    backgroundColor: "#0c3b73",
+    // width: "%",
+    // backgroundColor: "#0c3b73",
+    // backgroundColor: "#26a0df",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
@@ -271,21 +288,21 @@ const styles = StyleSheet.create({
     margin: 10,
     padding: 2,
     paddingVertical:5,
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
     alignItems: "center",
     justifyContent:"center",
     borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    // shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.1,
+    // shadowRadius: 2,
+    // elevation: 2,
   },
   itemText: {
     marginTop: 5,
-    fontSize: responsiveFontSize(1.3),
+    fontSize: 12,
     textAlign: "center",
-    color: "#0c3b73",
+    color: "#555555",
   },
   overlay: {
     position: "absolute",
@@ -298,6 +315,8 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: responsiveWidth(3),
   },
   whiteColor: {
-    color: "white",
+     color: "#26a0df", 
+    //  color: "#fff", 
+     fontSize:16
   },
 });

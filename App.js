@@ -22,7 +22,7 @@ import AddInvoiceScreen from "./Screen/AddInvoiceScreen";
 import AddCustomerScreen from "./Screen/AddCustomerScreen";
 import { AuthProvider, AuthContext } from "./Store/AuthContext";
 import { useContext } from "react";
-
+import { StyleSheet } from "react-native";
 import { CustomTabBar } from "./Components/CustomDrawerContent";
 import AddProductScreen from "./Screen/AddProductScreen";
 import InvoiceDetailScreen from "./Screen/InvoiceDetailScreen";
@@ -70,6 +70,24 @@ const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 const customTheme = {
   ...DefaultTheme,
+//   fonts: {
+//     regular: {
+//       fontFamily:'Mulish, sans-serif',
+//       fontWeight: 'normal',
+//     },
+//     medium: {
+//       fontFamily: 'Mulish, sans-serif',
+//       fontWeight: 'bold',
+//     },
+//     light: {
+//       fontFamily: 'Mulish, sans-serif',
+//       fontWeight: '300',
+//     },
+//     thin: {
+//       fontFamily: 'Mulish, sans-serif',
+//       fontWeight: '200',
+//     },
+//   },
   colors: {
     ...DefaultTheme.colors,
     primary: "#0c3b73",
@@ -88,16 +106,39 @@ function DrawerNavigator() {
   //   console.log(query);
   // };
 
+  const styles = StyleSheet.create({
+    screenMargin:{
+      marginTop:6
+    }
+  })
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
+        tabBarActiveTintColor: '#26a0df', // Color for active tab
+        tabBarInactiveTintColor: '#fff', // Color for inactive tabs
+        tabBarLabelStyle: {
+          fontSize: 14, // Adjust the label font size
+          // borderRadius:10,
+        },
         headerShown: false,
+        tabBarStyle: {
+          height: 55,
+          backgroundColor:"black",
+          color:"white",
+          borderTopRightRadius:15,
+          borderTopLeftRadius:15,
+          borderTopColor:"#fff",
+          // borderTo
+
+        },
         headerStyle: {
           // backgroundColor: `#262580`, // Set your desired header background color here
           backgroundColor: "#0c3b73",
           shadowColor: "transparent", // This removes the shadow on iOS
           elevation: 0, // This removes the shadow on Android
+          // marginTop:2,
         },
         tabBarHideOnKeyboard: true,
         headerTintColor: "white", // Set your desired header text color here
@@ -117,7 +158,12 @@ function DrawerNavigator() {
         component={HomeScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon name="home-outline" color="#0c3b73" size={size} />
+            <Icon 
+            style={styles.screenMargin} 
+            name="home-outline" 
+            color={color} 
+            size={size} 
+            />
           ),
           headerShown: true,
           // title:"myHome",
@@ -129,20 +175,20 @@ function DrawerNavigator() {
           },
           // headerTitle:"",
           headerTitleAlign: !searchMode ? "center" : "left",
-          tabBarLabel: "Home",
+          // tabBarLabel: "Home",
           headerRight: () => null,
           // tabBarVisible:false,
           // tabBarButton: () => null
         }}
       />
       <Tab.Screen
-        name="Invoice"
+        name="Invoices"
         component={FilterInvoiceScreen}
         // component={Invoice}
         options={{
           headerShown: true,
           tabBarIcon: ({ color, size }) => (
-            <Icon name="file-tray-full-outline" color="#0c3b73" size={size} />
+            <Icon style={styles.screenMargin} name="file-tray-full-outline" color={color}  size={size} />
           ),
           headerTitle: !searchMode
             ? (props) => <WertoneLogoTitle {...props} />
@@ -158,7 +204,7 @@ function DrawerNavigator() {
         options={{
           headerShown: true,
           tabBarIcon: ({ color, size }) => (
-            <Icon name="pricetag-outline" color="#0c3b73" size={size} />
+            <Icon style={styles.screenMargin} name="pricetag-outline" color={color}  size={size} />
           ),
           headerTitle: !searchMode
             ? (props) => <WertoneLogoTitle {...props} />
@@ -172,9 +218,9 @@ function DrawerNavigator() {
         component={Customer}
         options={{
           headerShown: true,
-          tabBarLabel: "People",
+          tabBarLabel: "Customer",
           tabBarIcon: ({ color, size }) => (
-            <Icon name="people-outline" color="#0c3b73" size={size} />
+            <Icon style={styles.screenMargin} name="people-outline" color={color}  size={size} />
           ),
           headerTitle: !searchMode
             ? (props) => <WertoneLogoTitle {...props} />
@@ -184,12 +230,12 @@ function DrawerNavigator() {
         }}
       />
       <Tab.Screen
-        name="Profile Setting"
+        name="Profile"
         component={ProfileSetting}
         options={{
           headerShown: true,
           tabBarIcon: ({ color, size }) => (
-            <Icon name="person-outline" color="#0c3b73" size={size} />
+            <Icon style={styles.screenMargin} name="person-outline" color={color}  size={size} />
           ),
           headerTitle: !searchMode
             ? (props) => <WertoneLogoTitle {...props} />

@@ -4,7 +4,7 @@ import { View, StyleSheet } from 'react-native';
 import { TextInput, HelperText } from 'react-native-paper';
 
 const CustomTextInput = ({
-  label,
+  placeholder,
   value,
   onChangeText,
   onBlur,
@@ -15,7 +15,8 @@ const CustomTextInput = ({
   return (
     <View style={styles.container}>
       <TextInput
-        label={label}
+        placeholder={placeholder}
+        underlineColor='#555'
         mode="flat"
         value={value}
         onChangeText={onChangeText}
@@ -40,8 +41,10 @@ const styles = StyleSheet.create({
   },
   textInput: {
     width: '100%',
-    marginBottom: 10,
-    backgroundColor:"rgba(0,0,0,0)"
+    // marginBottom: 3,
+    backgroundColor:"rgba(0,0,0,0)",
+    // backgroundColor:"lightgreen",
+    // height:40,
   },
 });
 
