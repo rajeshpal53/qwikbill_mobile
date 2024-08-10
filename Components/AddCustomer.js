@@ -56,8 +56,9 @@ const AddCustomer = ({ navigation, initialValues, handleSubmit }) => {
             }}
           >
             <TextInput
-              label="Name"
+              placeholder="Name"
               mode="flat"
+              underlineColor="#555555"
               onChangeText={handleChange("name")}
               onBlur={handleBlur("name")}
               value={values.name}
@@ -76,8 +77,9 @@ const AddCustomer = ({ navigation, initialValues, handleSubmit }) => {
             // marginBottom: 10 
             }}>
             <TextInput
-              label="Phone"
+              placeholder="Phone"
               mode="flat"
+              underlineColor="#555555"
               keyboardType="phone-pad"
               onChangeText={async (text) => {
                 handleChange("phone")(text);
@@ -121,7 +123,8 @@ const AddCustomer = ({ navigation, initialValues, handleSubmit }) => {
           </View>
           <View style={{ width: "100%" }}>
             <TextInput
-              label="GST No."
+            underlineColor="#555555"
+              placeholder="GST No."
               mode="flat"
               onChangeText={handleChange("gstnumber")}
               onBlur={handleBlur("gstnumber")}
@@ -140,7 +143,8 @@ const AddCustomer = ({ navigation, initialValues, handleSubmit }) => {
           </View>
           <View style={{ width: "100%", }}>
             <TextInput
-              label="Address"
+            underlineColor="#555555"
+              placeholder="Address"
               mode="flat"
               onChangeText={async (text) => {
                 handleChange("address")(text);
@@ -188,7 +192,8 @@ const AddCustomer = ({ navigation, initialValues, handleSubmit }) => {
           </View>
           <View style={{ width: "100%" }}>
             <TextInput
-              label="Email"
+            underlineColor="#555555"
+              placeholder="Email"
               mode="flat"
               onChangeText={handleChange("email")}
               onBlur={handleBlur("email")}
@@ -204,7 +209,8 @@ const AddCustomer = ({ navigation, initialValues, handleSubmit }) => {
           </View>
           <View style={{ width: "100%", }}>
             <TextInput
-              label="Type"
+              underlineColor="#555555"
+              placeholder="Type"
               mode="flat"
               onChangeText={async (text) => {
                 handleChange("type")(text);
@@ -278,7 +284,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     marginVertical: 10,
-    gap:20,
+    gap:8,
   },
   // input: {
   //   marginBottom: 16,

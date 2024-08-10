@@ -140,14 +140,14 @@ export default function CreateInvoice({ navigation }) {
         contentContainerStyle={styles.contentContainer}
       >
         {/* 1 */}
-        <View>
+        {/* <View>
           <Text style={styles.shopText}>Shop</Text>
-        </View>
+        </View> */}
 
         {/* 2 */}
         <View>
           <View style={styles.logoPickerContainer}>
-            <Entypo name="shop" size={30} color="#0c3b73" />
+            {/* <Entypo name="shop" size={30} color="#0c3b73" /> */}
             <View style={styles.pickerContainer}>
              <DropDownList/>
             </View>
@@ -163,8 +163,8 @@ export default function CreateInvoice({ navigation }) {
         handleButtonPress={handleButtonPress}/>
         <View style={styles.formContainer}>
           <View style={styles.formHeading}>
-            <Text style={{ fontSize: 20 }}>Provisional Invoice No :- </Text>
-            <Text style={{ fontSize: 20 }}>1234</Text>
+            <Text style={{ fontSize: 13 }}>Provisional Invoice No :- </Text>
+            <Text style={{ fontSize: 13 }}>1234</Text>
           </View>
 
           {/* <AddInvoice initialValues={initialValues}/> */}
@@ -198,11 +198,13 @@ const styles = StyleSheet.create({
   pickerContainer: {
     borderRadius: 10,
     width: "90%",
+    justifySelf:"center",
+
   },
   logoPickerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "center",
   },
   buttonContainer: {
     flexDirection: "row",
@@ -216,7 +218,7 @@ const styles = StyleSheet.create({
   },
   formHeading: {
     flexDirection: "row",
-    justifyContent: "center",
+    // justifyContent: "center",
   },
   formContainer: {
     gap: 15,
