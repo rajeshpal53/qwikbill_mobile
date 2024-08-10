@@ -1,7 +1,8 @@
-import { Image, View, Text, StyleSheet } from "react-native";
+import { Image, View, StyleSheet } from "react-native";
+import {Text} from "react-native-paper"
 export default function wertoneLogoTitle() {
   return (
-    <View style={{ flexDirection: "row" }}>
+    <View style={{ flexDirection: "row", gap:5 }}>
       <View style={{alignItems:"center"}}>
         <Image
           style={{ width: 40, height: 40 }}
@@ -10,9 +11,9 @@ export default function wertoneLogoTitle() {
         {/* <Text style={styles.whiteColor}>WERTONE</Text> */}
       </View>
 
-      <View>
-        <Text style={styles.whiteColor}>Billing</Text>
-        <Text style={styles.whiteColor}>Software</Text>
+      <View style={{justifyContent:"center" }}>
+        <Text  style={styles.whiteColor}>Billing Software</Text>
+        {/* <Text style={styles.whiteColor}></Text> */}
       </View>
     </View>
   );
@@ -20,6 +21,8 @@ export default function wertoneLogoTitle() {
 
 const styles = StyleSheet.create({
   whiteColor:{
-    color:"white"
+    color:"white",
+    fontSize:20,
+    fontWeight:"bold"
   }
 })

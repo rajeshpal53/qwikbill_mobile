@@ -1,7 +1,7 @@
 // ItemList.js
 import React, { useState, useCallback } from "react";
 import { View, FlatList, TouchableOpacity, StyleSheet, RefreshControl } from "react-native";
-import { Avatar, Menu, Text } from "react-native-paper";
+import { Avatar, Card, Menu, Text } from "react-native-paper";
 import { Feather } from "@expo/vector-icons";
 
 export default function ItemList({
@@ -35,22 +35,41 @@ export default function ItemList({
   const renderInternalItem = ({ item }) => {
     const isExpanded = item._id === expandedId;
     return (
-    <>
+    <View style={{ 
+      elevation:2,
+      marginTop:10,
+      borderRadius:10,
+      marginBottom:5,
+      marginHorizontal:10,
+      backgroundColor:"#fff",
+      // paddingLeft:5
+    }}>
     <TouchableOpacity
      onPress={() => toggleExpand(item._id)}
     //  onPress={() => onView(item._id)}
     style={{
-      // backgroundColor:"orange", 
+      // backgroundColor:"lightblue", 
+      // marginBottom:5,
+      // marginHorizontal:5,
+     
       // marginHorizontal:10, 
-      // marginVertical:10,
+      // marginVertical:20,
     }}
      >
       <View style={[
         styles.itemContainer,
-        {borderBottomWidth: (isExpanded)? 0 : 1 }
+        // {borderBottomWidth: (isExpanded)? 0 : 1 }
         ]}>
         <View style={styles.underItemContainer}>
-          <Avatar.Text label={item[titleKey]?.charAt(0)} size={40} />
+
+          <Avatar.Text color="#fff" 
+          style={{
+            backgroundColor:"#355a74",
+            marginHorizontal:8
+          }}  
+          label={item[titleKey]?.charAt(0)} 
+          size={40}  />
+
           <View style={styles.itemContent}>
             <Text style={styles.title}>{item[titleKey].toUpperCase()}</Text>
             <Text style={styles.subtitle}>{item[subtitleKey]}</Text>
@@ -61,7 +80,7 @@ export default function ItemList({
             onDismiss={hideMenu}
             anchor={
               <TouchableOpacity onPress={() => showMenu(item)} style={styles.menuButton}>
-                <Feather name="more-vertical" size={24} color="black" />
+                <Feather name="more-vertical" size={24} color="#777777" />
               </TouchableOpacity>
             }
           >
@@ -118,13 +137,14 @@ export default function ItemList({
         <Text style={{color:"blue"}}>more</Text>
       </TouchableOpacity>
     )}
-    </>
+    </View>
   );
 
 }
   return (
     <FlatList
       data={data}
+      style={{backgroundColor:"#fff"}}
       renderItem={renderInternalItem}
       keyExtractor={(item,index) => index}
     />
@@ -133,29 +153,33 @@ export default function ItemList({
 
 const styles = StyleSheet.create({
   itemContainer: {
-   paddingVertical:15,
+   paddingVertical:8,
   //  paddingHorizontal:4,
-   marginVertical:6,
+  //  marginVertical:6,
   //  elevation:2,
 
+  // backgroundColor:"orange",
     // borderBottomWidth: 1,
     borderBottomColor: "#ccc",
   },
   itemContent: {
     flex: 1,
-    marginLeft: 10,
+    // marginLeft: 20,
+    // backgroundColor:"lightblue"
   },
   menuButton: {
     padding: 10,
   },
   underItemContainer: {
     flexDirection: "row",
+    // backgroundColor:"lightgreen"
   },
   title: {
     fontSize: 16,
-    fontWeight: "bold",
+    // fontWeight: "bold",
+    color:"#555555"
   },
   subtitle: {
-    color: "#555",
+    color: "#777",
   },
 });

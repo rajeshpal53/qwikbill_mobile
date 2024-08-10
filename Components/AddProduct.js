@@ -61,7 +61,7 @@ const AddProduct = ({ navigation,initialValues,handleSubmit }) => {
       }) => (
         <View style={styles.container}>
           <TextInput
-            label=" Product Name"
+            placeholder="Product Name"
             mode="flat"
             onChangeText={handleChange("name")}
             onBlur={handleBlur("name")}
@@ -74,7 +74,8 @@ const AddProduct = ({ navigation,initialValues,handleSubmit }) => {
           </HelperText>
          
           <TextInput
-            label="Purchase Price"
+            
+            placeholder="Pruchase Price"
             keyboardType="phone-pad"
             mode="flat"
             onChangeText={handleChange("purchasePrice")}
@@ -91,7 +92,8 @@ const AddProduct = ({ navigation,initialValues,handleSubmit }) => {
           </HelperText>
 
           <TextInput
-            label="Selling Price"
+            
+            placeholder="Selling Price"
             keyboardType="phone-pad"
             mode="flat"
             onChangeText={handleChange("sellingPrice")}
@@ -108,7 +110,8 @@ const AddProduct = ({ navigation,initialValues,handleSubmit }) => {
           </HelperText>
           <View>
           <TextInput
-            label="HSN Code"
+          
+            placeholder="HSN Code"
             mode="flat"
             onChangeText={async (text) => {
               handleChange("hsncode")(text);
@@ -148,7 +151,7 @@ const AddProduct = ({ navigation,initialValues,handleSubmit }) => {
             ))}</ScrollView></View> }
           </View>
           <TextInput
-            label="Tax Value"
+           placeholder="Tax Value"
             keyboardType="phone-pad"
             mode="flat"
             onChangeText={handleChange("taxValue")}
@@ -212,7 +215,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   input: {
-    marginBottom: 5,
+    // marginBottom: 5,
     backgroundColor:"#fff",
     // shadowOffset: { width: 0, height: 2 },
     // shadowOpacity: 0.8,

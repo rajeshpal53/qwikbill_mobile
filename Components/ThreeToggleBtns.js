@@ -7,10 +7,12 @@ export default function ThreeToggleBtns({buttonsModes, setButtonsModes, toggleBu
     return (
         <View style={styles.buttonContainer}>
           <Button
+          textColor={buttonsModes.firstButtonMode ? "#fff" : "#26a0df"}
             style={{
               //   width: "50%",
+              // color:"#26a0df",
               backgroundColor: buttonsModes.firstButtonMode
-                ? "#6dbbc7"
+                ? "#000"
                 : "transparent",
             }}
             mode={
@@ -22,10 +24,11 @@ export default function ThreeToggleBtns({buttonsModes, setButtonsModes, toggleBu
           </Button>
 
           <Button
+          textColor={buttonsModes.secondButtonMode ? "#fff" : "#26a0df"}
             style={{
               //   width: "50%",
               backgroundColor: buttonsModes.secondButtonMode
-                ? "#6dbbc7"
+                ? "#000"
                 : "transparent",
             }}
             mode={
@@ -39,10 +42,11 @@ export default function ThreeToggleBtns({buttonsModes, setButtonsModes, toggleBu
           </Button>
 
           <Button
+          textColor= {buttonsModes.thirdButtonMode ? "#fff" : "#26a0df"}
             style={{
               //   width: "50%",
               backgroundColor: buttonsModes.thirdButtonMode
-                ? "#6dbbc7"
+                ? "#000"
                 : "transparent",
             }}
             mode={
@@ -79,7 +83,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent:"space-evenly",
-    marginTop:10
+    // marginTop:
   },
  
 });
