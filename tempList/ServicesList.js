@@ -20,7 +20,7 @@ export const services = [
     },
     // {
     //   name: "Add Customer",
-    //   icon: <AntDesign name="adduser" size={30} color="#0c3b73" />,
+    //   icon: <AntDesign name="adduser" size={22} color="#0c3b73" />,
     //   key: "2",
     //   navigateTo:"AddCustomer"
     // },
@@ -54,7 +54,7 @@ export const services = [
     //   icon: (
     //     <MaterialCommunityIcons
     //       name="newspaper-variant"
-    //       size={30}
+    //       size={22}
     //       color="#0c3b73"
     //     />
     //   ),
