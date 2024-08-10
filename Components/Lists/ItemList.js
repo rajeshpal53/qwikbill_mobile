@@ -52,7 +52,7 @@ export default function ItemList({
         <View style={styles.underItemContainer}>
           <Avatar.Text label={item[titleKey]?.charAt(0)} size={40} />
           <View style={styles.itemContent}>
-            <Text style={styles.title}>{item[titleKey]}</Text>
+            <Text style={styles.title}>{item[titleKey].toUpperCase()}</Text>
             <Text style={styles.subtitle}>{item[subtitleKey]}</Text>
           </View>
          

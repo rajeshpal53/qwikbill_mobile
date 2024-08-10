@@ -7,6 +7,7 @@ import { createApi } from '../Util/UtilApi';
 import { useSnackbar } from '../Store/SnackbarContext';
 import { Feather } from "@expo/vector-icons";
 import axios from 'axios';
+import { ScrollView } from 'react-native-gesture-handler';
 const SignupSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
   surname: Yup.string().required('Surname is required'),
@@ -27,9 +28,9 @@ const Signup = ({navigation}) => {
   const handleSignup = async (values) => {
     console.log(values);
     try{
+      const postData= {...values, enabled:true}
 
-
-    const response= await axios.post("http://192.168.1.3:8888/api/signup", JSON.stringify(values),{
+    const response= await axios.post("http://192.168.1.6:8888/api/signup", JSON.stringify(postData),{
       headers:{'Content-Type': 'application/json'},
     })
     const data= await response.data
@@ -51,6 +52,7 @@ const Signup = ({navigation}) => {
   const theme = useTheme();
   const roleOptions= ["admin", "owner", "employee", "manager", "create_only", "read_only"];
   return (
+    <View>
     <Formik
       initialValues={{
         name: '',
@@ -63,6 +65,7 @@ const Signup = ({navigation}) => {
       onSubmit={handleSignup}
     >
       {({ handleChange, handleBlur, handleSubmit, values, errors, touched,setFieldValue }) => (
+        <ScrollView>        
           <Card style={styles.container}>     
            <Image source={require('../assets/logo-wertone.png')} style={styles.img} />
            <Text variant='labelMedium' style={styles.wertoneTag}> wertone billing center</Text>  
@@ -158,8 +161,10 @@ const Signup = ({navigation}) => {
         </Text>
       </TouchableOpacity>
           </Card>
+          </ScrollView>
       )}
     </Formik>
+    </View>
   );
 };
 
