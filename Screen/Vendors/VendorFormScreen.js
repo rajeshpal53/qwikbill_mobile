@@ -62,7 +62,7 @@ export default function VendorFormScreen({route,navigation}) {
                 //   };
                 const postData= {
                   ...values,
-                  people:data.people._id,
+                  people:data?.people._id||fetchData._id,
                   shop:shopDetails._id
                 }
                 if(data){

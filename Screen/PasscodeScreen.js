@@ -95,6 +95,7 @@ export default function PasscodeScreen({ navigation }) {
   const handleNavigation = async () => {
     // const {previousLoginTime} = await storeTime();
     storeTime();
+
     if (enteredPasscode === passkey) {
       if (loginDetail1.isshop === false) {
         navigation.navigate("createshop");
