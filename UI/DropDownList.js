@@ -55,6 +55,7 @@ function DropDownList() {
           key={index}
           value={option.shopname}
           label={option.shopname}
+          color="#555555"
         >
           {option.shopname}
         </Picker.Item>
@@ -65,7 +66,7 @@ function DropDownList() {
 }
 const styles= StyleSheet.create({
     pickerContainer: {
-        borderWidth: 1,
+        // borderWidth: 1,
         borderColor: "#0c3b73",
         borderRadius: responsiveWidth(3),
         width: "100%",

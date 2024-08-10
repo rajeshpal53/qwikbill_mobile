@@ -29,7 +29,7 @@ const Signup = ({navigation}) => {
     console.log(values);
     try{
       const postData= {...values, enabled:true}
-    const response= await axios.post("http://192.168.1.6:8888/api/signup", JSON.stringify(postData),{
+    const response= await axios.post("http://192.168.1.4:8888/api/signup", JSON.stringify(postData),{
       headers:{'Content-Type': 'application/json'},
     })
     const data= await response.data

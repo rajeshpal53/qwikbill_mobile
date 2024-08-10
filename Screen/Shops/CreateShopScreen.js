@@ -44,14 +44,14 @@ const validationSchema = Yup.object().shape({
   //   .matches(/^[A-Z]{4}0[A-Z0-9]{6}$/, "Invalid IFSC code"),
 });
 
-export default function CreateShopScreen({route}) {
+export default function CreateShopScreen({ route }) {
   const navigation = useNavigation();
   const { showSnackbar } = useSnackbar();
 
   const data = route?.params?.shop;
   console.log("Route data is , ", data);
 
-  console.log("routedata , ", data)
+  console.log("routedata , ", data);
   return (
     <View contentContainerStyle={styles.container}>
       <Formik
@@ -64,14 +64,17 @@ export default function CreateShopScreen({route}) {
           country: data?.address[0]?.country || "",
           state: data?.address[0]?.state || "",
           city: data?.address[0]?.city || "",
-          pincode: data?.address?.[0]?.pincode !== undefined ? String(data.address[0].pincode) : "",
+          pincode:
+            data?.address?.[0]?.pincode !== undefined
+              ? String(data.address[0].pincode)
+              : "",
           accountNumber: data?.bankDetail[0]?.account || "",
           ifscCode: data?.bankDetail[0]?.ifsccode || "",
           bankName: data?.bankDetail[0]?.bankname || "",
           branch: data?.bankDetail[0]?.branch || "",
         }}
         validationSchema={validationSchema}
-        onSubmit={async (values, {resetForm}) => {
+        onSubmit={async (values, { resetForm }) => {
           console.log("shop created and values are , ", values);
 
           const formattedData = {
@@ -97,8 +100,7 @@ export default function CreateShopScreen({route}) {
             email: values.email,
           };
 
-          if(data)
-          {
+          if (data) {
             console.log("data is , ", data);
             try {
               headers = {
@@ -109,15 +111,15 @@ export default function CreateShopScreen({route}) {
                 formattedData,
                 headers
               );
-  
-              console.log("response is , ", response)
+
+              console.log("response is , ", response);
               showSnackbar("shop updated successfully", "success");
-              navigation.navigate("ViewShops")
+              navigation.navigate("ViewShops");
             } catch (error) {
               console.log("error is ", error);
               showSnackbar("error to create new product", "error");
             }
-          }else{
+          } else {
             try {
               headers = {
                 "Content-Type": "application/json",
@@ -127,17 +129,16 @@ export default function CreateShopScreen({route}) {
                 formattedData,
                 headers
               );
-  
-              console.log("response is , ", response)
+
+              console.log("response is , ", response);
               showSnackbar("shop created successfully", "success");
               // resetForm();
-              navigation.navigate("ViewShops")
+              navigation.navigate("ViewShops");
             } catch (error) {
               console.log("error is ", error);
               showSnackbar("error to create new product", "error");
             }
           }
-          
         }}
       >
         {({
@@ -151,13 +152,20 @@ export default function CreateShopScreen({route}) {
           <ScrollView>
             <View>
               <Text variant="headlineSmall" style={{ textAlign: "center" }}>
-                {(data) ? "Modify Shop Details" : "Create New Shop"}
+                {/* {(data) ? "Modify Shop Details" : "Create New Shop"} */}
               </Text>
             </View>
             <View style={styles.form}>
               <View style={styles.shopDetails}>
+                <Text
+                  style={{ color: "#555555" }}
+                  variant="bodyMedium"
+                >
+                  Customer Details
+                </Text>
+                <Divider style={[styles.dividerStyle, { width: "62%" }]} />
                 <CustomTextInput
-                  label="Shop Name"
+                  placeholder="Shop Name"
                   value={values.shopName}
                   onChangeText={handleChange("shopName")}
                   onBlur={handleBlur("shopName")}
@@ -165,7 +173,7 @@ export default function CreateShopScreen({route}) {
                   touched={touched.shopName}
                 />
                 <CustomTextInput
-                  label="Email ID"
+                  placeholder="Email ID"
                   value={values.email}
                   onChangeText={handleChange("email")}
                   onBlur={handleBlur("email")}
@@ -174,7 +182,7 @@ export default function CreateShopScreen({route}) {
                   keyboardType="email-address"
                 />
                 <CustomTextInput
-                  label="Mobile Details"
+                  placeholder="Mobile Details"
                   value={values.phone}
                   onChangeText={handleChange("phone")}
                   onBlur={handleBlur("phone")}
@@ -183,7 +191,7 @@ export default function CreateShopScreen({route}) {
                   keyboardType="numeric"
                 />
                 <CustomTextInput
-                  label="GST Number"
+                  placeholder="GST Number"
                   value={values.gstNumber}
                   onChangeText={handleChange("gstNumber")}
                   onBlur={handleBlur("gstNumber")}
@@ -192,11 +200,11 @@ export default function CreateShopScreen({route}) {
                   // keyboardType=""
                 />
                 <View style={{ width: "100%" }}>
+                  <Text variant="titleMedium">Address</Text>
                   <Divider style={{ marginVertical: 10 }} />
-                  <Text variant="titleLarge">Address</Text>
                 </View>
                 <CustomTextInput
-                  label="Country"
+                  placeholder="Country"
                   value={values.country}
                   onChangeText={handleChange("country")}
                   onBlur={handleBlur("country")}
@@ -204,7 +212,7 @@ export default function CreateShopScreen({route}) {
                   touched={touched.country}
                 />
                 <CustomTextInput
-                  label="State"
+                  placeholder="State"
                   value={values.state}
                   onChangeText={handleChange("state")}
                   onBlur={handleBlur("state")}
@@ -212,7 +220,7 @@ export default function CreateShopScreen({route}) {
                   touched={touched.state}
                 />
                 <CustomTextInput
-                  label="City"
+                  placeholder="City"
                   value={values.city}
                   onChangeText={handleChange("city")}
                   onBlur={handleBlur("city")}
@@ -220,7 +228,7 @@ export default function CreateShopScreen({route}) {
                   touched={touched.city}
                 />
                 <CustomTextInput
-                  label="Pincode"
+                  placeholder="Pincode"
                   value={values.pincode}
                   onChangeText={handleChange("pincode")}
                   onBlur={handleBlur("pincode")}
@@ -229,11 +237,11 @@ export default function CreateShopScreen({route}) {
                   keyboardType="numeric"
                 />
                 <View style={{ width: "100%" }}>
+                  <Text variant="titleMedium">Bank Details</Text>
                   <Divider style={{ marginVertical: 10 }} />
-                  <Text variant="titleLarge">Bank Details</Text>
                 </View>
                 <CustomTextInput
-                  label="Account No."
+                  placeholder="Account No."
                   value={values.accountNumber}
                   onChangeText={handleChange("accountNumber")}
                   onBlur={handleBlur("accountNumber")}
@@ -242,7 +250,7 @@ export default function CreateShopScreen({route}) {
                   keyboardType="numeric"
                 />
                 <CustomTextInput
-                  label="IFSC Code"
+                  placeholder="IFSC Code"
                   value={values.ifscCode}
                   onChangeText={handleChange("ifscCode")}
                   onBlur={handleBlur("ifscCode")}
@@ -251,7 +259,7 @@ export default function CreateShopScreen({route}) {
                   // keyboardType="numeric"
                 />
                 <CustomTextInput
-                  label="Bank Name"
+                  placeholder="Bank Name"
                   value={values.bankName}
                   onChangeText={handleChange("bankName")}
                   onBlur={handleBlur("bankName")}
@@ -259,7 +267,7 @@ export default function CreateShopScreen({route}) {
                   touched={touched.bankName}
                 />
                 <CustomTextInput
-                  label="Branch"
+                  placeholder="Branch"
                   value={values.branch}
                   onChangeText={handleChange("branch")}
                   onBlur={handleBlur("branch")}
@@ -273,7 +281,7 @@ export default function CreateShopScreen({route}) {
                 onPress={handleSubmit}
                 style={styles.button}
               >
-                {(data) ? "Update Shop" : "Create Shop"}
+                {data ? "Update Shop" : "Create Shop"}
               </Button>
             </View>
           </ScrollView>
@@ -307,9 +315,15 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   shopDetails: {
+    position:"relative",
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
   },
-
+  dividerStyle: {
+    marginTop: 10,
+    position: "relative",
+    top: -40,
+    alignSelf: "flex-end",
+  },
 });

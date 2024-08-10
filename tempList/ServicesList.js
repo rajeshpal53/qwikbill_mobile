@@ -7,47 +7,67 @@ import {
     Entypo,
     MaterialIcons,
     Octicons,
-    FontAwesome
+    FontAwesome,
+    Feather
   } from "@expo/vector-icons";
 import { responsiveFontSize } from "react-native-responsive-dimensions";
   
 export const services = [
     {
       name: "Add Invoice",
-      icon: <FontAwesome5 name="file-invoice" size={22} color="#0c3b73" />,
+      icon: <FontAwesome5 name="file-invoice" size={30} color="#26a0df" />,
       key: "1",
       navigateTo:"CreateInvoice"
     },
-    // {
-    //   name: "Add Customer",
-    //   icon: <AntDesign name="adduser" size={22} color="#0c3b73" />,
-    //   key: "2",
-    //   navigateTo:"AddCustomer"
-    // },
     {
-      name: "View Vendors",
-      icon: <FontAwesome name="group" size={22} color="#0c3b73" />,
-      key: "4",
-      navigateTo:"ViewVendor"
+      name: "Add Product",
+      icon: <Ionicons name="bag-add-outline" size={30} color="#26a0df" />,
+      key: "2",
+      navigateTo:"AddProduct"
     },
     {
-      name: " Add HSN/SAC Code",
-      icon: <FontAwesome5 name="user" size={22} color="#0c3b73" />,
-      key: "6",
-      navigateTo:"hsncode"
+      name: "Add Customer",
+      icon: <AntDesign name="adduser" size={30} color="#26a0df" />,
+      key: "2",
+      navigateTo:"AddCustomer"
     },
     {
-      name: "Create New Shop",
-      icon:<MaterialIcons name="add-business" size={22} color="#0c3b73" />,
+      name: "Add Shop",
+      icon:<MaterialIcons name="add-business" size={30} color="#26a0df" />,
       key: "5",
       navigateTo:"CreateShopScreen"
     },
     {
+      name: " Add HSN Code",
+      icon: <FontAwesome5 name="user" size={30} color="#26a0df" />,
+      key: "6",
+      navigateTo:"hsncode"
+    },
+    {
+      name: "View Vendors",
+      icon: <FontAwesome name="group" size={30} color="#26a0df" />,
+      key: "4",
+      navigateTo:"ViewVendor"
+    },
+    {
       name: "View Your Shops",
-      icon: <FontAwesome5 name="store" size={22} color="#0c3b73" />,
+      icon: <FontAwesome5 name="store" size={30} color="#26a0df" />,
       key: "6",
       navigateTo:"ViewShops"
     },
+    
+    {
+      name: "Favourites",
+      icon: <Ionicons name="heart-outline" size={30} color="#26a0df" />,
+      key: "9",
+      navigateTo:"CreateInvoice"
+    },
+    // {
+    //   name: "More",
+    //   icon: <Feather name="more-horizontal" size={30} color="#26a0df" />,
+    //   key: "6",
+    //   navigateTo:"ViewShops"
+    // },
 
     // {
     //   name: "Cheque Services",
@@ -67,12 +87,7 @@ export const services = [
     //   key: "8",
     //   navigateTo:"CreateInvoice"
     // },
-    {
-      name: "Favourites",
-      icon: <Ionicons name="heart-outline" size={22} color="#0c3b73" />,
-      key: "9",
-      navigateTo:"CreateInvoice"
-    },
+   
     // {
     //   name: "Deposits",
     //   icon: <FontAwesome5 name="piggy-bank" size={30} color="#0c3b73" />,
