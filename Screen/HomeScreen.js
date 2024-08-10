@@ -268,10 +268,12 @@ const styles = StyleSheet.create({
   },
   item: {
     flex: 1,
-    margin: 5,
+    margin: 10,
     padding: 2,
+    paddingVertical:5,
     backgroundColor: "#fff",
     alignItems: "center",
+    justifyContent:"center",
     borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },

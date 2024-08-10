@@ -69,7 +69,7 @@ export const services = [
     // },
     {
       name: "Favourites",
-      icon: <Ionicons name="heart-outline" size={30} color="#0c3b73" />,
+      icon: <Ionicons name="heart-outline" size={22} color="#0c3b73" />,
       key: "9",
       navigateTo:"CreateInvoice"
     },
