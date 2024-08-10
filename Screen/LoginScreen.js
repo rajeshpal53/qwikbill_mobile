@@ -22,8 +22,7 @@ import axios from 'axios';
   });
 
   const handleLogin = async (values,{resetForm} ) => {
-    const response= await axios.post("http://192.168.1.6:8888/api/login",JSON.stringify(values),{headers:{
-
+   const response= await axios.post("http://192.168.1.6:8888/api/login",JSON.stringify(values),{headers:{
       'Content-Type': 'application/json',
     }})
     console.log(response.data,"newResponse")

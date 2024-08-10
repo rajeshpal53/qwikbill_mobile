@@ -203,7 +203,7 @@ export default function ReviewAndPayScreen({ navigation }) {
                               params: {
                                 newData: newData,
                                 formData: formData,
-                                paymentMode: "unpaid",
+                                paymentMode: (checked) ? "unpaid" : "paid",
                                 submitHandler: submitHandler,
                               },
                             });}
@@ -260,9 +260,11 @@ const styles = StyleSheet.create({
   custDetailContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    flex:1,
   },
   textStyle: {
     fontSize: 18,
+    width:"50%"
   },
   contentFirstChild: {
     gap: 10,
