@@ -99,7 +99,7 @@ export default function PasscodeScreen({ navigation }) {
     storeTime();
     if(enteredPasscode===passkey){
       if(loginDetail1.isshop===false){
-        navigation.navigate("createshop")
+        navigation.navigate("CreateShopScreen")
       }
       else{
 

@@ -165,7 +165,7 @@ export default function HomeScreen({ navigation }) {
               <FlatList
                 style={styles.flatList}
                 data={services}
-                numColumns={4}
+                numColumns={3}
                 renderItem={({ item ,index}) => (
                   <TouchableOpacity
                     style={styles.item}

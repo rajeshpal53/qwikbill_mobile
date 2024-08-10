@@ -127,7 +127,7 @@ export default function Products({ navigation }) {
     formData.append('shop',shopDetails._id);
 
     try {
-      const response = await axios.post('http://192.168.1.3:8888/api/product/upload', formData, {
+      const response = await axios.post('http://192.168.1.6:8888/api/product/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

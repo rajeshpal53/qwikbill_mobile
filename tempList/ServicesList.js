@@ -14,37 +14,37 @@ import { responsiveFontSize } from "react-native-responsive-dimensions";
 export const services = [
     {
       name: "Add Invoice",
-      icon: <FontAwesome5 name="file-invoice" size={30} color="#0c3b73" />,
+      icon: <FontAwesome5 name="file-invoice" size={22} color="#0c3b73" />,
       key: "1",
       navigateTo:"CreateInvoice"
     },
     // {
     //   name: "Add Customer",
-    //   icon: <AntDesign name="adduser" size={30} color="#0c3b73" />,
+    //   icon: <AntDesign name="adduser" size={22} color="#0c3b73" />,
     //   key: "2",
     //   navigateTo:"AddCustomer"
     // },
     {
       name: "View Vendors",
-      icon: <FontAwesome name="group" size={30} color="#0c3b73" />,
+      icon: <FontAwesome name="group" size={22} color="#0c3b73" />,
       key: "4",
       navigateTo:"ViewVendor"
     },
     {
       name: " Add HSN/SAC Code",
-      icon: <FontAwesome5 name="user" size={30} color="#0c3b73" />,
+      icon: <FontAwesome5 name="user" size={22} color="#0c3b73" />,
       key: "6",
       navigateTo:"hsncode"
     },
     {
       name: "Create New Shop",
-      icon:<MaterialIcons name="add-business" size={30} color="#0c3b73" />,
+      icon:<MaterialIcons name="add-business" size={22} color="#0c3b73" />,
       key: "5",
       navigateTo:"CreateShopScreen"
     },
     {
       name: "View Your Shops",
-      icon: <FontAwesome5 name="store" size={30} color="#0c3b73" />,
+      icon: <FontAwesome5 name="store" size={22} color="#0c3b73" />,
       key: "6",
       navigateTo:"ViewShops"
     },
@@ -54,7 +54,7 @@ export const services = [
     //   icon: (
     //     <MaterialCommunityIcons
     //       name="newspaper-variant"
-    //       size={30}
+    //       size={22}
     //       color="#0c3b73"
     //     />
     //   ),
