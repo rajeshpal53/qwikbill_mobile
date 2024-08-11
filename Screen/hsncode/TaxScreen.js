@@ -130,8 +130,8 @@ export default function TaxScreen({navigation}) {
   }
 
   const renderExpandedContent = (item) => (
-    <View style={{marginLeft:"14%"}}>
-      <Text> Default :{item.isDefault?"Yes":"No"}</Text>    
+    <View>
+      <Text style={{color: "#777", fontSize: 12}}> Default :{item.isDefault?"Yes":"No"}</Text>    
     </View>
   );
   

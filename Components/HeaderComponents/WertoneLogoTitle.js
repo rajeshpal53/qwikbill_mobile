@@ -2,7 +2,7 @@ import { Image, View, StyleSheet } from "react-native";
 import {Text} from "react-native-paper"
 export default function wertoneLogoTitle() {
   return (
-    <View style={{ flexDirection: "row", gap:5 }}>
+    <View style={{ flexDirection: "row", gap:10 }}>
       <View style={{alignItems:"center"}}>
         <Image
           style={{ width: 40, height: 40 }}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { Button, Divider, Text } from "react-native-paper";
+import { Button, Card, Divider, Text } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useNavigation } from "@react-navigation/native";
@@ -150,11 +150,6 @@ export default function CreateShopScreen({ route }) {
           touched,
         }) => (
           <ScrollView>
-            <View>
-              <Text variant="headlineSmall" style={{ textAlign: "center" }}>
-                {/* {(data) ? "Modify Shop Details" : "Create New Shop"} */}
-              </Text>
-            </View>
             <View style={styles.form}>
               <View style={styles.shopDetails}>
                 <Text
@@ -199,10 +194,15 @@ export default function CreateShopScreen({ route }) {
                   touched={touched.gstNumber}
                   // keyboardType=""
                 />
-                <View style={{ width: "100%" }}>
-                  <Text variant="titleMedium">Address</Text>
-                  <Divider style={{ marginVertical: 10 }} />
                 </View>
+                <View style={styles.shopDetails}>
+                <Text
+                  style={{ color: "#555555" }}
+                  variant="bodyMedium"
+                >
+                  Address
+                </Text>
+                <Divider style={[styles.dividerStyle, { width: "80%" }]} />
                 <CustomTextInput
                   placeholder="Country"
                   value={values.country}
@@ -236,10 +236,15 @@ export default function CreateShopScreen({ route }) {
                   touched={touched.pincode}
                   keyboardType="numeric"
                 />
-                <View style={{ width: "100%" }}>
-                  <Text variant="titleMedium">Bank Details</Text>
-                  <Divider style={{ marginVertical: 10 }} />
                 </View>
+                <View style={styles.shopDetails}>
+                <Text
+                  style={{ color: "#555555" }}
+                  variant="bodyMedium"
+                >
+                  Bank Details
+                </Text>
+                <Divider style={[styles.dividerStyle, { width: "70%" }]} />
                 <CustomTextInput
                   placeholder="Account No."
                   value={values.accountNumber}
@@ -301,14 +306,11 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   form: {
-    backgroundColor: "#fff",
-    padding: 20,
+    // padding: 20,
     borderRadius: 10,
+    gap:10,
     // elevation: 5, // For shadow on Android
-    shadowColor: "#000", // For shadow on iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
+    
     margin: 10,
   },
   button: {
@@ -317,7 +319,14 @@ const styles = StyleSheet.create({
   shopDetails: {
     // flexDirection: "row",
     // flexWrap: "wrap",
+    padding:10,
+    backgroundColor:"#fff",
     justifyContent: "space-between",
+    elevation:2,
+    shadowColor: "#000", // For shadow on iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
   },
   dividerStyle: {
     marginTop: 10,

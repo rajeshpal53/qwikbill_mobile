@@ -127,7 +127,7 @@ export default function Products({ navigation }) {
     formData.append('shop',shopDetails._id);
 
     try {
-      const response = await axios.post('http://192.168.230.248:8888/api/product/upload', formData, {
+      const response = await axios.post('http://192.168.1.4:8888/api/product/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -149,15 +149,10 @@ export default function Products({ navigation }) {
   };
 
   const renderExpandedContent = (item) => (
-    <View
-      style={{
-        marginLeft: "14.5%",
-      }}
-    >
-      <Text> Cost price:{item.costprice}</Text>
-      <Text> hsn code:{item.hsncode}</Text>
-      {/* <Button title="more" onPress ={() => handleView(item._id)} /> */}
-    </View>
+    <View>
+      <Text style={{color: "#777", fontSize: 12}}>Cost price:{item.costprice}</Text>
+      <Text style={{color: "#777", fontSize: 12}}>hsn code:{item.hsncode}</Text>
+      </View>
   );
 
   const fabActions = [
@@ -207,7 +202,7 @@ export default function Products({ navigation }) {
                 icon={() => (
                   <Icon
                     name={open ? "close-outline" : "add-outline"}
-                    size={20}
+                    size={25}
                     color="white"
                   />
                 )}
@@ -275,7 +270,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   actionStyle: {
-    backgroundColor: "#26a0df",
+    backgroundColor: "#0c3b73",
     color: "floralwhite ",
   },
 });
