@@ -262,8 +262,8 @@ const AddCustomer = ({ navigation, initialValues, handleSubmit }) => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
-    margin: 10,
-    padding: 25,
+    // margin: 10,
+    // padding: 25,
     borderRadius: 10,
     elevation: 5, // For shadow on Android
     shadowColor: "#000", // For shadow on iOS
@@ -271,10 +271,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     marginVertical: 10,
-    flex: 1,
+    // flex: 1,
   },
   form: {
     backgroundColor: "#fff",
+    // backgroundColor: "orange",
+    // height:"100%",
     margin: 10,
     padding: 25,
     borderRadius: 10,

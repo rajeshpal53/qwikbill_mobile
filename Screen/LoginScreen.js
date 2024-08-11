@@ -22,41 +22,36 @@ const LoginScreen = ({ navigation }) => {
       .required("Password is required"),
   });
 
-  const handleLogin = async (values, { resetForm }) => {
-    const response = await axios.post(
-      "http://192.168.1.2:8888/api/login",
-      JSON.stringify(values),
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    console.log(response.data, "newResponse");
-    const data = await response.data;
-    await storeData("loginDetail", data.result);
-    setLoginDetail(data.result);
-    const token = "dummyToken";
-    login(token);
-    if (isLoading) {
-      {
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <ActivityIndicator size="large" />
-        </View>;
-      }
-    }
-    if (isAuthenticated) {
-      // navigation.navigate("wertone",{screen:'invoice'})
-      if (isPasskey) {
-        navigation.navigate("Passcode");
-      } else {
-        navigation.navigate("CreateNewPasscode");
-      }
-      resetForm();
-    }
-  };
+
+  const handleLogin = async (values,{resetForm} ) => {
+   const response= await axios.post("http://192.168.1.4:8888/api/login",JSON.stringify(values),{headers:{
+      'Content-Type': 'application/json',
+    }})
+    console.log(response.data,"newResponse")
+      const data = await response.data
+       await storeData("loginDetail",data.result);  
+      setLoginDetail(data.result) ;    
+     const token='dummyToken'
+      login(token)
+      if (isLoading) {
+        {
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <ActivityIndicator size="large" />
+          </View>
+        }
+       }
+      if(isAuthenticated){
+        // navigation.navigate("wertone",{screen:'invoice'})
+        if(isPasskey){
+          navigation.navigate('Passcode');
+        }else{
+          navigation.navigate('CreateNewPasscode');
+
+        }
+        resetForm();
+      }      
+}
+
   return (
     <Formik
       initialValues={{ email: "", password: "" }}

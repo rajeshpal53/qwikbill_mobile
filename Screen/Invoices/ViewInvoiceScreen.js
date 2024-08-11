@@ -9,9 +9,9 @@ import { ShopDetailContext } from "../../Store/ShopDetailContext";
 import InvoiceFilterModel from "../../Components/Modal/InvoiceFilterModel";
 
 const headlineMap = {
-  lastOneMonth: "last One Month",
-  lastThreeMonths: "last Three Months",
-  lastSixMonths: "last Six Months",
+  lastOneMonth: "Last One Month",
+  lastThreeMonths: "Last Three Months",
+  lastSixMonths: "Last Six Months",
 };
 
 const headlineHandler = (data) => {
@@ -142,15 +142,15 @@ const genrateInvoice=(item)=>{
         <View style={styles.container}>
           <View style={styles.header}>
             <Text style={styles.headerText}>
-              Statement for {headline} Invoices
+               {headline} Invoices
             </Text>
           </View>
           <DataTable style={{ flex: 1 }}>
             <DataTable.Header style={styles.tableHeader}>
-              <Text style={styles.tableHeaderText}>Date</Text>
+              <Text style={[styles.tableHeaderText, {}]}>Date</Text>
               <Text style={styles.tableHeaderText}>Phone No.</Text>
-              <Text style={styles.tableHeaderText}>Customer Name</Text>
-              <Text style={styles.tableHeaderTextLast}>Amount (₹)</Text>
+              <Text style={styles.tableHeaderText}>Name</Text>
+              <Text style={[styles.tableHeaderTextLast, {flex:0.7}]}>Amount (₹)</Text>
             </DataTable.Header>
             <Divider />
             {invoiceData.slice(from, to).map((item, index) => 
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   paymentStatus: {
-    flex: 1,
+    flex: 0.9,
     textAlign: "center",
     color: "red", // or green depending on logic
     borderRightWidth: 1,
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   total: {
-    flex: 1,
+    flex: 0.7,
     textAlign: "center",
     padding: 5,
   },

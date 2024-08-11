@@ -149,7 +149,7 @@ function DrawerNavigator() {
             ? (props) => <WertoneLogoTitle {...props} />
             : "",
 
-          headerTitleAlign: !searchMode ? "center" : "left",
+          headerTitleAlign: "left",
         }}
       />
 
@@ -165,7 +165,7 @@ function DrawerNavigator() {
             ? (props) => <WertoneLogoTitle {...props} />
             : "",
 
-          headerTitleAlign: !searchMode ? "center" : "left",
+          headerTitleAlign: "left",
         }}
       />
       <Tab.Screen
@@ -181,7 +181,7 @@ function DrawerNavigator() {
             ? (props) => <WertoneLogoTitle {...props} />
             : "",
 
-          headerTitleAlign: !searchMode ? "center" : "left",
+          headerTitleAlign: "left",
         }}
       />
       <Tab.Screen
@@ -197,6 +197,7 @@ function DrawerNavigator() {
             : "",
 
           headerTitleAlign: !searchMode ? "center" : "left",
+          headerRight: () => ""
         }}
       />
       {/* <Tab.Screen
@@ -270,12 +271,16 @@ function StackNavigator() {
       <Stack.Screen
         name="AddCustomer"
         component={AddCustomerScreen}
-        screenOptions={{}}
+        options={{
+          headerTitle:"Add Customer"
+        }}
       />
       <Stack.Screen
         name="AddProduct"
         component={AddProductScreen}
-        screenOptions={{}}
+        options={{
+          headerTitle:"Add Product"
+        }}
       />
       <Stack.Screen
         name="ViewVendor"
@@ -305,37 +310,51 @@ function StackNavigator() {
       <Stack.Screen
         name="VendorForm"
         component={VendorFormScreen}
-        screenOptions={{}}
+        options={{
+          headerTitle:"Add Vendor"
+        }}
       />
       <Stack.Screen
         name="InvoiceDetail"
         component={InvoiceDetailScreen}
-        screenOptions={{}}
+        options={{
+          headerTitle:"Invoice Details"
+        }}
       />
       <Stack.Screen
         name="CustomerDetail"
         component={CustomerDetailScreen}
-        screenOptions={{}}
+        options={{
+          headerTitle:"Customer Details"
+        }}
       />
       <Stack.Screen
         name="ProductDetail"
         component={ProductDetailScreen}
-        screenOptions={{}}
+        options={{
+          headerTitle:"Product Details"
+        }}
       />
       <Stack.Screen
         name="EditInvoice"
         component={EditInvoiceScreen}
-        screenOptions={{}}
+        options={{
+          headerTitle:"Edit Invoice Details"
+        }}
       />
       <Stack.Screen
         name="EditProduct"
         component={EditProductScreen}
-        screenOptions={{}}
+        options={{
+          headerTitle:"Edit Product Details"
+        }}
       />
       <Stack.Screen
         name="EditCustomer"
         component={EditCustomerScreen}
-        screenOptions={{}}
+        options={{
+          headerTitle:"Edit People Details"
+        }}
       />
       <Stack.Screen
         name="Passcode"
@@ -362,7 +381,9 @@ function StackNavigator() {
       <Stack.Screen
         name="CreateShopScreen"
         component={CreateShopScreen}
-        options={{}}
+        options={{
+          headerTitle:"Add Shop"
+        }}
       />
       <Stack.Screen
         name="genrateInvoice"

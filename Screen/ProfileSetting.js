@@ -72,8 +72,8 @@ function ProfileSetting({ navigation }) {
           <Title
             style={styles.titleStyle}
           >{`${login.name} ${login.surname}`}</Title>
-          <Paragraph style={styles.paragraph}>ID: {login._id}</Paragraph>
-          <Paragraph style={styles.paragraph}>Name: {login.name}</Paragraph>
+          {/* <Paragraph style={styles.paragraph}>ID: {login._id}</Paragraph> */}
+          <Paragraph style={styles.paragraph}>First Name: {login.name}</Paragraph>
           <Paragraph style={styles.paragraph}>
             Surname: {login.surname}
           </Paragraph>
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     width: "100%",
     color: "#fff",
   },
-  logout:{ alignSelf: "flex-end", marginBottom: 10, backgroundColor:"#96214e"},
+  logout:{ alignSelf: "flex-end", marginBottom: 10, backgroundColor:"#0c3b73"},
   paragraph: {
     marginVertical: 10,
   },

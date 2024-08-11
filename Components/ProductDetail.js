@@ -60,7 +60,9 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 16,
     margin: 10,
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
+    height:"96%"
+
   },
 
   label: {
