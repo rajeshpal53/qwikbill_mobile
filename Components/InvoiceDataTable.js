@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DataTable } from 'react-native-paper';
+import { DataTable, Text } from 'react-native-paper';
 import { useState, useEffect} from 'react';
 
 
@@ -51,11 +51,16 @@ const InvoiceDataTable = ({formData}) => {
   return (
     <DataTable>
       <DataTable.Header>
-        <DataTable.Title>Sr. No.</DataTable.Title>
-        <DataTable.Title numeric>Product Name</DataTable.Title>
-        <DataTable.Title numeric>Quantity</DataTable.Title>
-        <DataTable.Title numeric>GST Rate</DataTable.Title>
-        <DataTable.Title numeric>Amt</DataTable.Title>
+        <DataTable.Title>
+          <Text style={{fontWeight:"bold"}}>Sr. No.</Text> </DataTable.Title>
+        <DataTable.Title numeric>
+          <Text style={{fontWeight:"bold"}}>Product Name</Text> </DataTable.Title>
+        <DataTable.Title numeric>
+          <Text style={{fontWeight:"bold"}}>Quantity</Text> </DataTable.Title>
+        <DataTable.Title numeric>
+          <Text style={{fontWeight:"bold"}}>GST Rate</Text></DataTable.Title>
+        <DataTable.Title numeric>
+          <Text style={{fontWeight:"bold"}}>Amt</Text> </DataTable.Title>
       </DataTable.Header>
 
       {formData.items.slice(from, to).map((item, index) => (

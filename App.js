@@ -65,6 +65,7 @@ import SignupScreen from "./Screen/SignupScreen.js";
 import ViewClientScreen from "./Screen/Client/ViewClientScreen.js";
 import VendorFormScreen from "./Screen/Vendors/VendorFormScreen.js";
 import TaxScreen from "./Screen/hsncode/TaxScreen.js";
+import CustomBackButton from "./Components/HeaderComponents/CustomBackButton.js";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -93,12 +94,29 @@ function DrawerNavigator() {
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
+        tabBarActiveTintColor: '#26a0df', // Color for active tab
+        tabBarInactiveTintColor: '#fff', // Color for inactive tabs
+        tabBarLabelStyle: {
+          fontSize: 14, // Adjust the label font size
+          // borderRadius:10,
+        },
         headerShown: false,
+        tabBarStyle: {
+          height: 55,
+          backgroundColor:"black",
+          color:"white",
+          borderTopRightRadius:15,
+          borderTopLeftRadius:15,
+          borderTopColor:"#fff",
+          // borderTo
+
+        },
         headerStyle: {
           // backgroundColor: `#262580`, // Set your desired header background color here
           backgroundColor: "#0c3b73",
           shadowColor: "transparent", // This removes the shadow on iOS
           elevation: 0, // This removes the shadow on Android
+          // marginTop:2,
         },
         tabBarHideOnKeyboard: true,
         headerTintColor: "white", // Set your desired header text color here
@@ -118,7 +136,7 @@ function DrawerNavigator() {
         component={HomeScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon name="home-outline" color="#0c3b73" size={size} />
+            <Icon name="home-outline" color={color} size={size} />
           ),
           headerShown: true,
           // title:"myHome",
@@ -143,7 +161,7 @@ function DrawerNavigator() {
         options={{
           headerShown: true,
           tabBarIcon: ({ color, size }) => (
-            <Icon name="file-tray-full-outline" color="#0c3b73" size={size} />
+            <Icon name="file-tray-full-outline" color={color} size={size} />
           ),
           headerTitle: !searchMode
             ? (props) => <WertoneLogoTitle {...props} />
@@ -159,7 +177,7 @@ function DrawerNavigator() {
         options={{
           headerShown: true,
           tabBarIcon: ({ color, size }) => (
-            <Icon name="pricetag-outline" color="#0c3b73" size={size} />
+            <Icon name="pricetag-outline" color={color} size={size} />
           ),
           headerTitle: !searchMode
             ? (props) => <WertoneLogoTitle {...props} />
@@ -175,7 +193,7 @@ function DrawerNavigator() {
           headerShown: true,
           tabBarLabel: "People",
           tabBarIcon: ({ color, size }) => (
-            <Icon name="people-outline" color="#0c3b73" size={size} />
+            <Icon name="people-outline" color={color} size={size} />
           ),
           headerTitle: !searchMode
             ? (props) => <WertoneLogoTitle {...props} />
@@ -190,7 +208,7 @@ function DrawerNavigator() {
         options={{
           headerShown: true,
           tabBarIcon: ({ color, size }) => (
-            <Icon name="person-outline" color="#0c3b73" size={size} />
+            <Icon name="person-outline" color={color} size={size} />
           ),
           headerTitle: !searchMode
             ? (props) => <WertoneLogoTitle {...props} />
@@ -214,6 +232,8 @@ function DrawerNavigator() {
 }
 function StackNavigator() {
   const { isAuthenticated, isLoading,  searchMode  } = useContext(AuthContext);
+  const [isLandscape, setIsLandscape] = useState(false);
+
   useEffect(() => {
     isAuthenticated;
   }, [isAuthenticated]);
@@ -375,7 +395,7 @@ function StackNavigator() {
         name="CreateInvoice"
         component={CreateInvoice}
         options={{
-          headerRight: () => <LogoutBtn />,
+    
         }}
       />
       <Stack.Screen
@@ -389,21 +409,20 @@ function StackNavigator() {
         name="genrateInvoice"
         component={GenrateInvoiceScreen}
         options={{
-          headerRight: () => <LogoutBtn />,
+
         }}
       />
       <Stack.Screen
         name="ReviewAndPay"
         component={ReviewAndPayScreen}
         options={{
-          headerRight: () => <LogoutBtn />,
+   
         }}
       />
       <Stack.Screen
         name="InvoiceSuccess"
         component={InvoiceSuccessScreen}
         options={{
-          headerRight: () => <LogoutBtn />,
         }}
       />
       <Stack.Screen
@@ -419,10 +438,11 @@ function StackNavigator() {
       />
       <Stack.Screen
         name="ViewInvoices"
-        component={ViewInvoiceScreen}
+        component={ViewInvoiceScreen} 
         options={({ route }) => ({
           headerTitle: shopDetails.shopname,
-          headerRight: () => <RotateBtn />,
+          headerRight: () => <RotateBtn isLandscape={isLandscape} setIsLandscape={setIsLandscape} />,
+          headerLeft:() => <CustomBackButton isLandscape={isLandscape} setIsLandscape={setIsLandscape} />
         })}
       />
       <Stack.Screen

@@ -42,15 +42,16 @@ catch(error){
 
  }
   return (
-<ScrollView style={styles.container}>
+
     <AddCustomer navigation={navigation} initialValues={initialValues} handleSubmit={handleSubmit}/>
-</ScrollView>
+
   )
 }
 const styles= StyleSheet.create({
     container:{
-       flex:1,
-      //  backgroundColor:"orange"
+      //  flex:1,
+      justifyContent:"center",
+       backgroundColor:"orange"
     }
 })
 

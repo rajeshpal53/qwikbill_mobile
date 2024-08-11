@@ -60,6 +60,7 @@ export default function HomeScreen({ navigation }) {
   const windowHeight = useWindowDimensions().height;
   console.log(windowHeight)
   const overlayHeight = (0.20*windowHeight);
+  const containerHeight = 
   console.log(responsiveHeight(80), "    --- responsiveHeight");
   console.log(verticalScale(700), "    --- verticalscale");
 
@@ -211,6 +212,7 @@ const styles = StyleSheet.create({
     marginHorizontal: responsiveWidth(5),
     // backgroundColor:"orange",
     height: verticalScale(578)
+    // height:responsiveHeight(80)
     // height:713,
     // height:"100%",
     // backgroundColor:"lightblue"
