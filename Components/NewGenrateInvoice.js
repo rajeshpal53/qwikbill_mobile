@@ -197,6 +197,7 @@ const NewGenrateInvoice = ({ data }) => {
     try {
       const response = await fetch(
         `http://192.168.1.4:8888/download/invoice/invoice-${data._id}.pdf`,
+
         {
           credentials: "include",
         }

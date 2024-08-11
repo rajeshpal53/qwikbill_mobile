@@ -70,24 +70,7 @@ const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 const customTheme = {
   ...DefaultTheme,
-//   fonts: {
-//     regular: {
-//       fontFamily:'Mulish, sans-serif',
-//       fontWeight: 'normal',
-//     },
-//     medium: {
-//       fontFamily: 'Mulish, sans-serif',
-//       fontWeight: 'bold',
-//     },
-//     light: {
-//       fontFamily: 'Mulish, sans-serif',
-//       fontWeight: '300',
-//     },
-//     thin: {
-//       fontFamily: 'Mulish, sans-serif',
-//       fontWeight: '200',
-//     },
-//   },
+ 
   colors: {
     ...DefaultTheme.colors,
     primary: "#0c3b73",
@@ -106,39 +89,16 @@ function DrawerNavigator() {
   //   console.log(query);
   // };
 
-  const styles = StyleSheet.create({
-    screenMargin:{
-      marginTop:6
-    }
-  })
-
   return (
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
-        tabBarActiveTintColor: '#26a0df', // Color for active tab
-        tabBarInactiveTintColor: '#fff', // Color for inactive tabs
-        tabBarLabelStyle: {
-          fontSize: 14, // Adjust the label font size
-          // borderRadius:10,
-        },
         headerShown: false,
-        tabBarStyle: {
-          height: 55,
-          backgroundColor:"black",
-          color:"white",
-          borderTopRightRadius:15,
-          borderTopLeftRadius:15,
-          borderTopColor:"#fff",
-          // borderTo
-
-        },
         headerStyle: {
           // backgroundColor: `#262580`, // Set your desired header background color here
           backgroundColor: "#0c3b73",
           shadowColor: "transparent", // This removes the shadow on iOS
           elevation: 0, // This removes the shadow on Android
-          // marginTop:2,
         },
         tabBarHideOnKeyboard: true,
         headerTintColor: "white", // Set your desired header text color here
@@ -158,12 +118,7 @@ function DrawerNavigator() {
         component={HomeScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon 
-            style={styles.screenMargin} 
-            name="home-outline" 
-            color={color} 
-            size={size} 
-            />
+            <Icon name="home-outline" color="#0c3b73" size={size} />
           ),
           headerShown: true,
           // title:"myHome",
@@ -175,20 +130,20 @@ function DrawerNavigator() {
           },
           // headerTitle:"",
           headerTitleAlign: !searchMode ? "center" : "left",
-          // tabBarLabel: "Home",
+          tabBarLabel: "Home",
           headerRight: () => null,
           // tabBarVisible:false,
           // tabBarButton: () => null
         }}
       />
       <Tab.Screen
-        name="Invoices"
+        name="Invoice"
         component={FilterInvoiceScreen}
         // component={Invoice}
         options={{
           headerShown: true,
           tabBarIcon: ({ color, size }) => (
-            <Icon style={styles.screenMargin} name="file-tray-full-outline" color={color}  size={size} />
+            <Icon name="file-tray-full-outline" color="#0c3b73" size={size} />
           ),
           headerTitle: !searchMode
             ? (props) => <WertoneLogoTitle {...props} />
@@ -204,7 +159,7 @@ function DrawerNavigator() {
         options={{
           headerShown: true,
           tabBarIcon: ({ color, size }) => (
-            <Icon style={styles.screenMargin} name="pricetag-outline" color={color}  size={size} />
+            <Icon name="pricetag-outline" color="#0c3b73" size={size} />
           ),
           headerTitle: !searchMode
             ? (props) => <WertoneLogoTitle {...props} />
@@ -218,9 +173,9 @@ function DrawerNavigator() {
         component={Customer}
         options={{
           headerShown: true,
-          tabBarLabel: "Customer",
+          tabBarLabel: "People",
           tabBarIcon: ({ color, size }) => (
-            <Icon style={styles.screenMargin} name="people-outline" color={color}  size={size} />
+            <Icon name="people-outline" color="#0c3b73" size={size} />
           ),
           headerTitle: !searchMode
             ? (props) => <WertoneLogoTitle {...props} />
@@ -230,12 +185,12 @@ function DrawerNavigator() {
         }}
       />
       <Tab.Screen
-        name="Profile"
+        name="Profile Setting"
         component={ProfileSetting}
         options={{
           headerShown: true,
           tabBarIcon: ({ color, size }) => (
-            <Icon style={styles.screenMargin} name="person-outline" color={color}  size={size} />
+            <Icon name="person-outline" color="#0c3b73" size={size} />
           ),
           headerTitle: !searchMode
             ? (props) => <WertoneLogoTitle {...props} />
@@ -278,6 +233,7 @@ function StackNavigator() {
         headerStyle: {
           backgroundColor: "#0c3b73", // Set your desired header background color here
         },
+        headerTitleAlign:"center",
         headerTintColor: "white", // Set your desired header text color here
         headerTitleStyle: {
           fontWeight: "bold", // Optional: Set your desired font weight
@@ -299,11 +255,13 @@ function StackNavigator() {
         name="login"
         component={LoginScreen}
         screenOptions={{ headerShown: false }}
+        options={{ title: 'Login ' }} 
       />
       <Stack.Screen
         name="Signup"
         component={SignupScreen}
         screenOptions={{ headerShown: false }}
+        options={{ title: 'Sign Up ' }} 
       />
       <Stack.Screen
         name="AddInvoice"
@@ -417,9 +375,7 @@ function StackNavigator() {
         name="CreateInvoice"
         component={CreateInvoice}
         options={{
-          headerTitle:"Create Invoice",
-          // headerRight: () => 
-          // <LogoutBtn />,
+          headerRight: () => <LogoutBtn />,
         }}
       />
       <Stack.Screen
@@ -433,24 +389,21 @@ function StackNavigator() {
         name="genrateInvoice"
         component={GenrateInvoiceScreen}
         options={{
-          headerTitle:"generate Invoice"
-          // headerRight: () => <LogoutBtn />,
+          headerRight: () => <LogoutBtn />,
         }}
       />
       <Stack.Screen
         name="ReviewAndPay"
         component={ReviewAndPayScreen}
         options={{
-          headerTitle:"Review And Pay"
-          // headerRight: () => <LogoutBtn />,
+          headerRight: () => <LogoutBtn />,
         }}
       />
       <Stack.Screen
         name="InvoiceSuccess"
         component={InvoiceSuccessScreen}
         options={{
-          headerTitle:"Invoice Success"
-          // headerRight: () => <LogoutBtn />,
+          headerRight: () => <LogoutBtn />,
         }}
       />
       <Stack.Screen
