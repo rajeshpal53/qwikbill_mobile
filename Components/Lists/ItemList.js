@@ -1,7 +1,7 @@
 // ItemList.js
 import React, { useState, useCallback } from "react";
 import { View, FlatList, TouchableOpacity, StyleSheet, RefreshControl } from "react-native";
-import { Avatar, Card, Menu, Text } from "react-native-paper";
+import { Avatar, Button, Card, Menu, Text } from "react-native-paper";
 import { Feather } from "@expo/vector-icons";
 
 export default function ItemList({
@@ -68,13 +68,14 @@ export default function ItemList({
             marginHorizontal:8
           }}  
           label={item[titleKey]?.charAt(0)} 
-          size={40}  />
+          size={38}  />
 
           <View style={styles.itemContent}>
             <Text style={styles.title}>{item[titleKey].toUpperCase()}</Text>
             <Text style={styles.subtitle}>{item[subtitleKey]}</Text>
           </View>
          
+         {!isExpanded ? 
           <Menu
             visible={visible && currentItem?._id === item._id}
             onDismiss={hideMenu}
@@ -113,12 +114,17 @@ export default function ItemList({
                 
             }} 
             title="Delete" /> */}
-          </Menu> 
+          </Menu> :
+
+          <Button textColor="#26a0df" onPress={() => {
+              onView(item._id)
+          }}>
+            View
+            </Button> 
+           }
         </View>
         {isExpanded && (
-            // <View>
-            //     <Text>More items</Text>
-            // </View>
+           
             expandedItems(item)
         )}
       </View>
@@ -134,7 +140,6 @@ export default function ItemList({
        onPress={() => onView(item._id)
 
        }>
-        <Text style={{color:"blue"}}>more</Text>
       </TouchableOpacity>
     )}
     </View>
@@ -153,7 +158,8 @@ export default function ItemList({
 
 const styles = StyleSheet.create({
   itemContainer: {
-   paddingVertical:8,
+   paddingVertical:4,
+  //  backgroundColor:"blue"
   //  paddingHorizontal:4,
   //  marginVertical:6,
   //  elevation:2,
@@ -175,11 +181,12 @@ const styles = StyleSheet.create({
     // backgroundColor:"lightgreen"
   },
   title: {
-    fontSize: 16,
+    fontSize: 14,
     // fontWeight: "bold",
     color:"#555555"
   },
   subtitle: {
     color: "#777",
+    fontSize:12
   },
 });

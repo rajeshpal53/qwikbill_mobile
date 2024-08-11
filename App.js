@@ -398,7 +398,9 @@ function StackNavigator() {
         name="CreateInvoice"
         component={CreateInvoice}
         options={{
-          headerRight: () => <LogoutBtn />,
+          headerTitle:"Create Invoice",
+          // headerRight: () => 
+          // <LogoutBtn />,
         }}
       />
       <Stack.Screen
@@ -410,21 +412,24 @@ function StackNavigator() {
         name="genrateInvoice"
         component={GenrateInvoiceScreen}
         options={{
-          headerRight: () => <LogoutBtn />,
+          headerTitle:"generate Invoice"
+          // headerRight: () => <LogoutBtn />,
         }}
       />
       <Stack.Screen
         name="ReviewAndPay"
         component={ReviewAndPayScreen}
         options={{
-          headerRight: () => <LogoutBtn />,
+          headerTitle:"Review And Pay"
+          // headerRight: () => <LogoutBtn />,
         }}
       />
       <Stack.Screen
         name="InvoiceSuccess"
         component={InvoiceSuccessScreen}
         options={{
-          headerRight: () => <LogoutBtn />,
+          headerTitle:"Invoice Success"
+          // headerRight: () => <LogoutBtn />,
         }}
       />
       <Stack.Screen

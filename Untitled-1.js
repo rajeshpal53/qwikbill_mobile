@@ -91,7 +91,7 @@ export default function Customer({ navigation }) {
     console.log(file,"fileeeee")
     formData.append("file",file );
       const response = await axios.post(
-        "http://192.168.1.4:8888/api/product/upload",
+        "http://192.168.230.248:8888/api/product/upload",
         formData,
         {
           headers: {

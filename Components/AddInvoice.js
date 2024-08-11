@@ -198,6 +198,7 @@ const AddInvoice = ({
                     style={styles.suggestionsList}
                   >
                     {options.map((option, index) => (
+                      <>
                       <List.Item
                         key={index}
                         title={option.name}
@@ -209,7 +210,11 @@ const AddInvoice = ({
                           setFetchData(option);
                           setShowOptions(false);
                         }}
+                      
+                    
                       />
+                      <Divider />
+                      </>
                     ))}
                   </ScrollView>
                 </View>
@@ -334,7 +339,7 @@ const AddInvoice = ({
                   style={{ paddingTop: 10, color: "#555555" }}
                   variant="bodyMedium"
                 >
-                  add new Items
+                  Add Items
                 </Text>
                 <Divider style={[styles.dividerStyle, { width: "67%" }]} />
                 {values.items.map((item, index) => {
@@ -541,7 +546,7 @@ const AddInvoice = ({
             )}
           </FieldArray>
 
-          <Button mode="contained" onPress={handleSubmit} style={styles.button}>
+          <Button mode="contained" onPress={handleSubmit} style={[styles.button, {alignSelf:"center"}]}>
             Review and Pay
           </Button>
         </View>
@@ -566,12 +571,16 @@ const styles = StyleSheet.create({
     maxHeight: 200, // Adjust height as needed
     zIndex: 1,
     backgroundColor: "white",
-    borderWidth: 1,
+    borderWidth: 0.2,
     borderColor: "gray",
-    borderRadius: 4,
+    // borderRadius: 4,
+    elevation:2,
   },
   suggestionsList: {
     width: "100%",
+    border:"none",
+    // backgroundColor:"blue"
+    // borderWidth:0,
   },
   form: {
     backgroundColor: "rgba(0,0,0,0)",
@@ -590,6 +599,8 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
+    width:"50%",
+    alignSelf:"flex-end"
   },
   itemContainer: {
     // marginBottom: 10,
