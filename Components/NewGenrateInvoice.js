@@ -4,7 +4,6 @@ import { WebView } from "react-native-webview";
 import { Button } from "react-native-paper";
 import Icon from "react-native-vector-icons/Ionicons";
 import * as FileSystem from "expo-file-system";
-
 import { ScrollView } from "react-native-gesture-handler";
 import * as Sharing from "expo-sharing";
 import { readApi } from "../Util/UtilApi";
@@ -37,7 +36,7 @@ const NewGenrateInvoice = ({ data }) => {
             .container {
               max-width: 50em;
               margin: auto;
-              padding: 1.2em;
+              padding: 0.5em;
               border: 1px solid #ccc;
               border-radius: 1em;
             }
@@ -71,6 +70,9 @@ const NewGenrateInvoice = ({ data }) => {
             .invoice-details p {
               margin:1em 0   0;
             }
+              .tabelContainer{
+              background-color:"orange";
+              }
             .items {
               width: 100%;
               border-collapse: collapse;
@@ -114,7 +116,7 @@ const NewGenrateInvoice = ({ data }) => {
               justify-content:flex-end;
               }
               .logoUnpaid img{
-                height: 9rem;
+                height: 6rem;
               }
               .footer img{
                 width: 1.5rem;
@@ -130,11 +132,10 @@ const NewGenrateInvoice = ({ data }) => {
               <p>Phone:${data.people.phone}</p>
             </div>
             <div class="logoUnpaid">
-             <img  src=${
-               data.paymentStatus === "unpaid"
-               ?"https://t4.ftcdn.net/jpg/03/53/98/37/360_F_353983709_EMteiTFWbe5rFtAPtaxCotjotHg4gqck.jpg"
+             <img src=${data.paymentStatus === "unpaid"
+               ?"https://t4.ftcdn.net/jpg/03/53/98/37/360_F_353983709_EMteiTFWbe5rFtAPtaxCotjotHg4gqck.jp"
                :   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0N2OTLA7ebEBgftFByOI29InQJxJZBjquOcl-LEtooFhju6-RBHDb3Gsmz4Ke2h74m3E&usqp=CAU"
-             } alt='status'/>
+              } alt='status'/>
             </div>
             <div class="invoice-details">
             
@@ -151,6 +152,7 @@ const NewGenrateInvoice = ({ data }) => {
                 
               </div>
             </div>
+           
             <table class="items">
               <thead>
                 <tr>
@@ -194,7 +196,7 @@ const NewGenrateInvoice = ({ data }) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://192.168.230.248:8888/download/invoice/invoice-${data._id}.pdf`,
+        `http://192.168.1.4:8888/download/invoice/invoice-${data._id}.pdf`,
         {
           credentials: "include",
         }

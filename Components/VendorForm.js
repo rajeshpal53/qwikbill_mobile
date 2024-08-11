@@ -126,7 +126,7 @@ export default function VendorForm({route,navigation}) {
             <View style={styles.form}>
              <View style={styles.vendorDetails}>
              <CustomTextInput
-                  label="Vendor Name"
+                  placeholder="Name"
                   value={values.people}
                   onBlur={handleBlur("people")}
                   error={errors.people}
@@ -163,7 +163,7 @@ export default function VendorForm({route,navigation}) {
                   </View>
                 )}
                 <CustomTextInput
-                  label="amount"
+                  placeholder="amount"
                   value={values.amount}
                   onChangeText={handleChange("amount")}
                   onBlur={handleBlur("amount")}
@@ -172,7 +172,7 @@ export default function VendorForm({route,navigation}) {
                   keyboardType="numeric"
                 />
                 <CustomTextInput
-                  label="Gst Invoice Number"
+                  placeholder="Gst Invoice Number"
                   value={values.invoicenumber}
                   onChangeText={handleChange("invoicenumber")}
                   onBlur={handleBlur("invoicenumber")}

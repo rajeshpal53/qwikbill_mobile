@@ -105,12 +105,8 @@ export default function ViewShopsScreen() {
   }
 
   const renderExpandedContent = (item) => (
-    <View style={{
-      marginLeft:"14.5%"
-    }}>
-      <Text>Show Information</Text>
-      {/* <Button title="more" onPress ={() => handleView(item._id)} /> */}
-        
+    <View>
+      <Text style={{color: "#777", fontSize: 12}}>Show Information</Text>
     </View>
   );
 

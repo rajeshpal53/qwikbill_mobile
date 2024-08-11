@@ -108,6 +108,7 @@ export default function HomeScreen({ navigation }) {
   const goToHandler = (Screen) => {
     // navigation.navigate("wertone", {screen:'CreateInvoice'});
     // console.log("Pra ", item)
+    console.log("hi")
     navigation.navigate("StackNavigator", { screen: Screen });
   };
 
@@ -141,8 +142,8 @@ export default function HomeScreen({ navigation }) {
                     </View>
                          
                     <View style={styles.viewsContainer}>
-                      <Pressable style={styles.allThreeViews}>
-                      <Text style={[styles.whiteColor]}>View Customers</Text>
+                      <Pressable  style={styles.allThreeViews} onPress={() => navigation.navigate("Customer")}>
+                      <Text style={styles.whiteColor}>View Customers</Text>
                       </Pressable>
 
                       <View style={{
@@ -151,9 +152,8 @@ export default function HomeScreen({ navigation }) {
                         height:"50%"
                         }}></View>
 
-                      <Pressable style={styles.allThreeViews} 
+                      <Pressable  style={styles.allThreeViews} 
                       onPress={() => goToHandler("Invoices")}>
-
                       <Text style={styles.whiteColor}>View Invoices</Text>
                       </Pressable>
 
@@ -314,7 +314,6 @@ const styles = StyleSheet.create({
   },
   whiteColor: {
      color: "#26a0df", 
-    //  color: "#fff", 
      fontSize:16
   },
 });

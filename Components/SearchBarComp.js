@@ -60,7 +60,7 @@ const SearchBarComp = () => {
         
         <View style={[styles.inputContainer]}>
           <Searchbar
-            style={{ width: "100%", height:50 }}
+            style={{ width: "95%", height:50, marginLeft:10 }}
             placeholder="Search..."
             onChangeText={setSearchQuery}
             value={searchQuery}

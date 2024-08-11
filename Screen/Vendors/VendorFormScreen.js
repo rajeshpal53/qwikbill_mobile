@@ -114,15 +114,15 @@ export default function VendorFormScreen({route,navigation}) {
           touched,
         }) =>(
             <ScrollView>
-                <View>
+                {/* <View>
               <Text variant="headlineSmall" style={{ textAlign: "center" }}>
                 {(data) ? "Update Vendor Details" : "Create New Vendor"}
               </Text>
-            </View>
+            </View> */}
             <View style={styles.form}>
              <View style={styles.vendorDetails}>
              <CustomTextInput
-                  label="Vendor Name"
+                  placeholder="Name"
                   value={values.people}
                   onBlur={handleBlur("people")}
                   error={errors.people}
@@ -159,7 +159,7 @@ export default function VendorFormScreen({route,navigation}) {
                   </View>
                 )}
                 <CustomTextInput
-                  label="amount"
+                  placeholder="amount"
                   value={values.amount}
                   onChangeText={handleChange("amount")}
                   onBlur={handleBlur("amount")}
@@ -168,7 +168,7 @@ export default function VendorFormScreen({route,navigation}) {
                   keyboardType="numeric"
                 />
                 <CustomTextInput
-                  label="Gst Invoice Number"
+                  placeholder="Gst Invoice Number"
                   value={values.invoiceNumber}
                   onChangeText={handleChange("invoiceNumber")}
                   onBlur={handleBlur("invoiceNumber")}

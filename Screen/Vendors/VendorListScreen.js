@@ -105,10 +105,11 @@ export default function VendorListScreen() {
   }
 
   const renderExpandedContent = (item) => (
-    <View style={{marginLeft:"14%"}}>
-      <Text>{item.people.name}</Text>    
+    <View>
+      <Text style={{color: "#777", fontSize: 12}}>{item.people.name}</Text>    
     </View>
   );
+  
   const toggleModal = (sortBy) => {
     // Check if invoiceData is empty
     if (vendors.length === 0) {

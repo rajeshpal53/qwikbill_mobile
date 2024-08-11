@@ -62,6 +62,7 @@ const AddProduct = ({ navigation,initialValues,handleSubmit }) => {
         <View style={styles.container}>
           <TextInput
             placeholder="Product Name"
+            underlineColor="gray"
             mode="flat"
             onChangeText={handleChange("name")}
             onBlur={handleBlur("name")}
@@ -76,6 +77,7 @@ const AddProduct = ({ navigation,initialValues,handleSubmit }) => {
           <TextInput
             
             placeholder="Pruchase Price"
+            underlineColor="gray"
             keyboardType="phone-pad"
             mode="flat"
             onChangeText={handleChange("purchasePrice")}
@@ -92,7 +94,7 @@ const AddProduct = ({ navigation,initialValues,handleSubmit }) => {
           </HelperText>
 
           <TextInput
-            
+            underlineColor="gray"
             placeholder="Selling Price"
             keyboardType="phone-pad"
             mode="flat"
@@ -110,7 +112,7 @@ const AddProduct = ({ navigation,initialValues,handleSubmit }) => {
           </HelperText>
           <View>
           <TextInput
-          
+            underlineColor="gray"
             placeholder="HSN Code"
             mode="flat"
             onChangeText={async (text) => {
@@ -151,6 +153,7 @@ const AddProduct = ({ navigation,initialValues,handleSubmit }) => {
             ))}</ScrollView></View> }
           </View>
           <TextInput
+          underlineColor="gray"
            placeholder="Tax Value"
             keyboardType="phone-pad"
             mode="flat"
@@ -195,8 +198,10 @@ const styles = StyleSheet.create({
   },
   container: {
     backgroundColor: "#fff",
-    margin: 10,
-    padding: 25,
+    marginHorizontal:10,
+    height:"100%",
+    // paddingHorizontal: 10,
+    padding:25,
     borderRadius: 10,
     elevation: 5, // For shadow on Android
     shadowColor: "#000", // For shadow on iOS
