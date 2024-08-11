@@ -1,119 +1,170 @@
-import {React ,useState,useContext} from 'react';
-import { View,StyleSheet, Alert,Image,TouchableOpacity } from 'react-native';
-import{Text,TextInput,Button, Card,Divider} from 'react-native-paper'
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { AuthContext } from '../Store/AuthContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createApi } from '../Util/UtilApi';
-import { usePasskey } from '../Store/PasskeyContext';
-import axios from 'axios';
+import { React, useState, useContext } from "react";
+import { View, StyleSheet, Alert, Image, TouchableOpacity } from "react-native";
+import { Text, TextInput, Button, Card, Divider } from "react-native-paper";
+import { Formik } from "formik";
+import * as Yup from "yup";
+import { AuthContext } from "../Store/AuthContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createApi } from "../Util/UtilApi";
+import { usePasskey } from "../Store/PasskeyContext";
+import axios from "axios";
 
- const LoginScreen = ({navigation}) => {
-  const{login,isAuthenticated,isLoading,storeData,setLoginDetail}= useContext(AuthContext)
-  const{isPasskey}=usePasskey();
+const LoginScreen = ({ navigation }) => {
+  const { login, isAuthenticated, isLoading, storeData, setLoginDetail } =
+    useContext(AuthContext);
+  const { isPasskey } = usePasskey();
   const validationSchema = Yup.object().shape({
     email: Yup.string()
-      .email('Invalid email address')
-      .required('Email is required'),
+      .email("Invalid email address")
+      .required("Email is required"),
     password: Yup.string()
-      .min(6, 'Password must be at least 6 characters')
-      .required('Password is required')
+      .min(6, "Password must be at least 6 characters")
+      .required("Password is required"),
   });
 
-  const handleLogin = async (values,{resetForm} ) => {
-   const response= await axios.post("http://192.168.230.248:8888/api/login",JSON.stringify(values),{headers:{
-      'Content-Type': 'application/json',
-    }})
-    console.log(response.data,"newResponse")
-      const data = await response.data
-       await storeData("loginDetail",data.result);  
-      setLoginDetail(data.result) ;    
-     const token='dummyToken'
-      login(token)
-      if (isLoading) {
-        {
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <ActivityIndicator size="large" />
-          </View>
-        }
-       }
-      if(isAuthenticated){
-        // navigation.navigate("wertone",{screen:'invoice'})
-        if(isPasskey){
-          navigation.navigate('Passcode');
-        }else{
-          navigation.navigate('CreateNewPasscode');
-
-        }
-        resetForm();
-      }      
-}
+  const handleLogin = async (values, { resetForm }) => {
+    const response = await axios.post(
+      "http://192.168.1.2:8888/api/login",
+      JSON.stringify(values),
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log(response.data, "newResponse");
+    const data = await response.data;
+    await storeData("loginDetail", data.result);
+    setLoginDetail(data.result);
+    const token = "dummyToken";
+    login(token);
+    if (isLoading) {
+      {
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" />
+        </View>;
+      }
+    }
+    if (isAuthenticated) {
+      // navigation.navigate("wertone",{screen:'invoice'})
+      if (isPasskey) {
+        navigation.navigate("Passcode");
+      } else {
+        navigation.navigate("CreateNewPasscode");
+      }
+      resetForm();
+    }
+  };
   return (
     <Formik
-      initialValues={{ email: '', password: '' }}
+      initialValues={{ email: "", password: "" }}
       validationSchema={validationSchema}
       onSubmit={handleLogin}
     >
-      {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+      {({
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        values,
+        errors,
+        touched,
+      }) => (
         <View style={styles.container}>
-          <Card style={{backgroundColor:"#ffffff"}}>
-          <Image source={require('../assets/logo-wertone.png')} style={styles.img} />
-          <Text variant='labelMedium' style={styles.wertoneTag}> wertone billing center</Text>
-          <Text variant='bodyLarge' style={{alignSelf:"center"}}> Login</Text>
-          <TextInput
-          label='email'
-            style={styles.input}
-            autoCorrect={false}
-             mode="flat"
-             
-            onChangeText={handleChange('email')}
-            onBlur={handleBlur('email')}
-            value={values.email}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          {touched.email && errors.email && <Text style={styles.error}>{errors.email}</Text>}
-          <TextInput
-           mode="flat"
-           
-           label='password'
-            style={styles.input}
-            onChangeText={handleChange('password')}
-            onBlur={handleBlur('password')}
-            value={values.password}
-            secureTextEntry
-            autoCapitalize='none'
-          />
-          {touched.password && errors.password && <Text style={styles.error}>{errors.password}</Text>}
+          <Card style={{ backgroundColor: "#ffffff", height: "100%" }}>
+            <View
+              style={{
+                justifyContent: "spaceEvenly",
+                alignSelf: "flexStart",
+                paddingHorizontal: 8,
+                marginBottom: 50,
+              }}
+            >
+              <Image
+                source={require("../assets/logo-wertone.png")}
+                style={styles.img}
+              />
+              <Text variant="titleLarge" style={styles.wertoneTag}>
+                {" "}
+                Wertone billing Software
+              </Text>
+            </View>
+            {/* <Text variant='bodyLarge' style={{alignSelf:"center"}}> Login</Text> */}
+            <TextInput
+              label="Email"
+              style={styles.input}
+              autoCorrect={false}
+              mode="flat"
+              onChangeText={handleChange("email")}
+              onBlur={handleBlur("email")}
+              value={values.email}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+            {touched.email && errors.email && (
+              <Text style={styles.error}>{errors.email}</Text>
+            )}
+            <TextInput
+              mode="flat"
+              label="Password"
+              style={styles.input}
+              onChangeText={handleChange("password")}
+              onBlur={handleBlur("password")}
+              value={values.password}
+              secureTextEntry
+              autoCapitalize="none"
+            />
+            {touched.password && errors.password && (
+              <Text style={styles.error}>{errors.password}</Text>
+            )}
             {/* <Link href='' style={styles.link}> forget password?..</Link> */}
-          <Button onPress={handleSubmit} textColor='white' style={styles.button} >Login</Button>
-          <Button
-            icon={"google"}
-            // onPress={handleGoogleSignIn}
-            textColor='white'
-            style={[styles.button, { backgroundColor: '#DB4437' }]}
-          >
-            Login with Google
-          </Button>
-          <Button
-            icon={"facebook"}
-            // onPress={handleFacebookLogin}
-            textColor='white'
-            style={[styles.button, { backgroundColor: '#3b5998' }]}
-          >
-            Login with Facebook
-          </Button>
-          <Divider/>
-  
-          <TouchableOpacity onPress={() =>navigation.navigate("Signup")}>
-        <Text style={styles.signup}>
-          Don't have an account? <Text style={styles.signupText}>Sign Up</Text>
-        </Text>
-      </TouchableOpacity>
-          
-          </Card>
+            <Button
+              onPress={handleSubmit}
+              textColor="white"
+              style={[styles.button, { marginTop: 40 }]}
+            >
+              Login
+            </Button>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-evenly",
+                marginTop: 20,
+              }}
+            >
+              <Button
+                icon={"google"}
+                // onPress={handleGoogleSignIn}
+                textColor="white"
+                style={[
+                  styles.button,
+                  { backgroundColor: "#DB4437", width: "40%" },
+                ]}
+              >
+                Google
+              </Button>
+              <Button
+                icon={"facebook"}
+                // onPress={handleFacebookLogin}
+                textColor="white"
+                style={[
+                  styles.button,
+                  { backgroundColor: "#3b5998", width: "40%" },
+                ]}
+              >
+                Facebook
+              </Button>
+            </View>
+            <Divider style={{width:"80%",marginLeft:30,marginTop:20,}} />
 
+            <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
+              <Text style={styles.signup}>
+                Don't have an account?{" "}
+                <Text style={styles.signupText}>Sign Up</Text>
+              </Text>
+            </TouchableOpacity>
+          </Card>
         </View>
       )}
     </Formik>
@@ -122,54 +173,58 @@ import axios from 'axios';
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical:"30%",
-    marginVertical:10,
-    flex:1,
-    justifyContent :"center", 
-    paddingHorizontal: 16,
-    elevation:12,
+    // paddingVertical:"30%",
+    // marginVertical:10,
+    flex: 1,
+    justifyContent: "center",
+    padding: 16,
+    elevation: 12,
   },
-  signup:{alignSelf:"center",marginVertical:10,color:"grey"},
+  signup: {
+    alignSelf: "center",
+    marginVertical: 40,
+    color: "grey",
+    fontSize: 15,
+  },
   input: {
     marginBottom: 16,
     paddingHorizontal: 8,
-    width:'90%',
-    alignSelf:"center",
-    backgroundColor:"#ffffff"
-
+    width: "90%",
+    alignSelf: "center",
+    backgroundColor: "#ffffff",
   },
   signupText: {
-    color: '#1e90ff', 
-    fontWeight: 'bold',
+    color: "#1e90ff",
+    fontWeight: "bold",
   },
-  img:{
-      height:100,
-      width:100,
-      elevation:2,
-      alignSelf:"center",
-      marginVertical:10,
+  img: {
+    height: 70,
+    width: 70,
+    elevation: 2,
+    marginVertical: 10,
   },
-  wertoneTag:{
-    color:'gray',
-    alignSelf:'center',
-    marginVertical:5,
+  wertoneTag: {
+    color: "#777777",
+    marginVertical: 5,
+    fontWeight: "bold",
+    paddingLeft: 50,
   },
-  link:{
-      alignSelf:'flex-end',
-      color:'gray',
-      marginVertical:10,
+  link: {
+    alignSelf: "flex-end",
+    color: "gray",
+    marginVertical: 10,
   },
   error: {
-    color: 'red',
-    marginBottom: 16,
-    marginLeft:16
+    color: "red",
+    // marginBottom: 16,
+    marginLeft: 16,
   },
-  button:{
-    backgroundColor:'#0c3b73',
-    width:'80%',
-    alignSelf:"center",
-    marginBottom:20
-  }
+  button: {
+    backgroundColor: "#0c3b73",
+    width: "80%",
+    alignSelf: "center",
+    marginBottom: 20,
+  },
 });
 
 export default LoginScreen;

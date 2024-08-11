@@ -24,7 +24,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import TextBox from "react-native-password-eye";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { Feather } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { useContext, useState, useEffect } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { AuthContext } from "../Store/AuthContext";
@@ -109,25 +109,25 @@ export default function PasscodeScreen({ navigation }) {
       return Alert.alert("failed to login use phone lock or retry");
     }
   };
+  const handleLocalAuthentication = async () => {
+    const result = await LocalAuthentication.authenticateAsync({
+      promptMessage: "Authenticate",
+      fallbackLabel: "Enter Passcode",
+    });
+
+    if (result.success) {
+      // const {previousLoginTime} = await storeTimes();
+      storeTime();
+      navigation.navigate("wertone", {
+        screen: "Home",
+        // params : {previousLoginTime}
+      });
+    } else {
+      Alert.alert("Authentication Failed", "Please try again");
+    }
+  };
 
   useEffect(() => {
-    const handleLocalAuthentication = async () => {
-      const result = await LocalAuthentication.authenticateAsync({
-        promptMessage: "Authenticate",
-        fallbackLabel: "Enter Passcode",
-      });
-
-      if (result.success) {
-        // const {previousLoginTime} = await storeTimes();
-        storeTime();
-        navigation.navigate("wertone", {
-          screen: "Home",
-          // params : {previousLoginTime}
-        });
-      } else {
-        Alert.alert("Authentication Failed", "Please try again");
-      }
-    };
     handleLocalAuthentication();
   }, []);
 
@@ -207,6 +207,7 @@ export default function PasscodeScreen({ navigation }) {
                 <Image
                   source={require("../assets/logo-wertone.png")}
                   style={styles.img}
+
                 />
               </View>
 
@@ -216,11 +217,11 @@ export default function PasscodeScreen({ navigation }) {
                   alignItems: "center",
                 }}
               >
-                <Text variant="titleLarge" style={{ color: "white" }}>
+                <Text variant="titleLarge" style={{ color: "white",fontSize:20,fontWeight:"bold",marginBottom:2}}>
                   WERTONE
                 </Text>
                 <Text style={{ color: "white", letterSpacing: 3 }}>
-                  Biling Software
+                  Billing Software
                 </Text>
               </View>
             </View>
@@ -230,7 +231,7 @@ export default function PasscodeScreen({ navigation }) {
                 {!isKeyboardVisible && (
                   <View style={styles.myShopImageContainer}>
                     <Image
-                      source={require("../assets/myShop.jpg")}
+                      source={require("../assets/shopImg1.jpeg")}
                       style={styles.myShopeImage}
                     ></Image>
                   </View>
@@ -264,9 +265,11 @@ export default function PasscodeScreen({ navigation }) {
                   <Button
                     style={{
                       width: "50%",
+                      fontSize:12,
                       backgroundColor: buttonsModes.domainButtonMode
                         ? "#6dbbc7"
                         : "transparent",
+                      
                     }}
                     mode={
                       buttonsModes.domainButtonMode
@@ -335,7 +338,7 @@ export default function PasscodeScreen({ navigation }) {
                           >
                             <AntDesign
                               name="infocirlceo"
-                              size={25}
+                              size={20}
                               color="#6dbbc7"
                               onPress={() => {
                                 setTooltipVisible(true);
@@ -354,11 +357,11 @@ export default function PasscodeScreen({ navigation }) {
                         >
                           <TouchableOpacity onPress={handleEyePress}>
                             {eyeOn ? (
-                              <Feather name="eye" size={25} color="#6dbbc7" />
+                              <Feather name="eye" size={20} color="#6dbbc7" />
                             ) : (
                               <Feather
                                 name="eye-off"
-                                size={25}
+                                size={20}
                                 color="#6dbbc7"
                               />
                             )}
@@ -390,8 +393,19 @@ export default function PasscodeScreen({ navigation }) {
                 </TouchableOpacity>
               </Card.Content>
             </Card>
-
-            <View style={{ height: "20%", width: 25 }}></View>
+            <View style={{justifyContent:"center", alignItems:"center", height:"12%", marginTop:40}}>
+              <Text variant="titleSmall" style={{ color: "#6dbbc7" }}>
+                  Login with fingerprint
+                </Text>
+                <TouchableOpacity
+                onPress={() => {
+                  handleLocalAuthentication();
+                }}
+                style={{justifyContent:"center",marginTop:"20"}}
+              >
+                <Ionicons name="finger-print" size={50} color="#26a0df" style={{justifySelf:"center" , marginTop:20}} />
+              </TouchableOpacity>
+            </View>
           </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
@@ -401,7 +415,7 @@ export default function PasscodeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   card: {
-    height: "55%",
+    height: "70%",
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1,
@@ -445,7 +459,7 @@ const styles = StyleSheet.create({
   myShopImageContainer: {
     width: "30%",
     height: "20%",
-    marginTop:5
+    marginTop: 10,
   },
   scrollViewChild: {
     // backgroundColor: "grey",
