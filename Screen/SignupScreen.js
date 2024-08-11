@@ -37,6 +37,7 @@ const Signup = ({ navigation }) => {
   const [eyeOn, setEyeOn] = useState(false);
   const handleSignup = async (values) => {
     console.log(values);
+
     try {
       const postData = { ...values, enabled: true };
       const response = await axios.post(

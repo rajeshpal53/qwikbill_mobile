@@ -123,7 +123,9 @@ export default function Customer({ navigation }) {
     formData.append('shop',shopDetails._id);
 
     try {
-      const response = await axios.post('http://192.168.1.2:8888/api/people/upload', formData, {
+
+      const response = await axios.post('http://192.168.1.4:8888/api/people/upload', formData, {
+
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -144,12 +146,8 @@ export default function Customer({ navigation }) {
   };
 
   const renderExpandedContent = (item) => (
-    <View style={{
-      marginLeft:"14.5%"
-    }}>
-      <Text style={{color:"#555"}}>{item.email}</Text>
-      {/* <Text style={{color:"#555"}}>{(item.isClient)?"Client" : "not a Client"}</Text> */}
-        
+    <View>
+      <Text style={{color: "#777", fontSize: 12}}>{item.email}</Text>
     </View>
   );
 
@@ -191,11 +189,11 @@ export default function Customer({ navigation }) {
       /> */}
        <FAB.Group
               open={open}
-              fabStyle={styles.actionStyle}
+              fabStyle={[styles.actionStyle]}
               icon={() => (
                 <Icon
                   name={open ? "close-outline" : "add-outline"}
-                  size={30}
+                  size={25}
                   color="white"
                 />
               )}
@@ -253,14 +251,15 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: "absolute",
-    margin: 13,
-    right: 0,
-    bottom: 0,
+    // margin: 13,
+    // right: 0,
+    // bottom: 0,
+
     backgroundColor: "#96214e",
     color: "white",
   },
   actionStyle: {
-    backgroundColor: "#96214e",
+    backgroundColor: "#0c3b73",
     color: "floralwhite ",
   },
 });

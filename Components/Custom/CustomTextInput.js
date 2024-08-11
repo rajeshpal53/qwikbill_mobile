@@ -16,7 +16,7 @@ const CustomTextInput = ({
     <View style={styles.container}>
       <TextInput
         placeholder={placeholder}
-        underlineColor='#555'
+        underlineColor='gray'
         mode="flat"
         value={value}
         onChangeText={onChangeText}
