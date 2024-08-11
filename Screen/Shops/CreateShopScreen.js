@@ -161,9 +161,9 @@ export default function CreateShopScreen({ route }) {
                   style={{ color: "#555555" }}
                   variant="bodyMedium"
                 >
-                  Customer Details
+                  Shop Details
                 </Text>
-                <Divider style={[styles.dividerStyle, { width: "62%" }]} />
+                <Divider style={[styles.dividerStyle, { width: "70%" }]} />
                 <CustomTextInput
                   placeholder="Shop Name"
                   value={values.shopName}
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 20,
     borderRadius: 10,
-    elevation: 5, // For shadow on Android
+    // elevation: 5, // For shadow on Android
     shadowColor: "#000", // For shadow on iOS
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -315,15 +315,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   shopDetails: {
-    position:"relative",
-    flexDirection: "row",
-    flexWrap: "wrap",
+    // flexDirection: "row",
+    // flexWrap: "wrap",
     justifyContent: "space-between",
   },
   dividerStyle: {
     marginTop: 10,
     position: "relative",
-    top: -40,
+    top: -17,
     alignSelf: "flex-end",
   },
 });
