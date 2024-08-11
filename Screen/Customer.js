@@ -123,7 +123,7 @@ export default function Customer({ navigation }) {
     formData.append('shop',shopDetails._id);
 
     try {
-      const response = await axios.post('http://192.168.1.4:8888/api/people/upload', formData, {
+      const response = await axios.post('http://192.168.230.248:8888/api/people/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -147,8 +147,8 @@ export default function Customer({ navigation }) {
     <View style={{
       marginLeft:"14.5%"
     }}>
-      <Text>{item.email}</Text>
-      <Text>{(item.isClient)?"Client" : "not a Client"}</Text>
+      <Text style={{color:"#555"}}>{item.email}</Text>
+      {/* <Text style={{color:"#555"}}>{(item.isClient)?"Client" : "not a Client"}</Text> */}
         
     </View>
   );
@@ -195,7 +195,7 @@ export default function Customer({ navigation }) {
               icon={() => (
                 <Icon
                   name={open ? "close-outline" : "add-outline"}
-                  size={20}
+                  size={30}
                   color="white"
                 />
               )}

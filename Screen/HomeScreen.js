@@ -143,20 +143,18 @@ export default function HomeScreen({ navigation }) {
                     <View style={styles.viewsContainer}>
                       <Pressable style={styles.allThreeViews}>
                       <Text style={[styles.whiteColor]}>View Customers</Text>
-                      {/* <Text style={styles.whiteColor}></Text> */}
                       </Pressable>
 
                       <View style={{
-                        backgroundColor:"#777",
+                        backgroundColor:"rgba(0,0,0,0.3)",
                         width:1,
-                        height:"80%"
+                        height:"50%"
                         }}></View>
 
                       <Pressable style={styles.allThreeViews} 
                       onPress={() => goToHandler("Invoices")}>
 
                       <Text style={styles.whiteColor}>View Invoices</Text>
-                      {/* <Text style={styles.whiteColor}></Text> */}
                       </Pressable>
 
                       {/* <Pressable style={styles.allThreeViews}>
