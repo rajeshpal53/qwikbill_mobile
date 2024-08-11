@@ -196,7 +196,7 @@ const NewGenrateInvoice = ({ data }) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://192.168.1.4:8888/download/invoice/invoice-${data._id}.pdf`,
+        `http://192.168.230.248:8888/download/invoice/invoice-${data._id}.pdf`,
 
         {
           credentials: "include",
