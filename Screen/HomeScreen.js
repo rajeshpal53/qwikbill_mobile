@@ -56,13 +56,11 @@ export default function HomeScreen({ navigation }) {
   const { searchMode, setSearchMode } = useContext(AuthContext);
   // const {overlayHeight} = useContext(AuthContext);
   const pickerRef = useRef();
-  const windowWidth = useWindowDimensions().width;
-  const windowHeight = useWindowDimensions().height;
-  console.log(windowHeight)
-  const overlayHeight = (0.20*windowHeight);
-  const containerHeight = 
-  console.log(responsiveHeight(80), "    --- responsiveHeight");
-  console.log(verticalScale(700), "    --- verticalscale");
+  const {width, height} = useWindowDimensions(); 
+  console.log(width, "  ", height)
+  // const overlayHeight = (0.20*windowHeight);
+  // console.log(responsiveHeight(80), "    --- responsiveHeight");
+  // console.log(verticalScale(700), "    --- verticalscale");
 
   useEffect(() => {
     const getItem = async () => {

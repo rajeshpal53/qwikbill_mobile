@@ -128,7 +128,7 @@ export default function Products({ navigation }) {
 
     try {
 
-      const response = await axios.post('http://192.168.230.248:8888/api/product/upload', formData, {
+      const response = await axios.post('http://192.168.1.4:8888/api/product/upload', formData, {
 
 
         headers: {
