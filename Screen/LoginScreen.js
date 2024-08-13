@@ -24,7 +24,7 @@ const LoginScreen = ({ navigation }) => {
 
 
   const handleLogin = async (values,{resetForm} ) => {
-   const response= await axios.post("http://192.168.230.248:8888/api/login",JSON.stringify(values),{headers:{
+   const response= await axios.post("http://192.168.1.4:8888/api/login",JSON.stringify(values),{headers:{
       'Content-Type': 'application/json',
     }})
     console.log(response.data,"newResponse")
