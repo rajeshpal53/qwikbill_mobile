@@ -43,7 +43,9 @@ catch(error){
  }
   return (
 
+    <ScrollView contentContainerStyle={styles.container}>
     <AddCustomer navigation={navigation} initialValues={initialValues} handleSubmit={handleSubmit}/>
+    </ScrollView>
 
   )
 }
@@ -51,7 +53,6 @@ const styles= StyleSheet.create({
     container:{
       //  flex:1,
       justifyContent:"center",
-       backgroundColor:"orange"
     }
 })
 

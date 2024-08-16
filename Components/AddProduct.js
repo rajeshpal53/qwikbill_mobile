@@ -8,6 +8,7 @@ import {
   HelperText,
   List,
   Text,
+  Divider,
 } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -71,7 +72,7 @@ const AddProduct = ({ navigation, initialValues, handleSubmit }) => {
             }}
           >
             <TextInput
-              placeholder="Product Name"
+              label="Product Name"
               underlineColor="gray"
               mode="flat"
               onChangeText={handleChange("name")}
@@ -92,7 +93,7 @@ const AddProduct = ({ navigation, initialValues, handleSubmit }) => {
             }}
           >
             <TextInput
-              placeholder="Pruchase Price"
+              label="Pruchase Price"
               underlineColor="gray"
               keyboardType="phone-pad"
               mode="flat"
@@ -120,7 +121,7 @@ const AddProduct = ({ navigation, initialValues, handleSubmit }) => {
           >
             <TextInput
               underlineColor="gray"
-              placeholder="Selling Price"
+              label="Selling Price"
               keyboardType="phone-pad"
               mode="flat"
               onChangeText={handleChange("sellingPrice")}
@@ -146,7 +147,7 @@ const AddProduct = ({ navigation, initialValues, handleSubmit }) => {
           >
             <TextInput
               underlineColor="gray"
-              placeholder="HSN Code"
+              label="HSN Code"
               mode="flat"
               onChangeText={async (text) => {
                 handleChange("hsncode")(text);
@@ -173,17 +174,18 @@ const AddProduct = ({ navigation, initialValues, handleSubmit }) => {
               <View style={styles.suggestionsContainer}>
                 <ScrollView style={styles.suggestionsList}>
                   {options.map((option, index) => (
-                    <List.Item
-                      key={index}
-                      title={option.taxName}
-                      onPress={async () => {
-                        setFieldValue("hsncode", option.taxName);
-                        setFieldValue("taxValue", option.taxValue.toString());
-                        setShowHsnOptions(false);
-                      }}
-                    >
-                      {" "}
-                    </List.Item>
+                    <>
+                      <List.Item
+                        key={index}
+                        title={option.taxName}
+                        onPress={async () => {
+                          setFieldValue("hsncode", option.taxName);
+                          setFieldValue("taxValue", option.taxValue.toString());
+                          setShowHsnOptions(false);
+                        }}
+                      ></List.Item>
+                      <Divider />
+                    </>
                   ))}
                 </ScrollView>
               </View>
@@ -200,9 +202,10 @@ const AddProduct = ({ navigation, initialValues, handleSubmit }) => {
           >
             <TextInput
               underlineColor="gray"
-              placeholder="Tax Value"
+              label="Tax Value"
               keyboardType="phone-pad"
               mode="flat"
+              disabled = "true"
               onChangeText={handleChange("taxValue")}
               onBlur={handleBlur("taxValue")}
               value={values.taxValue}
@@ -231,16 +234,13 @@ const styles = StyleSheet.create({
     top: 55, // Adjust based on your input height and margin
     width: "100%",
     maxHeight: 200, // Adjust height as needed
-    minHeight: 70,
+    elevation: 2,
     zIndex: 1,
     backgroundColor: "white",
-    borderWidth: 1,
-    borderColor: "gray",
-    borderTopColor: "white",
-    borderRadius: 4,
   },
   suggestionsList: {
     width: "100%",
+    borderWidth: 0,
   },
   form: {
     // backgroundColor: "#fff",
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     // margin: 10,
     marginVertical: 5,
     marginHorizontal: 10,
-    // paddingVertical: 5,
+    paddingVertical: 50,
     borderRadius: 10,
     elevation: 5, // For shadow on Android
     shadowColor: "#000", // For shadow on iOS
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
   },
   input: {
     // marginBottom: 5,
-    backgroundColor:"rgba(0,0,0,0)",
+    backgroundColor: "rgba(0,0,0,0)",
     // shadowOffset: { width: 0, height: 2 },
     // shadowOpacity: 0.8,
     // shadowRadius: 2,
@@ -293,6 +293,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: "90%",
     alignSelf: "center",
+    marginBottom: 10,
   },
 });
 

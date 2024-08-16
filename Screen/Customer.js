@@ -124,7 +124,7 @@ export default function Customer({ navigation }) {
 
     try {
 
-      const response = await axios.post('http://192.168.1.4:8888/api/people/upload', formData, {
+      const response = await axios.post('http://192.168.1.3:8888/api/people/upload', formData, {
 
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -248,6 +248,7 @@ export default function Customer({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent:"center",
   },
   fab: {
     position: "absolute",

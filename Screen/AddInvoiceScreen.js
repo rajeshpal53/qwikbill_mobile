@@ -19,7 +19,7 @@ const getYear = (date) => {
 
    const formatDate = (isoDateString) => {
     const [year, month, day] = isoDateString.split('-');
-    return `${day}-${month}-${year}`;
+    return `${year}-${month}-${day}`;
   };
   
 const AddInvoiceScreen=({navigation,invoiceType})=>{
