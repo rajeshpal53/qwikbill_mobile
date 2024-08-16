@@ -237,6 +237,7 @@ function StackNavigator() {
   useEffect(() => {
     isAuthenticated;
   }, [isAuthenticated]);
+  
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -416,7 +417,8 @@ function StackNavigator() {
         name="ReviewAndPay"
         component={ReviewAndPayScreen}
         options={{
-   
+          headerRight: () => <RotateBtn isLandscape={isLandscape} setIsLandscape={setIsLandscape} />,
+          headerLeft:() => <CustomBackButton isLandscape={isLandscape} setIsLandscape={setIsLandscape} />
         }}
       />
       <Stack.Screen

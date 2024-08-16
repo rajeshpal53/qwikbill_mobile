@@ -107,6 +107,9 @@ export default function HomeScreen({ navigation }) {
   const goToHandler = (Screen) => {
     // navigation.navigate("wertone", {screen:'CreateInvoice'});
     // console.log("Pra ", item)
+    if(Screen === "CreateShopScreen"){
+      navigation.navigate(Screen, {isHome:false} );
+    }
     console.log("hi")
     navigation.navigate("StackNavigator", { screen: Screen });
   };

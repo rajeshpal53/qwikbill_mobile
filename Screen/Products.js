@@ -54,6 +54,8 @@ export default function Products({ navigation }) {
   const { showSnackbar } = useSnackbar();
   const onStateChange = ({ open }) => setOpen(open);
 
+  console.log("shopDetails p23 , ", shopDetails._id);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -128,7 +130,7 @@ export default function Products({ navigation }) {
 
     try {
 
-      const response = await axios.post('http://192.168.1.4:8888/api/product/upload', formData, {
+      const response = await axios.post('http://192.168.1.3:8888/api/product/upload', formData, {
 
 
         headers: {
@@ -261,7 +263,9 @@ export default function Products({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:"#fff"
+    // backgroundColor:"#fff"
+    justifyContent:"center"
+    // backgroundColor:"blue"
   },
   fab: {
     position: "absolute",

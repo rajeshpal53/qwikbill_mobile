@@ -44,7 +44,9 @@ const AddProductScreen = ({navigation}) => {
   }
   return (
 
+    <ScrollView style={styles.container}>
     <AddProduct navigation={navigation} initialValues={initialValues} handleSubmit={handleSubmit}/>
+    </ScrollView>
   )
 }
 styles= StyleSheet.create({
