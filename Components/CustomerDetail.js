@@ -7,12 +7,13 @@ function CustomerDetail({detail}) {
     <Card style={styles.card}>
         <Card.Content>
           <Title style={styles.titleStyle}>{detail.name}</Title>
-          <Paragraph style={styles.paragraph}>ID: {detail._id}</Paragraph>
+          <Paragraph style={styles.paragraph}>Address: {detail.address}</Paragraph>
+          <Paragraph style={styles.paragraph}>GST Number: {detail.gstnumber}</Paragraph>
           <Paragraph style={styles.paragraph}>Email: {detail.email}</Paragraph>
           <Paragraph style={styles.paragraph}>Phone: {detail.phone}</Paragraph>
           <Paragraph style={styles.paragraph}>Country: {detail.country}</Paragraph>
           <Paragraph style={styles.paragraph}>Enabled: {detail.enabled ? 'Yes' : 'No'}</Paragraph>
-          <Paragraph style={styles.paragraph}>Client: {detail.isClient ? 'Yes' : 'No'}</Paragraph>
+          <Paragraph style={styles.paragraph}>Client: {detail.type}</Paragraph>
           <Paragraph style={styles.paragraph}>Public: {detail.isPublic ? 'Yes' : 'No'}</Paragraph>
           <Paragraph style={styles.paragraph}>Created: {new Date(detail.created).toLocaleString()}</Paragraph>
           <Paragraph style={styles.paragraph}>Updated: {new Date(detail.updated).toLocaleString()}</Paragraph>

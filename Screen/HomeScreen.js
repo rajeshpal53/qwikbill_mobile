@@ -56,12 +56,11 @@ export default function HomeScreen({ navigation }) {
   const { searchMode, setSearchMode } = useContext(AuthContext);
   // const {overlayHeight} = useContext(AuthContext);
   const pickerRef = useRef();
-  const windowWidth = useWindowDimensions().width;
-  const windowHeight = useWindowDimensions().height;
-  console.log(windowHeight)
-  const overlayHeight = (0.20*windowHeight);
-  console.log(responsiveHeight(80), "    --- responsiveHeight");
-  console.log(verticalScale(700), "    --- verticalscale");
+  const {width, height} = useWindowDimensions(); 
+  console.log(width, "  ", height)
+  // const overlayHeight = (0.20*windowHeight);
+  // console.log(responsiveHeight(80), "    --- responsiveHeight");
+  // console.log(verticalScale(700), "    --- verticalscale");
 
   useEffect(() => {
     const getItem = async () => {
@@ -108,6 +107,9 @@ export default function HomeScreen({ navigation }) {
   const goToHandler = (Screen) => {
     // navigation.navigate("wertone", {screen:'CreateInvoice'});
     // console.log("Pra ", item)
+    if(Screen === "CreateShopScreen"){
+      navigation.navigate(Screen, {isHome:false} );
+    }
     console.log("hi")
     navigation.navigate("StackNavigator", { screen: Screen });
   };
@@ -209,8 +211,10 @@ const styles = StyleSheet.create({
   },
   container: { 
     marginHorizontal: responsiveWidth(5),
-   
-    height:responsiveHeight(80)
+    // backgroundColor:"orange",
+    height: verticalScale(578)
+    // height:responsiveHeight(80)
+
     // height:713,
     // height:"100%",
     // backgroundColor:"lightblue"

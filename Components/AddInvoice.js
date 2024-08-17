@@ -198,7 +198,7 @@ const AddInvoice = ({
                     style={styles.suggestionsList}
                   >
                     {options.map((option, index) => (
-                      <>
+                      <React.Fragment key={index}>
                       <List.Item
                         key={index}
                         title={option.name}
@@ -214,7 +214,7 @@ const AddInvoice = ({
                     
                       />
                       <Divider />
-                      </>
+                      </React.Fragment>
                     ))}
                   </ScrollView>
                 </View>
@@ -341,10 +341,10 @@ const AddInvoice = ({
                 >
                   Add Items
                 </Text>
-                <Divider style={[styles.dividerStyle, { width: "67%" }]} />
+                <Divider style={[styles.dividerStyle, { width: "75%" }]} />
                 {values.items.map((item, index) => {
                   return (
-                    <>
+                    <React.Fragment key={index}>
                       <View key={index} style={styles.itemContainer}>
                         <View style={{ position: "relative" }}>
                           <TextInput
@@ -529,7 +529,7 @@ const AddInvoice = ({
                           Remove
                         </Button>
                       </View>
-                    </>
+                    </React.Fragment>
                   );
                 })}
                 <Button

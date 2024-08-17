@@ -48,10 +48,13 @@ export default function CreateShopScreen({ route }) {
   const navigation = useNavigation();
   const { showSnackbar } = useSnackbar();
 
-  const data = route?.params?.shop;
-  console.log("Route data is , ", data);
+  const {isHome} = route.params||false;
 
-  console.log("routedata , ", data);
+  // const {isHome} = route.params.isHome;
+  const data = route?.params?.shop;
+  console.log("Route data is , ", isHome);
+
+  // console.log("routedata , ", data);
   return (
     <View contentContainerStyle={styles.container}>
       <Formik
@@ -114,7 +117,12 @@ export default function CreateShopScreen({ route }) {
 
               console.log("response is , ", response);
               showSnackbar("shop updated successfully", "success");
-              navigation.navigate("ViewShops");
+              if(isHome){
+                navigation.navigate("Home")
+              }else{
+                navigation.navigate("ViewShops");
+              }
+              
             } catch (error) {
               console.log("error is ", error);
               showSnackbar("error to create new product", "error");

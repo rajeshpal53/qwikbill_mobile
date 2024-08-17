@@ -64,10 +64,11 @@ const SearchBarComp = () => {
             placeholder="Search..."
             onChangeText={setSearchQuery}
             value={searchQuery}
-            mode="bar"
+            mode="bar" 
             onFocus={handleFocus}
             onBlur={handleBlur}
             onTraileringIconPress={handle}
+            clearIcon={() => null}
           />
         </View>
       ) : (
