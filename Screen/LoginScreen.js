@@ -8,11 +8,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createApi } from "../Util/UtilApi";
 import { usePasskey } from "../Store/PasskeyContext";
 import axios from "axios";
+import { useWindowDimensions } from "react-native";
 
 const LoginScreen = ({ navigation }) => {
   const { login, isAuthenticated, isLoading, storeData, setLoginDetail } =
     useContext(AuthContext);
   const { isPasskey } = usePasskey();
+  const { width, height } = useWindowDimensions();
+
   const validationSchema = Yup.object().shape({
     email: Yup.string()
       .email("Invalid email address")
@@ -23,34 +26,72 @@ const LoginScreen = ({ navigation }) => {
   });
 
 
-  const handleLogin = async (values,{resetForm} ) => {
-   const response= await axios.post("http://192.168.1.7:8888/api/login",JSON.stringify(values),{headers:{
-      'Content-Type': 'application/json',
-    }})
-    console.log(response.data,"newResponse")
-      const data = await response.data
-       await storeData("loginDetail",data.result);  
-      setLoginDetail(data.result) ;    
-     const token='dummyToken'
-      login(token)
-      if (isLoading) {
-        {
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <ActivityIndicator size="large" />
-          </View>
-        }
-       }
-      if(isAuthenticated){
-        // navigation.navigate("wertone",{screen:'invoice'})
-        if(isPasskey){
-          navigation.navigate('Passcode');
-        }else{
-          navigation.navigate('CreateNewPasscode');
+  const handleLogin = async (values, { resetForm }) => {
+    const response = await axios.post(
+      "http://192.168.1.3:8888/api/login",
+      JSON.stringify(values),
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log(response.data, "newResponse");
+    const data = await response.data;
+    await storeData("loginDetail", data.result);
+    setLoginDetail(data.result);
+    const token = "dummyToken";
+    login(token);
+    if (isLoading) {
+      {
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" />
+        </View>;
+      }
+    }
+    if (isAuthenticated) {
+      // navigation.navigate("wertone",{screen:'invoice'})
+      if (isPasskey) {
+        navigation.navigate("Passcode");
+      } else {
+        navigation.navigate("CreateNewPasscode");
+      }
+      resetForm();
+    }
+  };
 
-        }
-        resetForm();
-      }      
-}
+//invoicepeople
+//   const handleLogin = async (values,{resetForm} ) => {
+//    const response= await axios.post("http://192.168.1.7:8888/api/login",JSON.stringify(values),{headers:{
+//       'Content-Type': 'application/json',
+//     }})
+//     console.log(response.data,"newResponse")
+//       const data = await response.data
+//        await storeData("loginDetail",data.result);  
+//       setLoginDetail(data.result) ;    
+//      const token='dummyToken'
+//       login(token)
+//       if (isLoading) {
+//         {
+//           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+//             <ActivityIndicator size="large" />
+//           </View>
+//         }
+//        }
+//       if(isAuthenticated){
+//         // navigation.navigate("wertone",{screen:'invoice'})
+//         if(isPasskey){
+//           navigation.navigate('Passcode');
+//         }else{
+//           navigation.navigate('CreateNewPasscode');
+
+//         }
+//         resetForm();
+//       }      
+// }
+
 
   return (
     <Formik
@@ -66,14 +107,22 @@ const LoginScreen = ({ navigation }) => {
         errors,
         touched,
       }) => (
-        <View style={styles.container}>
-          <Card style={{ backgroundColor: "#ffffff", height: "100%" }}>
-            <View
+        <View style={[styles.container, { height: 0.90*height }]}>
+
+      
+          <Card style={{ 
+            backgroundColor: "#ffffff", 
+            height:"100%"
+             }}>
+              <View style={{height:"100%"}}>
+                
+              {/* <View style={{flex:1, backgroundColor:"gray"}} ></View> */}
+              <View
               style={{
                 justifyContent: "spaceEvenly",
-                alignSelf: "flexStart",
+                flex:1,
                 paddingHorizontal: 8,
-                marginBottom: 50,
+                // marginBottom: 50,
               }}
             >
               <Image
@@ -85,80 +134,105 @@ const LoginScreen = ({ navigation }) => {
                 Wertone billing Software
               </Text>
             </View>
-            {/* <Text variant='bodyLarge' style={{alignSelf:"center"}}> Login</Text> */}
-            <TextInput
-              label="Email"
-              style={styles.input}
-              autoCorrect={false}
-              mode="flat"
-              onChangeText={handleChange("email")}
-              onBlur={handleBlur("email")}
-              value={values.email}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-            {touched.email && errors.email && (
-              <Text style={styles.error}>{errors.email}</Text>
-            )}
-            <TextInput
-              mode="flat"
-              label="Password"
-              style={styles.input}
-              onChangeText={handleChange("password")}
-              onBlur={handleBlur("password")}
-              value={values.password}
-              secureTextEntry
-              autoCapitalize="none"
-            />
-            {touched.password && errors.password && (
-              <Text style={styles.error}>{errors.password}</Text>
-            )}
-            {/* <Link href='' style={styles.link}> forget password?..</Link> */}
-            <Button
-              onPress={handleSubmit}
-              textColor="white"
-              style={[styles.button, { marginTop: 40 }]}
-            >
-              Login
-            </Button>
-            <View
+              <View style={{ flex: 1, 
+                // backgroundColor:"lightblue",
+                 justifyContent:"space-around"}}>
+              <TextInput
+                label="Email"
+                style={styles.input}
+                autoCorrect={false}
+                mode="flat"
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+                value={values.email}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+              {touched.email && errors.email && (
+                <Text style={styles.error}>{errors.email}</Text>
+              )}
+              <TextInput
+                mode="flat"
+                label="Password"
+                style={styles.input}
+                onChangeText={handleChange("password")}
+                onBlur={handleBlur("password")}
+                value={values.password}
+                secureTextEntry
+                autoCapitalize="none"
+              />
+              {touched.password && errors.password && (
+                <Text style={styles.error}>{errors.password}</Text>
+              )}
+            </View>
+              {/* <View style={{flex:1, backgroundColor:"green"}} ></View> */}
+
+              <View
               style={{
-                flexDirection: "row",
-                justifyContent: "space-evenly",
-                marginTop: 20,
+                gap:20,
+                flex:1,
+                justifyContent:"center",
+                // backgroundColor:"lightgreen"
               }}
             >
               <Button
-                icon={"google"}
-                // onPress={handleGoogleSignIn}
+                onPress={handleSubmit}
                 textColor="white"
-                style={[
-                  styles.button,
-                  { backgroundColor: "#DB4437", width: "40%" },
-                ]}
+                style={[styles.button]}
               >
-                Google
+                Login
               </Button>
-              <Button
-                icon={"facebook"}
-                // onPress={handleFacebookLogin}
-                textColor="white"
-                style={[
-                  styles.button,
-                  { backgroundColor: "#3b5998", width: "40%" },
-                ]}
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  gap: 5,
+                }}
               >
-                Facebook
-              </Button>
+                <Button
+                  icon={"google"}
+                  // onPress={handleGoogleSignIn}
+                  textColor="white"
+                  style={[
+                    styles.button,
+                    { backgroundColor: "#DB4437", width: "40%" },
+                  ]}
+                >
+                  Google
+                </Button>
+                <Button
+                  icon={"facebook"}
+                  // onPress={handleFacebookLogin}
+                  textColor="white"
+                  style={[
+                    styles.button,
+                    { backgroundColor: "#3b5998", width: "40%" },
+                  ]}
+                >
+                  Facebook
+                </Button>
+              </View>
             </View>
-            <Divider style={{width:"80%",marginLeft:30,marginTop:20,}} />
-
-            <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
+            <Divider style={{ width: "80%", alignSelf:"center" }} />
+              <View style={{flex:1}} >
+                 <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
               <Text style={styles.signup}>
                 Don't have an account?{" "}
                 <Text style={styles.signupText}>Sign Up</Text>
               </Text>
             </TouchableOpacity>
+              </View>
+              </View>
+            
+
+            
+
+            {/* <Link href='' style={styles.link}> forget password?..</Link> */}
+
+            
+            
+
+           
           </Card>
         </View>
       )}
@@ -168,12 +242,10 @@ const LoginScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    // paddingVertical:"30%",
-    // marginVertical:10,
-    flex: 1,
+    // flex: 1,
     justifyContent: "center",
     padding: 16,
-    elevation: 12,
+    // elevation: 12,
   },
   signup: {
     alignSelf: "center",
@@ -182,7 +254,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   input: {
-    marginBottom: 16,
+    // marginBottom: 16,
     paddingHorizontal: 8,
     width: "90%",
     alignSelf: "center",
@@ -218,7 +290,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#0c3b73",
     width: "80%",
     alignSelf: "center",
-    marginBottom: 20,
   },
 });
 

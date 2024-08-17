@@ -41,7 +41,7 @@ const Signup = ({ navigation }) => {
     try {
       const postData = { ...values, enabled: true };
       const response = await axios.post(
-        "http://192.168.1.2:8888/api/signup",
+        "http://192.168.1.3:8888/api/signup",
         JSON.stringify(postData),
         {
           headers: { "Content-Type": "application/json" },
@@ -113,7 +113,7 @@ const Signup = ({ navigation }) => {
             </View>
             <TextInput
               style={styles.input}
-              label=" First Name"
+              placeholder=" First Name"
               mode="flat"
               onChangeText={handleChange("name")}
               onBlur={handleBlur("name")}
@@ -127,7 +127,7 @@ const Signup = ({ navigation }) => {
             <TextInput
               mode="flat"
               style={styles.input}
-              label="Surname"
+              placeholder="Surname"
               onChangeText={handleChange("surname")}
               onBlur={handleBlur("surname")}
               value={values.surname}
@@ -140,7 +140,7 @@ const Signup = ({ navigation }) => {
             <TextInput
               mode="flat"
               style={styles.input}
-              label="Email"
+              placeholder="Email"
               onChangeText={handleChange("email")}
               onBlur={handleBlur("email")}
               value={values.email}
@@ -161,7 +161,7 @@ const Signup = ({ navigation }) => {
               <TextInput
                 mode="flat"
                 style={styles.input}
-                label="Password"
+                placeholder="Password"
                 onChangeText={handleChange("password")}
                 onBlur={handleBlur("password")}
                 value={values.password}

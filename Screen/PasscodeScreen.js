@@ -34,11 +34,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Linking } from "react-native";
 import { usePasskey } from "../Store/PasskeyContext";
 import { LoginTimeContext } from "../Store/LoginTimeContext";
+import { useWindowDimensions } from "react-native";
 
 export default function PasscodeScreen({ navigation }) {
   // const navigation = useNavigation();
   const { currentLoginTime, lastLoginTime, storeTime } =
     useContext(LoginTimeContext);
+  let { width, height } = useWindowDimensions();
+  // height = 0.99*height
   const { loginDetail, getData } = useContext(AuthContext);
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [buttonsModes, setButtonsModes] = useState({
@@ -98,7 +101,13 @@ export default function PasscodeScreen({ navigation }) {
 
     if (enteredPasscode === passkey) {
       if (loginDetail1.isshop === false) {
-        navigation.navigate("createshop");
+        // navigation.navigate("CreateShopScreen", {
+        //   isHome: true,
+        // });
+        navigation.navigate("wertone", {
+          screen: "Home",
+          // params : {previousLoginTime}
+        });
       } else {
         navigation.navigate("wertone", {
           screen: "Home",
@@ -118,10 +127,14 @@ export default function PasscodeScreen({ navigation }) {
     if (result.success) {
       // const {previousLoginTime} = await storeTimes();
       storeTime();
-      navigation.navigate("wertone", {
-        screen: "Home",
-        // params : {previousLoginTime}
-      });
+      if (loginDetail1.isshop === false) {
+        navigation.navigate("CreateShopScreen");
+      } else {
+        navigation.navigate("wertone", {
+          screen: "Home",
+          // params : {previousLoginTime}
+        });
+      }
     } else {
       Alert.alert("Authentication Failed", "Please try again");
     }
@@ -190,24 +203,24 @@ export default function PasscodeScreen({ navigation }) {
     <>
       <StatusBar style="light" backgroundColor={"#0c3b73"} />
       <SafeAreaView style={styles.SafeAreaView}>
-        <KeyboardAvoidingView behavior="padding">
-          <View style={styles1.overlay}></View>
+        <KeyboardAvoidingView style={{ flex:1 }}>
+          <View style={[styles1.overlay, {height:0.30*height}]}></View>
 
-          <View style={styles.scrollViewChild}>
+          <View style={[styles.scrollViewChild, {height:height}]}>
             <View
               style={{
                 // flex:1,
-                // backgroundColor:"white",
-                height: "25%",
-                width: "50%",
+                // backgroundColor: "orange",
+                // height: "25%",
+                flex: 1,
+                width: "100%",
                 alignItems: "center",
               }}
             >
-              <View>
+              <View style={{ flex: 2 }}>
                 <Image
                   source={require("../assets/logo-wertone.png")}
                   style={styles.img}
-
                 />
               </View>
 
@@ -215,9 +228,13 @@ export default function PasscodeScreen({ navigation }) {
                 style={{
                   // backgroundColor:"pink",
                   alignItems: "center",
+                  flex: 1,
                 }}
               >
-                <Text variant="titleLarge" style={{ color: "white",fontSize:20,fontWeight:"bold",marginBottom:2}}>
+                <Text
+                  variant="titleMedium"
+                  style={{ color: "white", fontSize: 18, fontWeight: "bold" }}
+                >
                   WERTONE
                 </Text>
                 <Text style={{ color: "white", letterSpacing: 3 }}>
@@ -245,6 +262,7 @@ export default function PasscodeScreen({ navigation }) {
                   >{`${loginDetail1.name} ${loginDetail1.surname}`}</Text>
                 </View>
 
+                <View style={{gap:5}}>
                 <View style={styles.buttonContainer}>
                   <Button
                     style={{
@@ -265,11 +283,10 @@ export default function PasscodeScreen({ navigation }) {
                   <Button
                     style={{
                       width: "50%",
-                      fontSize:12,
+                      fontSize: 12,
                       backgroundColor: buttonsModes.domainButtonMode
                         ? "#6dbbc7"
                         : "transparent",
-                      
                     }}
                     mode={
                       buttonsModes.domainButtonMode
@@ -384,6 +401,7 @@ export default function PasscodeScreen({ navigation }) {
                     </View>
                   </Formik>
                 </View>
+                </View>
                 <TouchableOpacity
                   onPress={() => navigation.navigate("forgetPasscode")}
                 >
@@ -393,18 +411,25 @@ export default function PasscodeScreen({ navigation }) {
                 </TouchableOpacity>
               </Card.Content>
             </Card>
-            <View style={{justifyContent:"center", alignItems:"center", height:"12%", marginTop:40}}>
-              <Text variant="titleSmall" style={{ color: "#6dbbc7" }}>
+            <View style={styles.loginWithFingerContainer}>
+              <View style={styles.loginWithFinger}>
+                <Text variant="titleSmall" style={{ color: "#6dbbc7" }}>
                   Login with fingerprint
                 </Text>
                 <TouchableOpacity
-                onPress={() => {
-                  handleLocalAuthentication();
-                }}
-                style={{justifyContent:"center",marginTop:"20"}}
-              >
-                <Ionicons name="finger-print" size={50} color="#26a0df" style={{justifySelf:"center" , marginTop:20}} />
-              </TouchableOpacity>
+                  onPress={() => {
+                    handleLocalAuthentication();
+                  }}
+                  style={{ justifyContent: "center", marginTop: "20" }}
+                >
+                  <Ionicons
+                    name="finger-print"
+                    size={50}
+                    color="#26a0df"
+                    style={{ justifySelf: "center", marginTop: 20 }}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </KeyboardAvoidingView>
@@ -415,11 +440,12 @@ export default function PasscodeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   card: {
-    height: "70%",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1,
-    marginHorizontal: 9,
+    // height: "70%",
+    flex: 3,
+    // justifyContent: "center",
+    // alignItems: "center",
+    // zIndex: 1,
+    // marginHorizontal: 9,
     // backgroundColor: "yellow",
     borderRadius: 0,
   },
@@ -427,8 +453,8 @@ const styles = StyleSheet.create({
     height: 75,
     width: 75,
     elevation: 2,
-    alignSelf: "center",
-    marginVertical: 10,
+    // alignSelf: "center",
+    // marginVertical: 10,
   },
   tooltip: {
     backgroundColor: "white",
@@ -439,12 +465,7 @@ const styles = StyleSheet.create({
   },
   SafeAreaView: {
     flex: 1,
-    // position:"absolute",
     // backgroundColor: "pink",
-    // minHeight:"100vh",
-    // width:"50%",
-    // height:,
-    // paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
     paddingTop: 0,
   },
   buttonContainer: {
@@ -459,13 +480,13 @@ const styles = StyleSheet.create({
   myShopImageContainer: {
     width: "30%",
     height: "20%",
-    marginTop: 10,
+    // marginTop: 10,
   },
   scrollViewChild: {
     // backgroundColor: "grey",
     // height: "100%",
     // height:"200px",
-    height: 705,
+    // height: 705,
     // display: "flex",
     // flex: 1,
     alignItems: "center",
@@ -491,6 +512,20 @@ const styles = StyleSheet.create({
   tooltipText: {
     color: "grey",
   },
+  loginWithFingerContainer: {
+    flex: 1,
+    // marginTop:40
+    // paddingVertical: 0,
+    width: "100%",
+  },
+  loginWithFinger: {
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
+    // marginTop:40
+    paddingVertical: 0,
+    width: "100%",
+  },
 });
 
 const styles1 = StyleSheet.create({
@@ -514,7 +549,7 @@ const styles1 = StyleSheet.create({
     // transform: [{ translateX: -75 }, { translateY: -75 }], // Center the overlay
     width: "100%",
     // height: 250,
-    height: "35%",
+    // height: "35%",
     backgroundColor: "#0c3b73",
     zIndex: 0,
     borderBottomLeftRadius: 10,
@@ -527,11 +562,9 @@ const styles1 = StyleSheet.create({
   cardContent: {
     // backgroundColor: "red",
     paddingTop: 0,
-    display: "flex",
     alignItems: "center",
     justifyContent: "center",
     gap: 20,
-    // height: "100%",
     overflow: "scroll",
     flex: 1,
   },

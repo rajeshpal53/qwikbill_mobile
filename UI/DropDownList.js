@@ -1,7 +1,7 @@
 import React,{useContext,useState,useEffect,useRef} from "react"
 import { ShopDetailContext } from "../Store/ShopDetailContext"
 import { Picker } from "@react-native-picker/picker";
-import { View,Text ,StyleSheet} from "react-native"
+import { View,Text ,StyleSheet, TouchableOpacity} from "react-native"
 import { readApi } from "../Util/UtilApi";
 import {
   responsiveHeight,
@@ -9,6 +9,7 @@ import {
   responsiveFontSize,
   responsiveScreenFontSize
 } from "react-native-responsive-dimensions";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 function DropDownList() {
  const {addShopDetails,shopDetails}=useContext(ShopDetailContext)
@@ -17,14 +18,17 @@ function DropDownList() {
  console.log(shopDetails,"newShopDetails")
  const pickerRef = useRef();
 
+
+ async function fetchOptions() {
+  const response = await readApi(`api/shop/list`);
+  setOptions(response.result);
+  addShopDetails(response.result[0])
+  // Adjust according to your API respons
+  // setSelectedOption(data.result[0].shopname)
+}
+
  useEffect(() => {
-    async function fetchOptions() {
-      const response = await readApi(`api/shop/list`);
-      setOptions(response.result);
-      addShopDetails(response.result[0])
-      // Adjust according to your API respons
-      // setSelectedOption(data.result[0].shopname)
-    }
+   
     fetchOptions();
   }, []);
 
@@ -44,6 +48,7 @@ function DropDownList() {
   return (
     <View style={styles.pickerContainer}>
     <Picker
+      style={{width:"95%"}}
       ref={pickerRef}
       selectedValue={selectedShop}
       onValueChange={(itemValue, itemIndex) =>
@@ -61,6 +66,10 @@ function DropDownList() {
         </Picker.Item>
       ))}
     </Picker>
+
+    <TouchableOpacity style={{justifyContent:"center"}} onPress={fetchOptions}>
+      <MaterialCommunityIcons name="reload" size={20}/>
+    </TouchableOpacity>
   </View>
   )
 }
@@ -70,6 +79,7 @@ const styles= StyleSheet.create({
         borderColor: "#0c3b73",
         borderRadius: responsiveWidth(3),
         width: "100%",
+        flexDirection:"row"
       },
 })
 

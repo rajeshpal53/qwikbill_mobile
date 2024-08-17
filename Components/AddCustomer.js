@@ -261,7 +261,8 @@ const AddCustomer = ({ navigation, initialValues, handleSubmit }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
+    backgroundColor: "green",
     // margin: 10,
     // padding: 25,
     borderRadius: 10,
@@ -271,11 +272,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     marginVertical: 10,
-    // flex: 1,
+    flex: 1,
+    height:"100%"
   },
   form: {
-    backgroundColor: "#fff",
-    // backgroundColor: "orange",
+    // backgroundColor: "#fff",
+    // backgroundColor: "lightgreen",
     // height:"100%",
     margin: 10,
     padding: 25,
@@ -286,7 +288,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     marginVertical: 10,
-    gap:8,
+    gap:15,
+    flex:1,
+    justifyContent:"center",
   },
   // input: {
   //   marginBottom: 16,
@@ -300,11 +304,12 @@ const styles = StyleSheet.create({
   // },
   input: {
      width: "100%", 
-     overflow: "hidden", 
-     backgroundColor:"#fff" 
+     overflow: "hidden",  
+     backgroundColor:"rgba(0,0,0,0)" 
   },
   button: {
     marginTop: 16,
+    // marginBottom:70
   },
   suggestionsContainer: {
     position: "absolute",

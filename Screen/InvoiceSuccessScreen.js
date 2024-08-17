@@ -26,7 +26,7 @@ export default function InvoiceSuccessScreen({navigation}) {
     setLoading(true);
     try {
 
-      const response = await fetch(`http://192.168.29.81:8888/download/invoice/invoice-${dataId}.pdf`, {
+      const response = await fetch(`http://192.168.1.3:8888/download/invoice/invoice-${dataId}.pdf`, {
         credentials: "include",
       });
       const blob = await response.blob();
@@ -151,7 +151,7 @@ export default function InvoiceSuccessScreen({navigation}) {
           <View style={styles.buttonContainer}>
              <Button 
             mode="contained"
-             onPress={() => nextBtnHandler("anotherInvoice")}>
+             onPress={() => nextBtnHandler("CreateInvoice")}>
                Make Another Invoice
              </Button>
              <Button   

@@ -131,7 +131,10 @@ export default function ViewShopsScreen() {
       <FAB
         icon="plus"
         style={styles.fab}
-        onPress={() => navigation.navigate("CreateShopScreen")}
+        onPress={() => navigation.navigate("CreateShopScreen" , {
+            isHome:false,
+          }
+        )}
       />
       {isModalVisible && (
         <DeleteModal
@@ -147,6 +150,7 @@ export default function ViewShopsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent:"center"
   },
   fab: {
     position: "absolute",

@@ -147,7 +147,7 @@ const genrateInvoice=(item)=>{
           </View>
           <DataTable style={{ flex: 1 }}>
             <DataTable.Header style={styles.tableHeader}>
-              <Text style={[styles.tableHeaderText, {}]}>Date</Text>
+              <Text style={styles.tableHeaderText}>Date</Text>
               <Text style={styles.tableHeaderText}>Phone No.</Text>
               <Text style={styles.tableHeaderText}>Name</Text>
               <Text style={[styles.tableHeaderTextLast, {flex:0.7}]}>Amount (₹)</Text>

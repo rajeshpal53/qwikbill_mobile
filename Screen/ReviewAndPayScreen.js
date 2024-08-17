@@ -72,32 +72,32 @@ export default function ReviewAndPayScreen({ navigation }) {
               {/* first View */}
               <View style={styles.contentFirstChild}>
                 <View style={styles.custDetailContainer}>
-                  <Text style={styles.textStyle}>Customer Name :-</Text>
+                  <Text style={[styles.textStyle, {fontWeight:"bold"}]}>Customer Name :-</Text>
                   <Text style={styles.textStyle}>{formData.client}</Text>
                 </View>
 
                 <View style={styles.custDetailContainer}>
-                  <Text style={styles.textStyle}>Address :-</Text>
+                  <Text style={[styles.textStyle, {fontWeight:"bold"}]}>Address :-</Text>
                   <Text style={styles.textStyle}>{formData.address}</Text>
                 </View>
 
                 <View style={styles.custDetailContainer}>
-                  <Text style={styles.textStyle}>GST No. :-</Text>
+                  <Text style={[styles.textStyle, {fontWeight:"bold"}]}>GST No. :-</Text>
                   <Text style={styles.textStyle}>1234</Text>
                 </View>
 
                 <View style={styles.custDetailContainer}>
-                  <Text style={styles.textStyle}>Phone No. :- </Text>
+                  <Text style={[styles.textStyle, {fontWeight:"bold"}]}>Phone No. :- </Text>
                   <Text style={styles.textStyle}>{formData.phone}</Text>
                 </View>
 
                 <View style={styles.custDetailContainer}>
-                  <Text style={styles.textStyle}>Invoice No. :- </Text>
+                  <Text style={[styles.textStyle, {fontWeight:"bold"}]}>Invoice No. :- </Text>
                   <Text style={styles.textStyle}>1234</Text>
                 </View>
 
                 <View style={styles.custDetailContainer}>
-                  <Text style={styles.textStyle}>Date :- </Text>
+                  <Text style={[styles.textStyle, {fontWeight:"bold"}]}>Date :- </Text>
                   <Text style={styles.textStyle}>{formData.date}</Text>
                 </View>
               </View>
@@ -195,6 +195,7 @@ export default function ReviewAndPayScreen({ navigation }) {
                   <PaperProvider>
                     <Button
                       mode="contained"
+                      style={{backgroundColor:"#0c3b73", width:"70%", alignSelf:"center"}}
                       onPress={
                         checked
                           ?async()=>{ const newData = await submitHandler(formData, fetchDataId);
@@ -263,7 +264,7 @@ const styles = StyleSheet.create({
     flex:1,
   },
   textStyle: {
-    fontSize: 18,
+    fontSize: 14,
     width:"50%"
   },
   contentFirstChild: {
@@ -276,7 +277,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   confirmAndPayBtnContainer: {
-    backgroundColor: "lightgreen",
     borderRadius: 20,
   },
   containerStyle: {

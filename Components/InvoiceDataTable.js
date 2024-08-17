@@ -1,15 +1,16 @@
 import * as React from 'react';
-import { DataTable } from 'react-native-paper';
+import { DataTable, Text, Divider } from 'react-native-paper';
 import { useState, useEffect} from 'react';
+import {StyleSheet} from "react-native";
 
 
 const InvoiceDataTable = ({formData}) => {
     console.log("fdfs", formData.items)
-  const [page, setPage] = useState(0);
-  const [numberOfItemsPerPageList] = useState([2, 3, 4]);
-  const [itemsPerPage, onItemsPerPageChange] = useState(
-    numberOfItemsPerPageList[0]
-  );
+  // const [page, setPage] = useState(0);
+  // const [numberOfItemsPerPageList] = useState([2, 3, 4]);
+  // const [itemsPerPage, onItemsPerPageChange] = useState(
+  //   numberOfItemsPerPageList[0]
+  // );
 
  
   // const [items] = useState([
@@ -39,60 +40,109 @@ const InvoiceDataTable = ({formData}) => {
   //  },
   // ]);
 
-  const from = page * itemsPerPage;
-  const to = Math.min((page + 1) * itemsPerPage, formData.items.length);
+  // const from = page * itemsPerPage;
+  // const to = Math.min((page + 1) * itemsPerPage, formData.items.length);
 
   
-  useEffect(() => {
-    console.log("pra")
-    setPage(0);
-  }, [itemsPerPage]);
+  // useEffect(() => {
+  //   console.log("pra")
+  //   setPage(0);
+  // }, [itemsPerPage]);
 
   return (
-    <DataTable>
-      <DataTable.Header>
-        <DataTable.Title>Sr. No.</DataTable.Title>
-        <DataTable.Title numeric>Product Name</DataTable.Title>
-        <DataTable.Title numeric>Quantity</DataTable.Title>
-        <DataTable.Title numeric>GST Rate</DataTable.Title>
-        <DataTable.Title numeric>Amt</DataTable.Title>
+    <DataTable style={{flex:1}}>
+      <DataTable.Header style={styles.tableHeader}>
+        <Text style={styles.tableHeaderText}>
+      Sr. No. </Text>
+        <Text numeric style={styles.tableHeaderText}>
+         Product Name </Text>
+        <Text numeric style={styles.tableHeaderText}>
+          Quantity</Text>
+        <Text numeric style={styles.tableHeaderText}>
+        GST Rate</Text>
+        <Text numeric style={styles.tableHeaderTextLast}>
+         Amt </Text>
       </DataTable.Header>
-
-      {formData.items.slice(from, to).map((item, index) => (
-        <DataTable.Row key={item.key}>
-          <DataTable.Cell>{(from + index+1)}</DataTable.Cell>
-          <DataTable.Cell>{((from+index+1) === formData.items.length) ? ("Total") : (item.itemName)}</DataTable.Cell>
-          <DataTable.Cell numeric>{item.quantity}</DataTable.Cell>
-          <DataTable.Cell numeric>{}</DataTable.Cell>
-          <DataTable.Cell numeric>{((from+index+1) === formData.items.length) ? (item.Total) : (item.total)}</DataTable.Cell>
+      <Divider />
+      {formData.items.map((item, index) => (
+        <DataTable.Row key={index} style={styles.row}>
+          <Text style={styles.srNo}>{(index+1)}</Text>
+          <Text style={styles.item}>{(item.itemName)}</Text>
+          <Text numeric style={styles.quantity}>{item.quantity}</Text>
+          <Text numeric style={styles.gst}>{}</Text>
+          <Text numeric style={styles.total}>{(item.total)}</Text>
         </DataTable.Row>
       ))}
 
-      {/* Total row
-      {to === formData.items.length && (
-        <DataTable.Row>
-          <DataTable.Cell>Total</DataTable.Cell>
-          <DataTable.Cell />
-          <DataTable.Cell />
-          <DataTable.Cell numeric>
-            {formData.items.reduce((sum, item) => sum + parseInt(item.total), 0)}
-          </DataTable.Cell>
-        </DataTable.Row>
-      )} */}
-
-      <DataTable.Pagination
-        page={page}
-        numberOfPages={Math.ceil(formData.items.length / itemsPerPage)}
-        onPageChange={(page) => setPage(page)}
-        label={`${from + 1}-${to} of ${formData.items.length}`}
-        numberOfItemsPerPageList={numberOfItemsPerPageList}
-        numberOfItemsPerPage={itemsPerPage}
-        onItemsPerPageChange={onItemsPerPageChange}
-        showFastPaginationControls
-        selectPageDropdownLabel={'Rows per page'}
-      />
+      
     </DataTable>
   );
 };
 
 export default InvoiceDataTable;
+
+const styles = StyleSheet.create({
+
+  tableHeader: {
+    flexDirection: "row",
+    // justifyContent: "space-between",
+    backgroundColor: "#f0f0f0",
+    paddingHorizontal: 0,
+  },
+  tableHeaderText: {
+    flex: 1,
+    textAlign: "center",
+    borderRightColor: "gray",
+    borderRightWidth: 1,
+    padding: 5,
+    fontWeight: "bold",
+  },
+  tableHeaderTextLast: {
+    flex: 1,
+    fontWeight: "bold",
+    textAlign: "center",
+    padding: 5,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+    // backgroundColor:"orange",
+    paddingHorizontal: 0,
+  },
+  srNo: {
+    flex: 1,
+    textAlign: "center",
+    borderRightWidth: 1,
+    borderRightColor: "gray",
+    padding: 5,
+    // backgroundColor:"lightgreen"
+  },
+  item: {
+    flex: 1,
+    textAlign: "center",
+    borderRightWidth: 1,
+    borderRightColor: "gray",
+    padding: 5,
+  },
+  gst: {
+    flex: 1,
+    textAlign: "center",
+    borderRightWidth: 1,
+    borderRightColor: "gray",
+    padding: 5,
+  },
+  quantity: {
+    flex: 1,
+    textAlign: "center",
+    borderRightWidth: 1,
+    borderRightColor: "gray",
+    padding: 5,
+  },
+  total: {
+    flex: 1,
+    textAlign: "center",
+    padding: 5,
+  },
+});

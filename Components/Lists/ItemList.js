@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   RefreshControl,
+  Image
 } from "react-native";
 import { Avatar, Button, Card, Menu, Text } from "react-native-paper";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -24,6 +25,7 @@ export default function ItemList({
   const [expandedId, setExpandedId] = useState(null);
   const [currentItem, setCurrentItem] = useState(null);
 
+  console.log("data is , ", typeof data);
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);
   };
@@ -45,7 +47,7 @@ export default function ItemList({
           elevation: 2,
           // marginTop: 10,
           borderRadius: 10,
-          marginBottom:10,
+          marginBottom: 10,
           marginHorizontal: 10,
           backgroundColor: "#fff",
           // backgroundColor:"pink",
@@ -135,17 +137,26 @@ export default function ItemList({
               ) : (
                 <Button
                   textColor="#26a0df"
-                  icon={()=> <MaterialCommunityIcons style={{}} name="greater-than" size={18} color="#26a0df"/> }
+                  icon={() => (
+                    <MaterialCommunityIcons
+                      style={{}}
+                      name="greater-than"
+                      size={18}
+                      color="#26a0df"
+                    />
+                  )}
                   onPress={() => {
                     onView(item._id);
                   }}
                   contentStyle={{
-                    flexDirection:"row-reverse",
-                    }}
-                    labelStyle={{
-                      marginRight: 10, // Ensure no extra margin between the text and the icon
-                    }}
-                >View</Button>
+                    flexDirection: "row-reverse",
+                  }}
+                  labelStyle={{
+                    marginRight: 10, // Ensure no extra margin between the text and the icon
+                  }}
+                >
+                  View
+                </Button>
               )}
             </View>
           </View>
@@ -167,13 +178,23 @@ export default function ItemList({
       </View>
     );
   };
-  return (
+  return data.length > 0 ? (
     <FlatList
       data={data}
-      style={{ backgroundColor: "#fff", marginTop:10 }}
+      style={{ backgroundColor: "#fff", marginTop: 10 }}
       renderItem={renderInternalItem}
       keyExtractor={(item, index) => index}
     />
+  ) : (
+    <View style={{alignItems:"center"}}>
+      <Image
+        source={require("../../assets/noDataFound.png")}
+        style={{width:100, height:100}}
+      ></Image>
+      <Text variant="titleLarge" style={{ color: "#555" }}>
+        No data found...
+      </Text>
+    </View>
   );
 }
 
@@ -204,7 +225,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     // fontWeight: "bold",
-    
+
     color: "#555555",
   },
   subtitle: {
