@@ -214,6 +214,7 @@ const styles = StyleSheet.create({
     // backgroundColor:"orange",
     height: verticalScale(578)
     // height:responsiveHeight(80)
+
     // height:713,
     // height:"100%",
     // backgroundColor:"lightblue"
