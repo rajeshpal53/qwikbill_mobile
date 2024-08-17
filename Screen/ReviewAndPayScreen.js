@@ -27,6 +27,7 @@ export default function ReviewAndPayScreen({ navigation }) {
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+  let paymentStatus = 'paid';
 
   const [totalAdded, setTotalAdded] = useState(false);
   // useEffect(() => {
@@ -47,9 +48,19 @@ export default function ReviewAndPayScreen({ navigation }) {
   //   }
   // }, [formData.items, totalAdded]); // Ensure dependencies are correct
 
+  const handleChecked = () => {
+    if(checked){
+      setChecked(!checked);
+      paymentStatus = 'unpaid'
+    }
+    else{
+      setChecked(!checked)
+      paymentStatus = 'paid'
+    }
+  }
   const buttonPressed = async (buttonName) => {
     hideModal();
-    const newData = await submitHandler(formData, fetchDataId);
+    const newData = await submitHandler(formData, fetchDataId, paymentStatus);
     navigation.navigate("StackNavigator", {
       screen: "InvoiceSuccess",
       params: {
@@ -184,9 +195,7 @@ export default function ReviewAndPayScreen({ navigation }) {
                 <View style={styles.checkBoxContainer}>
                   <Checkbox
                     status={checked ? "checked" : "unchecked"}
-                    onPress={() => {
-                      setChecked(!checked);
-                    }}
+                    onPress={handleChecked}
                   />
                   <Text>Pay Later</Text>
                 </View>
