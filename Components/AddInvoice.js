@@ -1,5 +1,5 @@
 import { Directions } from "react-native-gesture-handler";
-import React, { useState, useId, useContext } from "react";
+import React, { useState, useId, useContext, useEffect } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import {
   TextInput,
@@ -79,9 +79,17 @@ const AddInvoice = ({
 }) => {
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
-  const [showItemOptions, setShowItemOptions] = useState(false);
+  // const [showItemOptions, setShowItemOptions] = useState(false);
+  const [showItemOptionsArray, setShowItemOptionsArray] = useState(
+    Array(initialValues?.items?.length || 1).fill(false) // Initialize based on initialValues
+  );
   const [fetchData, setFetchData] = useState([]);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    console.log(showItemOptionsArray, "----showarray")
+  }, [showItemOptionsArray])
+
 
   const showDatePicker = (setFieldValue) => {
     DateTimePickerAndroid.open({
@@ -98,6 +106,30 @@ const AddInvoice = ({
       is24Hour: true,
     });
   };
+
+  function setItemOptionsArraytrue(index) {
+    setShowItemOptionsArray(prevArray => {
+      // Create a new array with the updated value at index 0
+      const newArray = [...prevArray];
+      newArray[index] = true;
+      return newArray;
+    });
+}
+
+  function setItemOptionsArrayfalse(index) {
+    setShowItemOptionsArray(prevArray => {
+      // Create a new array with the updated value at index 0
+      const newArray = [...prevArray];
+      newArray[index] = false;
+      return newArray;
+    });
+}
+  function removeOptionsArrayIndex(index) {
+    setShowItemOptionsArray(prevArray => {
+      // Create a new array excluding the item at the specified index
+      return prevArray.filter((_, index1) => index1 !== index);
+    });
+}
 
   return (
     <Formik
@@ -200,7 +232,7 @@ const AddInvoice = ({
                     {options.map((option, index) => (
                       <React.Fragment key={index}>
                       <List.Item
-                        key={index}
+                        // key={index}
                         title={option.name}
                         onPress={async () => {
                           setFieldValue("client", option.name);
@@ -342,81 +374,84 @@ const AddInvoice = ({
                   Add Items
                 </Text>
                 <Divider style={[styles.dividerStyle, { width: "75%" }]} />
-                {values.items.map((item, index) => {
+                {values.items.map((item, index1) => {
                   return (
-                    <React.Fragment key={index}>
-                      <View key={index} style={styles.itemContainer}>
+                    <React.Fragment key={index1}>
+                      <View style={styles.itemContainer}>
                         <View style={{ position: "relative" }}>
                           <TextInput
                             
                             underlineColor="gray"
-                            placeholder={`Item ${index + 1} Name`}
+                            placeholder={`Item ${index1 + 1} Name`}
                             mode="flat"
                             onChangeText={async (text) => {
-                              handleChange(`items[${index}].itemName`)(text);
+                              handleChange(`items[${index1}].itemName`)(text);
                               if (text.length > 1) {
                                 const fetchedOptions = await fetchItemOptions(
                                   text,
                                   shopDetails._id
                                 );
                                 setOptions(fetchedOptions);
-                                setShowItemOptions(true);
+                                // setShowItemOptions(true);
+                                setItemOptionsArraytrue(index1);
                               } else {
-                                setShowItemOptions(false);
+                                setItemOptionsArrayfalse(index1);
                               }
                             }}
-                            onBlur={handleBlur(`items[${index}].itemName`)}
+                            onBlur={handleBlur(`items[${index1}].itemName`)}
                             value={item.itemName}
                             error={
                               touched.items &&
-                              touched.items[index] &&
+                              touched.items[index1] &&
                               errors.items &&
-                              errors.items[index] &&
-                              errors.items[index].itemName
+                              errors.items[index1] &&
+                              errors.items[index1].itemName
                                 ? true
                                 : false
                             }
                             style={styles.input}
                           />
                           {touched.items &&
-                            touched.items[index] &&
+                            touched.items[index1] &&
                             errors.items &&
-                            errors.items[index] &&
-                            errors.items[index].itemName && (
+                            errors.items[index1] &&
+                            errors.items[index1].itemName && (
                               <HelperText
                                 type="error"
                                 visible={
                                   touched.items &&
-                                  touched.items[index] &&
+                                  touched.items[index1] &&
                                   errors.items &&
-                                  errors.items[index] &&
-                                  errors.items[index].itemName
+                                  errors.items[index1] &&
+                                  errors.items[index1].itemName
                                 }
                               >
-                                {errors.items[index].itemName}
+                                {errors.items[index1].itemName}
                               </HelperText>
                             )}
 
-                          {showItemOptions && (
+                          {showItemOptionsArray[index1] && (
                             <View style={styles.suggestionsContainer}>
                               <ScrollView
+                                key={index1}
                                 nestedScrollEnabled={true}
                                 style={styles.suggestionsList}
                               >
-                                {options.map((option, index) => (
+                                {options.map((option, index2) => (
                                   <List.Item
-                                    key={index}
+                                    key={index2}
                                     title={option.name}
                                     onPress={async () => {
                                       setFieldValue(
-                                        `items[${index}].itemName`,
+                                        `items[${index1}].itemName`,
                                         option.name
                                       );
                                       setFieldValue(
-                                        `items[${index}].price`,
+                                        `items[${index1}].price`,
                                         option.price.toString()
                                       );
-                                      setShowItemOptions(false);
+                                      // setShowItemOptions(false);
+                                      setItemOptionsArrayfalse(index1)
                                     }}
                                   >
                                     {" "}
@@ -430,85 +465,85 @@ const AddInvoice = ({
 
                         <TextInput
                           underlineColor="gray"
-                          placeholder={`Item ${index + 1} Price`}
+                          placeholder={`Item ${index1 + 1} Price`}
                           mode="flat"
                           keyboardType="numeric"
-                          onChangeText={handleChange(`items[${index}].price`)}
-                          onBlur={handleBlur(`items[${index}].price`)}
+                          onChangeText={handleChange(`items[${index1}].price`)}
+                          onBlur={handleBlur(`items[${index1}].price`)}
                           value={item.price}
                           error={
                             touched.items &&
-                            touched.items[index] &&
+                            touched.items[index1] &&
                             errors.items &&
-                            errors.items[index] &&
-                            errors.items[index].price
+                            errors.items[index1] &&
+                            errors.items[index1].price
                               ? true
                               : false
                           }
                           style={styles.input}
                         />
                         {touched.items &&
-                          touched.items[index] &&
+                          touched.items[index1] &&
                           errors.items &&
-                          errors.items[index] &&
-                          errors.items[index].price && (
+                          errors.items[index1] &&
+                          errors.items[index1].price && (
                             <HelperText
                               type="error"
                               visible={
                                 touched.items &&
-                                touched.items[index] &&
+                                touched.items[index1] &&
                                 errors.items &&
-                                errors.items[index] &&
-                                errors.items[index].price
+                                errors.items[index1] &&
+                                errors.items[index1].price
                               }
                             >
-                              {errors.items[index].price}
+                              {errors.items[index1].price}
                             </HelperText>
                           )}
                         <TextInput
                           underlineColor="gray"
-                          placeholder={`Item ${index + 1} quantity`}
+                          placeholder={`Item ${index1 + 1} quantity`}
                           mode="flat"
                           keyboardType="numeric"
                           onChangeText={async (text) => {
-                            handleChange(`items[${index}].quantity`)(text);
+                            handleChange(`items[${index1}].quantity`)(text);
                             setFieldValue(
-                              `items[${index}].total`,
+                              `items[${index1}].total`,
                               (
-                                values.items[index].price *
+                                values.items[index1].price *
                                 (text ? parseFloat(text) : 0)
                               ).toString()
                             );
                           }}
-                          onBlur={handleBlur(`items[${index}].quantity`)}
+                          onBlur={handleBlur(`items[${index1}].quantity`)}
                           value={item.quantity}
                           error={
                             touched.items &&
-                            touched.items[index] &&
+                            touched.items[index1] &&
                             errors.items &&
-                            errors.items[index] &&
-                            errors.items[index].quantity
+                            errors.items[index1] &&
+                            errors.items[index1].quantity
                               ? true
                               : false
                           }
                           style={styles.input}
                         />
                         {touched.items &&
-                          touched.items[index] &&
+                          touched.items[index1] &&
                           errors.items &&
-                          errors.items[index] &&
-                          errors.items[index].quantity && (
+                          errors.items[index1] &&
+                          errors.items[index1].quantity && (
                             <HelperText
                               type="error"
                               visible={
                                 touched.items &&
-                                touched.items[index] &&
+                                touched.items[index1] &&
                                 errors.items &&
-                                errors.items[index] &&
-                                errors.items[index].quantity
+                                errors.items[index1] &&
+                                errors.items[index1].quantity
                               }
                             >
-                              {errors.items[index].quantity}
+                              {errors.items[index1].quantity}
                             </HelperText>
                           )}
                         <TextInput
@@ -522,7 +557,10 @@ const AddInvoice = ({
 
                         <Button
                           mode="outlined"
-                          onPress={() => remove(index)}
+                          onPress={() => {
+                            removeOptionsArrayIndex(index1)
+                            remove(index1)
+                          }}
                           disabled={values.items.length === 1}
                           style={styles.button}
                         >
@@ -648,3 +686,194 @@ const styles = StyleSheet.create({
 });
 
 export default AddInvoice;
+
+
+// {values.items.map((item, index1) => {
+//   const [showItemOptionsArray, setShowItemOptionsArray] = useState(
+//     Array(values.items.length).fill(false)
+//   );
+
+//   const handleShowItemOptions = (show, idx) => {
+//     const updatedArray = [...showItemOptionsArray];
+//     updatedArray[idx] = show;
+//     setShowItemOptionsArray(updatedArray);
+//   };
+
+//   return (
+//     <React.Fragment key={index}>
+//       <View key={index} style={styles.itemContainer}>
+//         <View style={{ position: "relative" }}>
+//           <TextInput
+//             underlineColor="gray"
+//             placeholder={`Item ${index + 1} Name`}
+//             mode="flat"
+//             onChangeText={async (text) => {
+//               handleChange(`items[${index}].itemName`)(text);
+//               if (text.length > 1) {
+//                 const fetchedOptions = await fetchItemOptions(
+//                   text,
+//                   shopDetails._id
+//                 );
+//                 setOptions(fetchedOptions);
+//                 handleShowItemOptions(true, index);
+//               } else {
+//                 handleShowItemOptions(false, index);
+//               }
+//             }}
+//             onBlur={handleBlur(`items[${index}].itemName`)}
+//             value={item.itemName}
+//             error={
+//               touched.items &&
+//               touched.items[index] &&
+//               errors.items &&
+//               errors.items[index] &&
+//               errors.items[index].itemName
+//                 ? true
+//                 : false
+//             }
+//             style={styles.input}
+//           />
+//           {touched.items &&
+//             touched.items[index] &&
+//             errors.items &&
+//             errors.items[index] &&
+//             errors.items[index].itemName && (
+//               <HelperText
+//                 type="error"
+//                 visible={
+//                   touched.items &&
+//                   touched.items[index] &&
+//                   errors.items &&
+//                   errors.items[index] &&
+//                   errors.items[index].itemName
+//                 }
+//               >
+//                 {errors.items[index].itemName}
+//               </HelperText>
+//             )}
+
+//           {showItemOptionsArray[index] && (
+//             <View style={styles.suggestionsContainer}>
+//               <ScrollView
+//                 nestedScrollEnabled={true}
+//                 style={styles.suggestionsList}
+//               >
+//                 {options.map((option, optionIndex) => (
+//                   <List.Item
+//                     key={optionIndex}
+//                     title={option.name}
+//                     onPress={async () => {
+//                       setFieldValue(
+//                         `items[${index}].itemName`,
+//                         option.name
+//                       );
+//                       setFieldValue(
+//                         `items[${index}].price`,
+//                         option.price.toString()
+//                       );
+//                       handleShowItemOptions(false, index);
+//                     }}
+//                   >
+//                     {" "}
+//                     {option.name}
+//                   </List.Item>
+//                 ))}
+//               </ScrollView>
+//             </View>
+//           )}
+//         </View>
+
+//         <TextInput
+//           underlineColor="gray"
+//           placeholder={`Item ${index + 1} Price`}
+//           mode="flat"
+//           keyboardType="numeric"
+//           onChangeText={handleChange(`items[${index}].price`)}
+//           onBlur={handleBlur(`items[${index}].price`)}
+//           value={item.price}
+//           error={
+//             touched.items &&
+//             touched.items[index] &&
+//             errors.items &&
+//             errors.items[index] &&
+//             errors.items[index].price
+//               ? true
+//               : false
+//           }
+//           style={styles.input}
+//         />
+//         {touched.items &&
+//           touched.items[index] &&
+//           errors.items &&
+//           errors.items[index] &&
+//           errors.items[index].price && (
+//             <HelperText
+//               type="error"
+//               visible={
+//                 touched.items &&
+//                 touched.items[index] &&
+//                 errors.items &&
+//                 errors.items[index] &&
+//                 errors.items[index].price
+//               }
+//             >
+//               {errors.items[index].price}
+//             </HelperText>
+//           )}
+//         <TextInput
+//           underlineColor="gray"
+//           placeholder={`Item ${index + 1} Quantity`}
+//           mode="flat"
+//           keyboardType="numeric"
+//           onChangeText={async (text) => {
+//             handleChange(`items[${index}].quantity`)(text);
+//             setFieldValue(
+//               `items[${index}].total`,
+//               (
+//                 values.items[index].price *
+//                 (text ? parseFloat(text) : 0)
+//               ).toString()
+//             );
+//           }}
+//           onBlur={handleBlur(`items[${index}].quantity`)}
+//           value={item.quantity}
+//           error={
+//             touched.items &&
+//             touched.items[index] &&
+//             errors.items &&
+//             errors.items[index] &&
+//             errors.items[index].quantity
+//               ? true
+//               : false
+//           }
+//           style={styles.input}
+//         />
+//         {touched.items &&
+//           touched.items[index] &&
+//           errors.items &&
+//           errors.items[index] &&
+//           errors.items[index].quantity && (
+//             <HelperText
+//               type="error"
+//               visible={
+//                 touched.items &&
+//                 touched.items[index] &&
+//                 errors.items &&
+//                 errors.items[index] &&
+//                 errors.items[index].quantity
+//               }
+//             >
+//               {errors.items[index].quantity}
+//             </HelperText>
+//           )}
+//         <TextInput
+//           underlineColor="gray"
+//           mode="flat"
+//           placeholder="Total"
+//           value={item.total}
+//           editable={false}
+//           style={styles.input}
+//         />
+
+//         <Button
+//           mode="outlined"

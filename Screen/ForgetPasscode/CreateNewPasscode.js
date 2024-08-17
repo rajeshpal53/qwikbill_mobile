@@ -13,6 +13,9 @@ import * as Yup from "yup";
 import { HelperText, Button, Card, Text, TextInput } from "react-native-paper";
 import { useSnackbar } from "../../Store/SnackbarContext";
 import { usePasskey } from "../../Store/PasskeyContext";
+import { useWindowDimensions } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+
 const PasscodeSchema = Yup.object().shape({
   passcode: Yup.string()
     .min(4, "Passcode is too short!")
@@ -27,6 +30,8 @@ const CreateNewPasscode = ({ navigation }) => {
   const { showSnackbar } = useSnackbar();
   const { passkey, savePasskey, removePasskey } = usePasskey();
   const [newPasskey, setNewPasskey] = useState("");
+  const { height } = useWindowDimensions();
+
   useEffect(() => {
     savePasskey(newPasskey);
   }, [passkey]);
@@ -35,11 +40,11 @@ const CreateNewPasscode = ({ navigation }) => {
       <StatusBar style="light" backgroundColor={"#0c3b73"} />
       <SafeAreaView style={styles.SafeAreaView}>
         <KeyboardAvoidingView behavior="padding">
-          <View style={styles1.overlay}></View>
-          <View style={styles.scrollViewChild}>
+          <View style={[styles.overlay, { height: 0.4 * height }]}></View>
+          <View style={[styles.scrollViewChild, { height: height }]}>
             <View
               style={{
-                flex:0.4,
+                flex: 1,
                 // backgroundColor:"pink",
                 // height: "25%",
                 width: "100%",
@@ -69,100 +74,115 @@ const CreateNewPasscode = ({ navigation }) => {
             </View>
             <View style={styles.cardContainer}>
               <Card style={styles.card}>
-                <Card.Content style={styles1.cardContent}>
-                  <View style={styles.myShopImageContainer}>
-                    <Image
-                      source={require("../../assets/forgetpassword.jpeg")}
-                      style={styles.myShopeImage}
-                    ></Image>
-                  </View>
-                  <Formik
-                    initialValues={{ passcode: "", confirmPasscode: "" }}
-                    validationSchema={PasscodeSchema}
-                    onSubmit={(values) => {
-                      console.log(values);
-                      setNewPasskey(values.passcode);
-                      savePasskey(values.passcode);
-                      showSnackbar(
-                        "succesfully update new passcode",
-                        "success"
-                      );
-                      navigation.navigate("Passcode");
-                    }}
-                  >
-                    {({
-                      handleChange,
-                      handleBlur,
-                      handleSubmit,
-                      values,
-                      errors,
-                      touched,
-                    }) => (
-                      <View style={{
-                        // backgroundColor:"orange",
-                        height:"80%"
-                      }}>
-                        <Text
-                          variant="headlineMedium"
-                          style={{ 
-                            color: "black", 
-                            marginVertical: 10,
-                            textAlign:"center",
-                          }}
-                        >
-                          Create Passcode
-                        </Text>
-                        <Text
-                          variant="labelSmall"
+                <Card.Content style={styles.cardContent}>
+                  <View style={{ flex: 1, paddingBottom:10 }}>
+                    <View style={styles.myShopImageContainer}>
+                      <Image
+                        source={require("../../assets/forgetpassword.jpeg")}
+                        style={styles.myShopeImage}
+                      ></Image>
+                    </View>
+                    <Formik
+                      initialValues={{ passcode: "", confirmPasscode: "" }}
+                      validationSchema={PasscodeSchema}
+                      onSubmit={(values) => {
+                        console.log(values);
+                        setNewPasskey(values.passcode);
+                        savePasskey(values.passcode);
+                        showSnackbar(
+                          "succesfully update new passcode",
+                          "success"
+                        );
+                        navigation.navigate("Passcode");
+                      }}
+                    >
+                      {({
+                        handleChange,
+                        handleBlur,
+                        handleSubmit,
+                        values,
+                        errors,
+                        touched,
+                      }) => (
+                        <View
                           style={{
-                            color: "grey",
-                            textAlign: "center",
-                            marginVertical: 15,
+                            height: "80%",
+                            gap:5
                           }}
                         >
-                          Let's set a unique App Passcode.
-                        </Text>
+                          <View style={{flex:1}}>
+                            <Text
+                              variant="headlineMedium"
+                              style={{
+                                color: "black",
+                                marginVertical: 10,
+                                textAlign: "center",
+                              }}
+                            >
+                              Create Passcode
+                            </Text>
+                            <Text
+                              variant="labelSmall"
+                              style={{
+                                color: "grey",
+                                textAlign: "center",
+                              }}
+                            >
+                              Let's set a unique App Passcode.
+                            </Text>
+                          </View>
 
-                        <TextInput
-                          style={{ marginVertical: 10 }}
-                          placeholder="Enter App Passcode"
-                          secureTextEntry
-                          onChangeText={handleChange("passcode")}
-                          onBlur={handleBlur("passcode")}
-                          value={values.passcode}
-                          keyboardType="numeric"
-                        />
-                        {errors.passcode && touched.passcode ? (
-                          <HelperText style={styles.error}>
-                            {errors.passcode}
-                          </HelperText>
-                        ) : null}
+                          <View style={{
+                            flex:2,
+                            }}>
+                            <TextInput
+                            style={{
+                              marginBottom: (errors.passcode &&
+                                touched.passcode) ? 0 : 30
+                            }}
+                              placeholder="Enter App Passcode"
+                              secureTextEntry
+                              onChangeText={handleChange("passcode")}
+                              onBlur={handleBlur("passcode")}
+                              value={values.passcode}
+                              keyboardType="numeric"
+                            />
+                            {errors.passcode && touched.passcode ? (
+                              <HelperText style={styles.error}>
+                                {errors.passcode}</HelperText>
+                            ) : null}
 
-                        <TextInput
-                          style={{ width: "100%", marginVertical: 10 }}
-                          placeholder="Re-enter App Passcode"
-                          secureTextEntry
-                          onChangeText={handleChange("confirmPasscode")}
-                          onBlur={handleBlur("confirmPasscode")}
-                          value={values.confirmPasscode}
-                          keyboardType="numeric"
-                        />
-                        {errors.confirmPasscode && touched.confirmPasscode ? (
-                          <Text style={styles.error}>
-                            {errors.confirmPasscode}
-                          </Text>
-                        ) : null}
-
-                        <Button
-                          style={styles.verifyButton}
-                          onPress={handleSubmit}
-                          mode="contained"
-                        >
-                          Submit
-                        </Button>
-                      </View>
-                    )}
-                  </Formik>
+                            <TextInput
+                            style={{
+                             
+                            }}
+                              placeholder="Re-enter App Passcode"
+                              secureTextEntry
+                              onChangeText={handleChange("confirmPasscode")}
+                              onBlur={handleBlur("confirmPasscode")}
+                              value={values.confirmPasscode}
+                              keyboardType="numeric"
+                            />
+                            {errors.confirmPasscode &&
+                            touched.confirmPasscode ? (
+                              <HelperText style={styles.error}>
+                                {errors.confirmPasscode}
+                              </HelperText>
+                            ) : null}
+                          </View>
+                          <View>
+                            <Button
+                              style={styles.verifyButton}
+                              onPress={handleSubmit}
+                              mode="contained"
+                            >
+                              Submit
+                            </Button>
+                          </View>
+                        </View>
+                      )}
+                    </Formik>
+                  </View>
                 </Card.Content>
               </Card>
             </View>
@@ -172,12 +192,14 @@ const CreateNewPasscode = ({ navigation }) => {
     </>
   );
 };
-const styles1 = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+
+const styles = StyleSheet.create({
+  // container: {
+  //   flex: 1,
+  //   justifyContent: "center",
+  //   backgroundColor:"orange",
+  //   alignItems: "center",
+  // },
   overlay: {
     position: "absolute",
     top: 0,
@@ -192,31 +214,26 @@ const styles1 = StyleSheet.create({
     color: "white",
     fontSize: 16,
   },
-  cardContent: {
-    paddingTop: 0,
-    height:"100%"
-  },
-});
-const styles = StyleSheet.create({
   error: {
     color: "red",
-    marginBottom: 10,
+    // marginBottom: 10,
   },
 
   submitButtonText: {
     color: "#fff",
     fontSize: 16,
   },
-  cardContainer:{
-    flex:1,
-     marginHorizontal:20,
+  cardContainer: {
+    flex: 3,
+    marginHorizontal: 20,
   },
   card: {
-    // alignItems: "center",
-    height:470,
-
-    // backgroundColor: "yellow",
+    height: "80%",
     borderRadius: 0,
+  },
+  cardContent: {
+    paddingTop: 0,
+    height: "100%",
   },
   instruction: {
     fontSize: 16,
@@ -238,12 +255,12 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "20%",
     marginVertical: 5,
-    alignItems:"center"
+    alignItems: "center",
   },
   scrollViewChild: {
-    height:"100%",
+    height: "100%",
     // backgroundColor: "grey",
-    justifyContent:"center",
+    justifyContent: "center",
     // alignItems: "center",
     width: "100%",
   },
@@ -253,6 +270,9 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     // flex:1
+  },
+  verifyButton: {
+    marginTop: 10,
   },
 });
 

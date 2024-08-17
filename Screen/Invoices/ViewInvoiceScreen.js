@@ -1,12 +1,15 @@
 // import { Text } from "react-native-paper"
 import { useRoute } from "@react-navigation/native";
-import { Divider, DataTable, FAB } from "react-native-paper";
+import { Divider, DataTable, FAB, Menu } from "react-native-paper";
 import React, { useContext, useEffect, useState } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { readApi } from "../../Util/UtilApi";
+import { readApi, deleteApi } from "../../Util/UtilApi";
 import { ShopDetailContext } from "../../Store/ShopDetailContext";
 import InvoiceFilterModel from "../../Components/Modal/InvoiceFilterModel";
+import { Feather } from "@expo/vector-icons";
+import DeleteModal from "../../UI/DeleteModal";
+import { useSnackbar } from "../../Store/SnackbarContext";
 
 const headlineMap = {
   lastOneMonth: "Last One Month",
@@ -30,10 +33,18 @@ export default function ViewInvoiceScreen({navigation}) {
   // console.log("routedata , ", data.data.paidUnpaidAll);
   const { shopDetails } = useContext(ShopDetailContext);
   const shopId = shopDetails._id;
+  const [deleteItemId, setDeleteItemId] = useState("");
   const [isModalVisible, setModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [invoiceData, setInvoiceData] = useState([]);
   const [page, setPage] = useState(0);
   const [numberOfItemsPerPageList] = useState([10, 15, 20]);
+  const { showSnackbar } = useSnackbar();
+  const [refresh, setRefresh] = useState(false);
+
+  const [visible, setVisible] = useState(false);
+  const [currentItem, setCurrentItem] = useState(null);
+
   const [itemsPerPage, onItemsPerPageChange] = useState(
     numberOfItemsPerPageList[0]
   );
@@ -59,7 +70,7 @@ export default function ViewInvoiceScreen({navigation}) {
 
     // Call the async function
     fetchData();
-  }, []);
+  }, [refresh]);
 
   useEffect(() => {
     setPage(0);
@@ -136,6 +147,35 @@ const genrateInvoice=(item)=>{
     },
   });
 }
+
+const showMenu = (item) => {
+  setCurrentItem(item);
+  setVisible(true);
+};
+
+const hideMenu = () => {
+  setVisible(false);
+  setCurrentItem(null);
+};
+
+const onEdit = (item) => {
+  navigation.navigate("AddInvoice", {item:item})
+  // console.log("Edit id is ", id);
+}
+
+const handleDelete = async() => {
+  try {
+    const response = await deleteApi(`api/invoice/delete/${deleteItemId}`);
+    setDeleteModalVisible(false);
+    showSnackbar("item delete successfully", "success");
+    setRefresh((prev) => !prev);
+  } catch (error) {
+    console.error("Error:", error);
+    showSnackbar("Failed to delete the item", "error");
+  }
+  
+}
+
   return (
     <>
       <ScrollView style={styles.scrollView}>
@@ -151,6 +191,7 @@ const genrateInvoice=(item)=>{
               <Text style={styles.tableHeaderText}>Phone No.</Text>
               <Text style={styles.tableHeaderText}>Name</Text>
               <Text style={[styles.tableHeaderTextLast, {flex:0.7}]}>Amount (₹)</Text>
+              <View style={{flex:0.2}}></View>
             </DataTable.Header>
             <Divider />
             {invoiceData.slice(from, to).map((item, index) => 
@@ -174,6 +215,58 @@ const genrateInvoice=(item)=>{
                 >
                   {item.total}
                 </Text>
+
+                {/* menu items */}
+
+                  <View style={{flex:0.2}}>
+
+                  
+                <Menu
+                  visible={visible && currentItem?._id === item._id}
+                  onDismiss={hideMenu}
+                  anchor={
+                    <TouchableOpacity
+                      onPress={() => showMenu(item)}
+                      style={{}}
+                    >
+                      <Feather name="more-vertical" size={24} color="#777777" />
+                    </TouchableOpacity>
+                  }
+                >
+                  {/* {menuItems.map((menuItem, index) => (
+                    <Menu.Item
+                      key={index}
+                      onPress={() => {
+                        hideMenu();
+                        menuItem.onPress(item);
+                      }}
+                      title={menuItem.title}
+                    />
+                  ))} */}
+                  {/* <Menu.Item 
+            onPress={() => {
+                hideMenu()
+                onView(item._id)
+            }} 
+            title="View" /> */}
+
+            <Menu.Item onPress={() => {
+                hideMenu()
+                onEdit(item)
+            }} 
+            title="Edit" />
+
+            <Menu.Item onPress={() => {
+                hideMenu()
+                console.log("id , ", item._id)
+                setDeleteItemId(item._id);
+                setDeleteModalVisible(true);
+                
+                
+            }} 
+            title="Delete" />
+                </Menu>
+                </View>
               </DataTable.Row>
             ) )}
             <DataTable.Pagination
@@ -195,6 +288,13 @@ const genrateInvoice=(item)=>{
         style={styles.fab}
         onPress={()=>{openModel()}}
       />
+      {deleteModalVisible && (
+                <DeleteModal
+                  visible={deleteModalVisible}
+                  setVisible={setDeleteModalVisible}
+                  handleDelete={handleDelete}
+                />
+              )}
       <InvoiceFilterModel style={{backgroundColor:"lightblue"}} isModalVisible = {isModalVisible} setModalVisible = {setModalVisible} toggleModal={toggleModal}/>
     </>
   );
@@ -255,7 +355,6 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderRightColor: "gray",
     padding: 5,
-    // backgroundColor:"lightgreen"
   },
   number: {
     flex: 1,
