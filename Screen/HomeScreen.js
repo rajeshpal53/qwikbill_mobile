@@ -209,8 +209,8 @@ const styles = StyleSheet.create({
   },
   container: { 
     marginHorizontal: responsiveWidth(5),
-    // backgroundColor:"orange",
-    height: verticalScale(578)
+   
+    height:responsiveHeight(80)
     // height:713,
     // height:"100%",
     // backgroundColor:"lightblue"

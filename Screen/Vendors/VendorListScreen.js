@@ -121,12 +121,12 @@ export default function VendorListScreen() {
     let noFound = <Text>NO Data found</Text>;
   
     if (sortBy === "paid") {
-     setFetchingurl(`api/vendor/filter?filter=paymentStatus&equal=paid&shop=`)
+     setFetchingurl(`api/vendor/filter?filter=paymentStatus&equal=paid&shop=${shopDetails._id}`)
     } else if (sortBy === "unpaid") {
-     setFetchingurl(`api/vendor/filter?filter=paymentStatus&equal=unpaid&shop=`)
+     setFetchingurl(`api/vendor/filter?filter=paymentStatus&equal=unpaid&shop=${shopDetails._id}`)
 
     } else {
-      setFetchingurl(`api/vendor/list?shop=`)
+      setFetchingurl(`api/vendor/list?shop=${shopDetails._id}`)
     }
   
     // Only update if filterData is not empty
