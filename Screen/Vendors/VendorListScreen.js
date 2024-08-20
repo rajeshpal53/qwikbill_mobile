@@ -76,6 +76,7 @@ export default function VendorListScreen() {
     const updatedVendors = vendors.filter((item) => item._id !== deleteId);
 
     try {
+      setIsLoading(true);
       const response = await deleteApi(`api/vendor/delete/${deleteId}`);
       setIsModalVisible(false);
       showSnackbar("Vendor delete successfully", "success");
@@ -83,6 +84,8 @@ export default function VendorListScreen() {
     } catch (error) {
       console.error("Error:", error);
       showSnackbar("Failed to delete the Vendor", "error");
+    }finally{
+      setIsLoading(false);
     }
   };
 
