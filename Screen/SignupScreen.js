@@ -18,6 +18,8 @@ import { useSnackbar } from "../Store/SnackbarContext";
 import { Feather } from "@expo/vector-icons";
 import axios from "axios";
 import { ScrollView } from "react-native-gesture-handler";
+import { useWindowDimensions } from "react-native";
+
 const SignupSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
   surname: Yup.string().required("Surname is required"),
@@ -35,6 +37,8 @@ const Signup = ({ navigation }) => {
   const [selected, setSelected] = React.useState("");
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [eyeOn, setEyeOn] = useState(false);
+  const {width, height}= useWindowDimensions();
+
   const handleSignup = async (values) => {
     console.log(values);
 
@@ -73,7 +77,7 @@ const Signup = ({ navigation }) => {
     "read_only",
   ];
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {height:height}]}>
       <Formik
         initialValues={{
           name: "",
@@ -94,7 +98,11 @@ const Signup = ({ navigation }) => {
           touched,
           setFieldValue,
         }) => (
-          <Card style={{ backgroundColor: "#ffffff", height: "100%" }}>
+          <Card style={{ 
+            backgroundColor: "#ffffff", 
+            flex:1,
+
+            }}>
             <View
               style={{
                 justifyContent: "spaceEvenly",
@@ -225,7 +233,6 @@ const Signup = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: "center",
     padding: 16,
     elevation: 12,
@@ -260,8 +267,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#0c3b73",
     width: "80%",
     alignSelf: "center",
-    marginBottom: 20,
-    marginTop: 40,
+    // marginBottom: 20,
+    // marginTop: 40,
   },
   img: {
     height: 60,

@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { Button, TextInput, Text, HelperText, List } from "react-native-paper";
+import { Button, TextInput, Text, HelperText, List, ActivityIndicator } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { createApi, readApi } from "../Util/UtilApi";
@@ -27,6 +27,7 @@ const AddCustomer = ({ navigation, initialValues, handleSubmit }) => {
   const [showOptions, setShowOptions] = useState(false);
   const [typeOptions, setTypeOptions] = useState(["people", "company"]);
   const [typeShowOptions, setTypeShowOptions] = useState(false);
+
   return (
     <Formik
       style={styles.container}
