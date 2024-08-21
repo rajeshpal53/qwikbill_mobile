@@ -37,15 +37,9 @@ import {
 import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
 import { useFonts } from "expo-font";
 import { Roboto_400Regular, Roboto_700Bold, Roboto_300Light_Italic } from "@expo-google-fonts/roboto";
-import AppLoading from "expo-app-loading";
+
 
 export default function HomeScreen({ navigation }) {
-
-  let [fontsLoaded] = useFonts({
-    Roboto_400Regular,
-    Roboto_700Bold,
-    Roboto_300Light_Italic,
-  });
 
   const { currentLoginTime, lastLoginTime, storeTime } = useContext(LoginTimeContext);
   // const [lastLoginTime, setLastLoginTime] = useState(route.params.previousLoginTime);
@@ -114,9 +108,7 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate("StackNavigator", { screen: Screen });
   };
 
-  if (!fontsLoaded) {
-    return <AppLoading />;
-  }
+
 
   return (
     <SafeAreaView style={styles.safeContainer}>

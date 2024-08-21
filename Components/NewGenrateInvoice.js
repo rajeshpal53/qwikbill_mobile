@@ -196,7 +196,7 @@ const NewGenrateInvoice = ({ data }) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://192.168.1.3:8888/download/invoice/invoice-${data._id}.pdf`,
+        `https://wertone-billing.onrender.com/download/invoice/invoice-${data._id}.pdf`,
 
         {
           credentials: "include",
