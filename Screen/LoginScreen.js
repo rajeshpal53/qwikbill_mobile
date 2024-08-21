@@ -28,7 +28,7 @@ const LoginScreen = ({ navigation }) => {
 
   const handleLogin = async (values, { resetForm }) => {
     const response = await axios.post(
-      "http://192.168.1.3:8888/api/login",
+      "https://wertone-billing.onrender.com/api/login",
       JSON.stringify(values),
       {
         headers: {

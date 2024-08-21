@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Wertone Billing Center",
-    "slug": "DummyReactApp",
+    "slug": "wertonebillingcenter",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo-wertone.png",
@@ -31,14 +31,14 @@
       },
       "permissions": ["USE_FINGERPRINT", "USE_BIOMETRIC"],
 
-      "package": "com.faizanshaikh0.DummyReactApp"
+      "package": "com.faizanshaikh0.wertonebillingcenter"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "bac85c97-2063-4468-95d0-1d7b19c7f40f"
+        "projectId": "50391450-117b-47e6-805e-9097ed8c9492"
       }
     }
   }

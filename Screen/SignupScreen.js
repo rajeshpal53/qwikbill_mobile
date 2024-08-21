@@ -45,7 +45,7 @@ const Signup = ({ navigation }) => {
     try {
       const postData = { ...values, enabled: true };
       const response = await axios.post(
-        "http://192.168.1.3:8888/api/signup",
+        "https://wertone-billing.onrender.com/api/signup",
         JSON.stringify(postData),
         {
           headers: { "Content-Type": "application/json" },
