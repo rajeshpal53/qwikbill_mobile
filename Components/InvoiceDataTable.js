@@ -52,7 +52,7 @@ const InvoiceDataTable = ({formData}) => {
   return (
     <DataTable style={{flex:1}}>
       <DataTable.Header style={styles.tableHeader}>
-        <Text style={styles.tableHeaderText}>
+        <Text style={[styles.tableHeaderText, {flex:0.7}]}>
       Sr. No. </Text>
         <Text numeric style={styles.tableHeaderText}>
          Product Name </Text>
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
   srNo: {
-    flex: 1,
+    flex: 0.7,
     textAlign: "center",
     borderRightWidth: 1,
     borderRightColor: "gray",
