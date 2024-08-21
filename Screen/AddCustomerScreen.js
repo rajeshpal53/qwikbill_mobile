@@ -1,12 +1,14 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import AddCustomer from '../Components/AddCustomer'
 import { StyleSheet ,ScrollView} from 'react-native'
 import { useSnackbar } from '../Store/SnackbarContext'
 import { createApi } from '../Util/UtilApi'
 import { ShopDetailContext } from '../Store/ShopDetailContext'
+import { ActivityIndicator } from 'react-native-paper'
 
 const AddCustomerScreen = ({navigation}) => {
 
+  const [isLoading, setIsLoading] = useState(false)
   const {shopDetails} = useContext(ShopDetailContext);
  const initialValues={ 
   name: '', 
@@ -30,6 +32,7 @@ try{
 const headers= {
   "Content-Type": "application/json",
 } 
+setIsLoading(true);
 const response = await createApi(`api/people/create?shop=${shopDetails._id}`,postData,headers);
   console.log("response",response)
   showSnackbar("add customer Successfully","success")
@@ -38,8 +41,13 @@ const response = await createApi(`api/people/create?shop=${shopDetails._id}`,pos
 catch(error){
         console.error("error to fetch customer",responsehandleSubmit)
         showSnackbar("error to fetch customer","error")
+}finally{
+  setIsLoading(false);
 }
 
+if(isLoading){
+  <ActivityIndicator size="large" /> 
+}
  }
   return (
 

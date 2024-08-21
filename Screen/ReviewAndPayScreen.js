@@ -11,22 +11,33 @@ import {
   IconButton,
 } from "react-native-paper";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Animated } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import InvoiceDataTable from "../Components/InvoiceDataTable";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { useWindowDimensions, BackHandler, TouchableWithoutFeedback } from "react-native";
+import * as ScreenOrientation from "expo-screen-orientation"
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function ReviewAndPayScreen({ navigation }) {
   const route = useRoute();
-
+  const [headerPosition] = useState(new Animated.Value(0)); // Start with header at its visible position
+  const [headerVisible, setHeaderVisible] = useState(true);
   const { formData, submitHandler, fetchDataId } = route.params;
 
   const [checked, setChecked] = useState(false);
+  const {width, height} = useWindowDimensions();
 
   const [visible, setVisible] = useState(false);
 
+  const [touchStart, setTouchStart] = useState(null);
+  const [scrolling, setScrolling] = useState(false);
+  const touchTimeoutRef = useRef(null);
+  const scrollRef = useRef(false)
+
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+  let paymentStatus = 'paid';
 
   const [totalAdded, setTotalAdded] = useState(false);
   // useEffect(() => {
@@ -47,9 +58,40 @@ export default function ReviewAndPayScreen({ navigation }) {
   //   }
   // }, [formData.items, totalAdded]); // Ensure dependencies are correct
 
+   // Custom back button handler
+ const onBackPress = async() => {
+  // Perform any action when the back button is pressed
+    await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT); // Lock to portrait
+
+    navigation.goBack()
+    return true; // Returning true prevents the default behavior (going back)
+};
+
+   // Use useFocusEffect to handle back button when the screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      // Add the event listener when the screen is focused
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      // Clean up the event listener when the screen is unfocused
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [])
+  );
+
+  const handleChecked = () => {
+    if(checked){
+      setChecked(!checked);
+      paymentStatus = 'unpaid'
+    }
+    else{
+      setChecked(!checked)
+      paymentStatus = 'paid'
+    }
+  }
   const buttonPressed = async (buttonName) => {
     hideModal();
-    const newData = await submitHandler(formData, fetchDataId);
+    const newData = await submitHandler(formData, fetchDataId, paymentStatus);
     navigation.navigate("StackNavigator", {
       screen: "InvoiceSuccess",
       params: {
@@ -60,12 +102,52 @@ export default function ReviewAndPayScreen({ navigation }) {
       },
     });
   };
-  console.log(checked, "checked");
+  // console.log(checked, "checked");
+
+  const toggleHeader = () => {
+    if ((width > height)) {
+      setHeaderVisible(prevState => !prevState);
+      navigation.setOptions({ headerShown: !headerVisible });
+    }
+    console.log("touchablity")
+  };
+
+  const handleTouchStart = (event) => {
+    setTouchStart(event.nativeEvent.timestamp);
+    setScrolling(false);
+  };
+
+
+  const handleTouchEnd = (event) => {
+    const touchDuration = event.nativeEvent.timestamp - touchStart;
+    if (!scrolling && touchDuration < 300) { // Adjust duration if needed
+      clearTimeout(touchTimeoutRef.current);
+      touchTimeoutRef.current = setTimeout(() => {
+        toggleHeader();
+      }, 0);
+    }
+  };
+  const handleScroll = () => {
+    setScrolling(true);
+    if (touchTimeoutRef.current) {
+      clearTimeout(touchTimeoutRef.current);
+    }
+  };
+  
+
   return (
-    <View style={styles.mainContainer}>
+    <TouchableWithoutFeedback 
+    onPressIn={handleTouchStart}
+    onPressOut={handleTouchEnd}
+      >
+    <View style={styles.mainContainer}
+    >
       <View style={styles.overlay}></View>
 
-      <ScrollView style={styles.scrollView}>
+      <ScrollView 
+      style={styles.scrollView}
+      onScrollBeginDrag={handleScroll}
+      >
         <View style={styles.cardContainer}>
           <Card style={styles.card}>
             <Card.Content style={styles.cardContent}>
@@ -184,9 +266,7 @@ export default function ReviewAndPayScreen({ navigation }) {
                 <View style={styles.checkBoxContainer}>
                   <Checkbox
                     status={checked ? "checked" : "unchecked"}
-                    onPress={() => {
-                      setChecked(!checked);
-                    }}
+                    onPress={handleChecked}
                   />
                   <Text>Pay Later</Text>
                 </View>
@@ -221,6 +301,7 @@ export default function ReviewAndPayScreen({ navigation }) {
         </View>
       </ScrollView>
     </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -247,7 +328,7 @@ const styles = StyleSheet.create({
     // marginHorizontal:10
   },
   cardContainer: {
-    // backgroundColor: "lightgreen",
+    backgroundColor: "rgba(0, 0, 0, 0)",
   },
   cardContent: {
     // backgroundColor:"orange"
@@ -256,7 +337,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
     flex: 1,
     marginHorizontal: 15,
-    // backgroundColor: "lightblue",
   },
   custDetailContainer: {
     flexDirection: "row",

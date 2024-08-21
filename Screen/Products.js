@@ -24,7 +24,6 @@ import FileUploadModal from "../Components/BulkUpload/FileUploadModal";
 import axios from "axios";
 
 
-
 const fetchSearchData = async (searchQuery, shopId) => {
   try {
     const response = readApi(

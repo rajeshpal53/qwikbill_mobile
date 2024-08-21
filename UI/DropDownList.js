@@ -10,9 +10,11 @@ import {
   responsiveScreenFontSize
 } from "react-native-responsive-dimensions";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { ActivityIndicator } from "react-native-paper";
 
 function DropDownList() {
  const {addShopDetails,shopDetails}=useContext(ShopDetailContext)
+ const [isLoading, setIsLoading] = useState(false);
  const [options, setOptions] = useState([]);
  const [selectedShop, setSelectedShop ] = useState("");
  console.log(shopDetails,"newShopDetails")
@@ -20,9 +22,11 @@ function DropDownList() {
 
 
  async function fetchOptions() {
+  setIsLoading(true);
   const response = await readApi(`api/shop/list`);
   setOptions(response.result);
   addShopDetails(response.result[0])
+  setIsLoading(false);
   // Adjust according to your API respons
   // setSelectedOption(data.result[0].shopname)
 }
@@ -47,6 +51,9 @@ function DropDownList() {
 
   return (
     <View style={styles.pickerContainer}>
+      {isLoading && (
+        <ActivityIndicator size="small"/>
+      )}
     <Picker
       style={{width:"95%"}}
       ref={pickerRef}
