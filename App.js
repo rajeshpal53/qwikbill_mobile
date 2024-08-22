@@ -231,9 +231,12 @@ function DrawerNavigator() {
   );
 }
 function StackNavigator() {
-  const [isLandscape, setIsLandscape] = useState(false);  
+  const [isLandscape, setIsLandscape] = useState(false);
   const { isAuthenticated, isLoading,  searchMode  } = useContext(AuthContext);
   const { shopDetails } = useContext(ShopDetailContext);
+
+  
+
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -241,6 +244,7 @@ function StackNavigator() {
       </View>
     );
   }
+
   return (
     <Stack.Navigator
       initialRouteName={isAuthenticated ? "Passcode" : "login"}
@@ -281,7 +285,9 @@ function StackNavigator() {
       <Stack.Screen
         name="AddInvoice"
         component={AddInvoiceScreen}
-        screenOptions={{}}
+        screenOptions={{
+          headerTitle:"Add Invoice"
+        }}
       />
       <Stack.Screen
         name="AddCustomer"
@@ -305,7 +311,8 @@ function StackNavigator() {
           // headerStyle: {
           //   backgroundColor: "#0c3b73", // Your desired background color
           // },
-          headerTitle: (searchMode && ""),
+          headerTitle: (searchMode) ? "" : "View Vendor",
+          headerTitleAlign:(searchMode) ? "left" : "center",
         }}
       />
 
@@ -319,7 +326,8 @@ function StackNavigator() {
           headerStyle: {
             backgroundColor: "#0c3b73", // Your desired background color
           },
-          headerTitle: (searchMode && ""),
+          headerTitle: (searchMode) ? "" : "HSN Codes",
+          headerTitleAlign:(searchMode) ? "left" : "center"
         }}
       />
       <Stack.Screen
@@ -390,7 +398,7 @@ function StackNavigator() {
         name="CreateInvoice"
         component={CreateInvoice}
         options={{
-    
+          headerTitle:"Add Invoice"
         }}
       />
       <Stack.Screen
@@ -404,13 +412,14 @@ function StackNavigator() {
         name="genrateInvoice"
         component={GenrateInvoiceScreen}
         options={{
-
+          headerTitle:"Generate Invoice"
         }}
       />
       <Stack.Screen
         name="ReviewAndPay"
         component={ReviewAndPayScreen}
         options={{
+          headerTitle: "Review And Pay",
           headerRight: () => <RotateBtn isLandscape={isLandscape} setIsLandscape={setIsLandscape} />,
           headerLeft:() => <CustomBackButton isLandscape={isLandscape} setIsLandscape={setIsLandscape} />
         }}
@@ -419,6 +428,7 @@ function StackNavigator() {
         name="InvoiceSuccess"
         component={InvoiceSuccessScreen}
         options={{
+          headerTitle:"Invoice Success"
         }}
       />
       <Stack.Screen

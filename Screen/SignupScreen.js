@@ -77,7 +77,7 @@ const Signup = ({ navigation }) => {
     "read_only",
   ];
   return (
-    <View style={[styles.container, {height:height}]}>
+    <ScrollView contentContainerStyle={[styles.container, {height:height}]}>
       <Formik
         initialValues={{
           name: "",
@@ -227,7 +227,7 @@ const Signup = ({ navigation }) => {
           </Card>
         )}
       </Formik>
-    </View>
+    </ScrollView>
   );
 };
 

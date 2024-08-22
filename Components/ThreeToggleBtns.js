@@ -11,8 +11,11 @@ export default function ThreeToggleBtns({buttonsModes, setButtonsModes, toggleBu
             style={{
               //   width: "50%",
               // color:"#26a0df",
+              // paddingVertical:1,
+              // paddingHorizontal:5,
+              flex:1,
               backgroundColor: buttonsModes.firstButtonMode
-                ? "#000"
+                ? "#777"
                 : "transparent",
             }}
             mode={
@@ -27,8 +30,9 @@ export default function ThreeToggleBtns({buttonsModes, setButtonsModes, toggleBu
           textColor={buttonsModes.secondButtonMode ? "#fff" : "#26a0df"}
             style={{
               //   width: "50%",
+              flex:1,
               backgroundColor: buttonsModes.secondButtonMode
-                ? "#000"
+                ? "#777"
                 : "transparent",
             }}
             mode={
@@ -45,8 +49,9 @@ export default function ThreeToggleBtns({buttonsModes, setButtonsModes, toggleBu
           textColor= {buttonsModes.thirdButtonMode ? "#fff" : "#26a0df"}
             style={{
               //   width: "50%",
+              flex:1,
               backgroundColor: buttonsModes.thirdButtonMode
-                ? "#000"
+                ? "#777"
                 : "transparent",
             }}
             mode={
@@ -81,8 +86,14 @@ const styles = StyleSheet.create({
   },
 
   buttonContainer: {
+    flex:1,
     flexDirection: "row",
-    justifyContent:"space-evenly",
+    justifyContent:"space-between",
+    backgroundColor:"#fff",
+    elevation:2,
+    // paddingVertical:5,
+    borderRadius:25,
+
     // marginTop:
   },
  

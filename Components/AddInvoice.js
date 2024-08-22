@@ -63,7 +63,7 @@ const validationSchema = Yup.object().shape({
           .positive("Price must be a positive number")
           .typeError("Price must be a number"),
         quantity: Yup.number()
-          .required("Price is required")
+          .required("quantity is required")
           .positive("Price must be a positive number")
           .typeError("Price must be a number"),
       })
@@ -72,8 +72,8 @@ const validationSchema = Yup.object().shape({
     .min(1, "Minimum of 1 item"),
 });
 const AddInvoice = ({
+  item,
   initialValues,
-  submitHandler,
   shopDetails,
   invoiceType,
 }) => {
@@ -149,21 +149,19 @@ const AddInvoice = ({
             screen: "ReviewAndPay",
             params: {
               formData: values,
-              submitHandler: submitHandler,
+              item,
               fetchDataId: fetchDataId,
             },
           });
 
-          // submitHandler(values,fetchDataId);
         } else {
           navigation.navigate("StackNavigator", {
             screen: "ReviewAndPay",
             params: {
               formData: values,
-              submitHandler: submitHandler,
+              item
             },
           });
-          // submitHandler(values);
         }
 
         resetForm();
