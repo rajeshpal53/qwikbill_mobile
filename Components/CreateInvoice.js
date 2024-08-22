@@ -155,12 +155,14 @@ export default function CreateInvoice({ navigation }) {
         </View>
 
         {/* 3 */}
+       
         <ThreeToggleBtns 
         buttonsModes={buttonsModes}
         setButtonsModes={setButtonsModes}
         navigation={navigation}
         toggleButtonsTexts={toggleButtonsTexts}
         handleButtonPress={handleButtonPress}/>
+        
         <View style={styles.formContainer}>
           <View style={styles.formHeading}>
             <Text style={{ fontSize: 13 }}>Provisional Invoice No :- </Text>

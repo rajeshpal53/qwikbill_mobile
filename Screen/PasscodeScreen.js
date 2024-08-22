@@ -77,6 +77,26 @@ export default function PasscodeScreen({ navigation }) {
     };
   }, []);
 
+  useEffect(() => {
+    handleLocalAuthentication();
+  }, []);
+
+  useEffect(() => {
+    async function loginDetailHandler() {
+      try {
+        const newValue = (await getData("loginDetail")) || "";
+
+        setLoginDetail1(newValue);
+      } catch {
+        console.log("failed get data ");
+      } finally {
+        // setNewLoading(false);
+      }
+    }
+
+    loginDetailHandler();
+  }, [loginDetail]);
+
   // const storeTimes = async() => {
   //   const previousLoginTime = await AsyncStorage.getItem("currentLoginTime");
 
@@ -140,31 +160,14 @@ export default function PasscodeScreen({ navigation }) {
     }
   };
 
-  useEffect(() => {
-    handleLocalAuthentication();
-  }, []);
+ 
 
   const handleEyePress = () => {
     setSecureTextEntry(!secureTextEntry);
     setEyeOn(!eyeOn);
   };
 
-  useEffect(() => {
-    async function loginDetailHandler() {
-      try {
-        const newValue = (await getData("loginDetail")) || "";
-
-        setLoginDetail1(newValue);
-      } catch {
-        console.log("failed get data ");
-      } finally {
-        // setNewLoading(false);
-      }
-    }
-
-    loginDetailHandler();
-  }, [loginDetail]);
-
+ 
   const handleButtonPress = (button) => {
     setButtonsModes((prevstate) => {
       if (button === "passcode" && !prevstate.passcodeButtonMode) {

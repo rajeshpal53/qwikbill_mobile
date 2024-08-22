@@ -79,25 +79,7 @@ export default function HomeScreen({ navigation }) {
     pickerRef.current.blur();
   }
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     const onBackPress = () => {
-  //       console.log("backPressed");
-  //       if (searchMode) {
-  //         setSearchMode(false);
-  //         return true; // Prevent default back button behavior
-  //       }
-  //       return false; // Allow default back button behavior
-  //     };
-
-  //     BackHandler.addEventListener("hardwareBackPress", onBackPress);
-
-  //     return () => {
-  //       BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-  //     };
-  //   }, [searchMode])
-  // );
-
+  
   const goToHandler = (Screen) => {
     // navigation.navigate("wertone", {screen:'CreateInvoice'});
     // console.log("Pra ", item)
