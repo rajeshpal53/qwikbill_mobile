@@ -118,7 +118,7 @@ export default function FilterInvoiceScreen() {
       data = {
         filteredBy: "dateRange",
         selectedOption: selectedOption,
-        date,
+        date:date.toString(),
         paidUnpaidAll,
       };
     } else {
@@ -227,14 +227,18 @@ export default function FilterInvoiceScreen() {
 
         <View style={styles.tabContainer}>
           <Button
-            mode={activeTab === "dateRange" ? "contained" : "outlined"}
+            mode={activeTab === "dateRange" ? "contained" : ""}
             onPress={() => setActiveTab("dateRange")}
+            buttonColor={activeTab === "dateRange" ? "#777" : "#fff"} // Background color
+            textColor={activeTab === "dateRange" ? "#ffffff" : "#26a0df"}  // Text color
           >
             Date Range
           </Button>
           <Button
-            mode={activeTab === "number" ? "contained" : "outlined"}
+            mode={activeTab === "number" ? "contained" : ""}
             onPress={() => setActiveTab("number")}
+            buttonColor={activeTab === "number" ? "#777" : "#fff"} // Background color
+            textColor={activeTab === "number" ? "#ffffff" : "#26a0df"}  // Text color
           >
             Number
           </Button>
@@ -332,11 +336,14 @@ const styles = StyleSheet.create({
   datePickerButton: {
     marginTop: 16,
     padding: 10,
-    backgroundColor: "#f0f0f0",
+    // backgroundColor: "#f0f0f0",
+
+    backgroundColor: "#777",
     borderRadius: 5,
   },
   dateText: {
     textAlign: "center",
     fontSize: 16,
+    color:"#fff"
   },
 });
