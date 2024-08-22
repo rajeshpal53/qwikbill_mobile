@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { Button, TextInput, Text, HelperText, List, ActivityIndicator } from "react-native-paper";
+import { Button, TextInput, Text, HelperText, List, ActivityIndicator, Divider } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { createApi, readApi } from "../Util/UtilApi";
@@ -235,8 +235,10 @@ const AddCustomer = ({ navigation, initialValues, handleSubmit }) => {
               <View style={styles.suggestionsContainer}>
                 <ScrollView style={styles.suggestionsList}>
                   {typeOptions.map((option, index) => (
+                    <React.Fragment key={index}>            
                     <List.Item
-                      key={index}
+                    style={{borderWidth:0}}
+                      // key={index}
                       title={option}
                       onPress={async () => {
                         setFieldValue("type", option);
@@ -244,8 +246,12 @@ const AddCustomer = ({ navigation, initialValues, handleSubmit }) => {
                       }}
                     >
                       {" "}
+                      
                       {option}
+                     
                     </List.Item>
+                    <Divider />
+                    </React.Fragment>
                   ))}
                 </ScrollView>
               </View>
@@ -319,12 +325,12 @@ const styles = StyleSheet.create({
     maxHeight: 200, // Adjust height as needed
     zIndex: 1,
     backgroundColor: "white",
-    borderWidth: 1,
-    borderColor: "gray",
-    borderRadius: 4,
+    // borderWidth: 1,
+
   },
   suggestionsList: {
     width: "100%",
+    // backgroundColor:"blue"
   },
 });
 

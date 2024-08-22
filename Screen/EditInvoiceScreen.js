@@ -62,37 +62,37 @@ function EditInvoiceScreen({ route,navigation }) {
   if (isLoading) {
     return <ActivityIndicator size="large" />;
   }
-  const submitHandler= async( values,fetchDataId)=>{
-    const postData = {
-         ...values,
-         client: "666130c9a9c613f884628d76",
-         number: parseInt(values.phone),
-         taxRate: 0,
-         currency: "USD",
-         status: "draft",
-         year: getYear(values.date),
-         expiredDate: getNextMonthDate(values.date),
-       };
-       delete postData.phone;
-       console.log(postData, "------postdata");
+  // const submitHandler= async( values,fetchDataId)=>{
+  //   const postData = {
+  //        ...values,
+  //        client: "666130c9a9c613f884628d76",
+  //        number: parseInt(values.phone),
+  //        taxRate: 0,
+  //        currency: "USD",
+  //        status: "draft",
+  //        year: getYear(values.date),
+  //        expiredDate: getNextMonthDate(values.date),
+  //      };
+  //      delete postData.phone;
+  //      console.log(postData, "------postdata");
 
-       try{
-        const headers={
-               "Content-Type": "application/json",
-             }
-          const response= await updateApi(`api/invoice/update/${invoiceId}`,postData,headers)
-          showSnackbar("update product Successfully","success")
-          navigation.navigate("Invoice");   
-      } 
-       catch (error){
-        showSnackbar("Failed to update invoice","error")
-        console.error("Failed to update invoice",response);
-      }
+  //      try{
+  //       const headers={
+  //              "Content-Type": "application/json",
+  //            }
+  //         const response= await updateApi(`api/invoice/update/${invoiceId}`,postData,headers)
+  //         showSnackbar("update product Successfully","success")
+  //         navigation.navigate("Invoice");   
+  //     } 
+  //      catch (error){
+  //       showSnackbar("Failed to update invoice","error")
+  //       console.error("Failed to update invoice",response);
+  //     }
 
-    }
+  //   }
   return (
     <ScrollView>
-      <AddInvoice initialValues={initialValues}navigation={navigation} submitHandler={submitHandler} />
+      <AddInvoice initialValues={initialValues} navigation={navigation} />
     </ScrollView>
   );
 }

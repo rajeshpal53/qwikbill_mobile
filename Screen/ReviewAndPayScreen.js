@@ -10,6 +10,7 @@ import {
   PaperProvider,
   IconButton,
 } from "react-native-paper";
+import { createApi, updateApi } from "../Util/UtilApi";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { View, StyleSheet, ScrollView, Animated } from "react-native";
 import { useRoute } from "@react-navigation/native";
@@ -18,13 +19,31 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useWindowDimensions, BackHandler, TouchableWithoutFeedback } from "react-native";
 import * as ScreenOrientation from "expo-screen-orientation"
 import { useFocusEffect } from "@react-navigation/native";
+import { ShopDetailContext } from "../Store/ShopDetailContext";
+import { useContext } from "react";
+import { useSnackbar } from "../Store/SnackbarContext";
+
+
+const getYear = (date) => {
+  if (!date) return "";
+  const dateObj = new Date(date);
+  return dateObj.getFullYear();
+};
+const getNextMonthDate = (date) => {
+  if (!date) return "";
+  const dateObj = new Date(date);
+  const nextMonth = new Date(dateObj.setMonth(dateObj.getMonth() + 1));
+  return nextMonth.toISOString().substring(0, 10);
+};
+
 
 export default function ReviewAndPayScreen({ navigation }) {
   const route = useRoute();
+  const { showSnackbar } = useSnackbar();
   const [headerPosition] = useState(new Animated.Value(0)); // Start with header at its visible position
   const [headerVisible, setHeaderVisible] = useState(true);
-  const { formData, submitHandler, fetchDataId } = route.params;
-
+  const { formData, fetchDataId, item } = route.params;
+  const { shopDetails } = useContext(ShopDetailContext);
   const [checked, setChecked] = useState(false);
   const {width, height} = useWindowDimensions();
 
@@ -98,7 +117,6 @@ export default function ReviewAndPayScreen({ navigation }) {
         newData: newData,
         formData: formData,
         paymentMode: buttonName,
-        // submitHandler: submitHandler,
       },
     });
   };
@@ -134,6 +152,64 @@ export default function ReviewAndPayScreen({ navigation }) {
     }
   };
   
+
+  const submitHandler = async (values, fetchDataId, paymentStatus) => {
+    const postData = {
+      ...values,
+      shop: shopDetails._id,
+      client: fetchDataId,
+      number: parseInt(values.phone),
+      taxRate: 0,
+      currency: "USD",
+      status: "draft",
+      year: getYear(values.date),
+      expiredDate: getNextMonthDate(values.date),
+      people: item?.people || fetchDataId,
+    };
+    delete postData.phone;
+    // delete postData.address
+    console.log(postData, "------postdata , ", item);
+    if(item !== undefined) {
+       console.log("items is p, ", item)
+      try {
+        const headers = {
+          "Content-Type": "application/json",
+        };
+        const response = await updateApi(
+          `api/invoice/update/${item._id}`,
+          postData,
+          headers
+        );
+        showSnackbar("invoice updated Successfull", "success");
+        if (response) {
+          console.log(response.result);
+          return response.result;
+        }
+      } catch (error) {
+        // console.error("Failed to update invoice", response);
+        showSnackbar("Failed to update invoice", "error");
+      }
+    } else {
+      try {
+        const headers = {
+          "Content-Type": "application/json",
+        };
+        const response = await createApi(
+          "api/invoice/create",
+          postData,
+          headers
+        );
+        showSnackbar("invoice Added Successfull", "success");
+        if (response) {
+          console.log(response.result);
+          return response.result;
+        }
+      } catch (error) {
+        // console.error("Failed to add invoice", response);
+        showSnackbar("Failed to add invoice", "error");
+      }
+    }
+  };
 
   return (
     <TouchableWithoutFeedback 

@@ -37,6 +37,7 @@ function CustomerVerification({ loginDetail1, setIsOtp, setOtpValue }) {
     }
   };
   return (
+    <ScrollView contentContainerStyle={{ backgroundColor:"gray", elevation:2}}>
     <View style={stylesVerify.cardContainer}>
       <Card style={stylesVerify.card}>
         <Card.Content style={stylesVerify.cardContent}>
@@ -81,6 +82,7 @@ function CustomerVerification({ loginDetail1, setIsOtp, setOtpValue }) {
         </Card.Content>
       </Card>
     </View>
+    </ScrollView>
   );
 }
 function ValidateOTP({ navigation, otpValue }) {
@@ -185,7 +187,7 @@ function Forgetpasscode({ navigation }) {
     <>
       <StatusBar style="light" backgroundColor={"#0c3b73"} />
       <SafeAreaView style={styles.SafeAreaView}>
-        <KeyboardAvoidingView behavior="padding">
+        {/* <KeyboardAvoidingView behavior="padding"> */}
           <View style={[styles.overlay, { height: overlayHeight }]}></View>
           <View style={styles.scrollViewChild}>
             <View
@@ -228,7 +230,7 @@ function Forgetpasscode({ navigation }) {
               />
             )}
           </View>
-        </KeyboardAvoidingView>
+        {/* </KeyboardAvoidingView> */}
       </SafeAreaView>
     </>
   );
@@ -388,7 +390,7 @@ const stylesVerify = StyleSheet.create({
   cardContainer: {
     backgroundColor: "grey",
     height: 390,
-    marginTop:5,
+    // marginTop:5,
   },
 });
 
