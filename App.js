@@ -231,13 +231,9 @@ function DrawerNavigator() {
   );
 }
 function StackNavigator() {
+  const [isLandscape, setIsLandscape] = useState(false);  
   const { isAuthenticated, isLoading,  searchMode  } = useContext(AuthContext);
-  const [isLandscape, setIsLandscape] = useState(false);
-
-  useEffect(() => {
-    isAuthenticated;
-  }, [isAuthenticated]);
-  
+  const { shopDetails } = useContext(ShopDetailContext);
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -245,8 +241,6 @@ function StackNavigator() {
       </View>
     );
   }
-
-  const { shopDetails } = useContext(ShopDetailContext);
   return (
     <Stack.Navigator
       initialRouteName={isAuthenticated ? "Passcode" : "login"}
