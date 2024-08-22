@@ -236,6 +236,7 @@ function StackNavigator() {
   const { shopDetails } = useContext(ShopDetailContext);
 
   
+
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -244,7 +245,6 @@ function StackNavigator() {
     );
   }
 
-  
   return (
     <Stack.Navigator
       initialRouteName={isAuthenticated ? "Passcode" : "login"}
