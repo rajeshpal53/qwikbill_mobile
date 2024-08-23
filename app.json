@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Wertone Billing Center",
-    "slug": "wertone-billing-center",
+    "slug": "wertonebillingcenter",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo-wertone.png",
@@ -33,14 +33,14 @@
         "USE_FINGERPRINT",
         "USE_BIOMETRIC"
       ],
-      "package": "com.prathmeshlakhade.wertonebillingcenter"
+      "package": "com.faizanshaikh0.wertonebillingcenter"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "3e4bc5ea-58d0-4be6-8574-57452ad669a5"
+        "projectId": "50391450-117b-47e6-805e-9097ed8c9492"
       }
     }
   }

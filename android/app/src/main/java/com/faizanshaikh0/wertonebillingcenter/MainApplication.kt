@@ -1,4 +1,4 @@
-package com.prathmeshlakhade.wertonebillingcenter
+package com.faizanshaikh0.wertonebillingcenter
 
 import android.app.Application
 import android.content.res.Configuration
