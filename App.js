@@ -234,9 +234,7 @@ function StackNavigator() {
   const [isLandscape, setIsLandscape] = useState(false);
   const { isAuthenticated, isLoading,  searchMode  } = useContext(AuthContext);
   const { shopDetails } = useContext(ShopDetailContext);
-
-  
-
+  // console.log(isAuthenticated)
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -464,8 +462,8 @@ function StackNavigator() {
 }
 export default function App() {
   return (
+    <SafeAreaProvider>
     <ShopDetailProvider>
-      <SafeAreaProvider>
         <PasskeyProvider>
           <SnackbarProvider>
             <Provider theme={customTheme}>
@@ -491,7 +489,7 @@ export default function App() {
             </Provider>
           </SnackbarProvider>
         </PasskeyProvider>
-      </SafeAreaProvider>
     </ShopDetailProvider>
+    </SafeAreaProvider>
   );
 }
