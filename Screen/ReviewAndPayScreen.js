@@ -22,6 +22,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { ShopDetailContext } from "../Store/ShopDetailContext";
 import { useContext } from "react";
 import { useSnackbar } from "../Store/SnackbarContext";
+import CheckInternet from "./CheckInternet/CheckInternet";
 
 
 const getYear = (date) => {
@@ -38,6 +39,7 @@ const getNextMonthDate = (date) => {
 
 
 export default function ReviewAndPayScreen({ navigation }) {
+  
   const route = useRoute();
   const { showSnackbar } = useSnackbar();
   const [headerPosition] = useState(new Animated.Value(0)); // Start with header at its visible position
@@ -82,7 +84,11 @@ export default function ReviewAndPayScreen({ navigation }) {
   // Perform any action when the back button is pressed
     await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT); // Lock to portrait
 
-    navigation.goBack()
+    if(navigation.canGoBack()){
+    navigation.goBack();
+    }else{
+      navigation.navigate("HOME")
+    }
     return true; // Returning true prevents the default behavior (going back)
 };
 
@@ -212,7 +218,8 @@ export default function ReviewAndPayScreen({ navigation }) {
   };
 
   return (
-    <TouchableWithoutFeedback 
+ 
+   <TouchableWithoutFeedback 
     onPressIn={handleTouchStart}
     onPressOut={handleTouchEnd}
       >
@@ -361,7 +368,6 @@ export default function ReviewAndPayScreen({ navigation }) {
                                 newData: newData,
                                 formData: formData,
                                 paymentMode: (checked) ? "unpaid" : "paid",
-                                submitHandler: submitHandler,
                               },
                             });}
                           : showModal
@@ -378,6 +384,7 @@ export default function ReviewAndPayScreen({ navigation }) {
       </ScrollView>
     </View>
     </TouchableWithoutFeedback>
+    
   );
 }
 

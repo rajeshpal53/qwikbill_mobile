@@ -1,5 +1,5 @@
-import { React, useState, useContext } from "react";
-import { View, StyleSheet, Alert, Image, TouchableOpacity } from "react-native";
+import { React, useState, useContext, useEffect } from "react";
+import { View, StyleSheet, Alert, Image, TouchableOpacity, Modal } from "react-native";
 import { Text, TextInput, Button, Card, Divider } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -9,12 +9,24 @@ import { createApi } from "../Util/UtilApi";
 import { usePasskey } from "../Store/PasskeyContext";
 import axios from "axios";
 import { useWindowDimensions } from "react-native";
+import NetInfo from "@react-native-community/netinfo";
+import { ActivityIndicator } from "react-native-paper";
 
 const LoginScreen = ({ navigation }) => {
-  const { login, isAuthenticated, isLoading, storeData, setLoginDetail } =
+  const [isLoading, setIsLoading] = useState(false);
+  const { login, isAuthenticated, storeData, setLoginDetail } =
     useContext(AuthContext);
+
   const { isPasskey } = usePasskey();
   const { width, height } = useWindowDimensions();
+
+  // useEffect(() => {
+  //   const unsubscribe = NetInfo.addEventListener(state => {
+  //     setIsConnected(state.isConnected);
+  //   });
+
+  //   return () => unsubscribe();
+  // }, []);
 
   const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -27,41 +39,55 @@ const LoginScreen = ({ navigation }) => {
 
 
   const handleLogin = async (values, { resetForm }) => {
-    const response = await axios.post(
-      "https://wertone-billing.onrender.com/api/login",
-      JSON.stringify(values),
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
+    
+    try{
+      setIsLoading(true);
+      const response = await axios.post(
+        "https://wertone-billing.onrender.com/api/login",
+        JSON.stringify(values),
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.data, "newResponse");
+      const data = await response.data;
+      await storeData("loginDetail", data.result);
+      setLoginDetail(data.result);
+      const token = "dummyToken";
+      login(token);
+      
+  
+      if (isAuthenticated) {
+        // navigation.navigate("wertone",{screen:'invoice'})
+        if (isPasskey) {
+          navigation.navigate("Passcode");
+        
+        } else {
+          navigation.navigate("CreateNewPasscode");
+         
+        }
+        
       }
-    );
-    console.log(response.data, "newResponse");
-    const data = await response.data;
-    await storeData("loginDetail", data.result);
-    setLoginDetail(data.result);
-    const token = "dummyToken";
-    login(token);
-    if (isLoading) {
-      {
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <ActivityIndicator size="large" />
-        </View>;
-      }
-    }
-    if (isAuthenticated) {
-      // navigation.navigate("wertone",{screen:'invoice'})
-      if (isPasskey) {
-        navigation.navigate("Passcode");
-      } else {
-        navigation.navigate("CreateNewPasscode");
-      }
+    }catch(error){
+      console.log("error - ", error)
+    }finally{
+      setIsLoading(false);
       resetForm();
     }
+   
   };
 
+  // if (isLoading) {
+  //   {
+  //     <View
+  //       style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+  //     >
+  //       <ActivityIndicator size="large" />
+  //     </View>;
+  //   }
+  // }
 //invoicepeople
 //   const handleLogin = async (values,{resetForm} ) => {
 //    const response= await axios.post("http://192.168.1.7:8888/api/login",JSON.stringify(values),{headers:{
@@ -94,7 +120,23 @@ const LoginScreen = ({ navigation }) => {
 
 
   return (
-    <Formik
+ 
+    <>
+    {/* Loading Modal */}
+    <Modal
+        transparent={true}
+        animationType="none"
+        visible={isLoading}
+        onRequestClose={() => {}}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.activityIndicatorWrapper}>
+            <ActivityIndicator size="large" color="#fff" />
+            <Text style={{color:"#fff", fontSize:20}}>Loading...</Text>
+          </View>
+        </View>
+      </Modal>
+      <Formik
       initialValues={{ email: "", password: "" }}
       validationSchema={validationSchema}
       onSubmit={handleLogin}
@@ -234,9 +276,13 @@ const LoginScreen = ({ navigation }) => {
 
            
           </Card>
+          
         </View>
       )}
     </Formik>
+    </>
+   
+   
   );
 };
 
@@ -246,6 +292,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 16,
     // elevation: 12,
+  },
+  modalBackground: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  activityIndicatorWrapper: {
+    backgroundColor: 'rgba(0, 0, 0, 0)',
+    height: 100,
+    width: 100,
+    borderRadius: 10,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   signup: {
     alignSelf: "center",

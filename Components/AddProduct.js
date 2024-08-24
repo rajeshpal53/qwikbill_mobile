@@ -33,15 +33,15 @@ const validationSchema = Yup.object().shape({
     .required("Selling price is required")
     .typeError("Selling price must be a number"),
   taxValue: Yup.number()
-    .required("Tax value is required")
+    // .required("Tax value is required")
     .typeError("Tax value must be a number"),
   purchasePrice: Yup.number()
     .required("Purchase price is required")
     .typeError("Purchase price must be a number"),
-  hsncode: Yup.string().required("HSN code is required"),
+  // hsncode: Yup.string().required("HSN code is required"),
 });
 
-const AddProduct = ({ navigation, initialValues, handleSubmit }) => {
+const AddProduct = ({ navigation, initialValues, handleSubmit, buttonText = "Add Product" }) => {
   console.log("in addproduct ", initialValues);
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
@@ -64,6 +64,7 @@ const AddProduct = ({ navigation, initialValues, handleSubmit }) => {
         touched,
         setFieldValue,
       }) => (
+        <ScrollView contentContainerStyle={{paddingVertical:10}} >
         <View style={styles.form}>
           <View
             style={{
@@ -220,9 +221,10 @@ const AddProduct = ({ navigation, initialValues, handleSubmit }) => {
             </HelperText>
           </View>
           <Button mode="contained" onPress={handleSubmit} style={styles.button}>
-            Submit
+            {buttonText}
           </Button>
         </View>
+        </ScrollView>
       )}
     </Formik>
   );
@@ -244,19 +246,18 @@ const styles = StyleSheet.create({
   },
   form: {
     // backgroundColor: "#fff",
-    // backgroundColor: "lightgreen",
+    backgroundColor: "rgba(0, 0, 0, 0)",
     // height:"100%",
     // margin: 10,
-    marginVertical: 5,
-    marginHorizontal: 10,
-    paddingVertical: 50,
+    padding: 25,
     borderRadius: 10,
-    elevation: 5, // For shadow on Android
-    shadowColor: "#000", // For shadow on iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    paddingHorizontal: 20,
+    // elevation: 5, // For shadow on Android
+    // shadowColor: "#000", // For shadow on iOS
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.2,
+    // shadowRadius: 2,
+    // paddingHorizontal: 20,
+    // gap:10,
     flex: 1,
     justifyContent: "center",
   },
@@ -266,14 +267,14 @@ const styles = StyleSheet.create({
     // margin: 10,
     // padding: 25,
     borderRadius: 10,
-    elevation: 5, // For shadow on Android
-    shadowColor: "#000", // For shadow on iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    marginVertical: 10,
+    // elevation: 5, // For shadow on Android
+    // shadowColor: "#000", // For shadow on iOS
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.2,
+    // shadowRadius: 2,
+    // marginVertical: 10,
     flex: 1,
-    height: "100%",
+    // height: "100%",
   },
   input: {
     // marginBottom: 5,

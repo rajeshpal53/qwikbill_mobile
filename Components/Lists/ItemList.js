@@ -87,7 +87,7 @@ export default function ItemList({
               <View style={styles.itemContent}>
                 <Text style={styles.title}>{item[titleKey].toUpperCase()}</Text>
                 <Text style={styles.subtitle}>{item[subtitleKey]}</Text>
-
+                {console.log("item --- , ", item[subtitleKey])}
                 {isExpanded && expandedItems(item)}
               </View>
 
@@ -189,10 +189,10 @@ export default function ItemList({
     <View style={{alignItems:"center"}}>
       <Image
         source={require("../../assets/noDataFound.png")}
-        style={{width:100, height:100}}
+        style={{width:"50%", height:100}}
       ></Image>
       <Text variant="titleLarge" style={{ color: "#555" }}>
-        No data found...
+        No data found
       </Text>
     </View>
   );

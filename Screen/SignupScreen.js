@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import {
   TextInput,
@@ -19,6 +19,8 @@ import { Feather } from "@expo/vector-icons";
 import axios from "axios";
 import { ScrollView } from "react-native-gesture-handler";
 import { useWindowDimensions } from "react-native";
+import { AuthContext } from "../Store/AuthContext";
+import { ActivityIndicator } from "react-native-paper";
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
@@ -31,6 +33,7 @@ const SignupSchema = Yup.object().shape({
 });
 
 const Signup = ({ navigation }) => {
+  const {isLoading, setIsLoading} = useContext(AuthContext);
   const { showSnackbar } = useSnackbar();
   const [expanded, setExpanded] = React.useState(false);
   const handlePress = () => setExpanded(!expanded);
@@ -43,6 +46,7 @@ const Signup = ({ navigation }) => {
     console.log(values);
 
     try {
+      setIsLoading(true);
       const postData = { ...values, enabled: true };
       const response = await axios.post(
         "https://wertone-billing.onrender.com/api/signup",
@@ -58,6 +62,8 @@ const Signup = ({ navigation }) => {
     } catch (error) {
       console.error("failed to signup", error);
       showSnackbar("failed to singup", "error");
+    }finally{
+      setIsLoading(false);
     }
 
     // Handle signup logic here
@@ -69,13 +75,24 @@ const Signup = ({ navigation }) => {
   };
   const theme = useTheme();
   const roleOptions = [
-    "admin",
-    "owner",
-    "employee",
-    "manager",
-    "create_only",
-    "read_only",
+    "Admin",
+    "Owner",
+    "Employee",
+    "Manager",
+    "Create_only",
+    "Read_only",
   ];
+
+  if (isLoading) {
+    {
+      <View
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      >
+        <ActivityIndicator size="large" />
+      </View>;
+    }
+  }
+
   return (
     <ScrollView contentContainerStyle={[styles.container, {height:height}]}>
       <Formik
@@ -220,7 +237,7 @@ const Signup = ({ navigation }) => {
             </Button>
             <TouchableOpacity onPress={() => navigation.navigate("login")}>
               <Text style={styles.signup}>
-                Alreay have an account?{" "}
+                Already have an account?{" "}
                 <Text style={styles.signupText}>login</Text>
               </Text>
             </TouchableOpacity>

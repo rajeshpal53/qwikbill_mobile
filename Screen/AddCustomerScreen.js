@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import AddCustomer from '../Components/AddCustomer'
-import { StyleSheet ,ScrollView} from 'react-native'
+import { StyleSheet ,ScrollView, View} from 'react-native'
 import { useSnackbar } from '../Store/SnackbarContext'
 import { createApi } from '../Util/UtilApi'
 import { ShopDetailContext } from '../Store/ShopDetailContext'
@@ -51,15 +51,15 @@ if(isLoading){
  }
   return (
 
-    <ScrollView contentContainerStyle={styles.container}>
+    // <View contentContainerStyle={styles.container}>
     <AddCustomer navigation={navigation} initialValues={initialValues} handleSubmit={handleSubmit}/>
-    </ScrollView>
+    // </View>
 
   )
 }
 const styles= StyleSheet.create({
     container:{
-      //  flex:1,
+       flex:1,
       justifyContent:"center",
     }
 })
