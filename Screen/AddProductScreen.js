@@ -50,13 +50,13 @@ const AddProductScreen = ({ navigation }) => {
     <ActivityIndicator size="large" />;
   }
   return (
-    <ScrollView style={styles.container}>
+    // <ScrollView style={styles.container}>
       <AddProduct
         navigation={navigation}
         initialValues={initialValues}
         handleSubmit={handleSubmit}
       />
-    </ScrollView>
+    // </ScrollView>
   );
 };
 styles = StyleSheet.create({

@@ -95,6 +95,12 @@ export default function ViewShopsScreen() {
 
   const handleView = (id) => {
     console.log(`Viewing shop with ID ${id}`);
+    navigation.navigate("StackNavigator", {
+      screen: "ShopDetails",
+      params: {
+        shopId: id,
+      },
+    })
   };
 
   const setModalVisible = (item) => {
@@ -106,7 +112,8 @@ export default function ViewShopsScreen() {
 
   const renderExpandedContent = (item) => (
     <View>
-      <Text style={{color: "#777", fontSize: 12}}>Show Information</Text>
+      <Text style={{color: "#777", fontSize: 12}}>{item.address[0].city}</Text>
+      <Text style={{color: "#777", fontSize: 12}}>{item.email}</Text>
     </View>
   );
 
@@ -121,7 +128,7 @@ export default function ViewShopsScreen() {
       <ItemList
         data={shopData}
         titleKey="shopname"
-        subtitleKey="address[0].city"
+        subtitleKey="phone"
         onDelete={handleDelete}
         onEdit={handleEdit}
         onView={handleView}

@@ -84,7 +84,7 @@ function EditProductScreen({route,navigation}) {
 
   return (
    <ScrollView>
-        <AddProduct initialValues={initialValues} handleSubmit={handleSubmit}/>
+        <AddProduct initialValues={initialValues} handleSubmit={handleSubmit} buttonText = "Update Product"/>
    </ScrollView>
   )
 }

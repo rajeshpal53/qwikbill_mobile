@@ -66,6 +66,8 @@ import ViewClientScreen from "./Screen/Client/ViewClientScreen.js";
 import VendorFormScreen from "./Screen/Vendors/VendorFormScreen.js";
 import TaxScreen from "./Screen/hsncode/TaxScreen.js";
 import CustomBackButton from "./Components/HeaderComponents/CustomBackButton.js";
+import CheckInternet from "./Screen/CheckInternet/CheckInternet.js";
+import ShopDetailScreen from "./ShopDetailScreen.js";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -141,7 +143,7 @@ function DrawerNavigator() {
           headerShown: true,
           // title:"myHome",
           headerTitle: !searchMode
-            ? (props) => <WertoneLogoTitle {...props} />
+            ? () => <WertoneLogoTitle title="Billing Software" />
             : "",
           headerTitleStyle: {
             backgroundColor: "white",
@@ -164,7 +166,7 @@ function DrawerNavigator() {
             <Icon name="file-tray-full-outline" color={color} size={size} />
           ),
           headerTitle: !searchMode
-            ? (props) => <WertoneLogoTitle {...props} />
+            ? () => <WertoneLogoTitle title="Invoices" />
             : "",
 
           headerTitleAlign: "left",
@@ -180,7 +182,7 @@ function DrawerNavigator() {
             <Icon name="pricetag-outline" color={color} size={size} />
           ),
           headerTitle: !searchMode
-            ? (props) => <WertoneLogoTitle {...props} />
+            ? () => <WertoneLogoTitle title="Products" />
             : "",
 
           headerTitleAlign: "left",
@@ -196,7 +198,7 @@ function DrawerNavigator() {
             <Icon name="people-outline" color={color} size={size} />
           ),
           headerTitle: !searchMode
-            ? (props) => <WertoneLogoTitle {...props} />
+            ? () => <WertoneLogoTitle  title="Peoples"/>
             : "",
 
           headerTitleAlign: "left",
@@ -211,7 +213,7 @@ function DrawerNavigator() {
             <Icon name="person-outline" color={color} size={size} />
           ),
           headerTitle: !searchMode
-            ? (props) => <WertoneLogoTitle {...props} />
+            ? () => <WertoneLogoTitle title="Profile Settings" />
             : "",
 
           headerTitleAlign: !searchMode ? "center" : "left",
@@ -231,19 +233,22 @@ function DrawerNavigator() {
   );
 }
 function StackNavigator() {
+  const [isConnected, setIsConnected] = useState(false);
   const [isLandscape, setIsLandscape] = useState(false);
   const { isAuthenticated, isLoading,  searchMode  } = useContext(AuthContext);
   const { shopDetails } = useContext(ShopDetailContext);
-  // console.log(isAuthenticated)
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
+
+  
+  // if (isLoading) {
+  //   return (
+  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+  //       <ActivityIndicator size="large" />
+  //     </View>
+  //   );
+  // }
 
   return (
+    <>
     <Stack.Navigator
       initialRouteName={isAuthenticated ? "Passcode" : "login"}
       screenOptions={{
@@ -284,7 +289,7 @@ function StackNavigator() {
         name="AddInvoice"
         component={AddInvoiceScreen}
         screenOptions={{
-          headerTitle:"Add Invoice"
+          headerTitle:"Create Invoice"
         }}
       />
       <Stack.Screen
@@ -457,7 +462,23 @@ function StackNavigator() {
           headerTitle: !searchMode ? "My Shops" : "", // Provide a default title
         }}
       />
+
+      <Stack.Screen
+        name="ShopDetails"
+        component={ShopDetailScreen}
+        options={{
+          headerRight: () => <HomeHeaderRight />,
+          headerTitle: !searchMode ? "My Shops" : "", // Provide a default title
+        }}
+      />
     </Stack.Navigator>
+    
+    <CheckInternet
+        isConnected={isConnected}
+        setIsConnected={setIsConnected}
+      />
+    </>
+    
   );
 }
 export default function App() {

@@ -46,6 +46,7 @@ export default function FilterInvoiceScreen() {
   const pickerRef = useRef();
   const inputRef = useRef(null);
   const navigation = useNavigation();
+  const flex=true
 
   useEffect(() => {
     async function fetchOptions() {
@@ -223,7 +224,9 @@ export default function FilterInvoiceScreen() {
         buttonsModes={buttonsModes}
         setButtonsModes={setButtonsModes}
         handleButtonPress={handleButtonPress}
-        toggleButtonsTexts={toggleButtonsTexts}/>
+        toggleButtonsTexts={toggleButtonsTexts}
+        flex={flex}
+        />
 
         <View style={styles.tabContainer}>
           <Button

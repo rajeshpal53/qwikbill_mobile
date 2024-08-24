@@ -61,7 +61,7 @@ function EditCustomerScreen({route,navigation}) {
           }
   return (
    <ScrollView>
-          <AddCustomer initialValues={initialValues} handleSubmit={submitHandler} />
+          <AddCustomer initialValues={initialValues} handleSubmit={submitHandler} buttonText="Edit Customer" />
    </ScrollView>
   )
 }

@@ -14,7 +14,7 @@ import { responsiveFontSize } from "react-native-responsive-dimensions";
   
 export const services = [
     {
-      name: "Add Invoice",
+      name: "Create Invoice",
       icon: <FontAwesome5 name="file-invoice" size={30} color="#26a0df" />,
       key: "1",
       navigateTo:"CreateInvoice"

@@ -25,6 +25,7 @@ const formatItems = (items) => {
 };
 
 const AddInvoiceScreen = ({ navigation, invoiceType, route }) => {
+  
   const { showSnackbar } = useSnackbar();
   const item = route?.params?.item;
   //  console.log("item is 11 ", item)

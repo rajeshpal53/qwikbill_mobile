@@ -2,7 +2,7 @@
 import { View, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 
-export default function ThreeToggleBtns({buttonsModes, setButtonsModes, toggleButtonsTexts, handleButtonPress}){
+export default function ThreeToggleBtns({buttonsModes, setButtonsModes, toggleButtonsTexts, handleButtonPress, flex}){
 
     return (
         <View style={styles.buttonContainer}>
@@ -13,11 +13,12 @@ export default function ThreeToggleBtns({buttonsModes, setButtonsModes, toggleBu
               // color:"#26a0df",
               // paddingVertical:1,
               // paddingHorizontal:5,
-              flex:1,
+              flex:buttonsModes.firstButtonMode ? 2 : 1,
               backgroundColor: buttonsModes.firstButtonMode
                 ? "#777"
                 : "transparent",
             }}
+            labelStyle={{flex:1}}
             mode={
               buttonsModes.firstButtonMode ? "contained" : "contained-disabled"
             }
@@ -30,11 +31,12 @@ export default function ThreeToggleBtns({buttonsModes, setButtonsModes, toggleBu
           textColor={buttonsModes.secondButtonMode ? "#fff" : "#26a0df"}
             style={{
               //   width: "50%",
-              flex:1,
+              flex:buttonsModes.secondButtonMode ? 2 : 1,
               backgroundColor: buttonsModes.secondButtonMode
                 ? "#777"
                 : "transparent",
             }}
+            labelStyle={{flex:1}}
             mode={
               buttonsModes.secondButtonMode
                 ? "contained"
@@ -49,11 +51,12 @@ export default function ThreeToggleBtns({buttonsModes, setButtonsModes, toggleBu
           textColor= {buttonsModes.thirdButtonMode ? "#fff" : "#26a0df"}
             style={{
               //   width: "50%",
-              flex:1,
+              flex: buttonsModes.thirdButtonMode ? 2 : 1,
               backgroundColor: buttonsModes.thirdButtonMode
                 ? "#777"
                 : "transparent",
             }}
+            labelStyle={{flex:1}}
             mode={
               buttonsModes.thirdButtonMode
                 ? "contained"
