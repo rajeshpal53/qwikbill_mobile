@@ -175,9 +175,9 @@ const AddProduct = ({ navigation, initialValues, handleSubmit, buttonText = "Add
               <View style={styles.suggestionsContainer}>
                 <ScrollView style={styles.suggestionsList}>
                   {options.map((option, index) => (
-                    <>
+                    <React.Fragment key={index}>
                       <List.Item
-                        key={index}
+                        // key={index}
                         title={option.taxName}
                         onPress={async () => {
                           setFieldValue("hsncode", option.taxName);
@@ -186,7 +186,7 @@ const AddProduct = ({ navigation, initialValues, handleSubmit, buttonText = "Add
                         }}
                       ></List.Item>
                       <Divider />
-                    </>
+                    </React.Fragment>
                   ))}
                 </ScrollView>
               </View>

@@ -67,7 +67,8 @@ import VendorFormScreen from "./Screen/Vendors/VendorFormScreen.js";
 import TaxScreen from "./Screen/hsncode/TaxScreen.js";
 import CustomBackButton from "./Components/HeaderComponents/CustomBackButton.js";
 import CheckInternet from "./Screen/CheckInternet/CheckInternet.js";
-import ShopDetailScreen from "./ShopDetailScreen.js";
+import ShopDetailScreen from "./Screen/Shops/ShopDetailScreen.js";
+import VendorDetailScreen from "./Screen/Vendors/VendorDetailScreen.js";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -170,6 +171,7 @@ function DrawerNavigator() {
             : "",
 
           headerTitleAlign: "left",
+          headerRight:() => "",
         }}
       />
 
@@ -460,6 +462,7 @@ function StackNavigator() {
         options={{
           headerRight: () => <HomeHeaderRight />,
           headerTitle: !searchMode ? "My Shops" : "", // Provide a default title
+          headerTitleAlign:(searchMode) ? "left" : "center"
         }}
       />
 
@@ -467,8 +470,15 @@ function StackNavigator() {
         name="ShopDetails"
         component={ShopDetailScreen}
         options={{
-          headerRight: () => <HomeHeaderRight />,
-          headerTitle: !searchMode ? "My Shops" : "", // Provide a default title
+          headerTitle: "My Shops", // Provide a default title
+        }}
+      />
+
+      <Stack.Screen
+        name="VendorDetail"
+        component={VendorDetailScreen}
+        options={{
+          headerTitle: "Vendor Details", // Provide a default title
         }}
       />
     </Stack.Navigator>

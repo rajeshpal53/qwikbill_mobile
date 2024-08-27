@@ -50,7 +50,10 @@ export default function Products({ navigation }) {
   const isFocused = useIsFocused();
   const [open, setOpen] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const {searchMode, setSearchMode} = useContext(AuthContext);
+
   const { showSnackbar } = useSnackbar();
+
   const onStateChange = ({ open }) => setOpen(open);
 
   console.log("shopDetails p23 , ", shopDetails._id);
@@ -83,6 +86,16 @@ export default function Products({ navigation }) {
     
     fetchSearchingData();
   }, [searchQuery])
+
+  useEffect(() => {
+    if (!isFocused) {
+      // Reset states when screen is not focused
+      setOpen(false);
+      setIsModalVisible(false);
+      setIsUploadModalVisible(false);
+      setSearchMode(false);
+    }
+  }, [isFocused]);
 
   if (isLoading) {
     return <ActivityIndicator size="large" />;

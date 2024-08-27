@@ -2,7 +2,7 @@
 import { View, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 
-export default function ThreeToggleBtns({buttonsModes, setButtonsModes, toggleButtonsTexts, handleButtonPress, flex}){
+export default function ThreeToggleBtns({buttonsModes, setButtonsModes, toggleButtonsTexts, handleButtonPress, flex, filter, setFilter}){
 
     return (
         <View style={styles.buttonContainer}>
