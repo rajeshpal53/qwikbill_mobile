@@ -32,7 +32,6 @@ const fetchOptions = async (input, shopDetails) => {
   const data = await response;
   return data.result; // Adjust according to your API response
 };
-
 export default function VendorFormScreen({ route, navigation }) {
   const { showSnackbar } = useSnackbar();
   const handlePress = () => setExpanded(!expanded);

@@ -87,7 +87,8 @@ export default function VendorListScreen() {
   };
 
   const handleView = (id) => {
-    // navigation.navigate("CustomerDetail", { customerId: id });
+    // console.log("vendor Viewed ,", id);
+    navigation.navigate("VendorDetail", { vendorId: id });
   };
 
   const setModalVisible = (item) => {
@@ -139,6 +140,7 @@ export default function VendorListScreen() {
   ];
 
   return (
+
     <View style={styles.container}>
       <View>
         <ItemList
@@ -158,13 +160,14 @@ export default function VendorListScreen() {
         style={styles.fab}
         onPress={() => navigation.navigate("VendorForm")}
       />
-      <FAB
+      {(vendors.length > 0) && (<FAB
         icon="filter"
         style={styles.filterfab}
         onPress={() => {
           openModel();
         }}
-      />
+      />)}
+
       <InvoiceFilterModel
         style={{ backgroundColor: "lightblue" }}
         isModalVisible={filterModal}
@@ -210,5 +213,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "white",
     flex: 1,
+
   },
 });

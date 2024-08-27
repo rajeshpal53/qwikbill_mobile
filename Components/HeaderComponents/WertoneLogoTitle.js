@@ -1,6 +1,6 @@
 import { Image, View, StyleSheet } from "react-native";
 import {Text} from "react-native-paper"
-export default function wertoneLogoTitle() {
+export default function wertoneLogoTitle({title}) {
   return (
     <View style={{ flexDirection: "row", gap:10 }}>
       <View style={{alignItems:"center"}}>
@@ -10,7 +10,6 @@ export default function wertoneLogoTitle() {
         />
         {/* <Text style={styles.whiteColor}>WERTONE</Text> */}
       </View>
-
       <View style={{justifyContent:"center" }}>
         <Text  style={styles.whiteColor}>Invoicely</Text>
         {/* <Text style={styles.whiteColor}></Text> */}

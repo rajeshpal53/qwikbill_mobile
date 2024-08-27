@@ -1502,6 +1502,11 @@
   dependencies:
     invariant "^2.2.4"
 
+"@react-native-community/netinfo@^11.3.2":
+  version "11.3.2"
+  resolved "https://registry.npmjs.org/@react-native-community/netinfo/-/netinfo-11.3.2.tgz"
+  integrity sha512-YsaS3Dutnzqd1BEoeC+DEcuNJedYRkN6Ef3kftT5Sm8ExnCF94C/nl4laNxuvFli3+Jz8Df3jO25Jn8A9S0h4w==
+
 "@react-native-google-signin/google-signin@^12.2.1":
   version "12.2.1"
   resolved "https://registry.npmjs.org/@react-native-google-signin/google-signin/-/google-signin-12.2.1.tgz"
@@ -3341,13 +3346,17 @@ expo-modules-core@1.12.21:
   dependencies:
     invariant "^2.2.4"
 
+
+expo-network@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.npmjs.org/expo-network/-/expo-network-6.0.1.tgz"
+  integrity sha512-WXXvkt1H75ojHVa263Jq+qjIyMzCfaoRzHKzOBMuSyDDcma9WpvKJpR1YpEQZH/zDhSfkKvh7Q3wRGOJr1J+dQ==
 expo-modules-core@^1.12.22:
   version "1.12.22"
   resolved "https://registry.npmjs.org/expo-modules-core/-/expo-modules-core-1.12.22.tgz"
   integrity sha512-MX9qJRuVszyuGksOZ1QkMcUGcAZ1o2AmDigkQAl9yxqFtwEpBOxELs3rXeQol7WiEabvK+bERTF9LtSTDCVCYw==
   dependencies:
     invariant "^2.2.4"
-
 expo-screen-orientation@^7.0.5:
   version "7.0.5"
   resolved "https://registry.npmjs.org/expo-screen-orientation/-/expo-screen-orientation-7.0.5.tgz"

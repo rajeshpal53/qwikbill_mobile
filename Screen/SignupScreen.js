@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
+import React, { useState, useContext } from "react";
+import { View, StyleSheet, TouchableOpacity, Image, Modal } from "react-native";
 import {
   TextInput,
   Button,
@@ -19,6 +19,8 @@ import { Feather } from "@expo/vector-icons";
 import axios from "axios";
 import { ScrollView } from "react-native-gesture-handler";
 import { useWindowDimensions } from "react-native";
+import { AuthContext } from "../Store/AuthContext";
+import { ActivityIndicator } from "react-native-paper";
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
@@ -30,18 +32,20 @@ const SignupSchema = Yup.object().shape({
 });
 
 const Signup = ({ navigation }) => {
+  const [ isLoading, setIsLoading ] = useState(false);
   const { showSnackbar } = useSnackbar();
   const [expanded, setExpanded] = React.useState(false);
   const handlePress = () => setExpanded(!expanded);
   const [selected, setSelected] = React.useState("");
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [eyeOn, setEyeOn] = useState(false);
-  const {width, height}= useWindowDimensions();
+  const { width, height } = useWindowDimensions();
 
   const handleSignup = async (values) => {
-    console.log(values);
+    console.log(values, " --values");
 
     try {
+      setIsLoading(true);
       const postData = { ...values, enabled: true,role:"admin"};
       const response = await axios.post(
         "http://192.168.29.81:8888/api/signup",
@@ -57,6 +61,8 @@ const Signup = ({ navigation }) => {
     } catch (error) {
       console.error("failed to signup", error);
       showSnackbar("failed to singup", "error");
+    } finally {
+      setIsLoading(false);
     }
 
     // Handle signup logic here
@@ -68,7 +74,20 @@ const Signup = ({ navigation }) => {
   };
   const theme = useTheme();
   return (
-    <ScrollView contentContainerStyle={[styles.container, {height:height}]}>
+    <ScrollView contentContainerStyle={[styles.container, { height: height }]}>
+      <Modal
+        transparent={true}
+        animationType="none"
+        visible={isLoading}
+        onRequestClose={() => {}}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.activityIndicatorWrapper}>
+            <ActivityIndicator size="large" color="#fff" />
+            <Text style={{ color: "#fff", fontSize: 20 }}>Loading...</Text>
+          </View>
+        </View>
+      </Modal>
       <Formik
         initialValues={{
           name: "",
@@ -88,11 +107,12 @@ const Signup = ({ navigation }) => {
           touched,
           setFieldValue,
         }) => (
-          <Card style={{ 
-            backgroundColor: "#ffffff", 
-            flex:1,
-
-            }}>
+          <Card
+            style={{
+              backgroundColor: "#ffffff",
+              flex: 1,
+            }}
+          >
             <View
               style={{
                 justifyContent: "spaceEvenly",
@@ -191,7 +211,7 @@ const Signup = ({ navigation }) => {
             </Button>
             <TouchableOpacity onPress={() => navigation.navigate("login")}>
               <Text style={styles.signup}>
-                Alreay have an account?{" "}
+                Already have an account?{" "}
                 <Text style={styles.signupText}>login</Text>
               </Text>
             </TouchableOpacity>
@@ -252,6 +272,21 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     fontWeight: "bold",
   
+  },
+  modalBackground: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  activityIndicatorWrapper: {
+    backgroundColor: "rgba(0, 0, 0, 0)",
+    height: 100,
+    width: 100,
+    borderRadius: 10,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

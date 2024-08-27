@@ -7,6 +7,7 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   Image,
+  ScrollView
 } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -14,7 +15,6 @@ import { HelperText, Button, Card, Text, TextInput } from "react-native-paper";
 import { useSnackbar } from "../../Store/SnackbarContext";
 import { usePasskey } from "../../Store/PasskeyContext";
 import { useWindowDimensions } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 
 const PasscodeSchema = Yup.object().shape({
   passcode: Yup.string()
@@ -39,8 +39,10 @@ const CreateNewPasscode = ({ navigation }) => {
     <>
       <StatusBar style="light" backgroundColor={"#0c3b73"} />
       <SafeAreaView style={styles.SafeAreaView}>
-        <KeyboardAvoidingView behavior="padding">
-          <View style={[styles.overlay, { height: 0.4 * height }]}></View>
+        {/* <KeyboardAvoidingView behavior="padding"> */}
+        <View style={[styles.overlay, { height: 0.4 * height }]}></View>
+        <ScrollView>
+          
           <View style={[styles.scrollViewChild, { height: height }]}>
             <View
               style={{
@@ -187,7 +189,8 @@ const CreateNewPasscode = ({ navigation }) => {
               </Card>
             </View>
           </View>
-        </KeyboardAvoidingView>
+          </ScrollView>
+        {/* </KeyboardAvoidingView> */}
       </SafeAreaView>
     </>
   );
