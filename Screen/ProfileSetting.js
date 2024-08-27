@@ -11,26 +11,37 @@ import {
 } from "react-native-paper";
 import { AuthContext } from "../Store/AuthContext";
 import { useIsFocused } from "@react-navigation/native";
+import { createApi } from "../Util/UtilApi";
 function ProfileSetting({ navigation }) {
   const { loginDetail, getData, isLoading, isAuthenticated, logout } =
     useContext(AuthContext);
   const [loginDetail1, setLoginDetail1] = useState(loginDetail);
   const [newLoading, setNewLoading] = useState(true);
   const isFocused = useIsFocused();
-  const logoutHandler = () => {
-    logout();
-    if (isLoading) {
-      return (
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <ActivityIndicator size="large" />
-        </View>
-      );
-    }
-    if (!isAuthenticated) {
+  const logoutHandler = async() => {
+    try{
       navigation.navigate("StackNavigator", { screen: "login" });
+      const response= await createApi("api/logout",{
+        "Content-Type": "application/json",
+      } )
+      console.log(response)
+      logout();
+      if (isLoading) {
+        return (
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <ActivityIndicator size="large" />
+          </View>
+        );
+      }
+      if (!isAuthenticated||response.success) {
+        navigation.navigate("StackNavigator", { screen: "login" });
+      }
+    }catch(err){
+      console.error("failed to logout",err)
     }
+   
   };
   useEffect(() => {
     async function loginDetailHandler() {
@@ -51,24 +62,18 @@ function ProfileSetting({ navigation }) {
   if (newLoading) {
     return <ActivityIndicator size="large" />;
   }
+  const editProfileHandler=()=>{
+    navigation.navigate("editProfile",{login:login})
+  }
   return (
     <View style={styles.container}>
-      <Button
-       icon={() => <Icon name="log-out-outline" size={20} color="white" />}
-        onPress={logoutHandler}
-        mode="contained"
-        style={styles.logout}
-       
-      >
-        LogOut
-      </Button>
       <Card style={styles.card}>
-        <Avatar.Image
+        <Avatar.Text
           size={100}
-          source={require("../assets/profile.png")}
+          label={login.name?.charAt(0)}
           style={styles.avatar}
         />
-        <Card.Content style={{ alignSelf: "center" }}>
+        <Card.Content style={{ alignSelf: "center",margin:20}}>
           <Title
             style={styles.titleStyle}
           >{`${login.name} ${login.surname}`}</Title>
@@ -81,17 +86,19 @@ function ProfileSetting({ navigation }) {
           <Paragraph style={styles.paragraph}>Role: {login.role}</Paragraph>
         </Card.Content>
         <Card.Actions>
-          <Button icon="pencil" mode="contained" labelStyle={styles.buttonText}>
+          <Button icon="pencil" mode="contained" buttonColor="#26a0df" labelStyle={styles.buttonText} onPress={editProfileHandler}>
             Edit
           </Button>
           <Button
-            icon="lock"
-            mode="contained"
-            color="blue"
-            labelStyle={styles.buttonText}
-          >
-            Update Password
-          </Button>
+       icon={() => <Icon name="log-out-outline" size={20} color="white" />}
+        buttonColor="#26a0df"
+        onPress={logoutHandler}
+        mode="contained"
+        labelStyle={styles.buttonText}
+       
+      >
+        LogOut
+      </Button>
         </Card.Actions>
       </Card>
     </View>
@@ -110,14 +117,20 @@ const styles = StyleSheet.create({
   },
   card: {
     width: "100%",
+    height:"100%",
     color: "#fff",
+    
+    justifyContent:"center"
   },
   logout:{ alignSelf: "flex-end", marginBottom: 10, backgroundColor:"#0c3b73"},
   paragraph: {
     marginVertical: 10,
+    fontSize:15,
+    paddingVertical:5
   },
   titleStyle: {
     fontWeight: "bold",
+    fontSize:25,
     marginBottom: 10,
     alignSelf: "center",
   },

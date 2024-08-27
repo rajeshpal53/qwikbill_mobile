@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { FAB, ToggleButton } from "react-native-paper";
 // import { Modal } from 'react-native';
@@ -8,9 +8,19 @@ export default function InvoiceFilterModel({
   isModalVisible,
   setModalVisible,
   toggleModal,
+  vendorFilter
 }) {
   const [sortBy, setSortBy] = useState("");
-  const values = ["paid", "unpaid", "reset", "old to new", "recent"];
+  const [values,setValues]=useState([])
+
+useEffect(()=>{
+  if(vendorFilter){
+    setValues(["paid", "unpaid", "reset"]);
+  }else{
+    setValues(["paid", "unpaid", "reset", "old to new", "recent"]);
+  }
+},[vendorFilter])
+  
   //   const toggleModal = () => {
   //     setModalVisible(!isModalVisible);
   //   };

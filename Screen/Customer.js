@@ -14,10 +14,6 @@ import { ShopDetailContext } from "../Store/ShopDetailContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import FileUploadModal from "../Components/BulkUpload/FileUploadModal";
 import axios from "axios";
-
-import FabGroup from "../Components/FabGroup";
-
-
 const fetchSearchData = async (searchQuery, shopId) => {
   try {
     console.log("shopid , ,", shopId)
@@ -48,6 +44,7 @@ export default function Customer({ navigation }) {
   const onStateChange = ({ open }) => setOpen(open);
   const {searchMode, setSearchMode} = useContext(AuthContext);
 
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -59,6 +56,7 @@ export default function Customer({ navigation }) {
       } finally {
         setIsLoading(false);
         setRefresh(false);
+        setOpen(false)
       }
     }
     fetchData();
@@ -133,7 +131,7 @@ export default function Customer({ navigation }) {
 
     try {
 
-      const response = await axios.post('https://wertone-billing.onrender.com/api/people/upload', formData, {
+      const response = await axios.post('http://192.168.29.81:8888/api/people/upload', formData, {
 
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -258,6 +256,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent:"center",
+    backgroundColor:"#fff"
   },
   fab: {
     position: "absolute",

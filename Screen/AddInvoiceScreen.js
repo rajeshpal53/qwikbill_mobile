@@ -23,9 +23,7 @@ const formatItems = (items) => {
   // console.log(i);
   return i;
 };
-
-const AddInvoiceScreen = ({ navigation, invoiceType, route }) => {
-  
+const AddInvoiceScreen = ({ navigation, invoiceType, route,invoiceNumber }) => {
   const { showSnackbar } = useSnackbar();
   const item = route?.params?.item;
   //  console.log("item is 11 ", item)
@@ -48,6 +46,7 @@ const AddInvoiceScreen = ({ navigation, invoiceType, route }) => {
     <ScrollView nestedScrollEnabled={true}>
       <AddInvoice
         item={item}
+        invoiceNumber={invoiceNumber}
         initialValues={initialValues}
         invoiceType={invoiceType}
         navigation={navigation}

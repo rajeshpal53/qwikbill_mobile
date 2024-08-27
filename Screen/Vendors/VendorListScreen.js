@@ -40,7 +40,8 @@ export default function VendorListScreen() {
     async function fetchData() {
       setIsLoading(true);
       try {
-        const response = await readApi(fetchingUrl + shopDetails._id);
+        const url=`${fetchingUrl}${shopDetails._id}`
+        const response = await readApi(url);
         setVendors(response.result);
       } catch (error) {
         console.error("error", error);
@@ -82,7 +83,6 @@ export default function VendorListScreen() {
   };
 
   const handleEdit = (item) => {
-    // console.log("item under edit ", item)
     navigation.navigate("VendorForm", { vendor: item });
   };
 
@@ -114,18 +114,18 @@ export default function VendorListScreen() {
 
     if (sortBy === "paid") {
       setFetchingurl(
-        `api/vendor/filter?filter=paymentStatus&equal=paid&shop=${shopDetails._id}`
+        `api/vendor/filter?filter=paymentStatus&equal=paid&shop=`
       );
     } else if (sortBy === "unpaid") {
       setFetchingurl(
-        `api/vendor/filter?filter=paymentStatus&equal=unpaid&shop=${shopDetails._id}`
+        `api/vendor/filter?filter=paymentStatus&equal=unpaid&shop=`
       );
     } else {
-      setFetchingurl(`api/vendor/list?shop=${shopDetails._id}`);
+      setFetchingurl(`api/vendor/list?shop=`);
     }
-
     // Only update if filterData is not empty
     if (filterData.length > 0) {
+
     }
     setFilterModal(!filterModal);
   };
@@ -140,8 +140,9 @@ export default function VendorListScreen() {
   ];
 
   return (
-    <>
-      <View style={styles.container}>
+
+    <View style={styles.container}>
+      <View>
         <ItemList
           data={vendors}
           titleKey="paymentStatus"
@@ -166,11 +167,13 @@ export default function VendorListScreen() {
           openModel();
         }}
       />)}
+
       <InvoiceFilterModel
         style={{ backgroundColor: "lightblue" }}
         isModalVisible={filterModal}
         setModalVisible={setFilterModal}
         toggleModal={toggleModal}
+        vendorFilter={true}
       />
       {isModalVisible && (
         <DeleteModal
@@ -179,7 +182,7 @@ export default function VendorListScreen() {
           handleDelete={handleDelete}
         />
       )}
-    </>
+    </View>
   );
 }
 
@@ -208,5 +211,8 @@ const styles = StyleSheet.create({
   },
   container: {
     justifyContent: "center",
+    backgroundColor: "white",
+    flex: 1,
+
   },
 });
