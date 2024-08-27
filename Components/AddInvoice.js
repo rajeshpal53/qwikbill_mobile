@@ -69,7 +69,25 @@ const validationSchema = Yup.object().shape({
       })
     )
     .required("Must have items")
-    .min(1, "Minimum of 1 item"),
+    .min(1, "Minimum of 1 item")
+    .test("unique", "Items must be unique", function (items) {
+      const itemNames = items.map((item) => item.itemName);
+      const duplicateIndices = itemNames.reduce((acc, itemName, index, array) => {
+        if (array.indexOf(itemName) !== index) {
+          acc.push(index);
+        }
+        return acc;
+      }, []);
+      
+      if (duplicateIndices.length > 0) {
+        // If duplicates are found, create an error for each duplicate
+        return this.createError({
+          path: `items[${duplicateIndices[0]}].itemName`, // Only show the error on the first duplicate found
+          message: "Duplicate items found. Please ensure all items are unique.",
+        });
+      }
+      return true;
+    }),
 });
 const AddInvoice = ({
   item,
@@ -99,7 +117,7 @@ const AddInvoice = ({
         const day = currentDate.getDate().toString().padStart(2, "0");
         const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
         const year = currentDate.getFullYear();
-        const formattedDate = `${day}-${month}-${year}`;
+        const formattedDate = `${year}-${month}-${day}`;
         setFieldValue("date", formattedDate);
       },
       mode: "date",
@@ -108,13 +126,24 @@ const AddInvoice = ({
   };
 
   function setItemOptionsArraytrue(index) {
+
+    if(showOptions){
+      setShowOptions(false);
+    }
+    
     setShowItemOptionsArray(prevArray => {
-      // Create a new array with the updated value at index 0
-      const newArray = [...prevArray];
+      // Create a new array with the same length as prevArray
+      const newArray = new Array(prevArray.length).fill(false);
+      // Set the value at the specified index to true
       newArray[index] = true;
       return newArray;
     });
 }
+
+// Function to set all elements to false
+const setAllToFalse = () => {
+  setShowItemOptionsArray(showItemOptionsArray.map(() => false));
+};
 
   function setItemOptionsArrayfalse(index) {
     setShowItemOptionsArray(prevArray => {
@@ -136,6 +165,8 @@ const AddInvoice = ({
       initialValues={initialValues}
       style={styles.container}
       validationSchema={validationSchema}
+      validateOnChange={true}
+      validateOnBlur={true}
       onSubmit={async (values, { resetForm }) => {
         // navigation.navigate("StackNavigator", {
         //   screen: "ReviewAndPay",
@@ -200,6 +231,7 @@ const AddInvoice = ({
                     );
                     setOptions(fetchedOptions);
                     setShowOptions(true);
+                    setAllToFalse();
                   } else {
                     setShowOptions(false);
                   }

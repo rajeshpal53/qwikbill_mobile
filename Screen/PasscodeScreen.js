@@ -209,6 +209,7 @@ export default function PasscodeScreen({ navigation }) {
         <KeyboardAvoidingView style={{ flex:1 }}>
           <View style={[styles1.overlay, {height:0.30*height}]}></View>
 
+          <ScrollView>
           <View style={[styles.scrollViewChild, {height:height}]}>
             <View
               style={{
@@ -435,6 +436,7 @@ export default function PasscodeScreen({ navigation }) {
               </View>
             </View>
           </View>
+          </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
     </>

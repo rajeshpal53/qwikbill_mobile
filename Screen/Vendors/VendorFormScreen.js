@@ -16,7 +16,7 @@ const validationSchema = Yup.object().shape({
     paymentStatus: Yup.string()
       .required("paymentStatus is required"),
     invoiceNumber: Yup.string()
-      .required("Email is required"),
+      .required("Invoice Number is required"),
     amount: Yup.string()
       .required("amount number is required"),
     people: Yup.string()
@@ -46,9 +46,9 @@ export default function VendorFormScreen({route,navigation}) {
            <Formik
              initialValues={{
                 paymentStatus: data?.paymentStatus|| "",
-                invoiceNumber: data?.invoiceNumber.toString() || "",
-                amount: data?.amount.toString() || "",
-                people: data?.people.name||""
+                invoiceNumber: data?.invoiceNumber?.toString() || "",
+                amount: data?.amount?.toString() || "",
+                people: data?.people?.name||""
              }}
              validationSchema={validationSchema}
              onSubmit={async (values, {resetForm}) => {

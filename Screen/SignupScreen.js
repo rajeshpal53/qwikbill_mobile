@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Image, Modal } from "react-native";
 import {
   TextInput,
   Button,
@@ -33,17 +33,17 @@ const SignupSchema = Yup.object().shape({
 });
 
 const Signup = ({ navigation }) => {
-  const {isLoading, setIsLoading} = useContext(AuthContext);
+  const [ isLoading, setIsLoading ] = useState(false);
   const { showSnackbar } = useSnackbar();
   const [expanded, setExpanded] = React.useState(false);
   const handlePress = () => setExpanded(!expanded);
   const [selected, setSelected] = React.useState("");
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [eyeOn, setEyeOn] = useState(false);
-  const {width, height}= useWindowDimensions();
+  const { width, height } = useWindowDimensions();
 
   const handleSignup = async (values) => {
-    console.log(values);
+    console.log(values, " --values");
 
     try {
       setIsLoading(true);
@@ -62,7 +62,7 @@ const Signup = ({ navigation }) => {
     } catch (error) {
       console.error("failed to signup", error);
       showSnackbar("failed to singup", "error");
-    }finally{
+    } finally {
       setIsLoading(false);
     }
 
@@ -83,18 +83,31 @@ const Signup = ({ navigation }) => {
     "Read_only",
   ];
 
-  if (isLoading) {
-    {
-      <View
-        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-      >
-        <ActivityIndicator size="large" />
-      </View>;
-    }
-  }
+  // if (isLoading) {
+  //   {
+  //     <View
+  //       style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+  //     >
+  //       <ActivityIndicator size="large" />
+  //     </View>;
+  //   }
+  // }
 
   return (
-    <ScrollView contentContainerStyle={[styles.container, {height:height}]}>
+    <ScrollView contentContainerStyle={[styles.container, { height: height }]}>
+      <Modal
+        transparent={true}
+        animationType="none"
+        visible={isLoading}
+        onRequestClose={() => {}}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.activityIndicatorWrapper}>
+            <ActivityIndicator size="large" color="#fff" />
+            <Text style={{ color: "#fff", fontSize: 20 }}>Loading...</Text>
+          </View>
+        </View>
+      </Modal>
       <Formik
         initialValues={{
           name: "",
@@ -115,11 +128,12 @@ const Signup = ({ navigation }) => {
           touched,
           setFieldValue,
         }) => (
-          <Card style={{ 
-            backgroundColor: "#ffffff", 
-            flex:1,
-
-            }}>
+          <Card
+            style={{
+              backgroundColor: "#ffffff",
+              flex: 1,
+            }}
+          >
             <View
               style={{
                 justifyContent: "spaceEvenly",
@@ -133,7 +147,14 @@ const Signup = ({ navigation }) => {
                 style={styles.img}
               />
               <Text variant="titleLarge" style={styles.wertoneTag}>
-                Welcome to <Text variant="titleLarge" style={[styles.wertoneTag,{color:"#0c3b73"}]}> Wertone  </Text> 
+                Welcome to{" "}
+                <Text
+                  variant="titleLarge"
+                  style={[styles.wertoneTag, { color: "#0c3b73" }]}
+                >
+                  {" "}
+                  Wertone{" "}
+                </Text>
               </Text>
             </View>
             <TextInput
@@ -298,6 +319,21 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     fontWeight: "bold",
     paddingLeft: 50,
+  },
+  modalBackground: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  activityIndicatorWrapper: {
+    backgroundColor: "rgba(0, 0, 0, 0)",
+    height: 100,
+    width: 100,
+    borderRadius: 10,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 
