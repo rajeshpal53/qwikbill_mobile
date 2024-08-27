@@ -19,13 +19,14 @@ function DropDownList() {
  const [selectedShop, setSelectedShop ] = useState("");
  console.log(shopDetails,"newShopDetails")
  const pickerRef = useRef();
-
-
  async function fetchOptions() {
   setIsLoading(true);
   const response = await readApi(`api/shop/list`);
   setOptions(response.result);
-  addShopDetails(response.result[0])
+  const newResponse= await readApi(`api/invoice/list?shop=${response.result[0]._id}`)
+  const count=newResponse.result.length
+  addShopDetails({...response.result[0],count:count})
+
   setIsLoading(false);
   // Adjust according to your API respons
   // setSelectedOption(data.result[0].shopname)
@@ -38,9 +39,11 @@ function DropDownList() {
 
 
 
-  const getSelectedOption = () => {
+  const getSelectedOption =async () => {
     const selectedId = options.find(option => option.shopname === selectedShop);
-    addShopDetails(selectedId)
+    const newResponse= await readApi(`api/invoice/list?shop=${selectedId._id}`)
+    count= newResponse.result.length
+    addShopDetails({...selectedId,count:count})
   } 
   
   useEffect(() => {

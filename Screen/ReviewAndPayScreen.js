@@ -199,14 +199,14 @@ export default function ReviewAndPayScreen({ navigation }) {
           postData,
           headers
         );
-        showSnackbar("invoice Added Successfull", "success");
+        showSnackbar("invoice generated Successfully", "success");
         if (response) {
           console.log(response.result);
           return response.result;
         }
       } catch (error) {
         // console.error("Failed to add invoice", response);
-        showSnackbar("Failed to add invoice", "error");
+        showSnackbar("Failed to generate invoice", "error");
       }
     }
   };

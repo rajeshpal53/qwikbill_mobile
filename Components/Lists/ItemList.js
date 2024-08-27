@@ -186,10 +186,10 @@ export default function ItemList({
       keyExtractor={(item, index) => index}
     />
   ) : (
-    <View style={{alignItems:"center"}}>
+    <View style={{alignItems:"center",backgroundColor:"white"}}>
       <Image
-        source={require("../../assets/noDataFound.png")}
-        style={{width:100, height:100}}
+        source={require("../../assets/noDataFoundImage2.jpg")}
+        style={{width:300, height:300}}
       ></Image>
       <Text variant="titleLarge" style={{ color: "#555" }}>
         No data found...
@@ -212,6 +212,7 @@ const styles = StyleSheet.create({
   },
   itemContent: {
     flex: 1,
+    backgroundColor:"white"
     // marginLeft: 20,
     // backgroundColor:"lightblue"
   },

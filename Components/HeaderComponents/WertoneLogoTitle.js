@@ -12,7 +12,7 @@ export default function wertoneLogoTitle() {
       </View>
 
       <View style={{justifyContent:"center" }}>
-        <Text  style={styles.whiteColor}>Billing Software</Text>
+        <Text  style={styles.whiteColor}>Invoicely</Text>
         {/* <Text style={styles.whiteColor}></Text> */}
       </View>
     </View>

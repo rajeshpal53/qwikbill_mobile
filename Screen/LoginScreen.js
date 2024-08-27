@@ -9,13 +9,13 @@ import { createApi } from "../Util/UtilApi";
 import { usePasskey } from "../Store/PasskeyContext";
 import axios from "axios";
 import { useWindowDimensions } from "react-native";
-
+import { useSnackbar } from "../Store/SnackbarContext";
 const LoginScreen = ({ navigation }) => {
   const { login, isAuthenticated, isLoading, storeData, setLoginDetail } =
     useContext(AuthContext);
   const { isPasskey } = usePasskey();
   const { width, height } = useWindowDimensions();
-
+  const { showSnackbar } = useSnackbar();
   const validationSchema = Yup.object().shape({
     email: Yup.string()
       .email("Invalid email address")
@@ -27,8 +27,10 @@ const LoginScreen = ({ navigation }) => {
 
 
   const handleLogin = async (values, { resetForm }) => {
+    try{
+
     const response = await axios.post(
-      "https://wertone-billing.onrender.com/api/login",
+      "http://192.168.29.81:8888/api/login",
       JSON.stringify(values),
       {
         headers: {
@@ -60,39 +62,14 @@ const LoginScreen = ({ navigation }) => {
       }
       resetForm();
     }
-  };
-
-//invoicepeople
-//   const handleLogin = async (values,{resetForm} ) => {
-//    const response= await axios.post("http://192.168.1.7:8888/api/login",JSON.stringify(values),{headers:{
-//       'Content-Type': 'application/json',
-//     }})
-//     console.log(response.data,"newResponse")
-//       const data = await response.data
-//        await storeData("loginDetail",data.result);  
-//       setLoginDetail(data.result) ;    
-//      const token='dummyToken'
-//       login(token)
-//       if (isLoading) {
-//         {
-//           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-//             <ActivityIndicator size="large" />
-//           </View>
-//         }
-//        }
-//       if(isAuthenticated){
-//         // navigation.navigate("wertone",{screen:'invoice'})
-//         if(isPasskey){
-//           navigation.navigate('Passcode');
-//         }else{
-//           navigation.navigate('CreateNewPasscode');
-
-//         }
-//         resetForm();
-//       }      
-// }
-
-
+  }catch(error){
+    if (error.response.status === 403) {
+      showSnackbar('Wrong credentials',"error"); // Custom message for 403
+    } else {
+     showSnackbar(error.response.data.message,"error"); // Message from server response
+    }
+  }
+  }
   return (
     <Formik
       initialValues={{ email: "", password: "" }}
@@ -112,15 +89,17 @@ const LoginScreen = ({ navigation }) => {
       
           <Card style={{ 
             backgroundColor: "#ffffff", 
-            height:"100%"
+            height:"100%",
              }}>
               <View style={{height:"100%"}}>
                 
               {/* <View style={{flex:1, backgroundColor:"gray"}} ></View> */}
               <View
               style={{
-                justifyContent: "spaceEvenly",
+                justifyContent: "center",
                 flex:1,
+                flexDirection:"row",
+                alignItems:"center",
                 paddingHorizontal: 8,
                 // marginBottom: 50,
               }}
@@ -131,7 +110,7 @@ const LoginScreen = ({ navigation }) => {
               />
               <Text variant="titleLarge" style={styles.wertoneTag}>
                 {" "}
-                Wertone billing Software
+                Invoicely
               </Text>
             </View>
               <View style={{ flex: 1, 
@@ -265,16 +244,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   img: {
-    height: 70,
-    width: 70,
+    height: 60,
+    width: 60,
     elevation: 2,
     marginVertical: 10,
   },
   wertoneTag: {
-    color: "#777777",
+    color: "#0c3b73",
     marginVertical: 5,
     fontWeight: "bold",
-    paddingLeft: 50,
   },
   link: {
     alignSelf: "flex-end",

@@ -20,6 +20,7 @@ import AddInvoice from "./AddInvoice";
 import AddInvoiceScreen from "../Screen/AddInvoiceScreen";
 import DropDownList from "../UI/DropDownList";
 import ThreeToggleBtns from "./ThreeToggleBtns";
+import { ShopDetailContext } from "../Store/ShopDetailContext";
 
 
 export default function CreateInvoice({ navigation }) {
@@ -27,15 +28,9 @@ export default function CreateInvoice({ navigation }) {
   const windowHeight = useWindowDimensions().height;
   const { selectedShop, setSelectedShop } = useContext(AuthContext);
   const [invoiceType, setInvoiceType] = useState("provInvoice")
-
   const pickerRef = useRef();
-
-  const initialValues = {
-    client: "",
-    phone : "",
-
-  }
-
+  const{shopDetails}=useContext(ShopDetailContext)
+  const invoiceNumber=1000+shopDetails.count+1
   // const [buttonsModes, setButtonsModes] = useState({
   //   recentButtonMode: false,
   //   provInvoiceButtonMode: true,
@@ -155,7 +150,6 @@ export default function CreateInvoice({ navigation }) {
         </View>
 
         {/* 3 */}
-       
         <ThreeToggleBtns 
         buttonsModes={buttonsModes}
         setButtonsModes={setButtonsModes}
@@ -166,11 +160,11 @@ export default function CreateInvoice({ navigation }) {
         <View style={styles.formContainer}>
           <View style={styles.formHeading}>
             <Text style={{ fontSize: 13 }}>Provisional Invoice No :- </Text>
-            <Text style={{ fontSize: 13 }}>1234</Text>
+            <Text style={{ fontSize: 13 }}>{invoiceNumber}</Text>
           </View>
 
           {/* <AddInvoice initialValues={initialValues}/> */}
-          <AddInvoiceScreen navigation={navigation} invoiceType={invoiceType} />
+          <AddInvoiceScreen navigation={navigation} invoiceType={invoiceType} invoiceNumber={invoiceNumber} />
         </View>
         {/* 6 */}
         <View></View>
