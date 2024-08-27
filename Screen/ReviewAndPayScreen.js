@@ -218,7 +218,8 @@ export default function ReviewAndPayScreen({ navigation }) {
           headers
         );
 
-          showSnackbar("invoice Added Successfull", "success");
+        showSnackbar("invoice generated Successfully", "success");
+        if (response) {
           console.log(response.result);
           navigation.navigate("StackNavigator", {
             screen: "InvoiceSuccess",
@@ -230,8 +231,8 @@ export default function ReviewAndPayScreen({ navigation }) {
           });
     
       } catch (error) {
-        console.error("Failed to add invoice", error);
-        showSnackbar("Failed to add invoice", "error");
+        // console.error("Failed to add invoice", response);
+        showSnackbar("Failed to generate invoice", "error");
       }
     }
   };

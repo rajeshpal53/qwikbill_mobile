@@ -42,8 +42,9 @@ const fetchItemOptions = async (input, shopDetails) => {
 // Validation Schema using Yup
 const validationSchema = Yup.object().shape({
   client: Yup.string()
-    .required("client is required")
-    .min(2, "client must be at least 2 characters long"),
+    .required("Customer name is required")
+    .min(3, 'Customer name must be at least 3 characters')
+  .max(35, 'Customer name must not exceed 35 characters'),
   address: Yup.string().required("Address is required"),
   date: Yup.string()
     .required("date is required")
@@ -94,6 +95,7 @@ const AddInvoice = ({
   initialValues,
   shopDetails,
   invoiceType,
+  invoiceNumber
 }) => {
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
@@ -179,9 +181,10 @@ const setAllToFalse = () => {
           navigation.navigate("StackNavigator", {
             screen: "ReviewAndPay",
             params: {
-              formData: values,
+              formData: {...values,},//invoiceNumber:invoiceNumber
               item,
               fetchDataId: fetchDataId,
+
             },
           });
 
@@ -220,7 +223,7 @@ const setAllToFalse = () => {
               <TextInput
                 // outlineColor="gray"//  placeholder="client Name"
                 underlineColor="gray"
-                placeholder="Name"
+                placeholder="Customer Name"
                 mode="flat"
                 onChangeText={async (text) => {
                   handleChange("client")(text);

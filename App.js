@@ -69,8 +69,8 @@ import CustomBackButton from "./Components/HeaderComponents/CustomBackButton.js"
 import CheckInternet from "./Screen/CheckInternet/CheckInternet.js";
 import ShopDetailScreen from "./Screen/Shops/ShopDetailScreen.js";
 import VendorDetailScreen from "./Screen/Vendors/VendorDetailScreen.js";
+import EditProfile from "./Screen/EditProfile.js";
 const Stack = createStackNavigator();
-const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 const customTheme = {
   ...DefaultTheme,
@@ -279,13 +279,19 @@ function StackNavigator() {
         name="login"
         component={LoginScreen}
         screenOptions={{ headerShown: false }}
-        options={{ title: 'Login ' }} 
+        // options={{ title: 'Login '}} 
+        options={{
+          headerShown:false
+        }}
+        
       />
       <Stack.Screen
         name="Signup"
         component={SignupScreen}
         screenOptions={{ headerShown: false }}
-        options={{ title: 'Sign Up ' }} 
+        options={{
+          headerShown:false
+        }}
       />
       <Stack.Screen
         name="AddInvoice"
@@ -376,7 +382,14 @@ function StackNavigator() {
         options={{
           headerTitle:"Edit Product Details"
         }}
-      />
+      /> 
+      <Stack.Screen
+      name="editProfile"
+      component={EditProfile}
+      options={{
+        headerTitle:"Edit Profile"
+      }}
+    />
       <Stack.Screen
         name="EditCustomer"
         component={EditCustomerScreen}

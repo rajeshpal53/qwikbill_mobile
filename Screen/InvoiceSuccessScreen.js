@@ -26,7 +26,7 @@ export default function InvoiceSuccessScreen({navigation}) {
     setLoading(true);
     try {
 
-      const response = await fetch(`https://wertone-billing.onrender.com/download/invoice/invoice-${dataId}.pdf`, {
+      const response = await fetch(`http://192.168.29.81:8888/download/invoice/invoice-${dataId}.pdf`, {
         credentials: "include",
       });
       const blob = await response.blob();

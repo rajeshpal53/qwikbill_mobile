@@ -7,6 +7,8 @@ import * as FileSystem from "expo-file-system";
 import { ScrollView } from "react-native-gesture-handler";
 import * as Sharing from "expo-sharing";
 import { readApi } from "../Util/UtilApi";
+import * as Linking from 'expo-linking';
+
 // import * as IntentLauncher from 'expo-intent-launcher';
 const NewGenrateInvoice = ({ data }) => {
   const [loading, setLoading] = useState(false);
@@ -192,77 +194,113 @@ const NewGenrateInvoice = ({ data }) => {
         `);
   }, []);
 
-  const convertHtmlToPdf = async (data) => {
-    setLoading(true);
+  // const convertHtmlToPdf = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await fetch(
+  //       `http://192.168.29.81:8888/download/invoice/invoice-${data._id}.pdf`,
+
+  //       {
+  //         credentials: "include",
+  //       }
+  //     );
+  //     const blob = await response.blob();
+      
+  //     console.log("response",response)
+  //     const reader = new FileReader();
+  //     reader.onload = async () => {
+  //       const base64data = reader.result.split(",")[1];
+  //       const fileUri = `${FileSystem.documentDirectory}invoice${data._id}.pdf`;
+        
+
+  //       console.log("File URI:", fileUri); // Debugging line
+
+  //       await FileSystem.writeAsStringAsync(fileUri, base64data, {
+  //         encoding: FileSystem.EncodingType.Base64,
+  //       });
+
+  //       const fileInfo = await FileSystem.getInfoAsync(fileUri);
+  //       console.log("File Info:", fileInfo);
+
+  //       if (await Sharing.isAvailableAsync()) {
+  //         await Sharing.shareAsync(fileUri, {
+  //           mimeType: "application/pdf",
+  //           dialogTitle: "Save file to Downloads",
+  //         });
+  //       } else {
+  //         console.log("sharing is not possible");
+  //       }
+       
+  //     };
+  //     reader.readAsDataURL(blob);
+  //   } catch (error) {
+  //     Alert.alert("Error", `Failed to download PDF. ${error.message}`, [
+  //       { text: "OK" },
+  //     ]);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  const downloadPDF = async () => {
     try {
-      const response = await fetch(
-        `https://wertone-billing.onrender.com/download/invoice/invoice-${data._id}.pdf`,
-
-        {
-          credentials: "include",
-        }
+      const downloadResumable = FileSystem.createDownloadResumable(
+        `http://192.168.29.81:8888/download/invoice/invoice-${data._id}.pdf`,
+        FileSystem.documentDirectory + `downloaded${data._id}.pdf`
       );
-      const blob = await response.blob();
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64data = reader.result.split(",")[1];
-        const fileUri = `${FileSystem.documentDirectory}invoice.pdf`;
-
-        console.log("File URI:", fileUri); // Debugging line
-
-        await FileSystem.writeAsStringAsync(fileUri, base64data, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
-
-        const fileInfo = await FileSystem.getInfoAsync(fileUri);
-        console.log("File Info:", fileInfo);
-        if (await Sharing.isAvailableAsync()) {
-          await Sharing.shareAsync(fileUri, {
-            mimeType: "application/pdf",
-            dialogTitle: "Save file to Downloads",
-          });
-        } else {
-          console.log("sharing is not possible");
-        }
-        // Debugging line
-        // if (fileInfo.exists) {
-        //   const intent = {
-        //     action: IntentLauncher.ACTION_VIEW,
-        //     data: fileInfo.uri,
-        //     flags: 1,
-        //     type: 'application/pdf',
-        //   };
-
-        //   await IntentLauncher.startActivityAsync(intent);
-        // } else {
-        //   Alert.alert("Error", "File does not exist.", [{ text: "OK" }]);
-        // }
-      };
-      reader.readAsDataURL(blob);
+      console.log(downloadResumable)
+  
+      const { uri } = await downloadResumable.downloadAsync();
+      console.log('Finished downloading to ', uri);
+  
+      // Share or view the PDF
+      // Share.share({
+      //   url: uri,
+      //   title: 'Your PDF file',
+      //   message: 'Here is your PDF file',
+      // });
+      if (await Sharing.isAvailableAsync()) {
+                await Sharing.shareAsync(uri, {
+                  mimeType: "application/pdf",
+                  dialogTitle: "Save file to Downloads",
+                });
+              } else {
+                console.log("sharing is not possible");
+              }
     } catch (error) {
-      Alert.alert("Error", `Failed to download PDF. ${error.message}`, [
-        { text: "OK" },
-      ]);
-    } finally {
-      setLoading(false);
+      console.error(error);
     }
   };
 
-  const shareFileHandler = async () => {
-    // try{
-    //   if (await Sharing.isAvailableAsync()) {
-    //       await Sharing.shareAsync(fileUri, {
-    //         mimeType: "application/pdf",
-    //         dialogTitle: "Save file to Downloads",
-    //       });
-    //     }else{
-    //       console.log("sharing is not possible")
-    //     }
-    //   }catch(error){
-    //         console.log("faile to share",error)
-    //   }
-  };
+  const sendWhatsAppMessage = async (phoneNumber, message) => {
+    // Replace the spaces in the message with '%20' to make it URL encoded
+    const urlEncodedMessage = encodeURIComponent(message);
+  
+    // Construct the WhatsApp URL
+    const whatsappUrl = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+    const smsUrl = `sms:${phoneNumber}?&body=${encodeURIComponent(message)}`;
+    // Use Linking to open the URL
+    try {
+      // Check if WhatsApp is installed
+      // const whatsappUrl = 'whatsapp://send?text=' + encodeURIComponent(message);
+      const isWhatsAppAvailable = await Linking.canOpenURL(whatsappUrl);
 
+      if (isWhatsAppAvailable) {
+        // Open WhatsApp
+        Linking.openURL(whatsappUrl);
+      } else {
+        // Open SMS app
+        const canOpenSms = await Linking.canOpenURL(smsUrl);
+        if (canOpenSms) {
+          Linking.openURL(smsUrl);
+        } else {
+          Alert.alert('Neither WhatsApp nor SMS is available on this device.');
+        }
+      }
+    } catch (error) {
+      console.error('An error occurred', error);
+    }
+  
+  };
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -277,25 +315,20 @@ const NewGenrateInvoice = ({ data }) => {
       {loading && <ActivityIndicator size="large" color="#0000ff" />}
       <View style={styles.buttonRow}>
         <Button
-          onPress={convertHtmlToPdf}
+          onPress={()=>{downloadPDF()}}
           style={styles.button}
           icon={() => <Icon name="download-outline" size={30} color="#000" />}
         >
-          download
+          Download and Share
         </Button>
         <Button
+          onPress={()=>{sendWhatsAppMessage(data.people.phone,"http://192.168.29.81:8888/download/invoice/invoice-66cb4fc3dfabffc6f60ad322.pdf")}}
           style={styles.button}
-          onPress={shareFileHandler}
-          icon={() => <Icon name="logo-whatsapp" size={30} color="#25D366" />}
+          icon={() => <Icon name="download-outline" size={30} color="#000" />}
         >
-          share on
+          Share link on Whatsapp
         </Button>
-        <Button
-          style={styles.button}
-          icon={() => <Icon name="arrow-back-outline" size={30} color="#000" />}
-        >
-          back
-        </Button>
+      
       </View>
     </View>
   );
@@ -312,10 +345,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    margin: 20,
+    marginVertical:20
   },
   button: {
-    padding: 10,
+    marginHorizontal:5,
+    paddingHorizontal:5
   },
 });
 

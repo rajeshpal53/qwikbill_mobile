@@ -10,9 +10,8 @@ export default function wertoneLogoTitle({title}) {
         />
         {/* <Text style={styles.whiteColor}>WERTONE</Text> */}
       </View>
-
       <View style={{justifyContent:"center" }}>
-        <Text  style={styles.whiteColor}>{title}</Text>
+        <Text  style={styles.whiteColor}>Invoicely</Text>
         {/* <Text style={styles.whiteColor}></Text> */}
       </View>
     </View>

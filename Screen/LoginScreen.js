@@ -11,7 +11,7 @@ import axios from "axios";
 import { useWindowDimensions } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import { ActivityIndicator } from "react-native-paper";
-
+import { useSnackbar } from "../Store/SnackbarContext";
 const LoginScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { login, isAuthenticated, storeData, setLoginDetail } =
@@ -28,6 +28,7 @@ const LoginScreen = ({ navigation }) => {
   //   return () => unsubscribe();
   // }, []);
 
+  const { showSnackbar } = useSnackbar();
   const validationSchema = Yup.object().shape({
     email: Yup.string()
       .email("Invalid email address")
@@ -39,6 +40,7 @@ const LoginScreen = ({ navigation }) => {
 
 
   const handleLogin = async (values, { resetForm }) => {
+
     
     try{
       setIsLoading(true);
@@ -68,7 +70,7 @@ const LoginScreen = ({ navigation }) => {
           navigation.navigate("CreateNewPasscode");
          
         }
-        
+  
       }
     }catch(error){
       console.log("error - ", error)
@@ -128,6 +130,19 @@ return (
       animationType="none"
       visible={isLoading}
       onRequestClose={() => {}}
+  }catch(error){
+    if (error.response.status === 403) {
+      showSnackbar('Wrong credentials',"error"); // Custom message for 403
+    } else {
+     showSnackbar(error.response.data.message,"error"); // Message from server response
+    }
+  }
+  }
+  return (
+    <Formik
+      initialValues={{ email: "", password: "" }}
+      validationSchema={validationSchema}
+      onSubmit={handleLogin}
     >
       <View style={styles.modalBackground}>
         <View style={styles.activityIndicatorWrapper}>
@@ -152,66 +167,65 @@ return (
       <ScrollView 
       // contentContainerStyle={{}}
       >
-      <View style={[styles.container, { height: 0.90*height }]}>
-
-       
-    
-        <Card style={{ 
-          backgroundColor: "#ffffff", 
-          height:"100%"
-           }}>
-            <View style={{height:"100%"}}>
-              
-            {/* <View style={{flex:1, backgroundColor:"gray"}} ></View> */}
-            <View
-            style={{
-              justifyContent: "spaceEvenly",
-              flex:1,
-              paddingHorizontal: 8,
-              // marginBottom: 50,
-            }}
-          >
-            <Image
-              source={require("../assets/logo-wertone.png")}
-              style={styles.img}
-            />
-            <Text variant="titleLarge" style={styles.wertoneTag}>
-              {" "}
-              Wertone billing Software
-            </Text>
-          </View>
-            <View style={{ flex: 1, 
-              // backgroundColor:"lightblue",
-               justifyContent:"space-around"}}>
-            <TextInput
-              label="Email"
-              style={styles.input}
-              autoCorrect={false}
-              mode="flat"
-              onChangeText={handleChange("email")}
-              onBlur={handleBlur("email")}
-              value={values.email}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-            {touched.email && errors.email && (
-              <Text style={styles.error}>{errors.email}</Text>
-            )}
-            <TextInput
-              mode="flat"
-              label="Password"
-              style={styles.input}
-              onChangeText={handleChange("password")}
-              onBlur={handleBlur("password")}
-              value={values.password}
-              secureTextEntry
-              autoCapitalize="none"
-            />
-            {touched.password && errors.password && (
-              <Text style={styles.error}>{errors.password}</Text>
-            )}
-          </View>
-            {/* <View style={{flex:1, backgroundColor:"green"}} ></View> */}
+      <View style={[styles.container, { height: 0.90*height }]}>      
+          <Card style={{ 
+            backgroundColor: "#ffffff", 
+            height:"100%",
+             }}>
+              <View style={{height:"100%"}}>
+                
+              {/* <View style={{flex:1, backgroundColor:"gray"}} ></View> */}
+              <View
+              style={{
+                justifyContent: "center",
+                flex:1,
+                flexDirection:"row",
+                alignItems:"center",
+                paddingHorizontal: 8,
+                // marginBottom: 50,
+              }}
+            >
+              <Image
+                source={require("../assets/logo-wertone.png")}
+                style={styles.img}
+              />
+              <Text variant="titleLarge" style={styles.wertoneTag}>
+                {" "}
+                Invoicely
+              </Text>
+            </View>
+              <View style={{ flex: 1, 
+                // backgroundColor:"lightblue",
+                 justifyContent:"space-around"}}>
+              <TextInput
+                label="Email"
+                style={styles.input}
+                autoCorrect={false}
+                mode="flat"
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+                value={values.email}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+              {touched.email && errors.email && (
+                <Text style={styles.error}>{errors.email}</Text>
+              )}
+              <TextInput
+                mode="flat"
+                label="Password"
+                style={styles.input}
+                onChangeText={handleChange("password")}
+                onBlur={handleBlur("password")}
+                value={values.password}
+                secureTextEntry
+                autoCapitalize="none"
+              />
+              {touched.password && errors.password && (
+                <Text style={styles.error}>{errors.password}</Text>
+              )}
+            </View>
+              {/* <View style={{flex:1, backgroundColor:"green"}} ></View> */}
 
             <View
             style={{
@@ -269,16 +283,7 @@ return (
           </TouchableOpacity>
             </View>
             </View>
-          
-
-          
-
-          {/* <Link href='' style={styles.link}> forget password?..</Link> */}
-
-          
-          
-
-         
+          {/* <Link href='' style={styles.link}> forget password?..</Link> */}    
         </Card>
      
       </View>
@@ -331,16 +336,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   img: {
-    height: 70,
-    width: 70,
+    height: 60,
+    width: 60,
     elevation: 2,
     marginVertical: 10,
   },
   wertoneTag: {
-    color: "#777777",
+    color: "#0c3b73",
     marginVertical: 5,
     fontWeight: "bold",
-    paddingLeft: 50,
   },
   link: {
     alignSelf: "flex-end",

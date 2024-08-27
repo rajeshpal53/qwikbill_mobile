@@ -70,7 +70,7 @@ export default function Products({ navigation }) {
       } finally {
         setIsLoading(false);
         setRefresh(false);
-        console.log("refressing 2")
+        setOpen(false)
       }
     }
     fetchData();
@@ -141,7 +141,7 @@ export default function Products({ navigation }) {
     formData.append('shop',shopDetails._id);
 
     try {
-      const response = await axios.post('https://wertone-billing.onrender.com/api/product/upload', formData, {
+      const response = await axios.post('http://192.168.29.81:8888/api/product/upload', formData, {
 
 
         headers: {
@@ -275,7 +275,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     // backgroundColor:"#fff"
-    justifyContent:"center"
+    justifyContent:"center",
+        backgroundColor:"#fff"
     // backgroundColor:"blue"
   },
   fab: {

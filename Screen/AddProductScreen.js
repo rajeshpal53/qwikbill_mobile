@@ -35,12 +35,12 @@ const AddProductScreen = ({ navigation }) => {
       };
       setIsLoading(true);
       const response = await createApi("api/product/create", postData, headers);
-      showSnackbar("product added successfully", "success");
+      showSnackbar("Add Product successfully", "success");
       console.log(response.result);
       navigation.navigate("wertone", { screen: "Products" });
     } catch (error) {
       console.error("errror to create new product", response);
-      showSnackbar("error to create new product", "error");
+      showSnackbar(error.response.data.message, "error");
     } finally {
       setIsLoading(false);
     }
