@@ -2,7 +2,7 @@
 import { useRoute } from "@react-navigation/native";
 import { Divider, DataTable, FAB, Menu, ActivityIndicator } from "react-native-paper";
 import React, { useContext, useEffect, useState, useCallback } from "react";
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image} from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { readApi, deleteApi } from "../../Util/UtilApi";
 import { ShopDetailContext } from "../../Store/ShopDetailContext";
@@ -33,7 +33,7 @@ const headlineHandler = (data) => {
 
 export default function ViewInvoiceScreen({navigation}) {
   const data = useRoute().params;
-  // console.log("routedata , ", data.data.paidUnpaidAll);
+  const url = data.data.url;
   const { shopDetails } = useContext(ShopDetailContext);
   const shopId = shopDetails._id;
   const [deleteItemId, setDeleteItemId] = useState("");
@@ -49,7 +49,6 @@ export default function ViewInvoiceScreen({navigation}) {
   const [currentItem, setCurrentItem] = useState(null);
   const [isLandScape, setIsLandscape] = useState(width > height);
   const [isLoading, setIsLoading] = useState(false);
-  console.log("isLandScape, : ", isLandScape);
 
   const [itemsPerPage, onItemsPerPageChange] = useState(
     numberOfItemsPerPageList[0]
@@ -63,14 +62,22 @@ export default function ViewInvoiceScreen({navigation}) {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        let itemsLength = ""
 
+        console.log(data.data.numberOfInvoices , "--- filtered by   33333");
+        if(data.data.filteredBy === 'number' && data.data.numberOfInvoices > 0){
+          
+          itemsLength = `&items=${data.data.numberOfInvoices}`;
+          console.log(data.data.numberOfInvoices , "--- filtered by   44444");
+        }
+ 
         setIsLoading(true);
         const response = await readApi(
-          `api/invoice/list?shop=${shopId}&items=12`
+          `${url}shop=${shopId}${itemsLength}`
         );
-        console.log("response length : ", response.result.length);
+        // console.log("response length : ", response.result.length);
 
-        console.log("complete response \n  " , response.result)
+        // console.log("complete response \n  " , response.result)
 
         setInvoiceData(response.result);
       } catch (error) {
@@ -177,7 +184,7 @@ const openModel=()=>{
   setModalVisible(true);
 }
 const genrateInvoice=(item)=>{
-  console.log(item,"item")
+  // console.log(item,"item")
   navigation.navigate("StackNavigator", {
     screen: "genrateInvoice",
     params: {
@@ -229,7 +236,7 @@ const handleDelete = async() => {
                {headline} Invoices
             </Text>
           </View>
-          <DataTable style={{ flex: 1 }}>
+          {(invoiceData.length > 0) && (<DataTable style={{ flex: 1 }}>
             <DataTable.Header style={styles.tableHeader}>
               <Text style={styles.tableHeaderText}>Date</Text>
               <Text style={styles.tableHeaderText}>Phone No.</Text>
@@ -244,7 +251,7 @@ const handleDelete = async() => {
               <DataTable.Row key={index} style={styles.row} onPress={()=>{ genrateInvoice(item)}}>
                 {/* <DataTable.Cell>{(from + index+1)}</DataTable.Cell> */}
                 <Text style={styles.date}>
-                  {formatDateHandler(item.updated)}
+                  {formatDateHandler(item.date)}
                 </Text>
                 <Text style={styles.number}>{item.number}</Text>
                 <Text style={styles.clientName}>{item.people?.name}</Text>
@@ -262,16 +269,17 @@ const handleDelete = async() => {
 
                 {/* menu items */}
 
-                  <View style={{flex:0.2, justifyContent:"center"}}>
+                  <View style={{flex:0.5, justifyContent:"center", padding:5}}>
 
                   
                 <Menu
                   visible={visible && currentItem?._id === item._id}
                   onDismiss={hideMenu}
+                  
                   anchor={
                     <TouchableOpacity
                       onPress={() => showMenu(item)}
-                      style={{}}
+                      style={{alignItems:"center"}}
                     >
                       <Feather name="more-vertical" size={24} color="#777777" />
                     </TouchableOpacity>
@@ -302,7 +310,7 @@ const handleDelete = async() => {
 
             <Menu.Item onPress={() => {
                 hideMenu()
-                console.log("id , ", item._id)
+                // console.log("id , ", item._id)
                 setDeleteItemId(item._id);
                 setDeleteModalVisible(true);
                 
@@ -324,14 +332,27 @@ const handleDelete = async() => {
               showFastPaginationControls
               selectPageDropdownLabel={"Rows per page"}
             />
-          </DataTable>
+          </DataTable>)}
+          
         </View>
       </ScrollView>
-      <FAB
+      {(invoiceData.length > 0) && ( <FAB
         icon="filter"
         style={styles.fab}
         onPress={()=>{openModel()}}
-      />
+      />)}
+
+      {(invoiceData.length <= 0) && (
+        <View style={{alignItems:"center", height:"100%"}}>
+      <Image
+        source={require("../../assets/noDataFound.png")}
+        style={{width:"50%", height:100}}
+      ></Image>
+      <Text variant="titleLarge" style={{ color: "#555" }}>
+        No data found
+      </Text>
+    </View>)}
+     
       {deleteModalVisible && (
                 <DeleteModal
                   visible={deleteModalVisible}
@@ -380,7 +401,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   tableHeaderTextLast: {
-    flex: 1,
+    flex: 0.5,
     fontWeight: "bold",
     textAlign: "center",
     padding: 5,
@@ -423,8 +444,10 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   total: {
-    flex: 0.7,
+    flex: 1,
     textAlign: "center",
+    borderRightWidth: 1,
+    borderRightColor: "gray",
     padding: 5,
   },
   fab: {

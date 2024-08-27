@@ -5,7 +5,7 @@ import AddProduct from "../Components/AddProduct"
 import { useSnackbar } from '../Store/SnackbarContext'
 import { readApi, updateApi } from "../Util/UtilApi"
 function EditProductScreen({route,navigation}) {
-  const [isLoading,setIsLoading]=useState(true)
+  const [isLoading,setIsLoading]=useState(false)
   
   const productId=route.params.productId
   const{showSnackbar}=useSnackbar()
@@ -19,6 +19,7 @@ function EditProductScreen({route,navigation}) {
       useEffect(()=>{
         const fetchDataHandler = async () => {
           try {
+            setIsLoading(true)
       const response = await readApi(`api/product/read/${productId}`);
             const data = await response;
             const productData = data.result;
@@ -84,7 +85,7 @@ function EditProductScreen({route,navigation}) {
 
   return (
    <ScrollView>
-        <AddProduct initialValues={initialValues} handleSubmit={handleSubmit}/>
+        <AddProduct initialValues={initialValues} handleSubmit={handleSubmit} buttonText = "Update Product"/>
    </ScrollView>
   )
 }

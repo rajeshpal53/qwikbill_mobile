@@ -14,9 +14,6 @@ import { ShopDetailContext } from "../Store/ShopDetailContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import FileUploadModal from "../Components/BulkUpload/FileUploadModal";
 import axios from "axios";
-
-
-
 const fetchSearchData = async (searchQuery, shopId) => {
   try {
     console.log("shopid , ,", shopId)
@@ -35,16 +32,17 @@ const fetchSearchData = async (searchQuery, shopId) => {
 export default function Customer({ navigation }) {
   const [customers, setCustomers] = useState([])
   const [isLoading, setIsLoading] = useState(true);
-  const [deleteId, setDeleteId] = useState();
+  const [deleteId, setDeleteId] = useState()
+  const isFocused = useIsFocused();;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isUploadModalVisible, setIsUploadModalVisible] = useState(false);
   const {searchQuery}  = useContext(AuthContext);
-  const isFocused = useIsFocused();
   const { showSnackbar } = useSnackbar();
   const {shopDetails}= useContext(ShopDetailContext)
   const [open, setOpen] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const onStateChange = ({ open }) => setOpen(open);
+  const {searchMode, setSearchMode} = useContext(AuthContext);
 
 
   useEffect(() => {
@@ -75,6 +73,16 @@ export default function Customer({ navigation }) {
     
     fetchSearchingData();
   }, [searchQuery])
+
+  useEffect(() => {
+    if (!isFocused) {
+      // Reset states when screen is not focused
+      setOpen(false);
+      setIsModalVisible(false);
+      setIsUploadModalVisible(false);
+      setSearchMode(false);
+    }
+  }, [isFocused]);
 
   if (isLoading) {
     return <ActivityIndicator size="large" />;

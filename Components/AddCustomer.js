@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
-import { Button, TextInput, Text, HelperText, List, ActivityIndicator, Divider } from "react-native-paper";
+import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { Button, TextInput, Text, HelperText, List, ActivityIndicator, Divider, Menu, Provider } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { createApi, readApi } from "../Util/UtilApi";
@@ -16,6 +16,11 @@ const validationSchema = Yup.object().shape({
   name: Yup.string().required("name is required").min(3, 'name must be at least 3 characters')
   .max(35, 'name must not exceed 35 characters'),
   email: Yup.string().email("Invalid email").required("Email is required"),
+  gstnumber: Yup.string()
+  .matches(
+    /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z0-9]{1}Z[0-9A-Z]{1}$/,
+    "Invalid GST number"
+  ),
   phone: Yup.string()
     .required("Phone number is required")
     .min(10, "Phone number must be at least 10 digits")
@@ -23,13 +28,18 @@ const validationSchema = Yup.object().shape({
   type: Yup.string().required("Type is required"),
 });
 
-const AddCustomer = ({ navigation, initialValues, handleSubmit }) => {
+const AddCustomer = ({ navigation, initialValues, handleSubmit, buttonText = "Add Customer" }) => {
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
-  const [typeOptions, setTypeOptions] = useState(["people", "company"]);
+  const [typeOptions, setTypeOptions] = useState(["PEOPLE", "COMPANY"]);
   const [typeShowOptions, setTypeShowOptions] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false); // State to manage Menu visibility
+
+  const openMenu = () => setMenuVisible(true);
+  const closeMenu = () => setMenuVisible(false);
 
   return (
+    <Provider>
     <Formik
       style={styles.container}
       initialValues={initialValues}
@@ -48,6 +58,9 @@ const AddCustomer = ({ navigation, initialValues, handleSubmit }) => {
         errors,
         touched,
       }) => (
+         <ScrollView contentContainerStyle={{ 
+        paddingVertical:10,
+        }}>
         <View style={styles.form}>
           <View
             style={{
@@ -83,6 +96,7 @@ const AddCustomer = ({ navigation, initialValues, handleSubmit }) => {
               mode="flat"
               underlineColor="#555555"
               keyboardType="phone-pad"
+              maxLength={15} // Limit input to 15 characters
               onChangeText={async (text) => {
                 handleChange("phone")(text);
                 if (text.length > 2) {
@@ -210,92 +224,79 @@ const AddCustomer = ({ navigation, initialValues, handleSubmit }) => {
             )}
           </View>
           <View style={{ width: "100%", }}>
-            <TextInput
-              underlineColor="#555555"
-              placeholder="Type"
-              mode="flat"
-              onChangeText={async (text) => {
-                handleChange("type")(text);
-                if (text.length > 1) {
-                  setTypeShowOptions(true);
-                } else {
-                  setTypeShowOptions(false);
-                }
-              }}
-              onBlur={handleBlur("type")}
-              value={values.type}
-              error={touched.type && errors.type ? true : false}
-              style={styles.input}
-            />
-            {touched.type && errors.type && (
-              <HelperText type="error" visible={touched.type && errors.type}>
-                {errors.type}
-              </HelperText>
-            )}
-            {typeShowOptions && (
-              <View style={styles.suggestionsContainer}>
-                <ScrollView style={styles.suggestionsList}>
-                  {typeOptions.map((option, index) => (
-                    <React.Fragment key={index}>            
-                    <List.Item
-                    style={{borderWidth:0}}
-                      // key={index}
-                      title={option}
-                      onPress={async () => {
-                        setFieldValue("type", option);
-                        setTypeShowOptions(false);
-                      }}
-                    >
-                      {" "}
-                      
-                      {option}
-                     
-                    </List.Item>
-                    <Divider />
-                    </React.Fragment>
-                  ))}
-                </ScrollView>
-              </View>
-            )}
+            <Menu
+              visible={menuVisible}
+              onDismiss={closeMenu}
+              anchor={
+                <TouchableOpacity
+                    onPress={openMenu} // Open menu on press
+                    style={styles.dropdownContainer}
+                  >
+                    <Text style={styles.dropdownText}>
+                      {values.type ? values.type : "Select Type"}
+                    </Text>
+                  </TouchableOpacity>
+              }
+              >
+                {typeOptions.map((option) => (
+                  <Menu.Item
+                    key={option}
+                    onPress={() => {
+                      setFieldValue("type", option);
+                      closeMenu();
+                    }}
+                    title={option}
+                  />
+                ))}
+              </Menu>
+              {touched.type && errors.type && (
+                <HelperText type="error" visible={touched.type && errors.type}>
+                  {errors.type}
+                </HelperText>
+              )}
+
           </View>
+
           <Button mode="contained" onPress={handleSubmit} style={styles.button}>
-            Submit
+            {buttonText}
           </Button>
         </View>
+        </ScrollView>
       )}
     </Formik>
+    </Provider>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     // backgroundColor: "#fff",
-    backgroundColor: "green",
+    // backgroundColor: "green",
     // margin: 10,
     // padding: 25,
     borderRadius: 10,
-    elevation: 5, // For shadow on Android
-    shadowColor: "#000", // For shadow on iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    marginVertical: 10,
+    // elevation: 5, // For shadow on Android
+    // shadowColor: "#000", // For shadow on iOS
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.2,
+    // shadowRadius: 2,
+    // marginVertical: 10,
     flex: 1,
-    height:"100%"
+    // height:"100%"
   },
   form: {
     // backgroundColor: "#fff",
-    // backgroundColor: "lightgreen",
+    backgroundColor: "rgba(0, 0, 0, 0)",
     // height:"100%",
-    margin: 10,
+    // margin: 10,
     padding: 25,
     borderRadius: 10,
-    elevation: 5, // For shadow on Android
-    shadowColor: "#000", // For shadow on iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    marginVertical: 10,
+    // elevation: 5, // For shadow on Android
+    // shadowColor: "#000", // For shadow on iOS
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.2,
+    // shadowRadius: 2,
+    // marginVertical: 10,
     gap:15,
     flex:1,
     justifyContent:"center",
@@ -318,6 +319,7 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 16,
     // marginBottom:70
+    backgroundColor:"#0c3b73"
   },
   suggestionsContainer: {
     position: "absolute",
@@ -332,6 +334,18 @@ const styles = StyleSheet.create({
   suggestionsList: {
     width: "100%",
     // backgroundColor:"blue"
+  },
+  dropdownContainer: {
+    // backgroundColor: "rgba(0,0,0,0)",
+    // backgroundColor: "pink",
+    borderBottomWidth: 1,
+    borderColor: "rgba(0, 0, 0, 0.3)",
+    paddingVertical: 15,
+  },
+  dropdownText: {
+    color: "#555555",
+    fontSize:16,
+    paddingLeft: 10,
   },
 });
 

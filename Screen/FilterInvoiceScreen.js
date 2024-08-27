@@ -22,7 +22,9 @@ import ThreeToggleBtns from "../Components/ThreeToggleBtns";
 export default function FilterInvoiceScreen() {
   const [activeTab, setActiveTab] = useState("dateRange");
   const [selectedOption, setSelectedOption] = useState("lastOneMonth");
-  const [paidUnpaidAll, setpaidUnpaidAll] = useState("AllInvoices")
+  const [paidUnpaidAll, setpaidUnpaidAll] = useState("all")
+  const [filter, setFilter] = useState("all");
+  const [url, setUrl] = useState("")
 
 
   const [buttonsModes, setButtonsModes] = useState({
@@ -46,6 +48,8 @@ export default function FilterInvoiceScreen() {
   const pickerRef = useRef();
   const inputRef = useRef(null);
   const navigation = useNavigation();
+  const flex=true
+  
 
   useEffect(() => {
     async function fetchOptions() {
@@ -61,16 +65,39 @@ export default function FilterInvoiceScreen() {
     function paidUnpaidAllHandler(){
 
       if(buttonsModes.firstButtonMode){
-        setpaidUnpaidAll("AllInvoices");
+        setpaidUnpaidAll("all");
       }else if(buttonsModes.secondButtonMode){
-        setpaidUnpaidAll("provInvoices");
+        setpaidUnpaidAll("paid");
       }else{
-        setpaidUnpaidAll("gstInvoices")
+        setpaidUnpaidAll("unpaid")
       }
     }
 
     paidUnpaidAllHandler()
   }, [buttonsModes]);
+
+  useEffect(() => {
+
+    if(paidUnpaidAll === "paid"){
+      setUrl(`api/invoice/filter?filter=paymentStatus&equal=paid&`)
+    }
+    else if(paidUnpaidAll === "unpaid"){
+      setUrl(`api/invoice/filter?filter=paymentStatus&equal=unpaid&`)
+    }
+    else{
+      console.log("p11111")
+      setUrl(`api/invoice/list?`)
+    }
+
+    if(selectedOption === "dateWise"){
+      
+      setUrl(`api/invoice/filter?filter=date&equal=${date.toISOString().split('T')[0]}&`)
+    }
+  }, [paidUnpaidAll, date, selectedOption])
+
+  useEffect(() => {
+    console.log("url is , ", url);
+  }, [url])
 
   const handleButtonPress = (button) => {
         setButtonsModes((prevstate) => {
@@ -119,13 +146,13 @@ export default function FilterInvoiceScreen() {
         filteredBy: "dateRange",
         selectedOption: selectedOption,
         date:date.toString(),
-        paidUnpaidAll,
+        url,
       };
     } else {
       data = {
         filteredBy: "number",
         numberOfInvoices,
-        paidUnpaidAll,
+        url,
       };
     }
 
@@ -223,7 +250,10 @@ export default function FilterInvoiceScreen() {
         buttonsModes={buttonsModes}
         setButtonsModes={setButtonsModes}
         handleButtonPress={handleButtonPress}
-        toggleButtonsTexts={toggleButtonsTexts}/>
+        toggleButtonsTexts={toggleButtonsTexts}
+        flex={flex}
+       
+        />
 
         <View style={styles.tabContainer}>
           <Button

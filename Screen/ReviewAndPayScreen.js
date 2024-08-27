@@ -12,7 +12,7 @@ import {
 } from "react-native-paper";
 import { createApi, updateApi } from "../Util/UtilApi";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { View, StyleSheet, ScrollView, Animated } from "react-native";
+import { View, StyleSheet, ScrollView, Animated, ActivityIndicator } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import InvoiceDataTable from "../Components/InvoiceDataTable";
 import { useEffect, useState, useCallback, useRef } from "react";
@@ -22,6 +22,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { ShopDetailContext } from "../Store/ShopDetailContext";
 import { useContext } from "react";
 import { useSnackbar } from "../Store/SnackbarContext";
+import CheckInternet from "./CheckInternet/CheckInternet";
 
 
 const getYear = (date) => {
@@ -38,6 +39,7 @@ const getNextMonthDate = (date) => {
 
 
 export default function ReviewAndPayScreen({ navigation }) {
+  
   const route = useRoute();
   const { showSnackbar } = useSnackbar();
   const [headerPosition] = useState(new Animated.Value(0)); // Start with header at its visible position
@@ -46,7 +48,7 @@ export default function ReviewAndPayScreen({ navigation }) {
   const { shopDetails } = useContext(ShopDetailContext);
   const [checked, setChecked] = useState(false);
   const {width, height} = useWindowDimensions();
-
+  const [isLoading, setIsLoading] = useState(false);
   const [visible, setVisible] = useState(false);
 
   const [touchStart, setTouchStart] = useState(null);
@@ -82,7 +84,11 @@ export default function ReviewAndPayScreen({ navigation }) {
   // Perform any action when the back button is pressed
     await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT); // Lock to portrait
 
-    navigation.goBack()
+    if(navigation.canGoBack()){
+    navigation.goBack();
+    }else{
+      navigation.navigate("HOME")
+    }
     return true; // Returning true prevents the default behavior (going back)
 };
 
@@ -110,15 +116,15 @@ export default function ReviewAndPayScreen({ navigation }) {
   }
   const buttonPressed = async (buttonName) => {
     hideModal();
-    const newData = await submitHandler(formData, fetchDataId, paymentStatus);
-    navigation.navigate("StackNavigator", {
-      screen: "InvoiceSuccess",
-      params: {
-        newData: newData,
-        formData: formData,
-        paymentMode: buttonName,
-      },
-    });
+    submitHandler(formData, fetchDataId, paymentStatus, buttonName);
+    // navigation.navigate("StackNavigator", {
+    //   screen: "InvoiceSuccess",
+    //   params: {
+    //     newData: newData,
+    //     formData: formData,
+    //     paymentMode: buttonName,
+    //   },
+    // });
   };
   // console.log(checked, "checked");
 
@@ -153,7 +159,7 @@ export default function ReviewAndPayScreen({ navigation }) {
   };
   
 
-  const submitHandler = async (values, fetchDataId, paymentStatus) => {
+  const submitHandler = async (values, fetchDataId, paymentStatus, buttonName) => {
     const postData = {
       ...values,
       shop: shopDetails._id,
@@ -172,6 +178,7 @@ export default function ReviewAndPayScreen({ navigation }) {
     if(item !== undefined) {
        console.log("items is p, ", item)
       try {
+        setIsLoading(true);
         const headers = {
           "Content-Type": "application/json",
         };
@@ -180,16 +187,27 @@ export default function ReviewAndPayScreen({ navigation }) {
           postData,
           headers
         );
-        showSnackbar("invoice updated Successfull", "success");
-        if (response) {
+        
+          showSnackbar("invoice updated Successfull", "success");
           console.log(response.result);
-          return response.result;
-        }
+
+          navigation.navigate("StackNavigator", {
+            screen: "InvoiceSuccess",
+            params: {
+              newData: response.result,
+              formData: formData,
+              paymentMode: (checked) ? "unpaid" : buttonName,
+            },
+          });
+        
       } catch (error) {
         // console.error("Failed to update invoice", response);
         showSnackbar("Failed to update invoice", "error");
+      }finally{
+        setIsLoading(false);
       }
-    } else {
+    } 
+    else {
       try {
         const headers = {
           "Content-Type": "application/json",
@@ -199,11 +217,19 @@ export default function ReviewAndPayScreen({ navigation }) {
           postData,
           headers
         );
+
         showSnackbar("invoice generated Successfully", "success");
         if (response) {
           console.log(response.result);
-          return response.result;
-        }
+          navigation.navigate("StackNavigator", {
+            screen: "InvoiceSuccess",
+            params: {
+              newData: response.result,
+              formData: formData,
+              paymentMode: (checked) ? "unpaid" : buttonName,
+            },
+          });
+    
       } catch (error) {
         // console.error("Failed to add invoice", response);
         showSnackbar("Failed to generate invoice", "error");
@@ -212,13 +238,28 @@ export default function ReviewAndPayScreen({ navigation }) {
   };
 
   return (
-    <TouchableWithoutFeedback 
+ 
+   <TouchableWithoutFeedback 
     onPressIn={handleTouchStart}
     onPressOut={handleTouchEnd}
       >
     <View style={styles.mainContainer}
     >
       <View style={styles.overlay}></View>
+
+      <Modal
+        transparent={true}
+        animationType="none"
+        visible={isLoading}
+        onRequestClose={() => {}}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.activityIndicatorWrapper}>
+            <ActivityIndicator size="large" color="#fff" />
+            <Text style={{ color: "#fff", fontSize: 20 }}>Loading...</Text>
+          </View>
+        </View>
+      </Modal>
 
       <ScrollView 
       style={styles.scrollView}
@@ -354,16 +395,9 @@ export default function ReviewAndPayScreen({ navigation }) {
                       style={{backgroundColor:"#0c3b73", width:"70%", alignSelf:"center"}}
                       onPress={
                         checked
-                          ?async()=>{ const newData = await submitHandler(formData, fetchDataId);
-                            navigation.navigate("StackNavigator", {
-                              screen: "InvoiceSuccess",
-                              params: {
-                                newData: newData,
-                                formData: formData,
-                                paymentMode: (checked) ? "unpaid" : "paid",
-                                submitHandler: submitHandler,
-                              },
-                            });}
+                          ?async()=>{ 
+                            const newData = await submitHandler(formData, fetchDataId);
+                            }
                           : showModal
                       }
                     >
@@ -378,6 +412,7 @@ export default function ReviewAndPayScreen({ navigation }) {
       </ScrollView>
     </View>
     </TouchableWithoutFeedback>
+    
   );
 }
 

@@ -83,7 +83,7 @@ export default function InvoiceSuccessScreen({navigation}) {
 
   const nextBtnHandler = (key) => {
     // setNextBtnActive(key); this was only for toggling button colors
-    navigation.navigate("Home")
+    navigation.navigate(key)
   }
 
   return (
@@ -124,7 +124,13 @@ export default function InvoiceSuccessScreen({navigation}) {
                 
                 <Text style={styles.infoText}>Mobile No : {formData.phone}</Text>
                 <Text style={styles.infoText}>Invoice Amt : ₹{formData.items[formData.items.length-1].total}/-</Text>
-                <Text style={styles.infoText}>Payment Mode : {route.params.paymentMode}</Text>
+                <Text style={styles.infoText}>Payment Mode : 
+                  <Text style={{
+                    color: (paymentMode === "unpaid") ? "red" : "green"
+                    }}>
+                      {route.params.paymentMode}
+                      </Text>
+                  </Text>
                 </View>
                 
               </ScrollView>
@@ -156,7 +162,7 @@ export default function InvoiceSuccessScreen({navigation}) {
              </Button>
              <Button   
             mode="contained"
-             onPress={() => nextBtnHandler("home")}>
+             onPress={() => nextBtnHandler("Home")}>
                Return Home
              </Button>
            </View>
