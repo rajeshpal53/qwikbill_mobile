@@ -12,16 +12,12 @@ import { useSnackbar } from "../../Store/SnackbarContext";
 import DeleteModal from "../../UI/DeleteModal";
 import InvoiceFilterModel from "../../Components/Modal/InvoiceFilterModel";
 
-
 const fetchSearchData = async (searchQuery) => {
   try {
-    const response = readApi(
-      `api/vendor/list?&q=${searchQuery}&fields=name`
-    );
+    const response = readApi(`api/vendor/list?&q=${searchQuery}&fields=name`);
     const result = await response;
 
     return result.result;
-    
   } catch (error) {
     console.error("error to search data", error);
   }
@@ -37,37 +33,34 @@ export default function VendorListScreen() {
   const { showSnackbar } = useSnackbar();
   const { shopDetails } = useContext(ShopDetailContext);
   const { searchQuery } = useContext(AuthContext);
-  const [filterModal,setFilterModal]=useState(false)
-  const [fetchingUrl,setFetchingurl]=useState(`api/vendor/list?shop=`)
+  const [filterModal, setFilterModal] = useState(false);
+  const [fetchingUrl, setFetchingurl] = useState(`api/vendor/list?shop=`);
 
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
       try {
-          const response = await readApi(fetchingUrl+shopDetails._id);
-          setVendors(response.result)
-
-
+        const url=`${fetchingUrl}${shopDetails._id}`
+        const response = await readApi(url);
+        setVendors(response.result);
       } catch (error) {
         console.error("error", error);
       } finally {
         setIsLoading(false);
       }
-
     }
     fetchData();
-  }, [isFocused,fetchingUrl]);
+  }, [isFocused, fetchingUrl]);
 
   useEffect(() => {
-    
-    const fetchSearchingData = async() => {
+    const fetchSearchingData = async () => {
       const newData = await fetchSearchData(searchQuery);
 
       setVendors(newData);
-    }
-    
+    };
+
     fetchSearchingData();
-  }, [searchQuery])
+  }, [searchQuery]);
 
   if (isLoading) {
     return <ActivityIndicator size="large" />;
@@ -84,134 +77,138 @@ export default function VendorListScreen() {
     } catch (error) {
       console.error("Error:", error);
       showSnackbar("Failed to delete the Vendor", "error");
-    }finally{
+    } finally {
       setIsLoading(false);
     }
   };
 
   const handleEdit = (item) => {
-    // console.log("item under edit ", item)
     navigation.navigate("VendorForm", { vendor: item });
   };
 
   const handleView = (id) => {
-
-    console.log("vendor Viewed ," , id);
     // navigation.navigate("CustomerDetail", { customerId: id });
   };
 
   const setModalVisible = (item) => {
-
     setDeleteId(item._id);
     setIsModalVisible(true);
-
-  }
+  };
 
   const renderExpandedContent = (item) => (
     <View>
-      <Text style={{color: "#777", fontSize: 12}}>{item.people.name}</Text>    
+      <Text style={{ color: "#777", fontSize: 12 }}>{item.people.name}</Text>
     </View>
   );
-  
+
   const toggleModal = (sortBy) => {
     // Check if invoiceData is empty
     if (vendors.length === 0) {
       setModalVisible(!isModalVisible);
       return;
     }
-  
+
     let filterData = [];
     let noFound = <Text>NO Data found</Text>;
-  
-    if (sortBy === "paid") {
-     setFetchingurl(`api/vendor/filter?filter=paymentStatus&equal=paid&shop=${shopDetails._id}`)
-    } else if (sortBy === "unpaid") {
-     setFetchingurl(`api/vendor/filter?filter=paymentStatus&equal=unpaid&shop=${shopDetails._id}`)
 
+    if (sortBy === "paid") {
+      setFetchingurl(
+        `api/vendor/filter?filter=paymentStatus&equal=paid&shop=`
+      );
+    } else if (sortBy === "unpaid") {
+      setFetchingurl(
+        `api/vendor/filter?filter=paymentStatus&equal=unpaid&shop=`
+      );
     } else {
-      setFetchingurl(`api/vendor/list?shop=${shopDetails._id}`)
+      setFetchingurl(`api/vendor/list?shop=`);
     }
-  
     // Only update if filterData is not empty
     if (filterData.length > 0) {
+
     }
     setFilterModal(!filterModal);
   };
-  const openModel=()=>{
+  const openModel = () => {
     setFilterModal(true);
-  }
-  
+  };
 
   const menuItems = [
     // { title: "View", onPress: (id) => handleView(id) },
     { title: "Edit", onPress: (item) => handleEdit(item) },
     { title: "Delete", onPress: (item) => setModalVisible(item) },
-  ]
+  ];
 
   return (
-    <>
     <View style={styles.container}>
-      <ItemList
-       data={vendors}
-       titleKey='paymentStatus'
-       subtitleKey="amount"
-       onDelete={setIsModalVisible}
-       onEdit={handleEdit}
-       onView={handleView}
-       expandedItems={renderExpandedContent}
-       menuItems={menuItems}
-       />
-      
-    </View>
-    <FAB 
-    icon={() => <Icon name="add-outline" size={25}      color="black" />}
-    theme={{ colors: { primary: '#fff' } }}
-    style={styles.fab}
-    onPress={() => navigation.navigate("VendorForm")}
-   />
-    <FAB
+      <View>
+        <ItemList
+          data={vendors}
+          titleKey="paymentStatus"
+          subtitleKey="amount"
+          onDelete={setIsModalVisible}
+          onEdit={handleEdit}
+          onView={handleView}
+          expandedItems={renderExpandedContent}
+          menuItems={menuItems}
+        />
+      </View>
+      <FAB
+        icon={() => <Icon name="add-outline" size={25} color="black" />}
+        theme={{ colors: { primary: "#fff" } }}
+        style={styles.fab}
+        onPress={() => navigation.navigate("VendorForm")}
+      />
+      <FAB
         icon="filter"
         style={styles.filterfab}
-        onPress={()=>{openModel()}}
+        onPress={() => {
+          openModel();
+        }}
       />
-      <InvoiceFilterModel style={{backgroundColor:"lightblue"}} isModalVisible = {filterModal} setModalVisible = {setFilterModal} toggleModal={toggleModal}/>
-   {isModalVisible && (
+      <InvoiceFilterModel
+        style={{ backgroundColor: "lightblue" }}
+        isModalVisible={filterModal}
+        setModalVisible={setFilterModal}
+        toggleModal={toggleModal}
+        vendorFilter={true}
+      />
+      {isModalVisible && (
         <DeleteModal
           visible={isModalVisible}
           setVisible={setIsModalVisible}
           handleDelete={handleDelete}
         />
       )}
-   </>
+    </View>
   );
 }
 
-
 const styles = StyleSheet.create({
-    fab: {
-        position: "absolute",
-        margin: 13,
-        right: 0,
-        bottom:0,
-        // padding:0,
-        color: "black",
-        // backgroundColor: "#96214e",
-        zIndex:100,
-        color:"white"
-      },
-      filterfab:{
-        position: "absolute",
-        margin: 13,
-        right: 0,
-        bottom:70,
-        // padding:0,
-        color: "black",
-        // backgroundColor: "#96214e",
-        zIndex:100,
-        color:"white"
-
-      },
-      container:{
-        justifyContent:"center",
-      }
+  fab: {
+    position: "absolute",
+    margin: 13,
+    right: 0,
+    bottom: 0,
+    // padding:0,
+    color: "black",
+    // backgroundColor: "#96214e",
+    zIndex: 100,
+    color: "white",
+  },
+  filterfab: {
+    position: "absolute",
+    margin: 13,
+    right: 0,
+    bottom: 70,
+    // padding:0,
+    color: "black",
+    // backgroundColor: "#96214e",
+    zIndex: 100,
+    color: "white",
+  },
+  container: {
+    justifyContent: "center",
+    backgroundColor: "white",
+    flex: 1,
+  },
 });

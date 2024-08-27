@@ -27,7 +27,6 @@ const SignupSchema = Yup.object().shape({
   password: Yup.string()
     .min(8, "Password must be at least 8 characters")
     .required("Password is required"),
-  role: Yup.string().required("Role is required"),
 });
 
 const Signup = ({ navigation }) => {
@@ -43,9 +42,9 @@ const Signup = ({ navigation }) => {
     console.log(values);
 
     try {
-      const postData = { ...values, enabled: true };
+      const postData = { ...values, enabled: true,role:"admin"};
       const response = await axios.post(
-        "https://wertone-billing.onrender.com/api/signup",
+        "http://192.168.29.81:8888/api/signup",
         JSON.stringify(postData),
         {
           headers: { "Content-Type": "application/json" },
@@ -68,14 +67,6 @@ const Signup = ({ navigation }) => {
     setEyeOn(!eyeOn);
   };
   const theme = useTheme();
-  const roleOptions = [
-    "admin",
-    "owner",
-    "employee",
-    "manager",
-    "create_only",
-    "read_only",
-  ];
   return (
     <ScrollView contentContainerStyle={[styles.container, {height:height}]}>
       <Formik
@@ -84,7 +75,6 @@ const Signup = ({ navigation }) => {
           surname: "",
           email: "",
           password: "",
-          role: "",
         }}
         validationSchema={SignupSchema}
         onSubmit={handleSignup}
@@ -106,7 +96,9 @@ const Signup = ({ navigation }) => {
             <View
               style={{
                 justifyContent: "spaceEvenly",
+                alignItems:"center",
                 alignSelf: "flexStart",
+                
                 paddingHorizontal: 8,
                 marginBottom: 50,
               }}
@@ -116,12 +108,12 @@ const Signup = ({ navigation }) => {
                 style={styles.img}
               />
               <Text variant="titleLarge" style={styles.wertoneTag}>
-                Welcome to <Text variant="titleLarge" style={[styles.wertoneTag,{color:"#0c3b73"}]}> Wertone  </Text> 
+                Welcome to <Text variant="titleLarge" style={[styles.wertoneTag,{color:"#0c3b73"}]}> Invoicely  </Text> 
               </Text>
             </View>
             <TextInput
               style={styles.input}
-              placeholder=" First Name"
+              placeholder="First Name"
               mode="flat"
               onChangeText={handleChange("name")}
               onBlur={handleBlur("name")}
@@ -135,7 +127,7 @@ const Signup = ({ navigation }) => {
             <TextInput
               mode="flat"
               style={styles.input}
-              placeholder="Surname"
+              placeholder="Last Name"
               onChangeText={handleChange("surname")}
               onBlur={handleBlur("surname")}
               value={values.surname}
@@ -163,7 +155,7 @@ const Signup = ({ navigation }) => {
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                paddingHorizontal: 5,
+                paddingRight: 5,
               }}
             >
               <TextInput
@@ -188,28 +180,7 @@ const Signup = ({ navigation }) => {
             {touched.password && errors.password && (
               <Text style={styles.errorText}>{errors.password}</Text>
             )}
-            <List.Accordion
-              style={{ paddingHorizontal: 8 }}
-              title={selected || "Select Role"}
-              expanded={expanded}
-              onPress={handlePress}
-              left={(props) => <List.Icon {...props} icon="account" />}
-            >
-              {roleOptions.map((role) => (
-                <List.Item
-                  key={role}
-                  onPress={() => {
-                    setFieldValue("role", role);
-                    setExpanded(false);
-                    setSelected(role);
-                  }}
-                  title={role}
-                />
-              ))}
-            </List.Accordion>
-            {touched.role && errors.role && (
-              <Text style={{ color: "red", marginTop: 10 }}>{errors.role}</Text>
-            )}
+            
 
             <Button
               mode="contained"
@@ -280,7 +251,7 @@ const styles = StyleSheet.create({
     color: "#777777",
     marginVertical: 5,
     fontWeight: "bold",
-    paddingLeft: 50,
+  
   },
 });
 

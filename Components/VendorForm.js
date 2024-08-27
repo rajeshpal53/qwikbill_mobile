@@ -20,7 +20,8 @@ const validationSchema = Yup.object().shape({
     amount: Yup.string()
       .required("amount number is required"),
     people: Yup.string()
-      .required("people is required"),
+      .required("people is required").min(3, 'name must be at least 3 characters')
+      .max(35, 'name must not exceed 35 characters'),
   });
   const fetchOptions = async (input,shopDetails) => {
     const headers={

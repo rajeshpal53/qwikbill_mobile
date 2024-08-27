@@ -234,8 +234,8 @@ const handleDelete = async() => {
               <Text style={styles.tableHeaderText}>Date</Text>
               <Text style={styles.tableHeaderText}>Phone No.</Text>
               <Text style={styles.tableHeaderText}>Name</Text>
-              <Text style={[styles.tableHeaderTextLast, {flex:0.7}]}>Amount (₹)</Text>
-              <View style={{flex:0.2}}></View>
+              <Text style={[styles.tableHeaderText,]}>Amount (₹)</Text>
+              <Text style={styles.tableHeaderTextLast}>options</Text>
             </DataTable.Header>
             <Divider />
             {invoiceData.slice(from, to).map((item, index) => 
