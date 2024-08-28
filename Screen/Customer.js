@@ -131,7 +131,7 @@ export default function Customer({ navigation }) {
 
     try {
 
-      const response = await axios.post('http://192.168.29.81:8888/api/people/upload', formData, {
+      const response = await axios.post('https://wertone-billing.onrender.com/api/people/upload', formData, {
 
         headers: {
           'Content-Type': 'multipart/form-data',

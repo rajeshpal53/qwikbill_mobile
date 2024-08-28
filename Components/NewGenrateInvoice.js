@@ -198,7 +198,7 @@ const NewGenrateInvoice = ({ data }) => {
   //   setLoading(true);
   //   try {
   //     const response = await fetch(
-  //       `http://192.168.29.81:8888/download/invoice/invoice-${data._id}.pdf`,
+  //       `https://wertone-billing.onrender.com/download/invoice/invoice-${data._id}.pdf`,
 
   //       {
   //         credentials: "include",
@@ -244,7 +244,7 @@ const NewGenrateInvoice = ({ data }) => {
   const downloadPDF = async () => {
     try {
       const downloadResumable = FileSystem.createDownloadResumable(
-        `http://192.168.29.81:8888/download/invoice/invoice-${data._id}.pdf`,
+        `https://wertone-billing.onrender.com/download/invoice/invoice-${data._id}.pdf`,
         FileSystem.documentDirectory + `downloaded${data._id}.pdf`
       );
       console.log(downloadResumable)
@@ -322,7 +322,7 @@ const NewGenrateInvoice = ({ data }) => {
           Download and Share
         </Button>
         <Button
-          onPress={()=>{sendWhatsAppMessage(data.people.phone,"http://192.168.29.81:8888/download/invoice/invoice-66cb4fc3dfabffc6f60ad322.pdf")}}
+          onPress={()=>{sendWhatsAppMessage(data.people.phone,"https://wertone-billing.onrender.com/download/invoice/invoice-66cb4fc3dfabffc6f60ad322.pdf")}}
           style={styles.button}
           icon={() => <Icon name="download-outline" size={30} color="#000" />}
         >

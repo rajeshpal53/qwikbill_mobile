@@ -144,7 +144,7 @@ function DrawerNavigator() {
           headerShown: true,
           // title:"myHome",
           headerTitle: !searchMode
-            ? () => <WertoneLogoTitle title="Billing Software" />
+            ? () => <WertoneLogoTitle title="Invoicely" />
             : "",
           headerTitleStyle: {
             backgroundColor: "white",
@@ -211,6 +211,7 @@ function DrawerNavigator() {
         component={ProfileSetting}
         options={{
           headerShown: true,
+          tabBarLabel: "Profile",
           tabBarIcon: ({ color, size }) => (
             <Icon name="person-outline" color={color} size={size} />
           ),
