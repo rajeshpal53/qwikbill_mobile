@@ -65,7 +65,7 @@ const AddProduct = ({ navigation, initialValues, handleSubmit, buttonText = "Add
         setFieldValue,
       }) => (
         <View style={styles.container}>
-        <ScrollView contentContainerStyle={{paddingVertical:10, backgroundColor:"orange"}} >
+        <ScrollView contentContainerStyle={{paddingVertical:10,}} >
         <View style={styles.form}>
           <View
             style={{
@@ -249,7 +249,6 @@ const styles = StyleSheet.create({
   form: {
     // backgroundColor: "#fff",
     backgroundColor: "rgba(0, 0, 0, 0)",
-    backgroundColor: "green",
     // height:"100%",
     // margin: 10,
     padding: 25,
@@ -265,16 +264,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   container: {
-    // backgroundColor: "#fff",
-    backgroundColor: "lightblue",
-    // margin: 10,
+    backgroundColor: "#fff",
+    // backgroundColor: "lightblue",
+    
+    margin: 10,
     // padding: 25,
     borderRadius: 10,
-    // elevation: 5, // For shadow on Android
-    // shadowColor: "#000", // For shadow on iOS
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.2,
-    // shadowRadius: 2,
+    elevation: 5, // For shadow on Android
+    shadowColor: "#000", // For shadow on iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
     // marginVertical: 10,
     flex: 1,
     // height: "100%",

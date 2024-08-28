@@ -41,7 +41,6 @@ const AddCustomer = ({ navigation, initialValues, handleSubmit, buttonText = "Ad
   return (
     <Provider>
     <Formik
-      style={styles.container}
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={(values) => {
@@ -58,6 +57,7 @@ const AddCustomer = ({ navigation, initialValues, handleSubmit, buttonText = "Ad
         errors,
         touched,
       }) => (
+        <View style={styles.container}>
          <ScrollView contentContainerStyle={{ 
         paddingVertical:10,
         }}>
@@ -262,6 +262,7 @@ const AddCustomer = ({ navigation, initialValues, handleSubmit, buttonText = "Ad
           </Button>
         </View>
         </ScrollView>
+        </View>
       )}
     </Formik>
     </Provider>
@@ -270,16 +271,16 @@ const AddCustomer = ({ navigation, initialValues, handleSubmit, buttonText = "Ad
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: "#fff",
+    backgroundColor: "#fff",
     // backgroundColor: "green",
-    // margin: 10,
+    margin: 10,
     // padding: 25,
     borderRadius: 10,
-    // elevation: 5, // For shadow on Android
-    // shadowColor: "#000", // For shadow on iOS
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.2,
-    // shadowRadius: 2,
+    elevation: 5, // For shadow on Android
+    shadowColor: "#000", // For shadow on iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
     // marginVertical: 10,
     flex: 1,
     // height:"100%"
