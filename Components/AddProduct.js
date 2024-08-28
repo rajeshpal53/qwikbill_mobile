@@ -49,7 +49,7 @@ const AddProduct = ({ navigation, initialValues, handleSubmit, buttonText = "Add
   return (
     <Formik
       initialValues={initialValues}
-      style={styles.container}
+      
       validationSchema={validationSchema}
       onSubmit={async (values) => {
         handleSubmit(values);
@@ -64,7 +64,8 @@ const AddProduct = ({ navigation, initialValues, handleSubmit, buttonText = "Add
         touched,
         setFieldValue,
       }) => (
-        <ScrollView contentContainerStyle={{paddingVertical:10}} >
+        <View style={styles.container}>
+        <ScrollView contentContainerStyle={{paddingVertical:10, backgroundColor:"orange"}} >
         <View style={styles.form}>
           <View
             style={{
@@ -225,6 +226,7 @@ const AddProduct = ({ navigation, initialValues, handleSubmit, buttonText = "Add
           </Button>
         </View>
         </ScrollView>
+        </View>
       )}
     </Formik>
   );
@@ -247,6 +249,7 @@ const styles = StyleSheet.create({
   form: {
     // backgroundColor: "#fff",
     backgroundColor: "rgba(0, 0, 0, 0)",
+    backgroundColor: "green",
     // height:"100%",
     // margin: 10,
     padding: 25,
@@ -263,7 +266,7 @@ const styles = StyleSheet.create({
   },
   container: {
     // backgroundColor: "#fff",
-    // backgroundColor: "green",
+    backgroundColor: "lightblue",
     // margin: 10,
     // padding: 25,
     borderRadius: 10,

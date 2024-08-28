@@ -48,7 +48,7 @@ const Signup = ({ navigation }) => {
       setIsLoading(true);
       const postData = { ...values, enabled: true,role:"admin"};
       const response = await axios.post(
-        "http://192.168.29.81:8888/api/signup",
+        "https://wertone-billing.onrender.com/api/signup",
         JSON.stringify(postData),
         {
           headers: { "Content-Type": "application/json" },

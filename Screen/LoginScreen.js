@@ -130,19 +130,6 @@ return (
       animationType="none"
       visible={isLoading}
       onRequestClose={() => {}}
-  }catch(error){
-    if (error.response.status === 403) {
-      showSnackbar('Wrong credentials',"error"); // Custom message for 403
-    } else {
-     showSnackbar(error.response.data.message,"error"); // Message from server response
-    }
-  }
-  }
-  return (
-    <Formik
-      initialValues={{ email: "", password: "" }}
-      validationSchema={validationSchema}
-      onSubmit={handleLogin}
     >
       <View style={styles.modalBackground}>
         <View style={styles.activityIndicatorWrapper}>
