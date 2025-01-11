@@ -1,8 +1,7 @@
 import {View, Text, StyleSheet, Image, Modal} from "react-native"
 import React, { useEffect } from "react"
 import NetInfo from "@react-native-community/netinfo"
-
-
+import { Feather } from "@expo/vector-icons";
 const CheckInternet = ({isConnected, setIsConnected}) => {
 
     useEffect(() => {
@@ -24,10 +23,7 @@ const CheckInternet = ({isConnected, setIsConnected}) => {
         animationType="slide"
       >
         <View style={styles.container}>
-             <Image
-                source={require('../../assets/noInternet.png')}
-                style={styles.image}
-           />
+        <Feather name="wifi-off" size={30} color="#black" />
         </View>
       </Modal>
     );

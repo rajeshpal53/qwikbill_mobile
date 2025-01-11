@@ -202,7 +202,7 @@ function Forgetpasscode({ navigation }) {
             >
               <View style={{}}>
                 <Image
-                  source={require("../../assets/logo-wertone.png")}
+                  source={require("../../assets/aaaa_transparent.png")}
                   style={styles.img}
                 />
               </View>
@@ -384,12 +384,12 @@ const stylesVerify = StyleSheet.create({
   },
   forgetPassImageContainer: {
     width: "30%",
-    height: "20%",
+    height: "30%",
     marginVertical: 5,
   },
   cardContainer: {
     backgroundColor: "grey",
-    height: 390,
+    height: 470,
     // marginTop:5,
   },
 });

@@ -89,7 +89,7 @@ const ShopDetailScreen = () => {
                 Country :-
               </Text>
               <Text style={styles.textStyle}>
-                {shopData[0].address[0].country.toUpperCase()}
+                {shopData[0].address[0]?.country?.toUpperCase()}
               </Text>
             </View>
 
@@ -98,7 +98,7 @@ const ShopDetailScreen = () => {
                 State :-
               </Text>
               <Text style={styles.textStyle}>
-                {shopData[0].address[0].state.toUpperCase()}
+                {shopData[0].address[0]?.state?.toUpperCase()}
               </Text>
             </View>
 
@@ -107,7 +107,7 @@ const ShopDetailScreen = () => {
                 City :-
               </Text>
               <Text style={styles.textStyle}>
-                {shopData[0].address[0].city.toUpperCase()}
+                {shopData[0].address[0]?.city?.toUpperCase()}
               </Text>
             </View>
 

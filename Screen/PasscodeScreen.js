@@ -223,7 +223,7 @@ export default function PasscodeScreen({ navigation }) {
             >
               <View style={{ flex: 2 }}>
                 <Image
-                  source={require("../assets/logo-wertone.png")}
+                  source={require("../assets/aaaa_transparent.png")}
                   style={styles.img}
                 />
               </View>

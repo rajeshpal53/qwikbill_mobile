@@ -3,7 +3,7 @@ import { View, StyleSheet,Alert } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Button,
   Card,
@@ -21,58 +21,35 @@ export default function InvoiceSuccessScreen({navigation}) {
   const { formData,newData, paymentMode } = route.params;
 
   const [loading,setLoading]=useState(false)
-
-  const convertHtmlToPdf = async (dataId) => {
-    setLoading(true);
+  const downloadPDF = async () => {
     try {
-
-      const response = await fetch(`https://wertone-billing.onrender.com/download/invoice/invoice-${dataId}.pdf`, {
-        credentials: "include",
-      });
-      const blob = await response.blob();
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64data = reader.result.split(',')[1];
-        const fileUri = `${FileSystem.documentDirectory}invoice.pdf`;
+      const downloadResumable = FileSystem.createDownloadResumable(
+        `https://wertone-billing.onrender.com/download/invoice/invoice-${newData._id}.pdf`,
+        FileSystem.documentDirectory + `downloaded${newData._id}.pdf`
+      );
+      console.log(downloadResumable)
+      console.log(newData._id)
+      const { uri } = await downloadResumable.downloadAsync();
+      console.log('Finished downloading to ', uri);
   
-        console.log('File URI:', fileUri); // Debugging line
-  
-        await FileSystem.writeAsStringAsync(fileUri, base64data, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
-  
-        const fileInfo = await FileSystem.getInfoAsync(fileUri);
-        console.log('File Info:', fileInfo); 
-        if (await Sharing.isAvailableAsync()) {
-                await Sharing.shareAsync(fileUri, {
+      // Share or view the PDF
+      // Share.share({
+      //   url: uri,
+      //   title: 'Your PDF file',
+      //   message: 'Here is your PDF file',
+      // });
+      if (await Sharing.isAvailableAsync()) {
+                await Sharing.shareAsync(uri, {
                   mimeType: "application/pdf",
                   dialogTitle: "Save file to Downloads",
-                }); 
-              }else{
-                console.log("sharing is not possible")
+                });
+              } else {
+                console.log("sharing is not possible");
               }
-        // Debugging line
-        // if (fileInfo.exists) {
-        //   const intent = {
-        //     action: IntentLauncher.ACTION_VIEW,
-        //     data: fileInfo.uri,
-        //     flags: 1,
-        //     type: 'application/pdf',
-        //   };
-  
-        //   await IntentLauncher.startActivityAsync(intent);
-        // } else {
-        //   Alert.alert("Error", "File does not exist.", [{ text: "OK" }]);
-        // }
-      };
-      reader.readAsDataURL(blob);
     } catch (error) {
-      Alert.alert("Error", `Failed to download PDF. ${error.message}`, [{ text: "OK" }]);
-    } finally {
-      setLoading(false);
+      console.error(error);
     }
   };
-
   // const [mediaBtnActive, setmediaBtnActive] = useState("whatsapp");
   // const [nextBtnActive, setNextBtnActive] = useState("anotherInvoice");
 
@@ -135,24 +112,13 @@ export default function InvoiceSuccessScreen({navigation}) {
                 
               </ScrollView>
             </Card.Content>
-
-            <Card.Actions style={styles.actions}>
                <Button 
                icon="download" 
-              mode = "contained"
-              
-               onPress={() => convertHtmlToPdf(newData._id)}>
-                 Downloads
+                mode = "contained"
+                style={{justifyContent:"center", alignSelf:"center",marginVertical:10,width:"60%"}}
+               onPress={() =>downloadPDF()}>
+                 Download and Share
                </Button>
-               <Button 
-               icon="share" 
-              mode="contained"
-              buttonColor="#FFF"
-              textColor="black"
-               onPress={() => mediaBtnHandler("whatsapp")}>
-               share
-               </Button>
-             </Card.Actions>
           </Card>
           <View style={styles.buttonContainer}>
              <Button 
@@ -235,8 +201,9 @@ const styles = StyleSheet.create({
     gap:15,
   },
   actions: {
-       justifyContent: 'space-between',
+       justifyContent: 'center',
        paddingHorizontal: 16,
+       alignContent:"center"
     },
   contentFirstChild: {
     gap: 10,

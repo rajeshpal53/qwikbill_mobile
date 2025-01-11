@@ -1,13 +1,14 @@
 {
   "expo": {
-    "name": "Invoicely",
-    "slug": "wertonebillingcenter",
+    "name": "QwikBill",
+    "slug": "qwikbill",
     "version": "1.0.0",
+    "newArchEnabled": true,
     "orientation": "portrait",
-    "icon": "./assets/logo-wertone.png",
+    "icon": "./assets/qLogo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/logo-wertone.png",
+      "image": "./assets/qwikBill-logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -26,21 +27,21 @@
     "android": {
       "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logo-wertone.png",
+        "foregroundImage": "./assets/qLogo.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": [
         "USE_FINGERPRINT",
         "USE_BIOMETRIC"
       ],
-      "package": "com.faizanshaikh0.wertonebillingcenter"
+      "package": "com.faizanshaikh0.qwikbill"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "50391450-117b-47e6-805e-9097ed8c9492"
+        "projectId": "ba1fa84d-e995-4987-ada8-0b85d1c13c86"
       }
     }
   }

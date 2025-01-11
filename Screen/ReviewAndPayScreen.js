@@ -67,6 +67,7 @@ export default function ReviewAndPayScreen({ navigation }) {
   const hideModal = () => setVisible(false);
   let paymentStatus = "paid";
 
+
   const [totalAdded, setTotalAdded] = useState(false);
   // useEffect(() => {
   //   if (!totalAdded) {

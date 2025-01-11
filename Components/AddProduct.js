@@ -48,8 +48,7 @@ const AddProduct = ({ navigation, initialValues, handleSubmit, buttonText = "Add
   const [showHsnOptions, setShowHsnOptions] = useState(false);
   return (
     <Formik
-      initialValues={initialValues}
-      
+      initialValues={initialValues} 
       validationSchema={validationSchema}
       onSubmit={async (values) => {
         handleSubmit(values);
