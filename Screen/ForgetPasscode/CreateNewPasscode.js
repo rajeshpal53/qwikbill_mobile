@@ -56,7 +56,7 @@ const CreateNewPasscode = ({ navigation }) => {
             >
               <View>
                 <Image
-                  source={require("../../assets/logo-wertone.png")}
+                  source={require("../../assets/aaaa_transparent.png")}
                   style={styles.img}
                 />
               </View>

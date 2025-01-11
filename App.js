@@ -167,7 +167,9 @@ function DrawerNavigator() {
             <Icon name="file-tray-full-outline" color={color} size={size} />
           ),
           headerTitle: !searchMode
-            ? () => <WertoneLogoTitle title="Invoices" />
+            ? () => <Text style={{ color:"white",
+              fontSize:20,
+              fontWeight:"bold"}}>Invoices</Text>
             : "",
 
           headerTitleAlign: "left",
@@ -184,7 +186,9 @@ function DrawerNavigator() {
             <Icon name="pricetag-outline" color={color} size={size} />
           ),
           headerTitle: !searchMode
-            ? () => <WertoneLogoTitle title="Products" />
+            ? () =><Text style={{ color:"white",
+              fontSize:20,
+              fontWeight:"bold"}}>Products</Text>
             : "",
 
           headerTitleAlign: "left",
@@ -195,12 +199,14 @@ function DrawerNavigator() {
         component={Customer}
         options={{
           headerShown: true,
-          tabBarLabel: "People",
+          tabBarLabel: "Customer",
           tabBarIcon: ({ color, size }) => (
             <Icon name="people-outline" color={color} size={size} />
           ),
           headerTitle: !searchMode
-            ? () => <WertoneLogoTitle  title="Peoples"/>
+            ? () => <Text style={{ color:"white",
+              fontSize:20,
+              fontWeight:"bold"}}>Customer</Text>
             : "",
 
           headerTitleAlign: "left",
@@ -216,7 +222,9 @@ function DrawerNavigator() {
             <Icon name="person-outline" color={color} size={size} />
           ),
           headerTitle: !searchMode
-            ? () => <WertoneLogoTitle title="Profile Settings" />
+            ? () =><Text style={{ color:"white",
+              fontSize:20,
+              fontWeight:"bold"}}>Profile Setting</Text>
             : "",
 
           headerTitleAlign: !searchMode ? "center" : "left",
@@ -242,13 +250,15 @@ function StackNavigator() {
   const { shopDetails } = useContext(ShopDetailContext);
 
   
-  // if (isLoading) {
-  //   return (
-  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-  //       <ActivityIndicator size="large" />
-  //     </View>
-  //   );
-  // }
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+  console.log(isLoading)
+  console.log(isAuthenticated,"akdskddkfkfkf")
 
   return (
     <>

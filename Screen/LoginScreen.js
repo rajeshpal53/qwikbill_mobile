@@ -13,10 +13,9 @@ import NetInfo from "@react-native-community/netinfo";
 import { ActivityIndicator } from "react-native-paper";
 import { useSnackbar } from "../Store/SnackbarContext";
 const LoginScreen = ({ navigation }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const { login, isAuthenticated, storeData, setLoginDetail } =
+  const { login, isAuthenticated, storeData, setLoginDetail} =
     useContext(AuthContext);
-
+    const [isLoading,setIsLoading]=useState(false)
   const { isPasskey } = usePasskey();
   const { width, height } = useWindowDimensions();
 
@@ -40,45 +39,45 @@ const LoginScreen = ({ navigation }) => {
 
 
   const handleLogin = async (values, { resetForm }) => {
-
-    
     try{
-      setIsLoading(true);
-      const response = await axios.post(
-        "https://wertone-billing.onrender.com/api/login",
-        JSON.stringify(values),
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log(response.data, "newResponse");
-      const data = await response.data;
-      await storeData("loginDetail", data.result);
-      setLoginDetail(data.result);
-      const token = "dummyToken";
-      login(token);
-      
-  
-      if (isAuthenticated) {
-        // navigation.navigate("wertone",{screen:'invoice'})
-        if (isPasskey) {
-          navigation.navigate("Passcode");
-        
-        } else {
-          navigation.navigate("CreateNewPasscode");
-         
-        }
-  
+    setIsLoading(true)
+    const response = await axios.post(
+      "http://192.168.1.5:8888/api/login",
+      JSON.stringify(values),
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    }catch(error){
-      console.log("error - ", error)
-    }finally{
-      setIsLoading(false);
+    );
+    console.log(response.data, "newResponse");
+    const data = await response.data;
+    await storeData("loginDetail", data.result);
+    setLoginDetail(data.result);
+    const token = "dummyToken";
+    login(token);
+    // if (isLoading) {
+    //   {
+    //     <View
+    //       style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+    //     >
+    //       <ActivityIndicator size="large" />
+    //     </View>;
+    //   }
+    // }
+      if (isPasskey) {
+        navigation.navigate("Passcode");
+      } else {
+        navigation.navigate("CreateNewPasscode");
+      }
       resetForm();
-    }
-   
+  }catch(err){
+    console.error(err)
+  }
+  finally{
+    resetForm();
+    setIsLoading(false)
+  }
   };
 
   // if (isLoading) {
@@ -123,7 +122,7 @@ const LoginScreen = ({ navigation }) => {
 
 return (
  
-  <>
+  <View style={{justifyContent:"center"}}>
   {/* Loading Modal */}
   <Modal
       transparent={true}
@@ -152,12 +151,14 @@ return (
       touched,
     }) => (
       <ScrollView 
-      // contentContainerStyle={{}}
+      contentContainerStyle={{justifyContent:"center"}}
       >
       <View style={[styles.container, { height: 0.90*height }]}>      
           <Card style={{ 
             backgroundColor: "#ffffff", 
             height:"100%",
+
+            
              }}>
               <View style={{height:"100%"}}>
                 
@@ -173,13 +174,9 @@ return (
               }}
             >
               <Image
-                source={require("../assets/logo-wertone.png")}
+                source={require("../assets/qwikBill.jpeg")}
                 style={styles.img}
               />
-              <Text variant="titleLarge" style={styles.wertoneTag}>
-                {" "}
-                Invoicely
-              </Text>
             </View>
               <View style={{ flex: 1, 
                 // backgroundColor:"lightblue",
@@ -277,7 +274,7 @@ return (
       </ScrollView>
     )}
   </Formik>
-  </>
+  </View>
  
  
 ); 
@@ -286,8 +283,8 @@ return (
 const styles = StyleSheet.create({
   container: {
     // flex: 1,
-    justifyContent: "center",
     padding: 16,
+    marginTop:"15%"
     // elevation: 12,
   },
   modalBackground: {
@@ -312,7 +309,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   input: {
-    // marginBottom: 16,
+    marginBottom: 5,
     paddingHorizontal: 8,
     width: "90%",
     alignSelf: "center",
@@ -323,8 +320,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   img: {
-    height: 60,
-    width: 60,
+    height: 140,
+    width: 240,
     elevation: 2,
     marginVertical: 10,
   },

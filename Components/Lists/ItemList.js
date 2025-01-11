@@ -85,7 +85,7 @@ export default function ItemList({
               />
 
               <View style={styles.itemContent}>
-                <Text style={styles.title}>{item[titleKey].toUpperCase()}</Text>
+                <Text style={styles.title}>{item[titleKey]?.toUpperCase()}</Text>
                 <Text style={styles.subtitle}>{item[subtitleKey]}</Text>
                 {console.log("item --- , ", item[subtitleKey])}
                 {isExpanded && expandedItems(item)}

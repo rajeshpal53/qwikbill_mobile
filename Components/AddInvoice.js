@@ -181,7 +181,7 @@ const setAllToFalse = () => {
           navigation.navigate("StackNavigator", {
             screen: "ReviewAndPay",
             params: {
-              formData: {...values,},//invoiceNumber:invoiceNumber
+              formData: {...values,invoiceNumber:invoiceNumber},
               item,
               fetchDataId: fetchDataId,
 

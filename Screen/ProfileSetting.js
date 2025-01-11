@@ -68,11 +68,16 @@ function ProfileSetting({ navigation }) {
   return (
     <View style={styles.container}>
       <Card style={styles.card}>
+        <View>
         <Avatar.Text
           size={100}
           label={login.name?.charAt(0)}
           style={styles.avatar}
         />
+   
+
+        </View>
+      
         <Card.Content style={{ alignSelf: "center",margin:20}}>
           <Title
             style={styles.titleStyle}
