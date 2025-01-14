@@ -33,7 +33,7 @@ function DropDownList() {
 }
 
  useEffect(() => {
-   
+
     fetchOptions();
   }, []);
 
@@ -44,8 +44,8 @@ function DropDownList() {
     const newResponse= await readApi(`api/invoice/list?shop=${selectedId._id}`)
     count= newResponse.result.length
     addShopDetails({...selectedId,count:count})
-  } 
-  
+  }
+
   useEffect(() => {
     if (selectedShop) {
       getSelectedOption();

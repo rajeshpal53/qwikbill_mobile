@@ -70,11 +70,15 @@ import CheckInternet from "./Screen/CheckInternet/CheckInternet.js";
 import ShopDetailScreen from "./Screen/Shops/ShopDetailScreen.js";
 import VendorDetailScreen from "./Screen/Vendors/VendorDetailScreen.js";
 import EditProfile from "./Screen/EditProfile.js";
+import SetPasswordSreen from "./src/NavigationContainer/StackScreen/SetPasswordScreen.js";
+import UserloginScreen from "../qwikbill_mobile/src/NavigationContainer/StackScreen/UserLoginScreen.js"
+
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const customTheme = {
   ...DefaultTheme,
- 
+
   colors: {
     ...DefaultTheme.colors,
     primary: "#0c3b73",
@@ -249,7 +253,7 @@ function StackNavigator() {
   const { isAuthenticated, isLoading,  searchMode  } = useContext(AuthContext);
   const { shopDetails } = useContext(ShopDetailContext);
 
-  
+
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -290,11 +294,11 @@ function StackNavigator() {
         name="login"
         component={LoginScreen}
         screenOptions={{ headerShown: false }}
-        // options={{ title: 'Login '}} 
+        // options={{ title: 'Login '}}
         options={{
           headerShown:false
         }}
-        
+
       />
       <Stack.Screen
         name="Signup"
@@ -393,7 +397,7 @@ function StackNavigator() {
         options={{
           headerTitle:"Edit Product Details"
         }}
-      /> 
+      />
       <Stack.Screen
       name="editProfile"
       component={EditProfile}
@@ -473,7 +477,7 @@ function StackNavigator() {
       />
       <Stack.Screen
         name="ViewInvoices"
-        component={ViewInvoiceScreen} 
+        component={ViewInvoiceScreen}
         options={({ route }) => ({
           headerTitle: shopDetails.shopname,
           headerRight: () => <RotateBtn isLandscape={isLandscape} setIsLandscape={setIsLandscape} />,
@@ -505,14 +509,28 @@ function StackNavigator() {
           headerTitle: "Vendor Details", // Provide a default title
         }}
       />
+      <Stack.Screen
+        name="SetPasswordScreen"
+        component={SetPasswordSreen}
+        options={{
+          headerTitle: "Set Password", // Provide a default title
+        }}
+      />
+       <Stack.Screen
+        name="UserloginScreen"
+        component={UserloginScreen}
+        options={{
+          headerTitle: "User Login", // Provide a default title
+        }}
+      />
     </Stack.Navigator>
-    
+
     <CheckInternet
         isConnected={isConnected}
         setIsConnected={setIsConnected}
       />
     </>
-    
+
   );
 }
 export default function App() {
