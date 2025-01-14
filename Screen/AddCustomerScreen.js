@@ -1,22 +1,22 @@
 import React, { useContext, useState } from 'react'
 import AddCustomer from '../Components/AddCustomer'
 import { StyleSheet ,ScrollView, View} from 'react-native'
-import { useSnackbar } from '../Store/SnackbarContext'
 import { createApi } from '../Util/UtilApi'
 import { ShopDetailContext } from '../Store/ShopDetailContext'
 import { ActivityIndicator } from 'react-native-paper'
+import { useSnackbar } from '../Store/SnackbarContext'
 
 const AddCustomerScreen = ({navigation}) => {
 
   const [isLoading, setIsLoading] = useState(false)
   const {shopDetails} = useContext(ShopDetailContext);
- const initialValues={ 
-  name: '', 
-  gstnumber: '', 
-  address:'', 
-  email: '', 
-  phone: '', 
-  type: '' 
+ const initialValues={
+  name: '',
+  gstnumber: '',
+  address:'',
+  email: '',
+  phone: '',
+  type: ''
 }
  const{showSnackbar}= useSnackbar();
 
@@ -31,7 +31,7 @@ console.log(postData, "data posted");
 try{
 const headers= {
   "Content-Type": "application/json",
-} 
+}
 setIsLoading(true);
 const response = await createApi(`api/people/create?shop=${shopDetails._id}`,postData,headers);
   console.log("response",response)
@@ -46,7 +46,7 @@ catch(error){
 }
 
 if(isLoading){
-  <ActivityIndicator size="large" /> 
+  <ActivityIndicator size="large" />
 }
  }
   return (
