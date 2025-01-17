@@ -56,7 +56,7 @@ const CreateNewPasscode = ({ navigation }) => {
             >
               <View>
                 <Image
-                  source={require("../../assets/aaaa_transparent.png")}
+                  source={require("../../../assets/aaaa_transparent.png")}
                   style={styles.img}
                 />
               </View>
@@ -80,7 +80,7 @@ const CreateNewPasscode = ({ navigation }) => {
                   <View style={{ flex: 1, paddingBottom:10 }}>
                     <View style={styles.myShopImageContainer}>
                       <Image
-                        source={require("../../assets/forgetpassword.jpeg")}
+                        source={require("../../../assets/forgetpassword.jpeg")}
                         style={styles.myShopeImage}
                       ></Image>
                     </View>

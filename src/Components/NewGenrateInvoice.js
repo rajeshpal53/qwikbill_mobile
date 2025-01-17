@@ -243,7 +243,7 @@ const NewGenrateInvoice = ({ data }) => {
   // };
   const downloadPDF = async () => {
     try {
-      //`http://192.168.1.3:8888/`
+      //`http://192.168.1.6:8888/`
       //  https://wertone-billing.onrender.com/
       const downloadResumable = FileSystem.createDownloadResumable(
         `https://wertone-billing.onrender.com/download/invoice/invoice-${data._id}.pdf`,

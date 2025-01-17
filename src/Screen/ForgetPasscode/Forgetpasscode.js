@@ -43,7 +43,7 @@ function CustomerVerification({ loginDetail1, setIsOtp, setOtpValue }) {
         <Card.Content style={stylesVerify.cardContent}>
           <View style={stylesVerify.forgetPassImageContainer}>
             <Image
-              source={require("../../assets/forgetpassword.jpeg")}
+              source={require("../../../assets/forgetpassword.jpeg")}
               style={stylesVerify.myShopeImage}
             ></Image>
           </View>
@@ -115,7 +115,7 @@ function ValidateOTP({ navigation, otpValue }) {
         <Card.Content style={stylesResend.cardContent}>
           <View style={stylesResend.myShopImageContainer}>
             <Image
-              source={require("../../assets/emailOTP.jpg")}
+              source={require("../../../assets/emailOTP.jpg")}
               style={stylesResend.myShopeImage}
             ></Image>
           </View>
@@ -202,7 +202,7 @@ function Forgetpasscode({ navigation }) {
             >
               <View style={{}}>
                 <Image
-                  source={require("../../assets/aaaa_transparent.png")}
+                  source={require("../../../assets/aaaa_transparent.png")}
                   style={styles.img}
                 />
               </View>

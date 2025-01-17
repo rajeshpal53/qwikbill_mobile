@@ -223,7 +223,7 @@ export default function PasscodeScreen({ navigation }) {
             >
               <View style={{ flex: 2 }}>
                 <Image
-                  source={require("../assets/aaaa_transparent.png")}
+                  source={require("../../assets/aaaa_transparent.png")}
                   style={styles.img}
                 />
               </View>
@@ -252,7 +252,7 @@ export default function PasscodeScreen({ navigation }) {
                 {!isKeyboardVisible && (
                   <View style={styles.myShopImageContainer}>
                     <Image
-                      source={require("../assets/shopImg1.jpeg")}
+                      source={require("../../assets/shopImg1.jpeg")}
                       style={styles.myShopeImage}
                     ></Image>
                   </View>

@@ -33,7 +33,7 @@ const UserloginScreen = ({ navigation }) => {
       console.log("User login screen")
       setIsLoading(true);
       const response = await axios.post(
-        "http://192.168.1.36:8888/api/login",
+        "http://192.168.1.6:8888/api/login",
         JSON.stringify(values),
         {
           headers: {

@@ -188,7 +188,7 @@ export default function ItemList({
   ) : (
     <View style={{alignItems:"center",backgroundColor:"white"}}>
       <Image
-        source={require("../../assets/noDataFoundImage2.jpg")}
+        source={require("../../../assets/noDataFoundImage2.jpg")}
         style={{width:300, height:300}}
       ></Image>
       <Text variant="titleLarge" style={{ color: "#555" }}>

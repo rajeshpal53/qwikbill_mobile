@@ -1,7 +1,7 @@
 import axios from 'axios';
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
-const API_BASE_URL = "http://192.168.1.36:8888/";
+const API_BASE_URL = "http://192.168.1.6:8888/";
 
 
 const apiRequest = async (method, url, data = null, headers) => {
