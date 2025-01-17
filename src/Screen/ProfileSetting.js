@@ -20,7 +20,7 @@ function ProfileSetting({ navigation }) {
   const isFocused = useIsFocused();
   const logoutHandler = async() => {
     try{
-      navigation.navigate("StackNavigator", { screen: "login" });
+      navigation.navigate("login");
       const response= await createApi("api/logout",{
         "Content-Type": "application/json",
       } )
@@ -36,7 +36,7 @@ function ProfileSetting({ navigation }) {
         );
       }
       if (!isAuthenticated||response.success) {
-        navigation.navigate("StackNavigator", { screen: "login" });
+        navigation.navigate("login");
       }
     }catch(err){
       console.error("failed to logout",err)
