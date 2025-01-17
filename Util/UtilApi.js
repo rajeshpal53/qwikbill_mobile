@@ -1,7 +1,7 @@
 import axios from 'axios';
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
-const API_BASE_URL = "http://192.168.1.5:8888/";
+const API_BASE_URL = "http://192.168.1.36:8888/";
 
 
 const apiRequest = async (method, url, data = null, headers) => {
@@ -15,7 +15,7 @@ const apiRequest = async (method, url, data = null, headers) => {
               ...headers,
             },
             withCredentials: true, // Include credentials
-          }); 
+          });
           return response.data||'';
     } catch (error) {
       console.error(`Error with ${method.toUpperCase()} request to ${url}:`, error.response || error.message);
@@ -31,7 +31,7 @@ const apiRequest = async (method, url, data = null, headers) => {
         })
         return response
   }
-  //CREATE  
+  //CREATE
   export const createApi = async (endpoint, data, headers) => {
     return apiRequest('post', endpoint, data, headers);
   };
@@ -45,7 +45,7 @@ const apiRequest = async (method, url, data = null, headers) => {
 export const updateApi = async (endpoint, data, headers) => {
     return apiRequest('patch', endpoint, data, headers);
   };
-  
+
   // DELETE
   export const deleteApi = async (endpoint) => {
     return deleteApiRequest('delete', endpoint,);

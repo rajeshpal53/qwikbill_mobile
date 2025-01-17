@@ -10,8 +10,6 @@ const VendorDetailScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
   const vendorId = useRoute().params.vendorId;
 
-  console.log(vendorId, " --vendorId");
-
   useEffect(() => {
     async function fetchDetailHandler() {
       try {

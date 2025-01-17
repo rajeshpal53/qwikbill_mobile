@@ -65,14 +65,17 @@ import SignupScreen from "./Screen/SignupScreen.js";
 import ViewClientScreen from "./Screen/Client/ViewClientScreen.js";
 import VendorFormScreen from "./Screen/Vendors/VendorFormScreen.js";
 import TaxScreen from "./Screen/hsncode/TaxScreen.js";
-import CustomBackButton from "./Components/HeaderComponents/CustomBackButton.js";
+// import CustomBackButton from "./Components/HeaderComponents/CustomBackButton.js";
 import CheckInternet from "./Screen/CheckInternet/CheckInternet.js";
 import ShopDetailScreen from "./Screen/Shops/ShopDetailScreen.js";
 import VendorDetailScreen from "./Screen/Vendors/VendorDetailScreen.js";
 import EditProfile from "./Screen/EditProfile.js";
-import SetPasswordSreen from "./src/NavigationContainer/StackScreen/SetPasswordScreen.js";
-import UserloginScreen from "../qwikbill_mobile/src/NavigationContainer/StackScreen/UserLoginScreen.js"
-
+import SetPasswordSreen from "./src/StackScreen/SetPasswordScreen.js";
+import UserloginScreen from "./src/StackScreen/UserLoginScreen.js";
+import CustomerDetail from "./src/StackScreen/CustomerSection/CustomerDetails.js";
+import CustomBackButton from "./src/Component/CustomBackButton.js";
+import CustomerDetails from "./src/StackScreen/Customerdetails.js";
+import ProductDetailsScreen from "./src/StackScreen/ProductSection/ProductDetailsScreen.js";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -101,8 +104,8 @@ function DrawerNavigator() {
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
-        tabBarActiveTintColor: '#26a0df', // Color for active tab
-        tabBarInactiveTintColor: '#fff', // Color for inactive tabs
+        tabBarActiveTintColor: "#26a0df", // Color for active tab
+        tabBarInactiveTintColor: "#fff", // Color for inactive tabs
         tabBarLabelStyle: {
           fontSize: 14, // Adjust the label font size
           // borderRadius:10,
@@ -110,13 +113,12 @@ function DrawerNavigator() {
         headerShown: false,
         tabBarStyle: {
           height: 55,
-          backgroundColor:"black",
-          color:"white",
-          borderTopRightRadius:15,
-          borderTopLeftRadius:15,
-          borderTopColor:"#fff",
+          backgroundColor: "black",
+          color: "white",
+          borderTopRightRadius: 15,
+          borderTopLeftRadius: 15,
+          borderTopColor: "#fff",
           // borderTo
-
         },
         headerStyle: {
           // backgroundColor: `#262580`, // Set your desired header background color here
@@ -135,7 +137,7 @@ function DrawerNavigator() {
         //     <Ionicons name="person-circle-outline" size={40} color="#ffffff" />
         //   </Pressable>
         // ),
-        headerRight: () => <HomeHeaderRight/>,
+        headerRight: () => <HomeHeaderRight />,
       }}
     >
       <Tab.Screen
@@ -171,34 +173,84 @@ function DrawerNavigator() {
             <Icon name="file-tray-full-outline" color={color} size={size} />
           ),
           headerTitle: !searchMode
-            ? () => <Text style={{ color:"white",
-              fontSize:20,
-              fontWeight:"bold"}}>Invoices</Text>
+            ? () => (
+                <Text
+                  style={{ color: "white", fontSize: 20, fontWeight: "bold" }}
+                >
+                  Invoices
+                </Text>
+              )
             : "",
 
           headerTitleAlign: "left",
-          headerRight:() => "",
+          headerRight: () => "",
         }}
       />
 
       <Tab.Screen
         name="Products"
-        component={Products}
+        component={ProductDetailsScreen}
+        options={{
+          headerShown: true,
+          // headerTitle: t("Payments"),
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="people-outline" color={color} size={size} />
+          ),
+          headerTitle: () => (
+            <Text style={styles.headerTitle}>{"Products Details"}</Text>
+          ),
+          headerTitleAlign: "center",
+          headerStyle: {
+            backgroundColor: "transparent",
+            // backgroundColor: "#fff"
+          },
+          headerLeft: () => <CustomBackButton />,
+        }}
+      />
+
+      {/* <Tab.Screen
+        name="Products"
+        component={ProductDetailsScreen}
         options={{
           headerShown: true,
           tabBarIcon: ({ color, size }) => (
             <Icon name="pricetag-outline" color={color} size={size} />
           ),
           headerTitle: !searchMode
-            ? () =><Text style={{ color:"white",
-              fontSize:20,
-              fontWeight:"bold"}}>Products</Text>
+            ? () => (
+                <Text
+                  style={{ color: "white", fontSize: 20, fontWeight: "bold" }}
+                >
+                  Products
+                </Text>
+              )
             : "",
 
           headerTitleAlign: "left",
         }}
-      />
+      /> */}
       <Tab.Screen
+        name="Customer"
+        component={CustomerDetail}
+        options={{
+          headerShown: true,
+          // headerTitle: t("Payments"),
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="people-outline" color={color} size={size} />
+          ),
+          headerTitle: () => (
+            <Text style={styles.headerTitle}>{"Customer Details"}</Text>
+          ),
+          headerTitleAlign: "center",
+          headerStyle: {
+            backgroundColor: "transparent",
+            // backgroundColor: "#fff"
+          },
+          headerLeft: () => <CustomBackButton />,
+        }}
+      />
+
+      {/* <Tab.Screen
         name="Customer"
         component={Customer}
         options={{
@@ -208,14 +260,19 @@ function DrawerNavigator() {
             <Icon name="people-outline" color={color} size={size} />
           ),
           headerTitle: !searchMode
-            ? () => <Text style={{ color:"white",
-              fontSize:20,
-              fontWeight:"bold"}}>Customer</Text>
+            ? () => (
+                <Text
+                  style={{ color: "white", fontSize: 20, fontWeight: "bold" }}
+                >
+                  Customer
+                </Text>
+              )
             : "",
 
           headerTitleAlign: "left",
         }}
-      />
+      /> */}
+
       <Tab.Screen
         name="Profile Setting"
         component={ProfileSetting}
@@ -226,13 +283,17 @@ function DrawerNavigator() {
             <Icon name="person-outline" color={color} size={size} />
           ),
           headerTitle: !searchMode
-            ? () =><Text style={{ color:"white",
-              fontSize:20,
-              fontWeight:"bold"}}>Profile Setting</Text>
+            ? () => (
+                <Text
+                  style={{ color: "white", fontSize: 20, fontWeight: "bold" }}
+                >
+                  Profile Setting
+                </Text>
+              )
             : "",
 
           headerTitleAlign: !searchMode ? "center" : "left",
-          headerRight: () => ""
+          headerRight: () => "",
         }}
       />
       {/* <Tab.Screen
@@ -250,9 +311,8 @@ function DrawerNavigator() {
 function StackNavigator() {
   const [isConnected, setIsConnected] = useState(false);
   const [isLandscape, setIsLandscape] = useState(false);
-  const { isAuthenticated, isLoading,  searchMode  } = useContext(AuthContext);
+  const { isAuthenticated, isLoading, searchMode } = useContext(AuthContext);
   const { shopDetails } = useContext(ShopDetailContext);
-
 
   if (isLoading) {
     return (
@@ -261,308 +321,354 @@ function StackNavigator() {
       </View>
     );
   }
-  console.log(isLoading)
-  console.log(isAuthenticated,"akdskddkfkfkf")
+  console.log(isLoading);
+  console.log(isAuthenticated, "akdskddkfkfkf");
 
   return (
     <>
-    <Stack.Navigator
-      initialRouteName={isAuthenticated ? "Passcode" : "login"}
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: "#0c3b73", // Set your desired header background color here
-        },
-        headerTitleAlign:"center",
-        headerTintColor: "white", // Set your desired header text color here
-        headerTitleStyle: {
-          fontWeight: "bold", // Optional: Set your desired font weight
-        },
-        headerLeft: searchMode ? () => null : undefined, // This removes the back button
-      }}
-    >
-      <Stack.Screen
-        name="wertone"
-        component={DrawerNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="local"
-        component={LocalAuthScreen}
-        screenOptions={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="login"
-        component={LoginScreen}
-        screenOptions={{ headerShown: false }}
-        // options={{ title: 'Login '}}
-        options={{
-          headerShown:false
-        }}
-
-      />
-      <Stack.Screen
-        name="Signup"
-        component={SignupScreen}
-        screenOptions={{ headerShown: false }}
-        options={{
-          headerShown:false
-        }}
-      />
-      <Stack.Screen
-        name="AddInvoice"
-        component={AddInvoiceScreen}
+      <Stack.Navigator
+        initialRouteName={isAuthenticated ? "Passcode" : "login"}
         screenOptions={{
-          headerTitle:"Create Invoice"
-        }}
-      />
-      <Stack.Screen
-        name="AddCustomer"
-        component={AddCustomerScreen}
-        options={{
-          headerTitle:"Add Customer"
-        }}
-      />
-      <Stack.Screen
-        name="AddProduct"
-        component={AddProductScreen}
-        options={{
-          headerTitle:"Add Product"
-        }}
-      />
-      <Stack.Screen
-        name="ViewVendor"
-        component={VendorListScreen}
-        options={{
-          headerRight: () => <HomeHeaderRight />,
-          // headerStyle: {
-          //   backgroundColor: "#0c3b73", // Your desired background color
-          // },
-          headerTitle: (searchMode) ? "" : "View Vendor",
-          headerTitleAlign:(searchMode) ? "left" : "center",
-        }}
-      />
-
-      <Stack.Screen name="viewClient" component={ViewClientScreen} />
-
-      <Stack.Screen
-        name="hsncode"
-        component={TaxScreen}
-        options={{
-          headerRight: () => <HomeHeaderRight />,
           headerStyle: {
-            backgroundColor: "#0c3b73", // Your desired background color
+            backgroundColor: "#0c3b73", // Set your desired header background color here
           },
-          headerTitle: (searchMode) ? "" : "HSN Codes",
-          headerTitleAlign:(searchMode) ? "left" : "center"
+          headerTitleAlign: "center",
+          headerTintColor: "white", // Set your desired header text color here
+          headerTitleStyle: {
+            fontWeight: "bold", // Optional: Set your desired font weight
+          },
+          headerLeft: searchMode ? () => null : undefined, // This removes the back button
         }}
-      />
-      <Stack.Screen
-        name="VendorForm"
-        component={VendorFormScreen}
-        options={{
-          headerTitle:"Add Vendor"
-        }}
-      />
-      <Stack.Screen
-        name="InvoiceDetail"
-        component={InvoiceDetailScreen}
-        options={{
-          headerTitle:"Invoice Details"
-        }}
-      />
-      <Stack.Screen
-        name="CustomerDetail"
-        component={CustomerDetailScreen}
-        options={{
-          headerTitle:"Customer Details"
-        }}
-      />
-      <Stack.Screen
-        name="ProductDetail"
-        component={ProductDetailScreen}
-        options={{
-          headerTitle:"Product Details"
-        }}
-      />
-      <Stack.Screen
-        name="EditInvoice"
-        component={EditInvoiceScreen}
-        options={{
-          headerTitle:"Edit Invoice Details"
-        }}
-      />
-      <Stack.Screen
-        name="EditProduct"
-        component={EditProductScreen}
-        options={{
-          headerTitle:"Edit Product Details"
-        }}
-      />
-      <Stack.Screen
-      name="editProfile"
-      component={EditProfile}
-      options={{
-        headerTitle:"Edit Profile"
-      }}
-    />
-      <Stack.Screen
-        name="EditCustomer"
-        component={EditCustomerScreen}
-        options={{
-          headerTitle:"Edit People Details"
-        }}
-      />
-      <Stack.Screen
-        name="Passcode"
-        component={PasscodeScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="forgetPasscode"
-        component={Forgetpasscode}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="CreateNewPasscode"
-        component={CreateNewPasscode}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="CreateInvoice"
-        component={CreateInvoice}
-        options={{
-          headerTitle:"Add Invoice"
-        }}
-      />
-      <Stack.Screen
-        name="CreateShopScreen"
-        component={CreateShopScreen}
-        options={{
-          headerTitle:"Add Shop"
-        }}
-      />
-      <Stack.Screen
-        name="genrateInvoice"
-        component={GenrateInvoiceScreen}
-        options={{
-          headerTitle:"Generate Invoice"
-        }}
-      />
-      <Stack.Screen
-        name="ReviewAndPay"
-        component={ReviewAndPayScreen}
-        options={{
-          headerTitle: "Review And Pay",
-          headerRight: () => <RotateBtn isLandscape={isLandscape} setIsLandscape={setIsLandscape} />,
-          headerLeft:() => <CustomBackButton isLandscape={isLandscape} setIsLandscape={setIsLandscape} />
-        }}
-      />
-      <Stack.Screen
-        name="InvoiceSuccess"
-        component={InvoiceSuccessScreen}
-        options={{
-          headerTitle:"Invoice Success"
-        }}
-      />
-      <Stack.Screen
-        name="Invoices"
-        component={FilterInvoiceScreen}
-        options={
-          {
-            // headerTitle: ((false)?
-            //      (() => ("")):
-            //      ("kunal store"))
+      >
+        <Stack.Screen
+          name="wertone"
+          component={DrawerNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="local"
+          component={LocalAuthScreen}
+          screenOptions={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="login"
+          component={LoginScreen}
+          screenOptions={{ headerShown: false }}
+          // options={{ title: 'Login '}}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Signup"
+          component={SignupScreen}
+          screenOptions={{ headerShown: false }}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="AddInvoice"
+          component={AddInvoiceScreen}
+          screenOptions={{
+            headerTitle: "Create Invoice",
+          }}
+        />
+        <Stack.Screen
+          name="AddCustomer"
+          component={AddCustomerScreen}
+          options={{
+            headerTitle: "Add Customer",
+          }}
+        />
+        <Stack.Screen
+          name="AddProduct"
+          component={AddProductScreen}
+          options={{
+            headerTitle: "Add Product",
+          }}
+        />
+        <Stack.Screen
+          name="ViewVendor"
+          component={VendorListScreen}
+          options={{
+            headerRight: () => <HomeHeaderRight />,
+            // headerStyle: {
+            //   backgroundColor: "#0c3b73", // Your desired background color
+            // },
+            headerTitle: searchMode ? "" : "View Vendor",
+            headerTitleAlign: searchMode ? "left" : "center",
+          }}
+        />
+
+        <Stack.Screen name="viewClient" component={ViewClientScreen} />
+
+        <Stack.Screen
+          name="hsncode"
+          component={TaxScreen}
+          options={{
+            headerRight: () => <HomeHeaderRight />,
+            headerStyle: {
+              backgroundColor: "#0c3b73", // Your desired background color
+            },
+            headerTitle: searchMode ? "" : "HSN Codes",
+            headerTitleAlign: searchMode ? "left" : "center",
+          }}
+        />
+        <Stack.Screen
+          name="VendorForm"
+          component={VendorFormScreen}
+          options={{
+            headerTitle: "Add Vendor",
+          }}
+        />
+        <Stack.Screen
+          name="InvoiceDetail"
+          component={InvoiceDetailScreen}
+          options={{
+            headerTitle: "Invoice Details",
+          }}
+        />
+        <Stack.Screen
+          name="CustomerDetail"
+          component={CustomerDetailScreen}
+          options={{
+            headerTitle: "Customer Details",
+          }}
+        />
+        <Stack.Screen
+          name="ProductDetail"
+          component={ProductDetailScreen}
+          options={{
+            headerTitle: "Product Details",
+          }}
+        />
+        <Stack.Screen
+          name="EditInvoice"
+          component={EditInvoiceScreen}
+          options={{
+            headerTitle: "Edit Invoice Details",
+          }}
+        />
+        <Stack.Screen
+          name="EditProduct"
+          component={EditProductScreen}
+          options={{
+            headerTitle: "Edit Product Details",
+          }}
+        />
+        <Stack.Screen
+          name="editProfile"
+          component={EditProfile}
+          options={{
+            headerTitle: "Edit Profile",
+          }}
+        />
+        <Stack.Screen
+          name="EditCustomer"
+          component={EditCustomerScreen}
+          options={{
+            headerTitle: "Edit People Details",
+          }}
+        />
+        <Stack.Screen
+          name="Passcode"
+          component={PasscodeScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="forgetPasscode"
+          component={Forgetpasscode}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="CreateNewPasscode"
+          component={CreateNewPasscode}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="CreateInvoice"
+          component={CreateInvoice}
+          options={{
+            headerTitle: "Add Invoice",
+          }}
+        />
+        <Stack.Screen
+          name="CreateShopScreen"
+          component={CreateShopScreen}
+          options={{
+            headerTitle: "Add Shop",
+          }}
+        />
+        <Stack.Screen
+          name="genrateInvoice"
+          component={GenrateInvoiceScreen}
+          options={{
+            headerTitle: "Generate Invoice",
+          }}
+        />
+        <Stack.Screen
+          name="ReviewAndPay"
+          component={ReviewAndPayScreen}
+          options={{
+            headerTitle: "Review And Pay",
+            headerRight: () => (
+              <RotateBtn
+                isLandscape={isLandscape}
+                setIsLandscape={setIsLandscape}
+              />
+            ),
+            headerLeft: () => (
+              <CustomBackButton
+                isLandscape={isLandscape}
+                setIsLandscape={setIsLandscape}
+              />
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="InvoiceSuccess"
+          component={InvoiceSuccessScreen}
+          options={{
+            headerTitle: "Invoice Success",
+          }}
+        />
+        <Stack.Screen
+          name="Invoices"
+          component={FilterInvoiceScreen}
+          options={
+            {
+              // headerTitle: ((false)?
+              //      (() => ("")):
+              //      ("kunal store"))
+            }
           }
-        }
-      />
-      <Stack.Screen
-        name="ViewInvoices"
-        component={ViewInvoiceScreen}
-        options={({ route }) => ({
-          headerTitle: shopDetails.shopname,
-          headerRight: () => <RotateBtn isLandscape={isLandscape} setIsLandscape={setIsLandscape} />,
-          headerLeft:() => <CustomBackButton isLandscape={isLandscape} setIsLandscape={setIsLandscape} />
-        })}
-      />
-      <Stack.Screen
-        name="ViewShops"
-        component={ViewShopsScreen}
-        options={{
-          headerRight: () => <HomeHeaderRight />,
-          headerTitle: !searchMode ? "My Shops" : "", // Provide a default title
-          headerTitleAlign:(searchMode) ? "left" : "center"
-        }}
-      />
+        />
+        <Stack.Screen
+          name="ViewInvoices"
+          component={ViewInvoiceScreen}
+          options={({ route }) => ({
+            headerTitle: shopDetails.shopname,
+            headerRight: () => (
+              <RotateBtn
+                isLandscape={isLandscape}
+                setIsLandscape={setIsLandscape}
+              />
+            ),
+            headerLeft: () => (
+              <CustomBackButton
+                isLandscape={isLandscape}
+                setIsLandscape={setIsLandscape}
+              />
+            ),
+          })}
+        />
+        <Stack.Screen
+          name="ViewShops"
+          component={ViewShopsScreen}
+          options={{
+            headerRight: () => <HomeHeaderRight />,
+            headerTitle: !searchMode ? "My Shops" : "", // Provide a default title
+            headerTitleAlign: searchMode ? "left" : "center",
+          }}
+        />
 
-      <Stack.Screen
-        name="ShopDetails"
-        component={ShopDetailScreen}
-        options={{
-          headerTitle: "My Shops", // Provide a default title
-        }}
-      />
+        <Stack.Screen
+          name="ShopDetails"
+          component={ShopDetailScreen}
+          options={{
+            headerTitle: "My Shops", // Provide a default title
+          }}
+        />
 
-      <Stack.Screen
-        name="VendorDetail"
-        component={VendorDetailScreen}
-        options={{
-          headerTitle: "Vendor Details", // Provide a default title
-        }}
-      />
-      <Stack.Screen
-        name="SetPasswordScreen"
-        component={SetPasswordSreen}
-        options={{
-          headerTitle: "Set Password", // Provide a default title
-        }}
-      />
-       <Stack.Screen
-        name="UserloginScreen"
-        component={UserloginScreen}
-        options={{
-          headerTitle: "User Login", // Provide a default title
-        }}
-      />
-    </Stack.Navigator>
+        <Stack.Screen
+          name="VendorDetail"
+          component={VendorDetailScreen}
+          options={{
+            headerTitle: "Vendor Details", // Provide a default title
+          }}
+        />
+        <Stack.Screen
+          name="SetPasswordScreen"
+          component={SetPasswordSreen}
+          options={{
+            headerTitle: "Set Password", // Provide a default title
+          }}
+        />
+        <Stack.Screen
+          name="UserloginScreen"
+          component={UserloginScreen}
+          options={{
+            headerTitle: "User Login", // Provide a default title
+          }}
+        />
 
-    <CheckInternet
+        <Stack.Screen
+          name="CustomerDetails"
+          component={CustomerDetails}
+          options={{
+            headerShown: true,
+            // headerTitle: t("Payments"),
+            tabBarIcon: ({ color, size }) => (
+              <Icon name="people-outline" color={color} size={size} />
+            ),
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"Customer Details"}</Text>
+            ),
+            headerTitleAlign: "center",
+            headerStyle: {
+              backgroundColor: "transparent",
+              // backgroundColor: "#fff"
+            },
+            headerLeft: () => <CustomBackButton />,
+          }}
+        />
+      </Stack.Navigator>
+
+      <CheckInternet
         isConnected={isConnected}
         setIsConnected={setIsConnected}
       />
     </>
-
   );
 }
+const styles = StyleSheet.create({
+  headerTitle: {
+    fontFamily: "Poppins-Regular",
+    // fontSize: fontSize.headingSmall,
+    fontWeight: "bold",
+  },
+});
 export default function App() {
   return (
     <SafeAreaProvider>
-    <ShopDetailProvider>
+      <ShopDetailProvider>
         <PasskeyProvider>
           <SnackbarProvider>
             <Provider theme={customTheme}>
               <NavigationContainer>
                 <AuthProvider>
                   <LoginTimeProvider>
-                  <Stack.Navigator
-                    initialRouteName="StackNavigator"
-                    optionScreen={{
-                      headerStyle: { backgroundColor: "black" },
-                      headerTintColor: "white",
-                    }}
-                  >
-                    <Stack.Screen
-                      name="StackNavigator"
-                      component={StackNavigator}
-                      options={{ headerShown: false }}
-                    />
-                  </Stack.Navigator>
+                    <Stack.Navigator
+                      initialRouteName="StackNavigator"
+                      optionScreen={{
+                        headerStyle: { backgroundColor: "black" },
+                        headerTintColor: "white",
+                      }}
+                    >
+                      <Stack.Screen
+                        name="StackNavigator"
+                        component={StackNavigator}
+                        options={{ headerShown: false }}
+                      />
+                    </Stack.Navigator>
                   </LoginTimeProvider>
                 </AuthProvider>
               </NavigationContainer>
             </Provider>
           </SnackbarProvider>
         </PasskeyProvider>
-    </ShopDetailProvider>
+      </ShopDetailProvider>
     </SafeAreaProvider>
   );
 }

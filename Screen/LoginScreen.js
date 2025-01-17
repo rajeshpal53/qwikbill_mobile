@@ -54,9 +54,10 @@ const LoginScreen = ({ navigation }) => {
 
   const handleLogin = async (values, { resetForm }) => {
     try {
+      console.log("login screen")
       setIsLoading(true);
       const response = await axios.post(
-        "http://192.168.1.5:8888/api/login",
+        "http://192.168.1.36:8888/api/login",
         JSON.stringify(values),
         {
           headers: {

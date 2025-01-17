@@ -114,24 +114,24 @@ export default function ItemList({
                       title={menuItem.title}
                     />
                   ))}
-                  {/* <Menu.Item 
+                  {/* <Menu.Item
             onPress={() => {
                 hideMenu()
                 onView(item._id)
-            }} 
+            }}
             title="View" />
 
             <Menu.Item onPress={() => {
                 hideMenu()
                 onEdit(item._id)
-            }} 
+            }}
             title="Edit" />
 
             <Menu.Item onPress={() => {
                 hideMenu()
                 onDelete(item._id)
-                
-            }} 
+
+            }}
             title="Delete" /> */}
                 </Menu>
               ) : (
@@ -162,13 +162,13 @@ export default function ItemList({
           </View>
         </TouchableOpacity>
         {/* {isExpanded && (
-      <TouchableOpacity 
+      <TouchableOpacity
       style={{
        borderBottomWidth:1,
        borderBottomColor: "#ccc",
        paddingLeft:"17%",
        paddingBottom:5
-       }} 
+       }}
        onPress={() => onView(item._id)
 
        }>
