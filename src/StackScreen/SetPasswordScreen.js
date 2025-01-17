@@ -1,6 +1,7 @@
 import { Text, TouchableOpacity, View } from "react-native";
-import SetpasswordModal from "../../Modal/SetpasswordModal";
+
 import { useState } from "react";
+import SetpasswordModal from "../Modal/SetpasswordModal";
 
 const SetPasswordSreen = ({navigation}) => {
   const [visible, setVisible] = useState(false);

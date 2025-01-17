@@ -30,9 +30,10 @@ const UserloginScreen = ({ navigation }) => {
 
   const handleLogin = async (values, { resetForm }) => {
     try {
+      console.log("User login screen")
       setIsLoading(true);
       const response = await axios.post(
-        "http://192.168.1.5:8888/api/login",
+        "http://192.168.1.36:8888/api/login",
         JSON.stringify(values),
         {
           headers: {
@@ -60,7 +61,7 @@ const UserloginScreen = ({ navigation }) => {
         {/* Logo Image */}
         <View style = {{ height:"35%"}}>
           <Image
-            source={require("../../../assets/qwikBill.jpeg")}
+            source={require("../../assets/qwikBill.jpeg")}
             style={styles.img}
             resizeMode="contain"
           />
