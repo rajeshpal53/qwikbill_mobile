@@ -7,7 +7,7 @@ import { readApi } from "../Util/UtilApi";
 import { AuthContext } from "../Store/AuthContext";
 import ItemList from "../Components/Lists/ItemList";
 import Icon from "react-native-vector-icons/Ionicons";
-import { useSnackbar } from "../Store/SnackbarContext";
+import { useSnackbar } from "../Store/SnackbarContextbar";
 import DeleteModal from "../UI/DeleteModal";
 import { deleteApi } from "../Util/UtilApi";
 import { ShopDetailContext } from "../Store/ShopDetailContext";

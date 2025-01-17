@@ -48,7 +48,7 @@ const Signup = ({ navigation }) => {
       const postData = { ...values, enabled: true, role: "admin" };
       const response = await axios.post(
         // "https://wertone-billing.onrender.com/api/signup",
-        "http://192.168.1.5:8888/api/signup",
+        "http://192.168.1.6:8888/api/signup",
         JSON.stringify(postData),
         {
           headers: { "Content-Type": "application/json" },
@@ -128,7 +128,7 @@ const Signup = ({ navigation }) => {
                 }}
               >
                 <Image
-                  source={require("../assets/qwikBill.jpeg")}
+                  source={require("../../assets/qwikBill.jpeg")}
                   style={styles.img}
                 />
                 <Text variant="titleMedium" style={styles.wertoneTag}>

@@ -21,7 +21,7 @@ import { useWindowDimensions } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import { ActivityIndicator } from "react-native-paper";
 import { useSnackbar } from "../Store/SnackbarContext";
-import SetpasswordModal from "../src/Modal/SetpasswordModal";
+import SetpasswordModal from "../Modal/SetpasswordModal";
 
 import { AuthContext } from "../Store/AuthContext";
 
@@ -57,7 +57,7 @@ const LoginScreen = ({ navigation }) => {
       console.log("login screen")
       setIsLoading(true);
       const response = await axios.post(
-        "http://192.168.1.36:8888/api/login",
+        "http://192.168.1.6:8888/api/login",
         JSON.stringify(values),
         {
           headers: {
@@ -185,7 +185,7 @@ const LoginScreen = ({ navigation }) => {
                     }}
                   >
                     <Image
-                      source={require("../assets/qwikBill.jpeg")}
+                      source={require("../../assets/qwikBill.jpeg")}
                       style={styles.img}
 
                     />

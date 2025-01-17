@@ -345,7 +345,7 @@ const handleDelete = async() => {
       {(invoiceData.length <= 0) && (
         <View style={{alignItems:"center", height:"100%"}}>
       <Image
-        source={require("../../assets/noDataFound.png")}
+        source={require("../../../assets/noDataFound.png")}
         style={{width:"50%", height:100}}
       ></Image>
       <Text variant="titleLarge" style={{ color: "#555" }}>
