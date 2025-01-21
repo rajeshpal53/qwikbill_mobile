@@ -4,7 +4,7 @@ import ProductCardDetails from "../Component/Cards/ProductCard";
 import { useState } from "react";
 import ViewCartOverlay from "../Overlays/ViewCartOverlays";
 
-const AllItemProduct = ({navigation}) => {
+const AllItemProduct = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchmodal, setsearchmodal] = useState(false); // State for modal visibility
   const [transcript, setTranscript] = useState(""); // State for transcript
@@ -42,17 +42,17 @@ const AllItemProduct = ({navigation}) => {
       info: "awosome Product",
     },
     {
-        id: 6,
-        Name: "Nokia",
-        "Selling Price": 67,
-        info: "awosome Product",
-      },
-      {
-        id: 7,
-        Name: "Nokia",
-        "Selling Price": 67,
-        info: "awosome Product",
-      },
+      id: 6,
+      Name: "Nokia",
+      "Selling Price": 67,
+      info: "awosome Product",
+    },
+    {
+      id: 7,
+      Name: "Nokia",
+      "Selling Price": 67,
+      info: "awosome Product",
+    },
   ];
 
   const filteredData = ProduchItem.filter((item) =>
@@ -81,15 +81,15 @@ const AllItemProduct = ({navigation}) => {
         contentContainerStyle={styles.flatListContainer}
       />
 
-      {showOverlay && <ViewCartOverlay navigation={navigation}/>}
+      {showOverlay && <ViewCartOverlay navigation={navigation} />}
     </View>
   );
 };
 
-const styles =  StyleSheet.create({
-    flatListContainer: {
-        paddingBottom: 150, // Add padding to the bottom of the FlatList content
-      },
-})
+const styles = StyleSheet.create({
+  flatListContainer: {
+    paddingBottom: 150, // Add padding to the bottom of the FlatList content
+  },
+});
 
 export default AllItemProduct;

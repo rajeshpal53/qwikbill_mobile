@@ -256,13 +256,15 @@ export default function FilterInvoiceScreen({}) {
 
           <View style={styles.MainContainer}>
             <View style={styles.TextView}>
-              <Text style = {styles.headerText}>Provisional Invoice No: - 1002</Text>
+              <Text style={styles.headerText}>
+                Provisional Invoice No: - 1002
+              </Text>
             </View>
             <View>
               <TextInput
                 placeholder="Name"
                 label="Name"
-                mode="outlined"
+                mode="flat"
                 style={styles.input}
                 editable={false}
                 // value={text}
@@ -271,7 +273,7 @@ export default function FilterInvoiceScreen({}) {
               <TextInput
                 placeholder="Address"
                 label="Address"
-                mode="outlined"
+                mode="flat"
                 style={styles.input}
                 editable={false}
                 // value={text}
@@ -280,7 +282,7 @@ export default function FilterInvoiceScreen({}) {
               <TextInput
                 placeholder="GST Number"
                 label="GST Number"
-                mode="outlined"
+                mode="flat"
                 style={styles.input}
                 editable={false}
                 // value={text}
@@ -289,23 +291,24 @@ export default function FilterInvoiceScreen({}) {
               <TextInput
                 placeholder="Phone"
                 label="Phone"
-                mode="outlined"
+                mode="flat"
                 style={styles.input}
                 editable={false}
                 // value={text}
               />
             </View>
             <View style={styles.buttonView}>
-              <TouchableOpacity style={styles.addButton}
-              onPress={()=> navigation.navigate("AllItemProduct")}>
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => navigation.navigate("AllItemProduct")}
+              >
                 <MaterialIcons name="add" size={24} color="black" />
                 <Text style={styles.addButtonText}>Add Items</Text>
               </TouchableOpacity>
             </View>
           </View>
 
-          <ItemDataTable
-          />
+          <ItemDataTable />
 
           {/* <View style={styles.tabContainer}>
           <Button
@@ -450,22 +453,21 @@ const styles = StyleSheet.create({
     color: "black",
   },
   MainContainer: {
-    marginHorizontal:10,
+    marginHorizontal: 10,
   },
-  TextView:{
-    marginVertical:8,
-    paddingVertical:8,
-
+  TextView: {
+    marginVertical: 8,
+    paddingVertical: 8,
   },
-  headerText:{
+  headerText: {
     fontSize: 16,
     fontWeight: "bold",
     color: "black",
-
   },
-  input:{
-    marginVertical:5,
-
-
-  }
+  input: {
+    flex: 1,
+    backgroundColor: "#f9f9f9",
+    height: 40,
+    marginTop: 10,
+  },
 });

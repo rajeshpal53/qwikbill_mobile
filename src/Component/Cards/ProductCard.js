@@ -8,6 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import { Card } from "react-native-paper";
+import IncAndDicButton from "../IncAndDicButton";
 
 const ProductCardDetails = ({ item, setshowOverlay }) => {
   const [inCart, setInCart] = useState(false);
@@ -15,29 +16,19 @@ const ProductCardDetails = ({ item, setshowOverlay }) => {
   const [selectedProduct, setSelectedProduct] = useState(0);
 
   const handleAddToCart = (item) => {
+    console.log("Value of item", item);
     setInCart(true);
-
-  };
-  const increaseQuantity = () => {
-    setQuantity((prev) => prev + 1); // Increase the quantity
-  };
-  const decreaseQuantity = () => {
-    if (quantity > 1) {
-      setQuantity((prev) => prev - 1); // Decrease the quantity, prevent going below 1
-    } else {
-      setInCart(false);
-    }
   };
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <Card style={styles.card}>
         <View style={styles.container}>
           {/* Product Image */}
-          <Image
+          {/* <Image
             source={require("../../../assets/profile.png")}
             style={styles.productImage}
             resizeMode="contain"
-          />
+          /> */}
 
           {/* Product Details */}
           <View style={styles.detailsContainer}>
@@ -48,30 +39,35 @@ const ProductCardDetails = ({ item, setshowOverlay }) => {
             <View style={styles.textButtonView}>
               <Text style={styles.productPrice}>${item["Selling Price"]}</Text>
               {/* Conditional rendering of 'Add to Cart' or quantity controls */}
-              {!inCart ? (
-                <TouchableOpacity
-                  style={styles.addButton}
-                  onPress={() => handleAddToCart(item)}
-                >
-                  <Text style={styles.addButtonText}>Add to Cart</Text>
-                </TouchableOpacity>
-              ) : (
-                <View style={styles.quantityControlContainer}>
+              {
+                !inCart ? (
                   <TouchableOpacity
-                    onPress={decreaseQuantity}
-                    style={styles.quantityButton}
+                    style={styles.addButton}
+                    onPress={() => handleAddToCart(item)}
                   >
-                    <Text style={styles.quantityButtonText}>-</Text>
+                    <Text style={styles.addButtonText}>Add to Cart</Text>
                   </TouchableOpacity>
-                  <Text style={styles.quantityText}>{quantity}</Text>
-                  <TouchableOpacity
-                    onPress={increaseQuantity}
-                    style={styles.quantityButton}
-                  >
-                    <Text style={styles.quantityButtonText}>+</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
+                ) : (
+                  <IncAndDicButton inCart={inCart} setInCart={setInCart} />
+                )
+                // (
+                //   <View style={styles.quantityControlContainer}>
+                //     <TouchableOpacity
+                //       onPress={decreaseQuantity}
+                //       style={styles.quantityButton}
+                //     >
+                //       <Text style={styles.quantityButtonText}>-</Text>
+                //     </TouchableOpacity>
+                //     <Text style={styles.quantityText}>{quantity}</Text>
+                //     <TouchableOpacity
+                //       onPress={increaseQuantity}
+                //       style={styles.quantityButton}
+                //     >
+                //       <Text style={styles.quantityButtonText}>+</Text>
+                //     </TouchableOpacity>
+                //   </View>
+                // )
+              }
             </View>
           </View>
         </View>
@@ -91,7 +87,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     marginHorizontal: 10,
     marginVertical: 2,
-  
   },
   container: {
     flexDirection: "row",
