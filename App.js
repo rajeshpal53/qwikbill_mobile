@@ -11,7 +11,7 @@ import { ShopDetailProvider } from "./src/Store/ShopDetailContext.js";
 import { ShopDetailContext } from "./src/Store/ShopDetailContext.js";
 import { LoginTimeProvider } from "./src/Store/LoginTimeContext.js";
 import { PasskeyProvider } from "./src/Store/PasskeyContext.js";
-import StackNavigator from "./src/NavigatorContainer/stackNavigator.js";
+import StackNavigator from "./src/NavigatorContainer/StackNavigator.js";
 const customTheme = {
   ...DefaultTheme,
   colors: {
