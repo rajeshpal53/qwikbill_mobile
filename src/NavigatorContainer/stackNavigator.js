@@ -1,21 +1,21 @@
 import { useState, useContext } from "react";
 import { createStackNavigator,HeaderStyleInterpolators } from "@react-navigation/stack";
-import BottomNavigator from "./BottomNavigator";
-import { AuthContext } from "../Store/AuthContext";
-import{ShopDetailContext}from "../Store/ShopDetailContext";
+import BottomNavigator from "./BottomNavigator.js";
+import { AuthContext } from "../Store/AuthContext.js";
+import{ShopDetailContext}from "../Store/ShopDetailContext.js";
 import Icon from "react-native-vector-icons/Ionicons";
 import { ActivityIndicator } from "react-native-paper";
 import PasscodeScreen from "../Screen/PasscodeScreen.js";
-import LoginScreen from "../Screen/LoginScreen";
-import AddInvoiceScreen from "../Screen/AddInvoiceScreen";
+import LoginScreen from "../Screen/LoginScreen.js";
+import AddInvoiceScreen from "../Screen/AddInvoiceScreen.js";
 import { Button, Pressable, TextComponent, View, Text,StyleSheet} from "react-native";
-import { CustomTabBar } from "../Components/CustomDrawerContent";
-import AddProductScreen from "../Screen/AddProductScreen";
-import InvoiceDetailScreen from "../Screen/InvoiceDetailScreen";
-import ProductDetailScreen from "../Screen/ProductDetailScreen";
-import EditInvoiceScreen from "../Screen/EditInvoiceScreen";
-import EditProductScreen from "../Screen/EditProductScreen";
-import EditCustomerScreen from "../Screen/EditCustomerScreen";
+import { CustomTabBar } from "../Components/CustomDrawerContent.js";
+import AddProductScreen from "../Screen/AddProductScreen.js";
+import InvoiceDetailScreen from "../Screen/InvoiceDetailScreen.js";
+import ProductDetailScreen from "../Screen/ProductDetailScreen.js";
+import EditInvoiceScreen from "../Screen/EditInvoiceScreen.js";
+import EditProductScreen from "../Screen/EditProductScreen.js";
+import EditCustomerScreen from "../Screen/EditCustomerScreen.js";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Feather } from "@expo/vector-icons";
 import HomeHeaderRight from "../Components/HeaderComponents/HomeHeaderRight.js";
@@ -47,8 +47,9 @@ import SetPasswordSreen from "../StackScreen/SetPasswordScreen.js";
 import UserloginScreen from "../StackScreen/UserLoginScreen.js";
 import CustomBackButton from "../Component/CustomBackButton.js";
 import CustomerDetails from "../StackScreen/Customerdetails.js";
-import AddCustomerScreen from "../Screen/AddCustomerScreen";
+import AddCustomerScreen from "../Screen/AddCustomerScreen.js";
 import CustomerDetailScreen from "../Screen/CustomerDetailScreen.js"
+import EnterNumberScreen from "../Screen/StackScreen/EnterNumberScreen.js";
 export default function StackNavigator() {
     const Stack = createStackNavigator();
     const [isConnected, setIsConnected] = useState(false);
@@ -95,6 +96,15 @@ export default function StackNavigator() {
           <Stack.Screen
             name="login"
             component={LoginScreen}
+            screenOptions={{ headerShown: false }}
+            // options={{ title: 'Login '}}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="EnterNumberScreen"
+            component={EnterNumberScreen}
             screenOptions={{ headerShown: false }}
             // options={{ title: 'Login '}}
             options={{
