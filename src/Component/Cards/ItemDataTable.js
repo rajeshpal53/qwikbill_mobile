@@ -1,52 +1,56 @@
-import { Card, IconButton } from "react-native-paper";
-import { View, Text, StyleSheet, Image } from "react-native";
-import { useState } from "react";
+import React, { useState } from "react";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { Card, TextInput } from "react-native-paper";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import IncAndDicButton from "../IncAndDicButton";
 
 const ItemDataTable = () => {
   const [quantity, setQuantity] = useState(1); // State for quantity
-
-  const increaseQuantity = () => setQuantity((prev) => prev + 1);
-  const decreaseQuantity = () => {
-    if (quantity > 1) setQuantity((prev) => prev - 1); // Prevent going below 1
-  };
+  const [amount, setAmount] = useState(300);
 
   return (
     <Card style={styles.card}>
-      <Card style={styles.Innercard}>
-        <View style={styles.innerContainer}>
-          {/* Product Image */}
-          <Image
-            source={require("../../../assets/profile.png")}
-            style={styles.productImage}
-            resizeMode="contain"
-          />
+      {/* Header */}
+      <View style={[styles.row, styles.header]}>
+        <Text style={[styles.cell, styles.smallCell]}>No.</Text>
+        <Text style={[styles.cell, styles.flexCell]}>Items</Text>
+        <Text style={[styles.cell, styles.smallCell]}>Price</Text>
+        <Text style={[styles.cell, styles.smallCell]}>Quantity</Text>
+        <Text style={[styles.cell, styles.smallCell]}>Action</Text>
+      </View>
 
-          {/* Product Details */}
-          <View style={styles.productDetails}>
-            <Text style={styles.productName}>iPhone</Text>
-            <Text style={styles.productPrice}>$300</Text>
-          </View>
-
-          {/* Quantity Control */}
-          <View style={styles.counterContainer}>
-            <IconButton
-              icon="minus"
-              size={15}
-              onPress={decreaseQuantity}
-              style={styles.iconButton}
-            />
-            <Text style={styles.quantityText}>{quantity}</Text>
-            <IconButton
-              icon="plus"
-              size={15}
-              onPress={increaseQuantity}
-              style={styles.iconButton}
-            />
-          </View>
+      {/* Row */}
+      <View style={styles.row}>
+        <Text style={[styles.cell, styles.smallCell]}>1</Text>
+        <Text style={[styles.cell, styles.flexCell]}>iPhone Plus</Text>
+        <Text style={[styles.cell, styles.smallCell]}>$300</Text>
+        <View style={[styles.cell, styles.smallCell]}>
+          <IncAndDicButton />
         </View>
-      </Card>
-      <View style={styles.PriceView}>
-        <Text style={styles.Price}>Total : {300}</Text>
+        <View style={[styles.cell, styles.smallCell]}>
+          <TouchableOpacity>
+            <MaterialIcons name="delete" size={20} color="red" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Total Price Section */}
+      <View style={styles.totalContainer}>
+        <Text style={styles.totalText}>Total:</Text>
+        <TextInput
+          mode="outlined"
+          style={styles.input}
+          editable={false}
+          value={`$${amount * quantity}`}
+        />
+      </View>
+
+      {/* Pay Button */}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.payButton}>
+          <MaterialIcons name="payment" size={20} color="white" />
+          <Text style={styles.payButtonText}>Pay</Text>
+        </TouchableOpacity>
       </View>
     </Card>
   );
@@ -54,60 +58,80 @@ const ItemDataTable = () => {
 
 const styles = StyleSheet.create({
   card: {
-    marginVertical:10,
+    margin: 10,
     elevation: 3,
     borderRadius: 8,
     backgroundColor: "#fff",
+    // paddingVertical:10
+    paddingHorizontal:8
 
   },
-  Innercard:{
-    elevation: 3,
-    borderRadius: 8,
-    backgroundColor: "#fff",
-
-  },
-
-  innerContainer: {
+  row: {
     flexDirection: "row",
     alignItems: "center",
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
   },
-  productImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
+  header: {
+    // backgroundColor: "#f0f0f0",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    paddingHorizontal: 5,
+    // marginVertical:10
   },
-  productDetails: {
+  cell: {
+    textAlign: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 5,
+
+  },
+  smallCell: {
+    // flex: 0.5,
+    textAlign:"center"
+  },
+  flexCell: {
     flex: 1,
-    marginLeft: 10,
   },
-  productName: {
-    fontSize: 12,
+  totalContainer: {
+    // flexDirection: "row",
+    // alignItems: "center",
+    marginTop: 10,
+    paddingHorizontal: 5,
+  },
+  totalText: {
+    fontSize: 16,
     fontWeight: "bold",
+    marginRight: 10,
+    marginTop: 10,
   },
-  productPrice: {
-    fontSize: 10,
-    color: "gray",
+  input: {
+    flex: 1,
+    backgroundColor: "#f9f9f9",
+    height: 35,
+    marginTop: 10,
   },
-  counterContainer: {
+  buttonContainer: {
+    marginTop: 10,
+    alignItems: "flex-end",
+    // width:"25%"
+
+  },
+  payButton: {
     flexDirection: "row",
-    alignItems: "center",
+    // alignItems: "center",
+    backgroundColor: "#007bff",
+    padding: 10,
+    paddingVertical:10,
+    borderRadius: 8,
+    marginBottom:10,
+
   },
-  iconButton: {
-    backgroundColor: "#f0f0f0",
-  },
-  quantityText: {
-    marginHorizontal: 10,
-    fontSize: 16,
+  payButtonText: {
+    marginLeft: 5,
+    color: "white",
     fontWeight: "bold",
-  },
-  PriceView: {
-    marginVertical: 10,
-    paddingVertical: 10,
-  },
-  Price: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginHorizontal: 10,
   },
 });
 

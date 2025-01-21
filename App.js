@@ -1,8 +1,8 @@
 import "react-native-gesture-handler";
 import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { Provider,  } from "react-native-paper";
-import { DefaultTheme,  } from "react-native-paper";
+import { PaperProvider } from "react-native-paper";
+import { DefaultTheme } from "react-native-paper";
 import { AuthProvider, AuthContext } from "./src/Store/AuthContext.js";
 import { SnackbarProvider } from "./src/Store/SnackbarContext.js";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -12,6 +12,10 @@ import { ShopDetailContext } from "./src/Store/ShopDetailContext.js";
 import { LoginTimeProvider } from "./src/Store/LoginTimeContext.js";
 import { PasskeyProvider } from "./src/Store/PasskeyContext.js";
 import StackNavigator from "./src/NavigatorContainer/stackNavigator.js";
+import { Provider } from "react-redux";
+import { Store } from "./src/Redux/Store.js";
+
+
 const customTheme = {
   ...DefaultTheme,
   colors: {
@@ -28,15 +32,17 @@ export default function App() {
       <ShopDetailProvider>
         <PasskeyProvider>
           <SnackbarProvider>
-            <Provider theme={customTheme}>
-              <NavigationContainer>
-                <AuthProvider>
-                  <LoginTimeProvider>
-                  <StackNavigator/>
-                  </LoginTimeProvider>
-                </AuthProvider>
-              </NavigationContainer>
-            </Provider>
+            <PaperProvider theme={customTheme}>
+              <Provider store={Store}>
+                <NavigationContainer>
+                  <AuthProvider>
+                    <LoginTimeProvider>
+                      <StackNavigator />
+                    </LoginTimeProvider>
+                  </AuthProvider>
+                </NavigationContainer>
+              </Provider>
+            </PaperProvider>
           </SnackbarProvider>
         </PasskeyProvider>
       </ShopDetailProvider>
