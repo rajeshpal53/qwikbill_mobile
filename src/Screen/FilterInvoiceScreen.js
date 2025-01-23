@@ -9,7 +9,13 @@ import {
   Keyboard,
   Platform,
 } from "react-native";
-import { Button, RadioButton, Card, TextInput, Divider } from "react-native-paper";
+import {
+  Button,
+  RadioButton,
+  Card,
+  TextInput,
+  Divider,
+} from "react-native-paper";
 import { AuthContext } from "../Store/AuthContext";
 import { Entypo } from "@expo/vector-icons";
 import { readApi } from "../Util/UtilApi";
@@ -18,38 +24,40 @@ import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import DropDownList from "../UI/DropDownList";
 import { ScrollView } from "react-native-gesture-handler";
 import ThreeToggleBtns from "../Components/ThreeToggleBtns";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import ItemDataTable from "../Component/Cards/ItemDataTable";
 
-export default function FilterInvoiceScreen() {
+export default function FilterInvoiceScreen({}) {
   const [activeTab, setActiveTab] = useState("dateRange");
   const [selectedOption, setSelectedOption] = useState("lastOneMonth");
-  const [paidUnpaidAll, setpaidUnpaidAll] = useState("all")
+  const [paidUnpaidAll, setpaidUnpaidAll] = useState("all");
   const [filter, setFilter] = useState("all");
-  const [url, setUrl] = useState("")
-
+  const [url, setUrl] = useState("");
 
   const [buttonsModes, setButtonsModes] = useState({
     firstButtonMode: true,
     secondButtonMode: false,
     thirdButtonMode: false,
-    
   });
 
   const toggleButtonsTexts = {
     first: "All",
     second: "Paid",
-    third: "Unpaid"
-  }
+    third: "Unpaid",
+  };
 
   const [numberOfInvoices, setNumberOfInvoices] = useState(0);
   const [date, setDate] = useState(new Date());
   const [options, setOptions] = useState([]);
-  const [selectedShop, setSelectedShop] = useState({ shopName: "", shopId: "" });
+  const [selectedShop, setSelectedShop] = useState({
+    shopName: "",
+    shopId: "",
+  });
   // const { selectedShop, setSelectedShop } = useContext(AuthContext);
   const pickerRef = useRef();
   const inputRef = useRef(null);
   const navigation = useNavigation();
-  const flex=true
-  
+  const flex = true;
 
   useEffect(() => {
     async function fetchOptions() {
@@ -59,74 +67,68 @@ export default function FilterInvoiceScreen() {
     fetchOptions();
   }, []);
 
-  
   useEffect(() => {
-
-    function paidUnpaidAllHandler(){
-
-      if(buttonsModes.firstButtonMode){
+    function paidUnpaidAllHandler() {
+      if (buttonsModes.firstButtonMode) {
         setpaidUnpaidAll("all");
-      }else if(buttonsModes.secondButtonMode){
+      } else if (buttonsModes.secondButtonMode) {
         setpaidUnpaidAll("paid");
-      }else{
-        setpaidUnpaidAll("unpaid")
+      } else {
+        setpaidUnpaidAll("unpaid");
       }
     }
 
-    paidUnpaidAllHandler()
+    paidUnpaidAllHandler();
   }, [buttonsModes]);
 
   useEffect(() => {
-
-    if(paidUnpaidAll === "paid"){
-      setUrl(`api/invoice/filter?filter=paymentStatus&equal=paid&`)
-    }
-    else if(paidUnpaidAll === "unpaid"){
-      setUrl(`api/invoice/filter?filter=paymentStatus&equal=unpaid&`)
-    }
-    else{
-      console.log("p11111")
-      setUrl(`api/invoice/list?`)
+    if (paidUnpaidAll === "paid") {
+      setUrl(`api/invoice/filter?filter=paymentStatus&equal=paid&`);
+    } else if (paidUnpaidAll === "unpaid") {
+      setUrl(`api/invoice/filter?filter=paymentStatus&equal=unpaid&`);
+    } else {
+      console.log("p11111");
+      setUrl(`api/invoice/list?`);
     }
 
-    if(selectedOption === "dateWise"){
-      
-      setUrl(`api/invoice/filter?filter=date&equal=${date.toISOString().split('T')[0]}&`)
+    if (selectedOption === "dateWise") {
+      setUrl(
+        `api/invoice/filter?filter=date&equal=${
+          date.toISOString().split("T")[0]
+        }&`
+      );
     }
-  }, [paidUnpaidAll, date, selectedOption])
+  }, [paidUnpaidAll, date, selectedOption]);
 
   useEffect(() => {
     console.log("url is , ", url);
-  }, [url])
+  }, [url]);
 
   const handleButtonPress = (button) => {
-        setButtonsModes((prevstate) => {
-          if (button === "first" && !prevstate.firstButtonMode) {
-            return {
-              firstButtonMode: true,
-              secondButtonMode: false,
-              thirdButtonMode: false,
-            };
-          } else if (
-            button === "second" &&
-            !prevstate.secondButtonMode
-          ) {
-            return {
-              firstButtonMode: false,
-              secondButtonMode: true,
-              thirdButtonMode: false,
-            };
-          } else if (button === "third" && !prevstate.thirdButtonMode) {
-            return {
-              firstButtonMode: false,
-              secondButtonMode: false,
-              thirdButtonMode: true,
-            };
-          } else {
-            return prevstate;
-          }
-        });
-      };
+    setButtonsModes((prevstate) => {
+      if (button === "first" && !prevstate.firstButtonMode) {
+        return {
+          firstButtonMode: true,
+          secondButtonMode: false,
+          thirdButtonMode: false,
+        };
+      } else if (button === "second" && !prevstate.secondButtonMode) {
+        return {
+          firstButtonMode: false,
+          secondButtonMode: true,
+          thirdButtonMode: false,
+        };
+      } else if (button === "third" && !prevstate.thirdButtonMode) {
+        return {
+          firstButtonMode: false,
+          secondButtonMode: false,
+          thirdButtonMode: true,
+        };
+      } else {
+        return prevstate;
+      }
+    });
+  };
 
   const handlePressOutside = () => {
     // Hide the keyboard and blur the TextInput
@@ -145,7 +147,7 @@ export default function FilterInvoiceScreen() {
       data = {
         filteredBy: "dateRange",
         selectedOption: selectedOption,
-        date:date.toString(),
+        date: date.toString(),
         url,
       };
     } else {
@@ -180,7 +182,6 @@ export default function FilterInvoiceScreen() {
       return (
         <Card style={styles.card}>
           <Card.Content>
-
             <RadioButton.Group
               onValueChange={(newValue) => setSelectedOption(newValue)}
               value={selectedOption}
@@ -203,7 +204,6 @@ export default function FilterInvoiceScreen() {
                   <RadioButton value="dateWise" />
                 </View>
               </View>
-
             </RadioButton.Group>
 
             {selectedOption === "dateWise" && (
@@ -237,25 +237,80 @@ export default function FilterInvoiceScreen() {
 
   return (
     <ScrollView style={styles.scrollView}>
-    <TouchableWithoutFeedback onPress={handlePressOutside}>
-      <View style={styles.container}>
-        <View style={styles.logoPickerContainer}>
-          <Entypo name="shop" size={30} color="#0c3b73" />
-          <View style={styles.pickerContainer}>
-            <DropDownList/>
+      <TouchableWithoutFeedback onPress={handlePressOutside}>
+        <View style={styles.container}>
+          <View style={styles.logoPickerContainer}>
+            <Entypo name="shop" size={30} color="#0c3b73" />
+            <View style={styles.pickerContainer}>
+              <DropDownList />
+            </View>
           </View>
-        </View>
 
-        <ThreeToggleBtns 
-        buttonsModes={buttonsModes}
-        setButtonsModes={setButtonsModes}
-        handleButtonPress={handleButtonPress}
-        toggleButtonsTexts={toggleButtonsTexts}
-        flex={flex}
-       
-        />
+          <ThreeToggleBtns
+            buttonsModes={buttonsModes}
+            setButtonsModes={setButtonsModes}
+            handleButtonPress={handleButtonPress}
+            toggleButtonsTexts={toggleButtonsTexts}
+            flex={flex}
+          />
 
-        <View style={styles.tabContainer}>
+          <View style={styles.MainContainer}>
+            <View style={styles.TextView}>
+              <Text style={styles.headerText}>
+                Provisional Invoice No: - 1002
+              </Text>
+            </View>
+            <View>
+              <TextInput
+                placeholder="Name"
+                label="Name"
+                mode="flat"
+                style={styles.input}
+                editable={false}
+                // value={text}
+              />
+
+              <TextInput
+                placeholder="Address"
+                label="Address"
+                mode="flat"
+                style={styles.input}
+                editable={false}
+                // value={text}
+              />
+
+              <TextInput
+                placeholder="GST Number"
+                label="GST Number"
+                mode="flat"
+                style={styles.input}
+                editable={false}
+                // value={text}
+              />
+
+              <TextInput
+                placeholder="Phone"
+                label="Phone"
+                mode="flat"
+                style={styles.input}
+                editable={false}
+                // value={text}
+              />
+            </View>
+            <View style={styles.buttonView}>
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => navigation.navigate("AllItemProduct")}
+              >
+                <MaterialIcons name="add" size={24} color="black" />
+                <Text style={styles.addButtonText}>Add Items</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <ItemDataTable />
+
+          {/* <View style={styles.tabContainer}>
           <Button
             mode={activeTab === "dateRange" ? "contained" : ""}
             onPress={() => setActiveTab("dateRange")}
@@ -272,9 +327,9 @@ export default function FilterInvoiceScreen() {
           >
             Number
           </Button>
-        </View>
-        {renderContent()}
-        <View style={styles.buttonContainer}>
+        </View> */}
+          {/* {renderContent()} */}
+          {/* <View style={styles.buttonContainer}>
           <Button
             mode="outlined"
             //  onPress={fetchDataHandler}
@@ -283,16 +338,16 @@ export default function FilterInvoiceScreen() {
             View
           </Button>
           <Button mode="outlined">Download</Button>
+        </View> */}
         </View>
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollView:{
-    flex:1,
+  scrollView: {
+    flex: 1,
     backgroundColor: "#fff",
   },
   container: {
@@ -339,16 +394,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: "center",
   },
-  paidUnpaidBtnContainer:{
+  paidUnpaidBtnContainer: {
     // backgroundColor:"orange",
-    flexDirection:"row",
-    justifyContent:"center"
+    flexDirection: "row",
+    justifyContent: "center",
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-evenly",
     marginVertical: 16,
-
   },
   row: {
     flexDirection: "row-reverse",
@@ -374,6 +428,46 @@ const styles = StyleSheet.create({
   dateText: {
     textAlign: "center",
     fontSize: 16,
-    color:"#fff"
+    color: "#fff",
+  },
+  buttonView: {
+    alignItems: "flex-end", // Moves the button to the right side
+    marginTop: 10,
+  },
+
+  addButton: {
+    flexDirection: "row", // Align icon and text horizontally
+    alignItems: "center", // Center vertically
+    justifyContent: "center", // Center horizontally
+    padding: 10,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+
+  addButtonText: {
+    marginLeft: 5, // Space between icon and text
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "black",
+  },
+  MainContainer: {
+    marginHorizontal: 10,
+  },
+  TextView: {
+    marginVertical: 8,
+    paddingVertical: 8,
+  },
+  headerText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "black",
+  },
+  input: {
+    flex: 1,
+    backgroundColor: "#f9f9f9",
+    height: 40,
+    marginTop: 10,
   },
 });
