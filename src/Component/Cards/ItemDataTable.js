@@ -63,8 +63,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: "#fff",
     // paddingVertical:10
-    paddingHorizontal:8
-
+    paddingHorizontal: 8,
   },
   row: {
     flexDirection: "row",
@@ -85,11 +84,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 5,
-
   },
   smallCell: {
     // flex: 0.5,
-    textAlign:"center"
+    textAlign: "center",
   },
   flexCell: {
     flex: 1,
@@ -116,17 +114,15 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignItems: "flex-end",
     // width:"25%"
-
   },
   payButton: {
     flexDirection: "row",
     // alignItems: "center",
     backgroundColor: "#007bff",
     padding: 10,
-    paddingVertical:10,
+    paddingVertical: 10,
     borderRadius: 8,
-    marginBottom:10,
-
+    marginBottom: 10,
   },
   payButtonText: {
     marginLeft: 5,

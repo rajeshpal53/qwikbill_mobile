@@ -11,7 +11,7 @@ const IncAndDicButton = ({ setInCart, InCart }) => {
     if (quantity > 1) {
       setQuantity((prev) => prev - 1); // Decrease the quantity, prevent going below 1
     } else {
-    //   setInCart(false);
+      //   setInCart(false);
     }
   };
   return (
@@ -41,8 +41,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     // marginHorizontal: 10,
     // marginVertical: 2,
-
-
   },
   quantityControlContainer: {
     flexDirection: "row",
