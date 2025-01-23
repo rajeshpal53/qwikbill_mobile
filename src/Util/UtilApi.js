@@ -1,7 +1,7 @@
 import axios from 'axios';
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
-const API_BASE_URL = "http://192.168.1.6:8888/";
+const API_BASE_URL = "http://192.168.73.248:2235/";
 
 
 const apiRequest = async (method, url, data = null, headers) => {
@@ -18,6 +18,7 @@ const apiRequest = async (method, url, data = null, headers) => {
           });
           return response.data||'';
     } catch (error) {
+      console.error("error is , error")
       console.error(`Error with ${method.toUpperCase()} request to ${url}:`, error.response || error.message);
       throw error.response || error.message;
     }

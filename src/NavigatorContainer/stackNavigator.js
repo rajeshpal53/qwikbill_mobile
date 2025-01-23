@@ -50,11 +50,13 @@ import CustomerDetails from "../StackScreen/Customerdetails.js";
 import AddCustomerScreen from "../Screen/AddCustomerScreen.js";
 import CustomerDetailScreen from "../Screen/CustomerDetailScreen.js"
 import EnterNumberScreen from "../Screen/StackScreen/EnterNumberScreen.js";
+import UserDataContext from "../Store/UserDataContext.js";
 export default function StackNavigator() {
     const Stack = createStackNavigator();
     const [isConnected, setIsConnected] = useState(false);
     const [isLandscape, setIsLandscape] = useState(false);
     const { isAuthenticated, isLoading, searchMode } = useContext(AuthContext);
+    const {userData} = useContext(UserDataContext);
     const { shopDetails } = useContext(ShopDetailContext);
   
     if (isLoading) {
@@ -64,12 +66,13 @@ export default function StackNavigator() {
         </View>
       );
     }
-    console.log(isLoading);
-    console.log(isAuthenticated, "akdskddkfkfkf");
+    console.log("userData is", userData)
+    // console.log(isLoading);
+    // console.log(isAuthenticated, "akdskddkfkfkf");
     return (
       <>
         <Stack.Navigator
-          initialRouteName={isAuthenticated ? "Passcode" : "login"}
+          initialRouteName={userData ? "Passcode" : "login"}
           screenOptions={{
             headerStyle: {
               backgroundColor: "#0c3b73", // Set your desired header background color here

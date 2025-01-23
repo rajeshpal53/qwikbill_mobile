@@ -8,6 +8,7 @@ import {
   Modal,
   ScrollView,
   Dimensions,
+  PixelRatio,
 } from "react-native";
 import { Text, TextInput, Button, Card, Divider } from "react-native-paper";
 import { Formik } from "formik";
@@ -26,12 +27,18 @@ import SetpasswordModal from "../Modal/SetpasswordModal";
 
 import { AuthContext } from "../Store/AuthContext";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import UserDataContext from "../Store/UserDataContext";
 
-const {height} = Dimensions.get("window");
-console.log("height", height)
+const { height } = Dimensions.get("window");
+console.log("height", height);
+const fontScale = PixelRatio.getFontScale();
+
+const getFontSize = (size) => size / fontScale;
+
 const LoginScreen = ({ navigation }) => {
   const { login, isAuthenticated, storeData, setLoginDetail } =
     useContext(AuthContext);
+    const {userData, saveUserData} = useContext(UserDataContext);
   const [isLoading, setIsLoading] = useState(false);
   const { isPasskey } = usePasskey();
   const { width, height } = useWindowDimensions();
@@ -52,10 +59,10 @@ const LoginScreen = ({ navigation }) => {
     //   .email("Invalid email address")
     //   .required("Email is required"),
     mobile: Yup.string()
-    .required("Phone number is required")
-    .matches(/^[0-9]+$/, "Phone number must be numeric")
-    .min(10, "Phone number must be at least 10 digits")
-    .max(12, "Phone number can be at most 15 digits"),
+      .required("Phone number is required")
+      .matches(/^[0-9]+$/, "Phone number must be numeric")
+      .min(10, "Phone number must be at least 10 digits")
+      .max(12, "Phone number can be at most 15 digits"),
     password: Yup.string()
       .min(6, "Password must be at least 6 characters")
       .required("Password is required"),
@@ -65,21 +72,22 @@ const LoginScreen = ({ navigation }) => {
     try {
       console.log("login screen");
       setIsLoading(true);
-      const response = await axios.post(
-        "http://192.168.1.6:8888/api/login",
-        JSON.stringify(values),
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log(response.data, "newResponse");
-      const data = await response.data;
-      await storeData("loginDetail", data.result);
-      setLoginDetail(data.result);
-      const token = "dummyToken";
-      login(token);
+
+      const payload = {
+        mobile : values?.mobile,
+        password : values?.password,
+      }
+      const response = await createApi('qapi/users/loginUser', payload);
+
+
+      console.log("response of Login is , ", response);
+      await saveUserData(response);
+      // console.log(response.data, "newResponse");
+      // const data = await response.data;
+      // await storeData("loginDetail", data.result);
+      // setLoginDetail(data.result);
+      // const token = "dummyToken";
+      // login(token);
       // if (isLoading) {
       //   {
       //     <View
@@ -146,7 +154,7 @@ const LoginScreen = ({ navigation }) => {
   };
   return (
     <View
-      style={{ justifyContent: "center",backgroundColor:"#fff", flex: 1 }}
+      style={{ justifyContent: "center", backgroundColor: "#fff", flex: 1 }}
     >
       {/* Loading Modal */}
       <Modal
@@ -158,7 +166,15 @@ const LoginScreen = ({ navigation }) => {
         <View style={styles.modalBackground}>
           <View style={styles.activityIndicatorWrapper}>
             <ActivityIndicator size="large" color="#fff" />
-            <Text style={{ color: "#fff", fontSize: 20 }}>Loading...</Text>
+            <Text
+              style={{
+                color: "#fff",
+                fontSize: 20,
+                fontFamily: "Poppins-Regular",
+              }}
+            >
+              Loading...
+            </Text>
           </View>
         </View>
       </Modal>
@@ -175,12 +191,14 @@ const LoginScreen = ({ navigation }) => {
           errors,
           touched,
         }) => (
-          <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ padding:5}}>
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            style={{ padding: 5 }}
+          >
             <View style={styles.container}>
               <View
                 style={{
                   flex: 1,
-                 
                 }}
               >
                 <View
@@ -191,7 +209,7 @@ const LoginScreen = ({ navigation }) => {
                   <View
                     style={{
                       justifyContent: "center",
-                      height:height*0.40,
+                      height: height * 0.4,
                       // flexDirection: "row",
                       alignItems: "center",
                       paddingHorizontal: 8,
@@ -204,13 +222,15 @@ const LoginScreen = ({ navigation }) => {
                     />
                   </View>
 
-                  <View style={{ gap:10}}>
+                  <View style={{ gap: 10 }}>
                     <View style={{ gap: 10 }}>
                       <Text
                         style={{
                           textAlign: "center",
-                          fontWeight: "bold",
-                          fontSize: 18,
+                          // fontWeight: "bold",
+                          color: "rgba(0, 0, 0, 0.7)",
+                          fontSize: getFontSize(18),
+                          fontFamily: "Poppins-Bold",
                         }}
                       >
                         Welcome to Qwickbill
@@ -218,8 +238,9 @@ const LoginScreen = ({ navigation }) => {
                       <Text
                         style={{
                           textAlign: "center",
-                          fontSize: 13,
+                          fontSize: getFontSize(13),
                           color: "gray",
+                          fontFamily: "Poppins-Regular",
                         }}
                       >
                         Manage your bills and payments effortlessly with
@@ -287,8 +308,16 @@ const LoginScreen = ({ navigation }) => {
                     {/* <View style={{flex:1, backgroundColor:"green"}} ></View> */}
 
                     <View style={{ alignItems: "flex-end" }}>
-                      <TouchableOpacity>
-                        <Text style={{ color: "#1E90FF" }}>
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate("EnterNumberScreen")}
+                      >
+                        <Text
+                          style={{
+                            color: "#1E90FF",
+                            fontFamily: "Poppins-Regular",
+                            fontSize: getFontSize(14),
+                          }}
+                        >
                           Forget Password ?
                         </Text>
                       </TouchableOpacity>
@@ -305,9 +334,16 @@ const LoginScreen = ({ navigation }) => {
                       <Button
                         onPress={handleSubmit}
                         textColor="white"
-                        style={[styles.button, { borderRadius: 10 }]}
+                        style={[
+                          styles.button,
+                          { borderRadius: 10},
+                        ]}
                       >
-                        Login
+                        <Text
+                          style={{ fontFamily: "Poppins-Medium", color: "white" }}
+                        >
+                          Login
+                        </Text>
                       </Button>
                       {/* <View
                       style={{
@@ -354,7 +390,11 @@ const LoginScreen = ({ navigation }) => {
                     </View>
 
                     <View
-                      style={{ flexDirection: "row", justifyContent: "center", marginBottom:10 }}
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        marginBottom: 10,
+                      }}
                     >
                       <Text style={styles.signup}>Don't have an account? </Text>
                       <TouchableOpacity
@@ -399,11 +439,12 @@ const styles = StyleSheet.create({
   signup: {
     // alignSelf: "center",
     // marginVertical: 40,
+    fontFamily:"Poppins-Regular",
     color: "grey",
-    fontSize: 15,
+    fontSize: getFontSize(14),
   },
   input: {
-    marginBottom: 5,
+    // marginBottom: 5,
     paddingHorizontal: 8,
     // width: "90%",
     // alignSelf: "center",
@@ -412,7 +453,8 @@ const styles = StyleSheet.create({
   },
   signupText: {
     color: "#1E90FF",
-    fontWeight: "bold",
+    fontFamily:"Poppins-Bold",
+    fontSize:getFontSize(14),
   },
   img: {
     height: 140,
@@ -433,6 +475,8 @@ const styles = StyleSheet.create({
   error: {
     color: "red",
     // marginBottom: 16,
+    fontSize: getFontSize(13),
+    fontFamily: "Poppins-Regular",
     marginLeft: 16,
   },
   button: {
