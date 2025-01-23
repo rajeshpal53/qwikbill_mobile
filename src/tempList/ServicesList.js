@@ -28,39 +28,45 @@ export const services = [
     {
       name: "Add Customer",
       icon: <AntDesign name="adduser" size={30} color="#26a0df" />,
-      key: "2",
+      key: "3",
       navigateTo:"AddCustomer"
     },
     {
       name: "Add Shop",
       icon:<MaterialIcons name="add-business" size={30} color="#26a0df" />,
-      key: "5",
+      key: "4",
       navigateTo:"CreateShopScreen"
     },
     {
       name: " Add HSN Code",
       icon: <FontAwesome5 name="user" size={30} color="#26a0df" />,
-      key: "6",
+      key: "5",
       navigateTo:"hsncode"
     },
     {
       name: "View Vendors",
       icon: <FontAwesome name="group" size={30} color="#26a0df" />,
-      key: "4",
+      key: "6",
       navigateTo:"ViewVendor"
     },
     {
       name: "View Your Shops",
       icon: <FontAwesome5 name="store" size={30} color="#26a0df" />,
-      key: "6",
+      key: "7",
       navigateTo:"ViewShops"
     },
     
     {
       name: "Favourites",
       icon: <Ionicons name="heart-outline" size={30} color="#26a0df" />,
-      key: "9",
+      key: "8",
       navigateTo:"CreateInvoice"
+    },
+    {
+      name: "",
+      icon: "",
+      key: "9",
+      navigateTo:""
     },
     // {
     //   name: "More",
