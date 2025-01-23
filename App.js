@@ -18,7 +18,7 @@ import { PasskeyProvider } from "./src/Store/PasskeyContext.js";
 import { Store } from "./src/Redux/Store.js";
 import { UserDataProvider } from "./src/Store/UserDataContext.js";
 import * as Font from "expo-font";
-import StackNavigator from "./src/NavigatorContainer/StackNavigator.js";
+import StackNavigator from "./src/NavigatorContainer/stackNavigator.js";
 import { FontProvider } from "./src/Store/FontProvider.js";
 
 const customTheme = {
@@ -50,22 +50,13 @@ export default function App() {
   });
   return (
     <SafeAreaProvider>
-// <<<<<<< Akash
-//       <ShopDetailProvider>
-//         <PasskeyProvider>
-//           <SnackbarProvider>
-//             <PaperProvider theme={customTheme}>
-//               <Provider store={Store}>
-//                 <NavigationContainer>
-//                   <AuthProvider>
-//                     <LoginTimeProvider>
-//                       <StackNavigator />
-// =======
+
       <UserDataProvider>
         <ShopDetailProvider>
           <PasskeyProvider>
             <SnackbarProvider>
-              <Provider theme={customTheme}>
+              <Provider store={Store}>
+              <PaperProvider theme={customTheme}>
                 <NavigationContainer>
                   <AuthProvider>
                     <LoginTimeProvider>
@@ -76,22 +67,17 @@ export default function App() {
                           <ActivityIndicator size={"large"} />
                         )}
                       </FontProvider>
-// >>>>>>> prathamesh
+
                     </LoginTimeProvider>
                   </AuthProvider>
                 </NavigationContainer>
+              </PaperProvider>
               </Provider>
-// <<<<<<< Akash
-//             </PaperProvider>
-//           </SnackbarProvider>
-//         </PasskeyProvider>
-//       </ShopDetailProvider>
-// =======
             </SnackbarProvider>
           </PasskeyProvider>
         </ShopDetailProvider>
       </UserDataProvider>
-// >>>>>>> prathamesh
+
     </SafeAreaProvider>
   );
 }
