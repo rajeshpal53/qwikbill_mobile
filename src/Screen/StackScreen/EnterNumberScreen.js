@@ -1,8 +1,13 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-// import auth, { getIdToken } from "@react-native-firebase/auth";
+import auth from "@react-native-firebase/auth";
 // import { useSnackbar } from "../../Store/SnackbarContext";
-// import { API_BASE_URL, fontFamily, log, fontSize, createApi } from "../../Util/UtilApi";
-// import UserDataContext from "../../Store/UserDataContext";
+import {
+  API_BASE_URL,
+  fontFamily,
+  log,
+  fontSize,
+  createApi,
+} from "../../Util/UtilApi";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { OtpInput } from "react-native-otp-entry";
@@ -19,6 +24,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Alert,
+  useWindowDimensions,
 } from "react-native";
 import {
   Button,
@@ -38,6 +44,8 @@ import * as Yup from "yup";
 // import * as Notifications from "expo-notifications"
 import CountryCodeModal from "../../Component/CountryCodeModal";
 import AutoSlidingCarousel from "../../Component/AutoSlidingCarousel";
+import SetpasswordModal from "../../Modal/SetpasswordModal";
+import UserDataContext from "../../Store/UserDataContext";
 // import { useTranslation } from "react-i18next";
 
 const Validation = Yup.object().shape({
@@ -57,119 +65,121 @@ const EnterNumberScreen = ({ navigation }) => {
   //   const { showSnackbar } = useSnackbar();
   const [FCMToken, setFCMToken] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  //   const { userData, saveUserData } = useContext(UserDataContext);
+  const { userData, saveUserData } = useContext(UserDataContext);
   const [modalVisible, setModalVisible] = useState(false);
   const [timer, setTimer] = useState(0); // Timer starts at 0
   const [isTimerRunning, setIsTimerRunning] = useState(false); // Controls the timer
   //   const { t } = useTranslation();
+  const [passwordModalVisible, setPasswordModalVisible] = useState(false);
+  const { width, height } = useWindowDimensions();
   const [otpError, setOtpError] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-     const carouselItems = [
-      {
-        id: "1",
-        image: require("../../../assets/images/carousel-slides/square1.jpg"),
-      },
-      {
-        id: "2",
-        image: require("../../../assets/images/carousel-slides/square2.jpg"),
-      },
-      {
-        id: "3",
-        image: require("../../../assets/images/carousel-slides/square3.jpg"),
-      },
-      {
-        id: "4",
-        image: require("../../../assets/images/carousel-slides/square4.jpg"),
-      },
-    ];
+  const carouselItems = [
+    {
+      id: "1",
+      image: require("../../../assets/images/carousel-slides/square1.jpg"),
+    },
+    {
+      id: "2",
+      image: require("../../../assets/images/carousel-slides/square2.jpg"),
+    },
+    {
+      id: "3",
+      image: require("../../../assets/images/carousel-slides/square3.jpg"),
+    },
+    {
+      id: "4",
+      image: require("../../../assets/images/carousel-slides/square4.jpg"),
+    },
+  ];
 
-  //   useEffect(() => {
-  //     async function checkNotificationPermission() {
-  //       // Check current notification permissions
-  //       console.log("checking notification permission")
-  //       const { status } = await Notifications.getPermissionsAsync();
+  useEffect(() => {
+    async function checkNotificationPermission() {
+      // Check current notification permissions
+      console.log("checking notification permission");
+      const { status } = await Notifications.getPermissionsAsync();
 
-  //       console.log("notification permission status , ", status);
-  //       if (status !== "granted") {
-  //         // Permission is not granted, request it
-  //         console.log("asking notification permission")
-  //         try{
+      console.log("notification permission status , ", status);
+      if (status !== "granted") {
+        // Permission is not granted, request it
+        console.log("asking notification permission");
+        try {
+          const { status: newStatus } =
+            await Notifications.requestPermissionsAsync();
 
-  //           const { status: newStatus } = await Notifications.requestPermissionsAsync();
+          console.log("asked notification permission status is , ", newStatus);
 
-  //           console.log("asked notification permission status is , ", newStatus)
+          if (newStatus === "granted") {
+            console.log("Notification permission granted.");
+            return true;
+          } else {
+            console.log("Notification permission denied.");
+            return false;
+          }
+        } catch (error) {
+          console.log("error getting notification permission is , ", error);
+        }
+      } else {
+        console.log("Notification permission already granted.");
+        return true;
+      }
+    }
 
-  //         if (newStatus === "granted") {
-  //           console.log("Notification permission granted.");
-  //           return true;
-  //         } else {
-  //           console.log("Notification permission denied.");
-  //           return false;
-  //         }
-  //         }catch(error){
-  //           console.log("error getting notification permission is , ", error)
-  //         }
+    checkNotificationPermission();
+  }, []);
 
-  //       } else {
-  //         console.log("Notification permission already granted.");
-  //         return true;
-  //       }
-  //     }
+  useEffect(() => {
+    async function signOutUser() {
+      try {
+        // showSnackbar("User signed out successfully (19.0.0)", "success");
+        await auth().signOut();
+        //log.info('User signed out successfully');
+      } catch (error) {
+        console.error("Error signing out:", error);
+        // showSnackbar("User signed out failed (19.0.0)", "error");
+      }
+    }
+    signOutUser();
+  }, []);
 
-  //     checkNotificationPermission();
-  //   }, []);
+  useEffect(() => {
+    // Firebase Auth State Listener
 
-  //   useEffect(() => {
-  //     async function signOutUser() {
-  //       try {
-  //         // showSnackbar("User signed out successfully (19.0.0)", "success");
-  //         await auth().signOut();
-  //         //log.info('User signed out successfully');
-  //       } catch (error) {
-  //         console.error("Error signing out:", error);
-  //         // showSnackbar("User signed out failed (19.0.0)", "error");
-  //       }
-  //     }
-  //     signOutUser();
-  //   }, []);
+    console.log("debugg111");
+    // log.info("debugg111");
+    const subscriber = auth().onAuthStateChanged(async (user) => {
+      console.log("debugg44444", JSON.stringify(user));
+      // log.info("debugg44444");
+      if (user) {
+        setIsVerified(true);
+        const idToken = await user.getIdToken();
+        console.log("debugg55555", user);
+        // const fToken=await AsyncStorage.getItem("FCMToken");
+        // Alert.alert("Success", "Auto-verified successfully!");
+        let pNumber = user.phoneNumber.replace("+91", "");
+        // const response= await postData(pNumber,fToken,idToken);
+        showSnackbar("Login successfully!", "success");
+        //   if(response){
+        //     setIsVerified(true);
+        //   navigation.reset({
+        //     index: 0,
+        //     routes: [
+        //       {
+        //         name: "Bottom",
+        //         params: {
+        //           screen: "Home",
+        //         },
+        //       },
+        //     ],
+        //   });
+        // }
+        setPasswordModalVisible(true);
+      }
+    });
 
-  //   useEffect(() => {
-  //     // Firebase Auth State Listener
-
-  //     console.log("debugg111");
-  //     log.info("debugg111");
-  //       const subscriber = auth().onAuthStateChanged(async (user) => {
-  //         console.log("debugg44444",JSON.stringify(user));
-  //         log.info("debugg44444");
-  //         if (user) {
-  //           setIsVerified(true);
-  //           const idToken = await user.getIdToken();
-  //           console.log("debugg55555",user);
-  //           const fToken=await AsyncStorage.getItem("FCMToken");
-  //           // Alert.alert("Success", "Auto-verified successfully!");
-  //         let pNumber= user.phoneNumber.replace("+91", "");
-  //           const response= await postData(pNumber,fToken,idToken);
-  //           showSnackbar("Login successfully!", "success");
-  //           if(response){
-  //             setIsVerified(true);
-  //           navigation.reset({
-  //             index: 0,
-  //             routes: [
-  //               {
-  //                 name: "Bottom",
-  //                 params: {
-  //                   screen: "Home",
-  //                 },
-  //               },
-  //             ],
-  //           });
-  //         }
-  //       }
-  //       })
-
-  //       return subscriber;
-  //     // Unsubscribe on cleanup
-  //   }, []);
+    return subscriber;
+    // Unsubscribe on cleanup
+  }, []);
   //   useEffect(() => {
   //     const fetchToken = async () => {
   //       try {
@@ -182,132 +192,187 @@ const EnterNumberScreen = ({ navigation }) => {
   //     };
   //     fetchToken();
   //   }, []);
-  //    const postData = async (pNumber,fToken,idToken) => {
-  //     setIsLoading(true);
-  //     console.log(FCMToken,"FCMToken");
-  //       const payload = {
-  //         mobile: pNumber||phoneNumber,
-  //         fcmtokens: [FCMToken||fToken],
-  //         idToken:idToken
-  //       };
-  //       console.log("payload", payload);
-  //       console.log("pNumber", pNumber);
-  //       console.log("phoneNumber", phoneNumber);
-  //       try {
-  //         if(payload.mobile){
-  //           const response = await createApi(`users/upsert`,payload); // Convert JavaScript object to JSON;
-  //           console.log("data found , ", response);
-  //           saveUserData(response);
-  //           return true;
-  //         }
-  //       } catch (error) {
-  //         console.error("Error:", error);
-  //         return false;
-  //       } finally {
-  //         setIsLoading(false);
-  //       }
-  //     };
 
-  //   const handleResendOTP = () => {
-  //     setTimer(90) // Reset the timer
-  //     // Logic for resending OTP
-  //     sendOtp("+91"+phoneNumber);
-  //   };
-    const formatTime = (seconds) => {
-      const minutes = Math.floor(seconds / 60);
-      const secs = seconds % 60;
-      return `${minutes}:${secs < 10 ? `0${secs}` : secs}`; // Adds leading zero to seconds if < 10
+  const idTokenValidate = async (idToken) => {
+    const payload = {
+      mobile: phoneNumber,
+      idToken: idToken,
     };
+
+    console.log("payload for idToken Api is , ", payload);
+
+    try {
+      const response = await createApi("qapi/users/idTokenValidate", payload);
+
+      console.log("response status 1 , ", response?.message);
+      console.log("response 1 , ", response);
+      if (response?.message == "ID token and mobile number validated successfully.") {
+        return true;
+      }
+    } catch (error) {
+      return false;
+    } finally {
+    }
+  };
+
+  const postData = async (password) => {
+    setIsLoading(true);
+    console.log(FCMToken, "FCMToken");
+    const payload = {
+      mobile: phoneNumber,
+      // fcmtokens: [FCMToken||fToken],
+      password,
+      // idToken: idToken,
+    };
+    console.log("payload", payload);
+    try {
+      if (payload?.mobile) {
+        const response = await createApi(`qapi/users/signUp`, payload); // Convert JavaScript object to JSON;
+        console.log("data found 'qapi/users/signUp', ", response);
+        return true;
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  // const postData = async (pNumber, fToken, idToken) => {
+  //   setIsLoading(true);
+  //   console.log(FCMToken, "FCMToken");
+  //   const payload = {
+  //     mobile: pNumber || phoneNumber,
+  //     fcmtokens: [FCMToken||fToken],
+  //     idToken: idToken,
+  //   };
+  //   console.log("payload", payload);
+  //   console.log("pNumber", pNumber);
+  //   console.log("phoneNumber", phoneNumber);
+  //   try {
+  //     if (payload.mobile) {
+  //       const response = await createApi(`users/upsert`, payload); // Convert JavaScript object to JSON;
+  //       console.log("data found , ", response);
+  //       saveUserData(response);
+  //       return true;
+  //     }
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     return false;
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  const handleResendOTP = () => {
+    setTimer(90); // Reset the timer
+    // Logic for resending OTP
+    sendOtp("+91" + phoneNumber);
+  };
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes}:${secs < 10 ? `0${secs}` : secs}`; // Adds leading zero to seconds if < 10
+  };
   //   // Function to start the timer
   //   const startTimer = (timer) => {
   //     setTimer(timer); // Set timer to 2:30 (150 seconds)
   //     setIsTimerRunning(true); // Start the timer
   //   };
 
-  //   // Step 1: Send OTP
-  //   const sendOtp = async (phoneNumber) => {
-  //     try {
-  //       setIsLoading(true);
-  //       console.log("debugg22222");
-  //       log.info("debugg22222");
+  // Step 1: Send OTP
+  const sendOtp = async (phoneNumber) => {
+    try {
+      setIsLoading(true);
+      console.log("debugg22222");
+      // log.info("debugg22222");
 
-  //       startTimer(90); // Start the timer
-  //        const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
-  //        console.log("confirmation",JSON.stringify(confirmation));
-  //         setConfirm(confirmation);
-  //     //   setConfirm(true);
-  //       setAutoVerification(true); // Set auto-verification flag
-  //       console.log("debugg33333");
-  //       setAutoVerification(false); // Reset auto-verification flag
-  //       // Alert.alert(
-  //       //   "OTP Sent!",
-  //       //   "Check your messages for the verification code."
-  //       // );
-  //       showSnackbar("OTP Sent! Check your messages for the verification code.", "success");
-  //     } catch (error) {
-  //       // Alert.alert("Error", error.message);
-  //       showSnackbar(`OTP Sent failed ${error}`, "error");
-  //     }
-  //     finally{
-  //       setIsLoading(false);
-  //     }
-  //   };
+      // startTimer(90); // Start the timer
+      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
+      console.log("confirmation", JSON.stringify(confirmation));
+      setConfirm(confirmation);
+      //   setConfirm(true);
+      setAutoVerification(true); // Set auto-verification flag
+      console.log("debugg33333");
+      setAutoVerification(false); // Reset auto-verification flag
+      // Alert.alert(
+      //   "OTP Sent!",
+      //   "Check your messages for the verification code."
+      // );
+      showSnackbar(
+        "OTP Sent! Check your messages for the verification code.",
+        "success"
+      );
+    } catch (error) {
+      // Alert.alert("Error", error.message);
+      showSnackbar(`OTP Sent failed ${error}`, "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Step 2: Confirm OTP (Fallback for Manual Entry)
-  //   const confirmOtp = async () => {
-  //     if(otp.length===0){
-  //       setOtpError(true);
-  //       return;
-  //     }
-  //     console.log(otp,"otp");
-  //     log.info("Confirrm Otp Start ");
-  //     if (otp.length !== 6|| otp ==="" ) {
-  //       setOtpError(true);
-  //       console.log(`ddsdddsdsd`)
-  //       return;
-  //     }
-  //     setIsDisabled(true);
-  //     setTimeout(() => {
-  //       setIsDisabled(false);
-  //     }, 10000); // 10 seconds
-  //     try {
-  //       if (confirm) {
-  //         console.log("debugg66666");
-  //         const userCredential = await confirm.confirm(otp);
-  //         console.log(userCredential,"djdjdjdj") // Verifies the OTP
-  //         const user = userCredential.user; // Authenticated user object
-  //         // Fetch the ID token for backend verification
-  //         const idToken = await user.getIdToken();
-  //         console.log("debugg77777",user, idToken);
-  //         log.info("debugg77777",user, idToken);
+  const confirmOtp = async () => {
+    if (otp.length === 0) {
+      setOtpError(true);
+      return;
+    }
+    console.log(otp, "otp");
+    // log.info("Confirrm Otp Start ");
+    if (otp.length !== 6 || otp === "") {
+      setOtpError(true);
+      console.log(`ddsdddsdsd`);
+      return;
+    }
+    setIsDisabled(true);
+    setTimeout(() => {
+      setIsDisabled(false);
+    }, 10000); // 10 seconds
+    try {
+      if (confirm) {
+        console.log("debugg66666");
+        const userCredential = await confirm.confirm(otp);
+        console.log(userCredential, "djdjdjdj"); // Verifies the OTP
+        const user = userCredential.user; // Authenticated user object
+        // Fetch the ID token for backend verification
+        const idToken = await user.getIdToken();
+        console.log("debugg77777 pra", user, idToken);
 
-  //         //  pconst response=await postData();
+        const isIdTokenValidate = await idTokenValidate(idToken);
 
-  //       //    if(response){
+        if (isIdTokenValidate) {
+          setPasswordModalVisible(true);
+          // const response = await postData();
 
-  //       //   // Alert.alert("Success", "Phone number verified successfully!");
-  //       //   showSnackbar("Phone number verified successfully!", "success");
-  //       //   navigation.reset({
-  //       //     index: 0,
-  //       //     routes: [
-  //       //       {
-  //       //         name: "Bottom",
-  //       //         params: {
-  //       //           screen: "Home",
-  //       //         },
-  //       //       },
-  //       //     ],
-  //       //   });
-  //       //   setIsVerified(true);
-  //       // }
-  //       }
-  //     } catch (error) {
-  //       // Alert.alert("Invalid Code", "The code you entered is incorrect.");
-  //       // showSnackbar("Invalid Otp ", "error");
-  //       showSnackbar(` Failed to Login ${error}`,"error");
-  //     }
-  //   };
+          // if (response) {
+            
+            //   // Alert.alert("Success", "Phone number verified successfully!");
+            //   showSnackbar("Phone number verified successfully!", "success");
+            //   navigation.reset({
+            //     index: 0,
+            //     routes: [
+            //       {
+            //         name: "Bottom",
+            //         params: {
+            //           screen: "Home",
+            //         },
+            //       },
+            //     ],
+            //   });
+            //   setIsVerified(true);
+          // }
+        }
+      }
+    } catch (error) {
+      // Alert.alert("Invalid Code", "The code you entered is incorrect.");
+      // showSnackbar("Invalid Otp ", "error");
+      showSnackbar(` Failed to Login ${error}`, "error");
+    }
+  };
 
+  const closeModal = () => {
+    setPasswordModalVisible(false);
+  };
   //    useEffect(() => {
   //       let interval;
   //       if (isTimerRunning && timer > 0) {
@@ -334,26 +399,28 @@ const EnterNumberScreen = ({ navigation }) => {
   //       };
   //     }, [isTimerRunning, timer]);
 
-  //   const Loader=()=>{
-  //     return(<Portal>
-  //       <Modal
-  //         visible={isLoading}
-  //         contentContainerStyle={styles.modalBackground}
-  //         accessible={true}
-  //         accessibilityLabel="Loading content. Please wait."
-  //         accessibilityRole="alert" // Announces this as an important message
-  //       >
-  //         <View style={styles.loaderContainer}>
-  //           <ActivityIndicator
-  //             animating={true}
-  //             size="large"
-  //             accessibilityLabel="Loading indicator"
-  //             accessibilityLiveRegion="assertive"
-  //           />
-  //         </View>
-  //       </Modal>
-  //     </Portal>)
-  //   }
+  const Loader = () => {
+    return (
+      <Portal>
+        <Modal
+          visible={isLoading}
+          contentContainerStyle={styles.modalBackground}
+          accessible={true}
+          accessibilityLabel="Loading content. Please wait."
+          accessibilityRole="alert" // Announces this as an important message
+        >
+          <View style={styles.loaderContainer}>
+            <ActivityIndicator
+              animating={true}
+              size="large"
+              accessibilityLabel="Loading indicator"
+              accessibilityLiveRegion="assertive"
+            />
+          </View>
+        </Modal>
+      </Portal>
+    );
+  };
   const t = (str) => {
     return str;
   };
@@ -361,7 +428,6 @@ const EnterNumberScreen = ({ navigation }) => {
     <View style={styles.container}>
       {!isVerified && (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            
           <KeyboardAvoidingView
             style={{ flex: 1 }}
             behavior="height"
@@ -422,10 +488,10 @@ const EnterNumberScreen = ({ navigation }) => {
                     </TouchableOpacity>
 
                     <View>
-                      {/* <Image
-              style={styles.img}
-              source={require("../../../assets/getotp.png")}
-            /> */}
+                      <Image
+                        style={{ height: height * 0.4, width: "100%" }}
+                        source={require("../../../assets/getotp.png")}
+                      />
                       {isLoading && <Loader />}
                     </View>
 
@@ -460,7 +526,7 @@ const EnterNumberScreen = ({ navigation }) => {
                     >
                       {/* <Text style={styles.timer}>{t("Resend Otp in : ")} {timer}</Text> */}
                       <TouchableOpacity
-                        // onPress={handleResendOTP}
+                        onPress={handleResendOTP}
                         disabled={timer !== 0}
                       >
                         <Text
@@ -477,7 +543,8 @@ const EnterNumberScreen = ({ navigation }) => {
 
                     <Button
                       mode="contained"
-                    //   onPress={confirmOtp}
+                      onPress={confirmOtp}
+                      // onPress={() => setPasswordModalVisible(true)}
                       style={styles.loginButton}
                     >
                       {t("Login")}
@@ -502,7 +569,11 @@ const EnterNumberScreen = ({ navigation }) => {
             ) : (
               <>
                 <View style={styles.topSection}>
-                  <AutoSlidingCarousel height={400} carouselItems={carouselItems} fromScreen={"EnterNumber"} />
+                  <AutoSlidingCarousel
+                    height={400}
+                    carouselItems={carouselItems}
+                    fromScreen={"EnterNumber"}
+                  />
                   <Pressable
                     style={styles.fab}
                     label="Skip"
@@ -532,7 +603,7 @@ const EnterNumberScreen = ({ navigation }) => {
                     <View style={{ flex: 1, justifyContent: "space-around" }}>
                       <View style={{ gap: 25 }}>
                         <Text style={styles.heading}>
-                          {t("WELCOME TO DAILY SABJI")}
+                          {t("WELCOME TO QWIKBILL")}
                         </Text>
                         <Formik
                           initialValues={{ phone: "" }}
@@ -543,7 +614,7 @@ const EnterNumberScreen = ({ navigation }) => {
                             // navigation.navigate("EnterOtp", { values, confirm });
                             console.log("phoneNumber", "+91" + values.phone);
                             setPhoneNumber(values.phone);
-                            // sendOtp("+91"+values.phone);
+                            sendOtp("+91" + values.phone);
                             // setIsVerified((prev) => !prev);
                             setConfirm(true);
                           }}
@@ -701,6 +772,13 @@ const EnterNumberScreen = ({ navigation }) => {
           </KeyboardAvoidingView>
         </TouchableWithoutFeedback>
       )}
+
+      <SetpasswordModal
+        visible={passwordModalVisible}
+        closeModal={closeModal}
+        navigation={navigation}
+        postData={postData}
+      />
     </View>
   );
 };
@@ -878,7 +956,7 @@ const styles = StyleSheet.create({
   loginButton: {
     marginTop: 30,
     borderRadius: 10,
-    backgroundColor: "#0a6846",
+    backgroundColor: "#0c3b73",
     height: 48,
     justifyContent: "center",
   },
