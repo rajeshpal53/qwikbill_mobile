@@ -1,50 +1,61 @@
-import React,{useContext,useState,useEffect,useRef} from "react"
-import { ShopDetailContext } from "../Store/ShopDetailContext"
+import React, { useContext, useState, useEffect, useRef } from "react";
+import { ShopDetailContext } from "../Store/ShopDetailContext";
 import { Picker } from "@react-native-picker/picker";
-import { View,Text ,StyleSheet, TouchableOpacity} from "react-native"
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { readApi } from "../Util/UtilApi";
 import {
   responsiveHeight,
   responsiveWidth,
   responsiveFontSize,
-  responsiveScreenFontSize
+  responsiveScreenFontSize,
 } from "react-native-responsive-dimensions";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { ActivityIndicator } from "react-native-paper";
+import { ActivityIndicator, List } from "react-native-paper";
 
 function DropDownList() {
- const {addShopDetails,shopDetails}=useContext(ShopDetailContext)
- const [isLoading, setIsLoading] = useState(false);
- const [options, setOptions] = useState([]);
- const [selectedShop, setSelectedShop ] = useState("");
- console.log(shopDetails,"newShopDetails")
- const pickerRef = useRef();
- async function fetchOptions() {
-  setIsLoading(true);
-  const response = await readApi(`api/shop/list`);
-  setOptions(response.result);
-  const newResponse= await readApi(`api/invoice/list?shop=${response.result[0]._id}`)
-  const count=newResponse.result.length
-  addShopDetails({...response.result[0],count:count})
+  const { addShopDetails, shopDetails } = useContext(ShopDetailContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const [options, setOptions] = useState([]);
+  const [selectedShop, setSelectedShop] = useState("");
+  console.log(shopDetails, "newShopDetails");
+  const pickerRef = useRef();
+  async function fetchOptions() {
+    try {
+      setIsLoading(true);
+      const response = await readApi(`api/shop/list`);
+      setOptions(response.result);
+      const newResponse = await readApi(
+        `api/invoice/list?shop=${response?.result[0]?._id}`
+      );
+      const count = newResponse.result.length;
+      addShopDetails({ ...response.result[0], count: count });
 
-  setIsLoading(false);
-  // Adjust according to your API respons
-  // setSelectedOption(data.result[0].shopname)
-}
+    } catch (error) {
+      console.log("error getting shops , ", error)
+    }finally{
+      setIsLoading(false);
+    }
+   
 
- useEffect(() => {
+    
+    // Adjust according to your API respons
+    // setSelectedOption(data.result[0].shopname)
+  }
 
+  useEffect(() => {
     fetchOptions();
   }, []);
 
-
-
-  const getSelectedOption =async () => {
-    const selectedId = options.find(option => option.shopname === selectedShop);
-    const newResponse= await readApi(`api/invoice/list?shop=${selectedId._id}`)
-    count= newResponse.result.length
-    addShopDetails({...selectedId,count:count})
-  }
+  const getSelectedOption = async () => {
+    const selectedId = options.find(
+      (option) => option.shopname === selectedShop
+    );
+    const newResponse = await readApi(
+      `api/invoice/list?shop=${selectedId._id}`
+    );
+    count = newResponse.result.length;
+    addShopDetails({ ...selectedId, count: count });
+  };
 
   useEffect(() => {
     if (selectedShop) {
@@ -53,44 +64,183 @@ function DropDownList() {
   }, [selectedShop]);
 
   return (
+    
     <View style={styles.pickerContainer}>
-      {isLoading && (
-        <ActivityIndicator size="small"/>
-      )}
-    <Picker
-      style={{width:"95%"}}
-      ref={pickerRef}
-      selectedValue={selectedShop}
-      onValueChange={(itemValue, itemIndex) =>
-        setSelectedShop(itemValue)
-      }
-    >
-      {options.map((option, index) => (
-        <Picker.Item
-          key={index}
-          value={option.shopname}
-          label={option.shopname}
-          color="#555555"
-        >
-          {option.shopname}
-        </Picker.Item>
-      ))}
-    </Picker>
+      {isLoading && <ActivityIndicator size="small" />}
+      <Picker
+      mode="dropdown"
+        style={{ width: "95%" }}
+        ref={pickerRef}
+        selectedValue={selectedShop}
+        onValueChange={(itemValue, itemIndex) => setSelectedShop(itemValue)}
+      >
+        {/* {[
+          {shopname:"abc"}, 
+          {shopname:"abc"}, 
+          {shopname:"abc"}, 
+        {shopname:"xyz"}].map((option, index) => (
+          <Picker.Item
+            key={index}
+            value={option.shopname}
+            label={option.shopname}
+            color="#555555"
+          >
+            {option.shopname}
+          </Picker.Item>
+        ))} */}
+        {options.map((option, index) => (
+          <Picker.Item
+            key={index}
+            value={option.shopname}
+            label={option.shopname}
+            color="#555555"
+          >
+            {option.shopname}
+          </Picker.Item>
+        ))}
+      </Picker>
 
-    <TouchableOpacity style={{justifyContent:"center"}} onPress={fetchOptions}>
-      <MaterialCommunityIcons name="reload" size={20}/>
-    </TouchableOpacity>
-  </View>
-  )
+      <TouchableOpacity
+        style={{ justifyContent: "center" }}
+        onPress={fetchOptions}
+      >
+        <MaterialCommunityIcons name="reload" size={20} />
+      </TouchableOpacity>
+    </View>
+  );
 }
-const styles= StyleSheet.create({
-    pickerContainer: {
-        // borderWidth: 1,
-        borderColor: "#0c3b73",
-        borderRadius: responsiveWidth(3),
-        width: "100%",
-        flexDirection:"row"
-      },
-})
+const styles = StyleSheet.create({
+  pickerContainer: {
+    // borderWidth: 1,
+    borderColor: "#0c3b73",
+    borderRadius: responsiveWidth(3),
+    width: "100%",
+    flexDirection: "row",
+  },
+});
 
-export default DropDownList
+export default DropDownList;
+
+
+//----------------------------------------------------------------------------  
+
+
+// import React, { useContext, useState, useEffect, useRef } from "react";
+// import { ShopDetailContext } from "../Store/ShopDetailContext";
+// import { Picker } from "@react-native-picker/picker";
+// import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+// import { readApi } from "../Util/UtilApi";
+// import {
+//   responsiveHeight,
+//   responsiveWidth,
+//   responsiveFontSize,
+//   responsiveScreenFontSize,
+// } from "react-native-responsive-dimensions";
+// import { MaterialCommunityIcons } from "@expo/vector-icons";
+// import { ActivityIndicator, List } from "react-native-paper";
+
+// function DropDownList() {
+//   const { addShopDetails, shopDetails } = useContext(ShopDetailContext);
+//   const [isLoading, setIsLoading] = useState(false);
+//   const [options, setOptions] = useState([]);
+//   const [selectedShop, setSelectedShop] = useState("");
+//   const [expanded, setExpanded] = useState(false);
+//   console.log(shopDetails, "newShopDetails");
+//   const pickerRef = useRef();
+//   async function fetchOptions() {
+//     try {
+//       setIsLoading(true);
+//       const response = await readApi(`api/shop/list`);
+//       setOptions(response.result);
+//       const newResponse = await readApi(
+//         `api/invoice/list?shop=${response?.result[0]?._id}`
+//       );
+//       const count = newResponse.result.length;
+//       addShopDetails({ ...response.result[0], count: count });
+
+//     } catch (error) {
+//       console.log("error getting shops , ", error)
+//     }finally{
+//       setIsLoading(false);
+//     }
+   
+
+    
+//     // Adjust according to your API respons
+//     // setSelectedOption(data.result[0].shopname)
+//   }
+
+//   useEffect(() => {
+//     fetchOptions();
+//   }, []);
+
+//   const getSelectedOption = async () => {
+//     const selectedId = options.find(
+//       (option) => option.shopname === selectedShop
+//     );
+//     const newResponse = await readApi(
+//       `api/invoice/list?shop=${selectedId._id}`
+//     );
+//     count = newResponse.result.length;
+//     addShopDetails({ ...selectedId, count: count });
+//   };
+
+//   useEffect(() => {
+//     if (selectedShop) {
+//       getSelectedOption();
+//     }
+//   }, [selectedShop]);
+
+//   const toggleAccordion = () => setExpanded(!expanded);
+//   return (
+//     <View style={styles.accordionContainer}>
+//         <List.Accordion
+//           title={selectedShop || "Choose a Service"}
+//           expanded={expanded}
+//           // onPress={toggleAccordion}
+//           style={{width: "95%"}}
+//           // style={styles.accordion}
+//         >
+//           <ScrollView
+//             contentContainerStyle={{}}
+//             style={{
+
+//                 position:"absolute",
+//                 top:64,
+//                 zIndex:1,
+//               height: 400,
+//               borderWidth: 1,
+//               borderColor: "rgba(0, 0, 0, 0.3)",
+//               width:"100%"
+//             }}
+//             // nestedScrollEnabled={true}
+//           >
+//             <View style={{ backgroundColor: "#fff" }}>
+//               {options?.map((option, index) => (
+//                 <List.Item
+//                   key={index}
+//                   title={option?.shopname}
+//                   // style={{
+//                   //   backgroundColor: selectedService?.id === service?.id ? "rgba(0, 0, 0, 0.2)" : "#fff",
+//                   // }}
+//                   // onPress={() => handleServiceSelection(service)}
+//                 />
+//               ))}
+//             </View>
+//           </ScrollView>
+//         </List.Accordion>
+//       </View>
+    
+//   );
+// }
+// const styles = StyleSheet.create({
+//   pickerContainer: {
+//     // borderWidth: 1,
+//     borderColor: "#0c3b73",
+//     borderRadius: responsiveWidth(3),
+//     width: "100%",
+//     flexDirection: "row",
+//   },
+// });
+
+// export default DropDownList;

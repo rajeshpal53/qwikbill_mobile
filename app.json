@@ -26,6 +26,7 @@
     },
     "android": {
       "versionCode": 1,
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/qLogo.png",
         "backgroundColor": "#ffffff"
@@ -34,15 +35,16 @@
         "USE_FINGERPRINT",
         "USE_BIOMETRIC"
       ],
-      "package": "com.faizanshaikh0.qwikbill"
+      "package": "com.wertone.qwikbill"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "ba1fa84d-e995-4987-ada8-0b85d1c13c86"
+        "projectId": "230e4be6-1127-4c5c-a287-888b54ae4faf"
       }
-    }
+    },
+    "owner": "wertone"
   }
 }

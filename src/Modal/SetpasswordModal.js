@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
-import { IconButton, Modal, TextInput } from "react-native-paper";
+import { IconButton, Modal, ProgressBar, TextInput } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const SetpasswordModal = ({ visible, HandalsetPasswordModal,navigation }) => {
+const SetpasswordModal = ({ visible, closeModal, navigation, postData }) => {
   //   const [password, setPassword] = useState("");
   //   const [Confirmpassword, setConfirmPassword] = useState("");
   const [PassisSecure, setPassIsSecure] = useState(true);
@@ -26,10 +26,10 @@ const SetpasswordModal = ({ visible, HandalsetPasswordModal,navigation }) => {
 
   const evaluatePasswordStrength = (pass) => {
     let score = 0;
-    if (pass.length > 0) score++;
     if (pass.length >= 6) score++;
-    if (/[A-Z]/.test(pass)) score++;
-    if (/[0-9]/.test(pass) && /[^A-Za-z0-9]/.test(pass)) score++;
+    if (pass.length >= 8) score++;
+    if (/[A-Z]/.test(pass) && pass.length >= 4) score++;
+    if (/[0-9]/.test(pass) && /[^A-Za-z0-9]/.test(pass) && pass.length >= 4) score++;
     setStrength(score);
   };
 
@@ -55,11 +55,37 @@ const SetpasswordModal = ({ visible, HandalsetPasswordModal,navigation }) => {
     setConfirmPassIsSecure((prevState) => !prevState);
   };
 
+  const getPasswordStrength = () => {
+    if(strength < 1){
+      return 0;
+    }
+    if (strength == 1) {
+      return 25;
+    } else if (strength == 2) {
+      return 50;
+    } else if (strength == 3) {
+      return 75;
+    } else if (strength == 4) {
+      return 100;
+    }
+  };
+
+  const getProgressValue = () => {
+    if (strength == 1) {
+      return 0.25;
+    } else if (strength == 2) {
+      return 0.5;
+    } else if (strength == 3) {
+      return 0.75;
+    } else if (strength == 4) {
+      return 1;
+    }
+  };
   return (
     <Modal
       visible={visible}
-      onDismiss={HandalsetPasswordModal}
-      onRequestClose={HandalsetPasswordModal}
+      onDismiss={closeModal}
+      onRequestClose={closeModal}
       animationType="slide"
       contentContainerStyle={styles.containerStyle}
     >
@@ -69,9 +95,17 @@ const SetpasswordModal = ({ visible, HandalsetPasswordModal,navigation }) => {
         onSubmit={async (values, { resetForm }) => {
           try {
             console.log(values);
-            await AsyncStorage.setItem("UserPassword", JSON.stringify(values));
-            resetForm(); // Reset the form after successful submission
-            navigation.navigate("UserloginScreen")
+            // await AsyncStorage.setItem("UserPassword", JSON.stringify(values));
+              
+              const signupSuccessfully = await postData(values?.password);
+
+              if(signupSuccessfully){
+                closeModal();
+                resetForm(); // Reset the form after successful submission
+                // navigation.navigate("UserloginScreen")
+                navigation.goBack();
+              }
+           
           } catch (error) {
             console.log("Unable to save data", error);
           }
@@ -88,12 +122,12 @@ const SetpasswordModal = ({ visible, HandalsetPasswordModal,navigation }) => {
           <View style={styles.main}>
             <View style={styles.TextView}>
               <Text style={styles.TextHead}>Set Your Password</Text>
-              <Text>Create a strong password to secure your account.</Text>
+              <Text style={{color:"rgba(0, 0, 0, 0.5)", fontSize:12}}>Create a strong password to secure your account.</Text>
             </View>
             <View style={styles.InputTextView}>
               <TextInput
                 label="Enter password"
-                mode="outlined"
+                mode="flat"
                 value={values.password}
                 onChangeText={(text) => {
                   handleChange("password")(text);
@@ -112,7 +146,30 @@ const SetpasswordModal = ({ visible, HandalsetPasswordModal,navigation }) => {
               {touched.password && errors.password && (
                 <Text style={styles.errorText}>{errors.password}</Text>
               )}
-              <View style={styles.strengthMeter}>
+
+              <View
+                style={{
+                  marginVertical: 10,
+                  paddingVertical: 10,
+                  marginHorizontal: 5,
+                }}
+              >
+                <ProgressBar progress={getProgressValue()} color="rgb(35, 167, 35)" style={{height:5, borderRadius:10}} />
+                <View style={{ flexDirection: "row", justifyContent:"flex-start", alignItems:"center", gap:5, marginTop: 5, }}>
+                  <Text
+                    style={{
+                      //  textAlign: "center",
+                      // marginTop: 5,
+                      //  fontWeight: "bold",
+                      color: "rgba(0, 0, 0, 0.5)",
+                    }}
+                  >
+                    Strong
+                  </Text>
+                  <Text>{getPasswordStrength()} %</Text>
+                </View>
+              </View>
+              {/* <View style={styles.strengthMeter}>
                 {[1, 2, 3, 4].map((level) => (
                   <View key={level} style={styles.levelContainer}>
                     <View
@@ -127,10 +184,10 @@ const SetpasswordModal = ({ visible, HandalsetPasswordModal,navigation }) => {
                     <Text style={styles.label}>{getStrengthLabel(level)}</Text>
                   </View>
                 ))}
-              </View>
+              </View> */}
               <TextInput
                 label="Confirm Password"
-                mode="outlined"
+                mode="flat"
                 value={values.confirmPassword}
                 onChangeText={handleChange("confirmPassword")}
                 onBlur={handleBlur("confirmPassword")}
@@ -152,8 +209,8 @@ const SetpasswordModal = ({ visible, HandalsetPasswordModal,navigation }) => {
                 </TouchableOpacity>
               </View>
               <View style={styles.textinfoView}>
-                <Text>
-                  Your password must be at least 8 characters, include an
+                <Text style={{color:"rgba(255, 0, 0, 0.6)", fontSize:12}}>
+                  * Your password must be at least 8 characters, include an
                   uppercase letter, a number, and a special character.
                 </Text>
               </View>
@@ -174,7 +231,7 @@ const styles = StyleSheet.create({
   main: {
     backgroundColor: "#fff",
     marginHorizontal: 10,
-    paddingVertical: 30,
+    paddingBottom: 20,
     borderRadius: 10,
     paddingHorizontal: 5,
     elevation: 5,
@@ -182,10 +239,12 @@ const styles = StyleSheet.create({
   TextView: {
     paddingVertical: 10,
     marginHorizontal: 5,
+    gap:15,
   },
   TextHead: {
     fontSize: 20,
     paddingVertical: 10,
+    fontWeight:"bold"
   },
   InputTextView: {
     paddingVertical: 10,
@@ -200,14 +259,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     marginTop: 20,
     borderRadius: 10,
-    backgroundColor: "#17C6ED",
+    // backgroundColor: "#17C6ED",
+    backgroundColor: "#0c3b73",
   },
   textbutton: {
     textAlign: "center",
     color: "#fff",
   },
   textinfoView: {
-    marginTop: 10,
+    marginTop: 20,
   },
   label: {
     textAlign: "center",
