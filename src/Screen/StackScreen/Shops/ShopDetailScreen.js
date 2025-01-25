@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { Card, Divider, Text } from "react-native-paper";
 import { useRoute } from "@react-navigation/native";
 import { ActivityIndicator, StyleSheet } from "react-native";
-import { readApi } from "../../Util/UtilApi";
+import { readApi } from "../../../Util/UtilApi";
 
 const ShopDetailScreen = () => {
   const [shopData, setShopData] = useState("");
