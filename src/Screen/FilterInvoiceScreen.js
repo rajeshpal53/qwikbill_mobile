@@ -242,7 +242,7 @@ export default function FilterInvoiceScreen({}) {
           <View style={styles.logoPickerContainer}>
             <Entypo name="shop" size={30} color="#0c3b73" />
             <View style={styles.pickerContainer}>
-              <DropDownList />
+              <DropDownList options={[]} />
             </View>
           </View>
 
