@@ -1,7 +1,7 @@
 import axios from 'axios';
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
-const API_BASE_URL = "http://192.168.73.248:2235/";
+export const API_BASE_URL = "http://192.168.1.9:2235/";
 
 
 const apiRequest = async (method, url, data = null, headers) => {
@@ -50,4 +50,17 @@ export const updateApi = async (endpoint, data, headers) => {
   // DELETE
   export const deleteApi = async (endpoint) => {
     return deleteApiRequest('delete', endpoint,);
+  };
+
+  export const fontSize = {
+    headingLarge: 24,
+    headingMedium: 22,
+    heading: 20,
+    headingSmall: 18,
+    labelLarge: 16,
+    labelMedium: 14,
+    label: 12,
+    labelSmall: 10,
+    labelXSmall:9,
+    labelXXSmall:8,
   };

@@ -3,13 +3,13 @@ import React, { useEffect, useState, useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import { FAB, Text, ActivityIndicator } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
-import ItemList from "../../Components/Lists/ItemList";
-import { readApi } from "../../Util/UtilApi";
+import ItemList from "../../../Components/Lists/ItemList";
+import { readApi } from "../../../Util/UtilApi";
 import { useIsFocused } from "@react-navigation/native";
-import { useSnackbar } from "../../Store/SnackbarContext";
-import { deleteApi } from "../../Util/UtilApi";
-import DeleteModal from "../../UI/DeleteModal";
-import {AuthContext} from "../../Store/AuthContext"
+import { useSnackbar } from "../../../Store/SnackbarContext";
+import { deleteApi } from "../../../Util/UtilApi";
+import DeleteModal from "../../../UI/DeleteModal";
+import {AuthContext} from "../../../Store/AuthContext"
 
 
 const fetchSearchData = async (searchQuery) => {
