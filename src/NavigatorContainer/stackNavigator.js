@@ -128,6 +128,7 @@ import AllItemProduct from "../../src/StackScreen/AllItemProduct.js";
 import CustomerDetailScreen from "../Screen/CustomerDetailScreen.js";
 import EnterNumberScreen from "../Screen/StackScreen/EnterNumberScreen.js";
 import UserDataContext from "../Store/UserDataContext.js";
+import EditProfileScreen from "../Screen/StackScreen/EditProfileScreen.js";
 export default function StackNavigator() {
   const Stack = createStackNavigator();
   const [isConnected, setIsConnected] = useState(false);
@@ -182,6 +183,8 @@ export default function StackNavigator() {
         />
 
         <Stack.Screen name="viewClient" component={ViewClientScreen} />
+        <Stack.Screen name="EditProfilePage" component={EditProfileScreen} />
+
 
         <Stack.Screen
           name="hsncode"

@@ -12,49 +12,50 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { ActivityIndicator, List } from "react-native-paper";
 
-function DropDownList() {
+function DropDownList({options}) {
   const { addShopDetails, shopDetails } = useContext(ShopDetailContext);
   const [isLoading, setIsLoading] = useState(false);
-  const [options, setOptions] = useState([]);
+  // const [options, setOptions] = useState([]);
   const [selectedShop, setSelectedShop] = useState("");
   console.log(shopDetails, "newShopDetails");
   const pickerRef = useRef();
-  async function fetchOptions() {
-    try {
-      setIsLoading(true);
-      const response = await readApi(`api/shop/list`);
-      setOptions(response.result);
-      const newResponse = await readApi(
-        `api/invoice/list?shop=${response?.result[0]?._id}`
-      );
-      const count = newResponse.result.length;
-      addShopDetails({ ...response.result[0], count: count });
 
-    } catch (error) {
-      console.log("error getting shops , ", error)
-    }finally{
-      setIsLoading(false);
-    }
+  // async function fetchOptions() {
+  //   try {
+  //     setIsLoading(true);
+  //     const response = await readApi(`api/shop/list`);
+  //     setOptions(response.result);
+  //     const newResponse = await readApi(
+  //       `api/invoice/list?shop=${response?.result[0]?._id}`
+  //     );
+  //     const count = newResponse.result.length;
+  //     addShopDetails({ ...response.result[0], count: count });
+
+  //   } catch (error) {
+  //     console.log("error getting shops , ", error)
+  //   }finally{
+  //     setIsLoading(false);
+  //   }
    
 
     
-    // Adjust according to your API respons
-    // setSelectedOption(data.result[0].shopname)
-  }
+  //   // Adjust according to your API respons
+  //   // setSelectedOption(data.result[0].shopname)
+  // }
 
-  useEffect(() => {
-    fetchOptions();
-  }, []);
+  // useEffect(() => {
+  //   fetchOptions();
+  // }, []);
 
   const getSelectedOption = async () => {
-    const selectedId = options.find(
-      (option) => option.shopname === selectedShop
-    );
-    const newResponse = await readApi(
-      `api/invoice/list?shop=${selectedId._id}`
-    );
-    count = newResponse.result.length;
-    addShopDetails({ ...selectedId, count: count });
+    // const selectedId = options.find(
+    //   (option) => option.shopname === selectedShop
+    // );
+    // const newResponse = await readApi(
+    //   `api/invoice/list?shop=${selectedId._id}`
+    // );
+    // count = newResponse.result.length;
+    // addShopDetails({ ...selectedId, count: count });
   };
 
   useEffect(() => {
@@ -68,41 +69,32 @@ function DropDownList() {
     <View style={styles.pickerContainer}>
       {isLoading && <ActivityIndicator size="small" />}
       <Picker
+      enabled={options.length > 0} // Disable the picker if options.length is 0
       mode="dropdown"
-        style={{ width: "95%" }}
-        ref={pickerRef}
-        selectedValue={selectedShop}
-        onValueChange={(itemValue, itemIndex) => setSelectedShop(itemValue)}
-      >
-        {/* {[
-          {shopname:"abc"}, 
-          {shopname:"abc"}, 
-          {shopname:"abc"}, 
-        {shopname:"xyz"}].map((option, index) => (
-          <Picker.Item
-            key={index}
-            value={option.shopname}
-            label={option.shopname}
-            color="#555555"
-          >
-            {option.shopname}
-          </Picker.Item>
-        ))} */}
-        {options.map((option, index) => (
-          <Picker.Item
-            key={index}
-            value={option.shopname}
-            label={option.shopname}
-            color="#555555"
-          >
-            {option.shopname}
-          </Picker.Item>
-        ))}
-      </Picker>
+      style={{ width: "95%" }}
+      ref={pickerRef}
+      selectedValue={selectedShop}
+      onValueChange={(itemValue) => setSelectedShop(itemValue)}
+    >
+      {/* Default placeholder */}
+      <Picker.Item 
+        label="Please select your Shop" 
+        value="" 
+        color="#888888" 
+        enabled={false} 
+      />
+      {options.map((option, index) => (
+        <Picker.Item
+          key={index}
+          value={option?.shopname}
+          label={option?.shopname}
+          color="#555555"
+        />
+      ))}
+    </Picker>
 
       <TouchableOpacity
         style={{ justifyContent: "center" }}
-        onPress={fetchOptions}
       >
         <MaterialCommunityIcons name="reload" size={20} />
       </TouchableOpacity>
