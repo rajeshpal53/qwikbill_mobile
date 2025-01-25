@@ -103,11 +103,11 @@ const ProductDetailsScreen = ({ navigation }) => {
         keyExtractor={(item) => item.id.toString()}
       />
 
-      {/* <FAB
+      <FAB
         icon={() => <Icon name="add" size={25} color="#fff" />}
         style={styles.fab}
-        onPress={() => console.log("FAB pressed")}
-      /> */}
+        onPress={() => navigation.navigate("AddProduct")}
+      />
 
       {/* {editmodal && (
         <EditCustomerDetailsModal
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 25,
     bottom: 25,
-    backgroundColor: "#1bd18f",
+    backgroundColor: "#0c3b73",
     justifyContent: "center",
     alignItems: "center",
   },

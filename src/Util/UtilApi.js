@@ -1,9 +1,12 @@
 import axios from 'axios';
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
+
+
 export const API_BASE_URL = "http://192.168.1.9:2235/";
 
 
+export const NORM_URL="https://dailysabji.com/"
 const apiRequest = async (method, url, data = null, headers) => {
     try {
         const response = await axios({
@@ -51,7 +54,6 @@ export const updateApi = async (endpoint, data, headers) => {
   export const deleteApi = async (endpoint) => {
     return deleteApiRequest('delete', endpoint,);
   };
-
   export const fontSize = {
     headingLarge: 24,
     headingMedium: 22,

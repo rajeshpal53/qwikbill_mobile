@@ -78,8 +78,8 @@ const LoginScreen = ({ navigation }) => {
         password : values?.password,
       }
       const response = await createApi('qapi/users/loginUser', payload);
-
-
+     await storeData("loginDetail", response);
+      setLoginDetail(response);
       console.log("response of Login is , ", response);
       await saveUserData(response);
       // console.log(response.data, "newResponse");
