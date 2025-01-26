@@ -50,7 +50,7 @@ export default function HomeScreen({ navigation }) {
   const { searchMode, setSearchMode } = useContext(AuthContext);
   // const {overlayHeight} = useContext(AuthContext);
   const pickerRef = useRef();
-  const {width, height} = useWindowDimensions(); 
+  const {width, height} = useWindowDimensions();
   console.log(width, "  ", height)
   // const overlayHeight = (0.20*windowHeight);
   // console.log(responsiveHeight(80), "    --- responsiveHeight");
@@ -67,7 +67,7 @@ export default function HomeScreen({ navigation }) {
         console.log("Failed to fetch login details:", error);
       }
     };
-  
+
     getItem();
   }, []);
 
@@ -79,7 +79,7 @@ export default function HomeScreen({ navigation }) {
     pickerRef.current.blur();
   }
 
-  
+
   const goToHandler = (Screen) => {
     // navigation.navigate("wertone", {screen:'CreateInvoice'});
     // console.log("Pra ", item)
@@ -87,7 +87,8 @@ export default function HomeScreen({ navigation }) {
       navigation.navigate(Screen, {isHome:false} );
     }
     console.log("hi")
-    navigation.navigate("StackNavigator", { screen: Screen });
+    // navigation.navigate("StackNavigator", { screen: Screen });
+    navigation.navigate(Screen)
   };
 
 
@@ -99,7 +100,7 @@ export default function HomeScreen({ navigation }) {
       ></View>
 
       <View style={styles.scrollView}>
-        
+
           <View style={styles.container}>
             <View style={styles.header}>
               <Text style={styles.headerText}>{`Welcome, ${loginDetail.name} ${loginDetail.surname}`}</Text>
@@ -111,12 +112,12 @@ export default function HomeScreen({ navigation }) {
             <View style={{ flex: 0.6 }}>
               <Card style={styles.card}>
                 <View>
- 
+
                   <Card.Content style={styles.cardContent}>
                     <View style={styles.dropDownContainer}>
                     <DropDownList/>
                     </View>
-                         
+
                     <View style={styles.viewsContainer}>
                       <Pressable  style={styles.allThreeViews} onPress={() => navigation.navigate("Customer")}>
                       <Text style={styles.whiteColor}>View Customers</Text>
@@ -128,7 +129,7 @@ export default function HomeScreen({ navigation }) {
                         height:"50%"
                         }}></View>
 
-                      <Pressable  style={styles.allThreeViews} 
+                      <Pressable  style={styles.allThreeViews}
                       onPress={() => goToHandler("Invoices")}>
                       <Text style={styles.whiteColor}>View Invoices</Text>
                       </Pressable>
@@ -161,7 +162,7 @@ export default function HomeScreen({ navigation }) {
                   </TouchableOpacity>
                 )}
                 keyExtractor={(item,index) =>index}
-               
+
                 // ItemSeparatorComponent={<View style={{height:10}} />}
                 ListEmptyComponent={<Text>No Items Found</Text>}
                 // ListHeaderComponent={<Text style={styles.listHeader}>List</Text>}
@@ -183,7 +184,7 @@ const styles = StyleSheet.create({
   scrollView: {
     height: "100%",
   },
-  container: { 
+  container: {
     marginHorizontal: responsiveWidth(5),
     // backgroundColor:"orange",
     height: verticalScale(578)
@@ -210,14 +211,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop:10
     //  fontFamily:'Roboto_700Bold'
-    
+
   },
   // headerText1: {
   //   color: "#fff",
   //   fontSize: responsiveFontSize(2.5),
   //   // fontWeight: "bold",
   //   fontFamily:"Roboto_300Light_Italic"
-    
+
   // },
   subHeaderText: {
     color: "#fff",
@@ -292,7 +293,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: responsiveWidth(3),
   },
   whiteColor: {
-     color: "#26a0df", 
+     color: "#26a0df",
      fontSize:16
   },
 });

@@ -1,12 +1,21 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
 import { Card, TextInput } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import IncAndDicButton from "../IncAndDicButton";
+import { useDispatch, useSelector } from "react-redux";
+import { removeFromCart } from "../../Redux/CartProductRedux/CartSlice";
 
 const ItemDataTable = () => {
-  const [quantity, setQuantity] = useState(1); // State for quantity
-  const [amount, setAmount] = useState(300);
+  const carts = useSelector((state) => state.cart.Carts);
+  const totalPrice = useSelector((state) => state.cart.totalPrice);
+  const dispatch = useDispatch();
 
   return (
     <Card style={styles.card}>
@@ -19,20 +28,30 @@ const ItemDataTable = () => {
         <Text style={[styles.cell, styles.smallCell]}>Action</Text>
       </View>
 
-      {/* Row */}
-      <View style={styles.row}>
-        <Text style={[styles.cell, styles.smallCell]}>1</Text>
-        <Text style={[styles.cell, styles.flexCell]}>iPhone Plus</Text>
-        <Text style={[styles.cell, styles.smallCell]}>$300</Text>
-        <View style={[styles.cell, styles.smallCell]}>
-          <IncAndDicButton />
-        </View>
-        <View style={[styles.cell, styles.smallCell]}>
-          <TouchableOpacity>
-            <MaterialIcons name="delete" size={20} color="red" />
-          </TouchableOpacity>
-        </View>
-      </View>
+      {/* Items List */}
+      <FlatList
+        data={carts}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item, index }) => (
+          <View style={styles.row}>
+            <Text style={[styles.cell, styles.smallCell]}>{index + 1}</Text>
+            <Text style={[styles.cell, styles.flexCell]}>{item?.Name}</Text>
+            <Text style={[styles.cell, styles.smallCell]}>
+              ${(item?.Price * item?.quantity).toFixed(2)}
+            </Text>
+            <View style={[styles.cell, styles.smallCell]}>
+              <IncAndDicButton item={item} />
+            </View>
+            <View style={[styles.cell, styles.smallCell]}>
+              <TouchableOpacity
+                onPress={() => dispatch(removeFromCart(item?.id))}
+              >
+                <MaterialIcons name="delete" size={20} color="red" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+      />
 
       {/* Total Price Section */}
       <View style={styles.totalContainer}>
@@ -41,16 +60,8 @@ const ItemDataTable = () => {
           mode="outlined"
           style={styles.input}
           editable={false}
-          value={`$${amount * quantity}`}
+          value={`$ ${totalPrice.toFixed(2)}`}
         />
-      </View>
-
-      {/* Pay Button */}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.payButton}>
-          <MaterialIcons name="payment" size={20} color="white" />
-          <Text style={styles.payButtonText}>Pay</Text>
-        </TouchableOpacity>
       </View>
     </Card>
   );
@@ -58,12 +69,12 @@ const ItemDataTable = () => {
 
 const styles = StyleSheet.create({
   card: {
-    margin: 10,
+    margin: 2,
     elevation: 3,
     borderRadius: 8,
     backgroundColor: "#fff",
-    // paddingVertical:10
-    paddingHorizontal: 8,
+    paddingVertical: 20,
+    marginTop: 15,
   },
   row: {
     flexDirection: "row",
@@ -73,28 +84,24 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ddd",
   },
   header: {
-    // backgroundColor: "#f0f0f0",
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
-    paddingHorizontal: 5,
-    // marginVertical:10
+    // paddingHorizontal: 5,
   },
   cell: {
     textAlign: "center",
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 5,
+    fontSize: 12,
   },
   smallCell: {
-    // flex: 0.5,
     textAlign: "center",
   },
   flexCell: {
     flex: 1,
   },
   totalContainer: {
-    // flexDirection: "row",
-    // alignItems: "center",
     marginTop: 10,
     paddingHorizontal: 5,
   },
@@ -113,18 +120,15 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginTop: 10,
     alignItems: "flex-end",
-    // width:"25%"
   },
-  payButton: {
+  addButton: {
     flexDirection: "row",
-    // alignItems: "center",
+    alignItems: "center",
     backgroundColor: "#007bff",
     padding: 10,
-    paddingVertical: 10,
     borderRadius: 8,
-    marginBottom: 10,
   },
-  payButtonText: {
+  addButtonText: {
     marginLeft: 5,
     color: "white",
     fontWeight: "bold",

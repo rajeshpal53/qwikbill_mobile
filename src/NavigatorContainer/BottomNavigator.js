@@ -102,12 +102,12 @@ export default function BottomNavigator() {
                   </Text>
                 )
               : "",
-  
+
             headerTitleAlign: "left",
             headerRight: () => "",
           }}
         />
-  
+
         <Tab.Screen
           name="Products"
           component={ProductDetailsScreen}
@@ -128,7 +128,7 @@ export default function BottomNavigator() {
             headerLeft: () => <CustomBackButton />,
           }}
         />
-  
+
         {/* <Tab.Screen
           name="Products"
           component={ProductDetailsScreen}
@@ -146,7 +146,7 @@ export default function BottomNavigator() {
                   </Text>
                 )
               : "",
-  
+
             headerTitleAlign: "left",
           }}
         /> */}
@@ -170,7 +170,7 @@ export default function BottomNavigator() {
             headerLeft: () => <CustomBackButton />,
           }}
         />
-  
+
         {/* <Tab.Screen
           name="Customer"
           component={Customer}
@@ -189,11 +189,11 @@ export default function BottomNavigator() {
                   </Text>
                 )
               : "",
-  
+
             headerTitleAlign: "left",
           }}
         /> */}
-  
+
         <Tab.Screen
           name="Profile Setting"
           component={ProfileSetting}
@@ -212,7 +212,7 @@ export default function BottomNavigator() {
                   </Text>
                 )
               : "",
-  
+
             headerTitleAlign: !searchMode ? "center" : "left",
             headerRight: () => "",
           }}

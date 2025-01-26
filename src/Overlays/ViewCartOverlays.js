@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native";
 import { Text } from "react-native-paper";
 
-const ViewCartOverlay = ({navigation}) => {
+const ViewCartOverlay = ({navigation, carts}) => {
   // const [selectedTypes, setSelectedTypes] = useState(0);
 
   // useEffect(() => {
@@ -33,7 +33,7 @@ const ViewCartOverlay = ({navigation}) => {
           }}
         >
           <Text style={{ fontSize: 16, color: "#1c6a4a" }}>
-            Selected Item : 5
+          Selected Item : {carts.length}
           </Text>
         </View>
         <View style={{ }}>
