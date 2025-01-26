@@ -6,6 +6,7 @@ import ViewCartOverlay from "../Overlays/ViewCartOverlays";
 import { ProduchItem } from "../../ProductData";
 import { setProduct } from "../Redux/CartProductRedux/ProductSlice";
 import { useDispatch, useSelector } from "react-redux";
+import OpenmiqModal from "../Modal/Openmicmodal";
 
 const AllItemProduct = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -62,6 +63,13 @@ const AllItemProduct = ({ navigation }) => {
           </View>
         )}
       />
+      {searchmodal && (
+        <OpenmiqModal
+          modalVisible={searchmodal}
+          setModalVisible={setsearchmodal}
+          transcript={transcript}
+        />
+      )}
       {showOverlay && <ViewCartOverlay navigation={navigation} carts={carts} />}
     </View>
   );

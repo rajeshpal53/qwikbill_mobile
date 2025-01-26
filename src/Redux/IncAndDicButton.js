@@ -5,14 +5,10 @@ import {
   decreaseQuantity,
   incrementQuantity,
   removeFromCart,
-} from "../Redux/CartProductRedux/CartSlice";
+} from "./CartProductRedux/CartSlice";
 
 const IncAndDicButton = ({item }) => {
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    console.log("Data is 7897485", item);
-  }, [item]); // This effect runs only when `item` changes
 
   const handleDecrement = (item) => {
     if (item.quantity > 1) {
@@ -31,7 +27,7 @@ const IncAndDicButton = ({item }) => {
         >
           <Text style={styles.quantityButtonText}>-</Text>
         </TouchableOpacity>
-        <Text style={styles.quantityText}>{item?.quantity}</Text>
+        <Text style={styles.quantityText}>{item.quantity}</Text>
         <TouchableOpacity
           onPress={() => dispatch(incrementQuantity(item?.id))}
           style={styles.quantityButton}

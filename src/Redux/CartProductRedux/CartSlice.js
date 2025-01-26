@@ -15,7 +15,6 @@ const CartSlice = createSlice({
       const itemIndex = state.Carts.find((item) => item.id === newItem.id);
 
       if (itemIndex) {
-        // If item is already in the cart, update its quantity and totalPrice
         itemIndex.quantity++;
         itemIndex.totalPrice += newItem.Price;
 
@@ -46,7 +45,7 @@ const CartSlice = createSlice({
         state.Carts = state.Carts.filter((item) => item.id !== itemId);
       }
     },
-    
+
     incrementQuantity(state, action) {
       const itemId = action.payload;
       const finditem = state.Carts.find((item) => item.id === itemId);

@@ -1,10 +1,10 @@
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { Modal } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-// import {
-//   ExpoSpeechRecognitionModule,
-//   useSpeechRecognitionEvent,
-// } from "expo-speech-recognition";
+import {
+  ExpoSpeechRecognitionModule,
+  useSpeechRecognitionEvent,
+} from "expo-speech-recognition";
 const OpenmiqModal = ({ modalVisible, setModalVisible, transcript }) => {
   const handleClose = () => {
     ExpoSpeechRecognitionModule.stop(); // Stop speech recognition
@@ -21,9 +21,9 @@ const OpenmiqModal = ({ modalVisible, setModalVisible, transcript }) => {
       contentContainerStyle={styles.containerStyle}
     >
       <TouchableOpacity
-        style={styles.modalBackground} // Make the background clickable
-        activeOpacity={1} // Prevent clicks on the background from closing the modal
-        onPress={handleClose} // Close the modal when clicking outside
+        style={styles.modalBackground}
+        activeOpacity={1}
+        onPress={handleClose} 
       >
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Speak Now</Text>
