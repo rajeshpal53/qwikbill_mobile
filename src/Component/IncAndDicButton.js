@@ -1,31 +1,39 @@
-import { useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  decreaseQuantity,
+  incrementQuantity,
+  removeFromCart,
+} from "../Redux/CartProductRedux/CartSlice";
 
-const IncAndDicButton = ({ setInCart, InCart }) => {
-  const [quantity, setQuantity] = useState(1);
+const IncAndDicButton = ({item }) => {
+  const dispatch = useDispatch();
 
-  const increaseQuantity = () => {
-    setQuantity((prev) => prev + 1); // Increase the quantity
-  };
-  const decreaseQuantity = () => {
-    if (quantity > 1) {
-      setQuantity((prev) => prev - 1); // Decrease the quantity, prevent going below 1
-    } else {
-      //   setInCart(false);
+  useEffect(() => {
+    console.log("Data is 7897485", item);
+  }, [item]); // This effect runs only when `item` changes
+
+  const handleDecrement = (item) => {
+    if (item.quantity > 1) {
+      dispatch(decreaseQuantity(item.id));
+    }else{
+      dispatch(removeFromCart(item.id));
     }
   };
+
   return (
     <View style={styles.main}>
       <View style={styles.quantityControlContainer}>
         <TouchableOpacity
-          onPress={decreaseQuantity}
+          onPress={()=> handleDecrement(item)}
           style={styles.quantityButton}
         >
           <Text style={styles.quantityButtonText}>-</Text>
         </TouchableOpacity>
-        <Text style={styles.quantityText}>{quantity}</Text>
+        <Text style={styles.quantityText}>{item?.quantity}</Text>
         <TouchableOpacity
-          onPress={increaseQuantity}
+          onPress={() => dispatch(incrementQuantity(item?.id))}
           style={styles.quantityButton}
         >
           <Text style={styles.quantityButtonText}>+</Text>
@@ -64,4 +72,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default IncAndDicButton;
+export default memo(IncAndDicButton);

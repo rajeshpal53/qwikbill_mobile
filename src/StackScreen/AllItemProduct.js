@@ -1,63 +1,39 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import Searchbarwithmic from "../../src/Component/Searchbarwithmic";
 import ProductCardDetails from "../Component/Cards/ProductCard";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ViewCartOverlay from "../Overlays/ViewCartOverlays";
+import { ProduchItem } from "../../ProductData";
+import { setProduct } from "../Redux/CartProductRedux/ProductSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const AllItemProduct = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchmodal, setsearchmodal] = useState(false); // State for modal visibility
-  const [transcript, setTranscript] = useState(""); // State for transcript
-  const [showOverlay, setshowOverlay] = useState(true);
+  const [searchmodal, setsearchmodal] = useState(false);
+  const [transcript, setTranscript] = useState("");
+  const [showOverlay, setshowOverlay] = useState(false);
+  const dispatch = useDispatch();
+  const products = useSelector((state) => state.product);
+  const carts = useSelector((state) => state.cart.Carts);
 
-  const ProduchItem = [
-    {
-      id: 1,
-      Name: "Camera",
-      "Selling Price": 67,
-      info: "awosome Product",
-    },
-    {
-      id: 2,
-      Name: "Iphone",
-      "Selling Price": 67,
-      info: "awosome Product",
-    },
-    {
-      id: 3,
-      Name: "Laptop",
-      "Selling Price": 67,
-      info: "awosome Product",
-    },
-    {
-      id: 4,
-      Name: "Watch",
-      "Selling Price": 67,
-      info: "awosome Product",
-    },
-    {
-      id: 5,
-      Name: "Nokia",
-      "Selling Price": 67,
-      info: "awosome Product",
-    },
-    {
-      id: 6,
-      Name: "Nokia",
-      "Selling Price": 67,
-      info: "awosome Product",
-    },
-    {
-      id: 7,
-      Name: "Nokia",
-      "Selling Price": 67,
-      info: "awosome Product",
-    },
-  ];
+  useEffect(() => {
+    if (carts.length > 0) {
+      setshowOverlay(true);
+    } else {
+      setshowOverlay(false);
+    }
+  }, [carts]);
 
-  const filteredData = ProduchItem.filter((item) =>
-    item.Name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    dispatch(setProduct(ProduchItem));
+  }, []);
+
+  const filteredData = useMemo(() => {
+    return (products.products || []).filter((item) =>
+      item.Name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [products.products, searchQuery]);
+
   return (
     <View>
       <Searchbarwithmic
@@ -66,7 +42,6 @@ const AllItemProduct = ({ navigation }) => {
         setsearchmodal={setsearchmodal}
         setTranscript={setTranscript}
         placeholderText="Search User by name ..."
-        //    refuser={searchBarRef}
       />
       <FlatList
         data={filteredData}
@@ -79,9 +54,15 @@ const AllItemProduct = ({ navigation }) => {
         )}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.flatListContainer}
+        ListEmptyComponent={() => (
+          <View style={{ alignItems: "center", marginTop: 20 }}>
+            <Text style={{ fontSize: 16, color: "gray" }}>
+              No products found.
+            </Text>
+          </View>
+        )}
       />
-
-      {showOverlay && <ViewCartOverlay navigation={navigation} />}
+      {showOverlay && <ViewCartOverlay navigation={navigation} carts={carts} />}
     </View>
   );
 };
