@@ -12,8 +12,10 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import ItemDataTable from "../Cards/ItemDataTable";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { readApi } from "../../Util/UtilApi";
+import { clearCart } from "../../Redux/CartProductRedux/CartSlice";
+
 
 // Validation Schema using Yup
 const validationSchema = Yup.object({
@@ -26,9 +28,11 @@ const validationSchema = Yup.object({
 });
 
 const CreateInvoiceForm = () => {
+    const dispatch = useDispatch()
   const navigation = useNavigation();
   const carts = useSelector((state) => state.cart.Carts);
   const [shopData, setShopData] = useState(null); // To store the shop data response
+
 
   const handlePhoneBlur = async (phoneNumber) => {
     if (/^\d{10}$/.test(phoneNumber)) {
@@ -54,7 +58,7 @@ const CreateInvoiceForm = () => {
           phone: "",
         }}
         validationSchema={validationSchema}
-        onSubmit={(values) => {
+        onSubmit={(values, {resetForm}) => {
           const formData = {
             ...values,
             Product: carts.map((item) => ({
@@ -66,6 +70,8 @@ const CreateInvoiceForm = () => {
             })), // Rename items to Product and map necessary fields
           };
           console.log("Form Submitted Data:", formData);
+          resetForm()
+          dispatch(clearCart()); // Clear the cart in Redux
 
           // You can now send formData to your backend API or process it further
         }}
