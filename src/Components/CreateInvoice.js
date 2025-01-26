@@ -105,34 +105,6 @@ export default function CreateInvoice({ navigation }) {
     }
   };
 
-  // function open() {
-  //   pickerRef.current.focus();
-  // }
-
-  // function close() {
-  //   pickerRef.current.blur();
-  // }
-
-  // const validationSchema = Yup.object().shape({
-  //   customerName: Yup.string().required("name is required"),
-  //   mobile: Yup.string().required("mobile is required"),
-  //   address: Yup.string().required("address is required"),
-  //   productName: Yup.string().required("Product name is required"),
-  //   quantity: Yup.string().required("quantity is required"),
-  //   // password: Yup.string()
-  //   //   .min(6, 'Password must be at least 6 characters')
-  //   //   .required('Password is required')
-  // });
-
-
-  const handlePressOutside = () => {
-    // Hide the keyboard and blur the TextInput
-    Keyboard.dismiss();
-    if (inputRef.current) {
-      inputRef.current.blur();
-    }
-  };
-
   return (
     <ScrollView style={styles.scrollView}>
       <TouchableWithoutFeedback>

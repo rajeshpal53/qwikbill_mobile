@@ -29,15 +29,12 @@ function DropDownList() {
       );
       const count = newResponse.result.length;
       addShopDetails({ ...response.result[0], count: count });
-
     } catch (error) {
-      console.log("error getting shops , ", error)
-    }finally{
+      console.log("error getting shops , ", error);
+    } finally {
       setIsLoading(false);
     }
-   
 
-    
     // Adjust according to your API respons
     // setSelectedOption(data.result[0].shopname)
   }
@@ -64,19 +61,18 @@ function DropDownList() {
   }, [selectedShop]);
 
   return (
-    
     <View style={styles.pickerContainer}>
       {isLoading && <ActivityIndicator size="small" />}
       <Picker
-      mode="dropdown"
+        mode="dropdown"
         style={{ width: "95%" }}
         ref={pickerRef}
         selectedValue={selectedShop}
         onValueChange={(itemValue, itemIndex) => setSelectedShop(itemValue)}
       >
         {/* {[
-          {shopname:"abc"}, 
-          {shopname:"abc"}, 
+          {shopname:"abc"},
+          {shopname:"abc"},
           {shopname:"abc"}, 
         {shopname:"xyz"}].map((option, index) => (
           <Picker.Item
@@ -121,9 +117,7 @@ const styles = StyleSheet.create({
 
 export default DropDownList;
 
-
-//----------------------------------------------------------------------------  
-
+//----------------------------------------------------------------------------
 
 // import React, { useContext, useState, useEffect, useRef } from "react";
 // import { ShopDetailContext } from "../Store/ShopDetailContext";
@@ -163,9 +157,7 @@ export default DropDownList;
 //     }finally{
 //       setIsLoading(false);
 //     }
-   
 
-    
 //     // Adjust according to your API respons
 //     // setSelectedOption(data.result[0].shopname)
 //   }
@@ -230,7 +222,7 @@ export default DropDownList;
 //           </ScrollView>
 //         </List.Accordion>
 //       </View>
-    
+
 //   );
 // }
 // const styles = StyleSheet.create({

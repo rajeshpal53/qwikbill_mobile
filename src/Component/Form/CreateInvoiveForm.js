@@ -13,6 +13,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import ItemDataTable from "../Cards/ItemDataTable";
 import { useSelector } from "react-redux";
+import { readApi } from "../../Util/UtilApi";
 
 // Validation Schema using Yup
 const validationSchema = Yup.object({
@@ -27,6 +28,21 @@ const validationSchema = Yup.object({
 const CreateInvoiceForm = () => {
   const navigation = useNavigation();
   const carts = useSelector((state) => state.cart.Carts);
+  const [shopData, setShopData] = useState(null); // To store the shop data response
+
+  const handlePhoneBlur = async (phoneNumber) => {
+    if (/^\d{10}$/.test(phoneNumber)) {
+      try {
+        const api = `/getUserByMobile/:${phoneNumber}`
+        const response = await readApi(api)
+        setShopData(response); // Assuming the response contains shop data
+        console.log("Shop Data:", data);
+      } catch (error) {
+        console.error("Error fetching shop data:", error);
+      }
+    }
+    console.log("Hit function")
+  };
 
   return (
     <ScrollView>
@@ -69,7 +85,7 @@ const CreateInvoiceForm = () => {
               mode="flat"
               style={styles.input}
               onChangeText={handleChange("phone")}
-              onBlur={handleBlur("phone")}
+              onBlur={() => handlePhoneBlur(values.phone)} // Trigger API call on blur
               value={values.phone}
             />
             {touched.phone && errors.phone && (

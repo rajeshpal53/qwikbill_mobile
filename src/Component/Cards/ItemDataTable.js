@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { Card, TextInput } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import IncAndDicButton from "../IncAndDicButton";
+import IncAndDicButton from "../../Redux/IncAndDicButton";
 import { useDispatch, useSelector } from "react-redux";
 import { removeFromCart } from "../../Redux/CartProductRedux/CartSlice";
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Image,
   Text,
@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import { Card } from "react-native-paper";
-import IncAndDicButton from "../IncAndDicButton";
+import IncAndDicButton from "../../Redux/IncAndDicButton";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, removeFromCart } from "../../Redux/CartProductRedux/CartSlice";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -16,7 +16,8 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 const ProductCardDetails = ({ item }) => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.Carts);
-  const isInCart = cartItems.some((cartItem) => cartItem.id === item.id); // Check if item is in the cart
+  const isInCart = cartItems.some((cartItem) => cartItem.id === item.id); 
+  const inCart = cartItems.find((cartItem) => cartItem.id === item.id) || null;
 
 
   const handleAddToCart = (item) => {
@@ -26,6 +27,7 @@ const ProductCardDetails = ({ item }) => {
   const handleDeletetocart = (item) =>{
     dispatch(removeFromCart(item?.id))
   }
+
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <Card style={styles.card}>
@@ -48,6 +50,7 @@ const ProductCardDetails = ({ item }) => {
                     justifyContent: "space-between",
                     flex: 1,
                     alignItems: "center",
+                    marginVertical:5
                   }}
                 >
                   {/* Remove from Cart Button */}
@@ -67,7 +70,7 @@ const ProductCardDetails = ({ item }) => {
                   >
                     {/* Increment/Decrement Controls */}
                     <IncAndDicButton
-                      item = {item}
+                      item = {inCart}
                     />
                   </View>
                 </View>
