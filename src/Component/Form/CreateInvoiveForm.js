@@ -17,35 +17,35 @@ import { readApi } from "../../Util/UtilApi";
 import { clearCart } from "../../Redux/CartProductRedux/CartSlice";
 
 
-// Validation Schema using Yup
-const validationSchema = Yup.object({
-  name: Yup.string().required("Name is required"),
-  address: Yup.string().required("Address is required"),
-  gstNumber: Yup.string().required("GST Number is required"),
-  phone: Yup.string()
-    .required("Phone is required")
-    .matches(/^\d{10}$/, "Phone must be 10 digits"),
-});
-
 const CreateInvoiceForm = () => {
-    const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const carts = useSelector((state) => state.cart.Carts);
   const [shopData, setShopData] = useState(null); // To store the shop data response
+  const cartsValue = useSelector((state) => state.cart);
 
+
+
+  const validationSchema = Yup.object({
+    name: Yup.string().required("Name is required"),
+    address: Yup.string().required("Address is required"),
+    gstNumber: Yup.string().required("GST Number is required"),
+    phone: Yup.string()
+      .required("Phone is required")
+      .matches(/^\d{10}$/, "Phone must be 10 digits"),
+  });
 
   const handlePhoneBlur = async (phoneNumber) => {
     if (/^\d{10}$/.test(phoneNumber)) {
       try {
-        const api = `/getUserByMobile/:${phoneNumber}`
-        const response = await readApi(api)
+        const api = `/getUserByMobile/:${phoneNumber}`;
+        const response = await readApi(api);
         setShopData(response); // Assuming the response contains shop data
         console.log("Shop Data:", data);
       } catch (error) {
         console.error("Error fetching shop data:", error);
       }
     }
-    console.log("Hit function")
   };
 
   return (
@@ -58,7 +58,7 @@ const CreateInvoiceForm = () => {
           phone: "",
         }}
         validationSchema={validationSchema}
-        onSubmit={(values, {resetForm}) => {
+        onSubmit={(values, { resetForm }) => {
           const formData = {
             ...values,
             Product: carts.map((item) => ({
@@ -68,12 +68,18 @@ const CreateInvoiceForm = () => {
               totalprice: item?.totalPrice,
               quantity: item?.quantity,
             })),
+            Pricedetails: [
+              {
+                TotalPrice: cartsValue.totalPrice,
+                Discount: cartsValue.discount,
+                PayAmount: cartsValue.afterdiscount,
+              },
+            ],
           };
           console.log("Form Submitted Data:", formData);
-          resetForm()
+          navigation.navigate("PDFScreen",{formData})
+          resetForm();
           dispatch(clearCart());
-
-
         }}
       >
         {({

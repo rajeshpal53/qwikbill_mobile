@@ -10,60 +10,55 @@ import { Card, TextInput } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import IncAndDicButton from "../../Redux/IncAndDicButton";
 import { useDispatch, useSelector } from "react-redux";
-import { removeFromCart } from "../../Redux/CartProductRedux/CartSlice";
+import {
+  applyDiscount,
+  removeFromCart,
+} from "../../Redux/CartProductRedux/CartSlice";
+import PriceDetails from "../PriceDetails";
 
 const ItemDataTable = () => {
   const carts = useSelector((state) => state.cart.Carts);
-  const totalPrice = useSelector((state) => state.cart.totalPrice);
   const dispatch = useDispatch();
 
   return (
-    <Card style={styles.card}>
-      {/* Header */}
-      <View style={[styles.row, styles.header]}>
-        <Text style={[styles.cell, styles.smallCell]}>No.</Text>
-        <Text style={[styles.cell, styles.flexCell]}>Items</Text>
-        <Text style={[styles.cell, styles.smallCell]}>Price</Text>
-        <Text style={[styles.cell, styles.smallCell]}>Quantity</Text>
-        <Text style={[styles.cell, styles.smallCell]}>Action</Text>
-      </View>
+    <>
+      <Card style={styles.card}>
+        {/* Header */}
+        <View style={[styles.row, styles.header]}>
+          <Text style={[styles.cell, styles.smallCell]}>No.</Text>
+          <Text style={[styles.cell, styles.flexCell]}>Items</Text>
+          <Text style={[styles.cell, styles.smallCell]}>Price</Text>
+          <Text style={[styles.cell, styles.smallCell]}>Quantity</Text>
+          <Text style={[styles.cell, styles.smallCell]}>Action</Text>
+        </View>
 
-      {/* Items List */}
-      <FlatList
-        data={carts}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) => (
-          <View style={styles.row}>
-            <Text style={[styles.cell, styles.smallCell]}>{index + 1}</Text>
-            <Text style={[styles.cell, styles.flexCell]}>{item?.Name}</Text>
-            <Text style={[styles.cell, styles.smallCell]}>
-              ${(item?.Price * item?.quantity).toFixed(2)}
-            </Text>
-            <View style={[styles.cell, styles.smallCell]}>
-              <IncAndDicButton item={item} />
+        {/* Items List */}
+        <FlatList
+          data={carts}
+          keyExtractor={(item) => item.id.toString()}  // Using a unique `id` as key
+          renderItem={({ item, index }) => (
+            <View style={styles.row}>
+              <Text style={[styles.cell, styles.smallCell]}>{index + 1}</Text>
+              <Text style={[styles.cell, styles.flexCell]}>{item?.Name}</Text>
+              <Text style={[styles.cell, styles.smallCell]}>
+                ${(item?.Price * item?.quantity).toFixed(2)}
+              </Text>
+              <View style={[styles.cell, styles.smallCell]}>
+                <IncAndDicButton item={item} />
+              </View>
+              <View style={[styles.cell, styles.smallCell]}>
+                <TouchableOpacity
+                  onPress={() => dispatch(removeFromCart(item?.id))}
+                >
+                  <MaterialIcons name="delete" size={20} color="red" />
+                </TouchableOpacity>
+              </View>
             </View>
-            <View style={[styles.cell, styles.smallCell]}>
-              <TouchableOpacity
-                onPress={() => dispatch(removeFromCart(item?.id))}
-              >
-                <MaterialIcons name="delete" size={20} color="red" />
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-      />
-
-      {/* Total Price Section */}
-      <View style={styles.totalContainer}>
-        <Text style={styles.totalText}>Total:</Text>
-        <TextInput
-          mode="outlined"
-          style={styles.input}
-          editable={false}
-          value={`$ ${totalPrice.toFixed(2)}`}
+          )}
         />
-      </View>
-    </Card>
+      </Card>
+      <PriceDetails />
+    </>
   );
 };
 
@@ -73,7 +68,7 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderRadius: 8,
     backgroundColor: "#fff",
-    paddingVertical: 20,
+    // paddingVertical: 20,
     marginTop: 15,
   },
   row: {
@@ -136,3 +131,20 @@ const styles = StyleSheet.create({
 });
 
 export default ItemDataTable;
+
+{
+  /* Total Price Section
+      <View style={styles.totalContainer}>
+        <Text style={styles.totalText}>Total:</Text>
+        <TextInput
+          mode="outlined"
+          style={styles.input}
+          editable={false}
+          value={`$ ${totalPrice.toFixed(2)}`}
+        />
+      </View>
+
+      <View style={styles.totalContainer}>
+        <Text style={styles.totalText}>Discount :</Text>
+      </View> */
+}
