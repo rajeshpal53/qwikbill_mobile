@@ -34,12 +34,12 @@ const ProductDetailsCard = ({ item }) => {
             )}
           </View>
           <View style={styles.TextView}>
-            <Text style={styles.itemname}>{item.Name}</Text>
+            <Text style={styles.itemname}>{item.productName}</Text>
             <Text style={styles.priceText}>
-              Selling Price: ${item["Selling Price"]}
+              Selling Price: ${item.sellingPrice}
             </Text>
             <Text style={styles.priceText}>
-              Market Price: ${item["Market Price"]}
+              Market Price: ${item.marketPrice}
             </Text>
           </View>
 
@@ -65,7 +65,7 @@ const ProductDetailsCard = ({ item }) => {
             <View style={styles.Availabletext}>
               <Text style={item.Available ? styles.inStock : styles.outOfStock}>
                 {item.Available
-                  ? `In Stock(${item.itemCount})`
+                  ? `In Stock(${item.numberOfProducts})`
                   : "Out of Stock"}
               </Text>
             </View>

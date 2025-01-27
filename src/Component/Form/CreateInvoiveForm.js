@@ -67,13 +67,13 @@ const CreateInvoiceForm = () => {
               price: item?.Price,
               totalprice: item?.totalPrice,
               quantity: item?.quantity,
-            })), // Rename items to Product and map necessary fields
+            })),
           };
           console.log("Form Submitted Data:", formData);
           resetForm()
-          dispatch(clearCart()); // Clear the cart in Redux
+          dispatch(clearCart());
 
-          // You can now send formData to your backend API or process it further
+
         }}
       >
         {({

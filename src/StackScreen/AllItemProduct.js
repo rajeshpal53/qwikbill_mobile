@@ -14,7 +14,7 @@ const AllItemProduct = ({ navigation }) => {
   const [transcript, setTranscript] = useState("");
   const [showOverlay, setshowOverlay] = useState(false);
   const dispatch = useDispatch();
-  const products = useSelector((state) => state.product);
+  const products = useSelector((state) => state.product.products);
   const carts = useSelector((state) => state.cart.Carts);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const AllItemProduct = ({ navigation }) => {
   }, []);
 
   const filteredData = useMemo(() => {
-    return (products.products || []).filter((item) =>
+    return (products || []).filter((item) =>
       item.Name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [products.products, searchQuery]);
