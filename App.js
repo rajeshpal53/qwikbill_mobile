@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 
 import { PaperProvider, ActivityIndicator } from "react-native-paper";
-
+import { I18nextProvider } from "react-i18next";
 import { DefaultTheme } from "react-native-paper";
 import { AuthProvider, AuthContext } from "./src/Store/AuthContext.js";
 import { SnackbarProvider } from "./src/Store/SnackbarContext.js";
@@ -13,7 +13,8 @@ import { ShopDetailProvider } from "./src/Store/ShopDetailContext.js";
 import { ShopDetailContext } from "./src/Store/ShopDetailContext.js";
 import { LoginTimeProvider } from "./src/Store/LoginTimeContext.js";
 import { PasskeyProvider } from "./src/Store/PasskeyContext.js";
-
+// import i18n from "./src/Locale";
+import i18n from "./src/Locale/index.js";
   import { Provider } from "react-redux";
 import { Store } from "./src/Redux/Store.js";
 import { UserDataProvider } from "./src/Store/UserDataContext.js";
@@ -56,6 +57,7 @@ export default function App() {
           <PasskeyProvider>
             <SnackbarProvider>
               <Provider store={Store}>
+              <I18nextProvider i18n={i18n}>
               <PaperProvider theme={customTheme}>
                 <NavigationContainer>
                   <AuthProvider>
@@ -72,6 +74,7 @@ export default function App() {
                   </AuthProvider>
                 </NavigationContainer>
               </PaperProvider>
+              </I18nextProvider>
               </Provider>
             </SnackbarProvider>
           </PasskeyProvider>

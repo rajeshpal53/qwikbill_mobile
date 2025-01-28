@@ -43,15 +43,15 @@ import RotateBtn from "../Components/HeaderComponents/RotateBtn.js";
 import GenrateInvoiceScreen from "../Screen/GenrateInvoiceScreen.js";
 import Forgetpasscode from "../Screen/ForgetPasscode/Forgetpasscode.js";
 import CreateNewPasscode from "../Screen/ForgetPasscode/CreateNewPasscode.js";
-import CreateShopScreen from "../Screen/Shops/CreateShopScreen.js";
-import ViewShopsScreen from "../Screen/Shops/ViewShopsScreen.js";
+import CreateShopScreen from "../Screen/StackScreen/Shops/Form/CreateShopScreen.js";
+import ViewShopsScreen from "../Screen/StackScreen/Shops/ViewShopsScreen.js";
 import VendorListScreen from "../Screen/Vendors/VendorListScreen.js";
 import SignupScreen from "../Screen/SignupScreen.js";
 import ViewClientScreen from "../Screen/Client/ViewClientScreen.js";
 import VendorFormScreen from "../Screen/Vendors/VendorFormScreen.js";
 import TaxScreen from "../Screen/hsncode/TaxScreen.js";
 import CheckInternet from "../Screen/CheckInternet/CheckInternet.js";
-import ShopDetailScreen from "../Screen/Shops/ShopDetailScreen.js";
+import ShopDetailScreen from "../Screen/StackScreen/Shops/ShopDetailScreen.js";
 import VendorDetailScreen from "../Screen/Vendors/VendorDetailScreen.js";
 import EditProfile from "../Screen/EditProfile.js";
 import SetPasswordSreen from "../StackScreen/SetPasswordScreen.js";
@@ -129,6 +129,7 @@ import CustomerDetailScreen from "../Screen/CustomerDetailScreen.js";
 import EnterNumberScreen from "../Screen/StackScreen/EnterNumberScreen.js";
 import UserDataContext from "../Store/UserDataContext.js";
 import PdfScreen from "../Component/PdfViewer.js";
+import EditProfileScreen from "../Screen/StackScreen/EditProfileScreen.js";
 export default function StackNavigator() {
   const Stack = createStackNavigator();
   const [isConnected, setIsConnected] = useState(false);
@@ -183,6 +184,8 @@ export default function StackNavigator() {
         />
 
         <Stack.Screen name="viewClient" component={ViewClientScreen} />
+        <Stack.Screen name="EditProfilePage" component={EditProfileScreen} />
+
 
         <Stack.Screen
           name="hsncode"
