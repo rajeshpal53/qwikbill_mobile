@@ -5,15 +5,12 @@ import { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import CustomDropdown from "./CustomeDropdown";
 
-
-
 const PriceDetails = () => {
   const dispatch = useDispatch();
   const totalPrice = useSelector((state) => state.cart.totalPrice);
   const afterdiscount = useSelector((state) => state.cart.afterdiscount);
   const [discountValue, setDiscountValue] = useState("");
   const carts = useSelector((state) => state.cart.Carts);
-  const [status, setStatus] = useState("Unpaid");
 
   const handleDiscountChange = (value) => {
     const parsedDiscount =
@@ -23,11 +20,6 @@ const PriceDetails = () => {
     dispatch(applyDiscount(parsedDiscount));
     setDiscountValue(value);
   };
-
-  const handleDropdown = (value) => {
-    setStatus(value); // Update the selected value
-  };
-
   return (
     <View style={styles.Main}>
       <View>
@@ -54,18 +46,25 @@ const PriceDetails = () => {
         </View>
       </View>
 
-      {/* Total Amount  */}
-      <View style={styles.priceView}>
-        <Text style={styles.label}>Total Amount</Text>
-        <Text style={styles.value}>{`$ ${afterdiscount.toFixed(2)}`}</Text>
-      </View>
-
       {/* Payment Status with Border Style */}
       <View style={[styles.priceView]}>
         <Text style={styles.label}>Status</Text>
         <CustomDropdown />
-
       </View>
+
+      <View style={styles.priceView}>
+        <Text style={styles.label}>Partially Paid</Text>
+        <Text style={styles.value}>{`$ ${afterdiscount.toFixed(2)}`}</Text>
+      </View>
+
+
+       {/* Total Amount  */}
+       <View style={styles.priceView}>
+        <Text style={styles.Totallabel}>Total Amount</Text>
+        <Text style={styles.value}>{`$ ${afterdiscount.toFixed(2)}`}</Text>
+      </View>
+
+
     </View>
   );
 };
@@ -102,6 +101,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
   },
+  Totallabel:{
+    fontSize: 18,
+    color: "#333",
+    fontWeight:"bold"
+  },
   discountInputWrapper: {
     flex: 1,
     justifyContent: "flex-end",
@@ -111,12 +115,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "flex-end",
-
   },
   picker: {
     height: 50, // Ensure the dropdown has height
     width: "90%", // Make sure it fills the available width
-
   },
   paymentStatusContainer: {
     borderBottomWidth: 1, // Border for the payment status row
@@ -128,11 +130,8 @@ const styles = StyleSheet.create({
 
 export default PriceDetails;
 
-
-
-
-
- {/* <View style={styles.pickerWrapper}>
+{
+  /* <View style={styles.pickerWrapper}>
           <Picker
             selectedValue={status}
             onValueChange={handleDropdown}
@@ -142,4 +141,5 @@ export default PriceDetails;
             <Picker.Item label="Paid" value="paid" />
             <Picker.Item label="Partially Paid" value="partially_paid" />
           </Picker>
-        </View> */}
+        </View> */
+}

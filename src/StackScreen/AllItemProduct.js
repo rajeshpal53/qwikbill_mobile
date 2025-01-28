@@ -3,7 +3,7 @@ import Searchbarwithmic from "../../src/Component/Searchbarwithmic";
 import ProductCardDetails from "../Component/Cards/ProductCard";
 import { useEffect, useMemo, useState } from "react";
 import ViewCartOverlay from "../Overlays/ViewCartOverlays";
-import { ProduchItem } from "../../ProductData";
+import { ProductItem } from "../../ProductData";
 import { setProduct } from "../Redux/CartProductRedux/ProductSlice";
 import { useDispatch, useSelector } from "react-redux";
 import OpenmiqModal from "../Modal/Openmicmodal";
@@ -26,14 +26,14 @@ const AllItemProduct = ({ navigation }) => {
   }, [carts]);
 
   useEffect(() => {
-    dispatch(setProduct(ProduchItem));
+    dispatch(setProduct(ProductItem));
   }, []);
 
   const filteredData = useMemo(() => {
     return (products || []).filter((item) =>
-      item.Name.toLowerCase().includes(searchQuery.toLowerCase())
+      item.Name?.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [products.products, searchQuery]);
+  }, [products, searchQuery]);
 
   return (
     <View>
