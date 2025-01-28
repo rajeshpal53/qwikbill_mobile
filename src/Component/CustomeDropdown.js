@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from 'react
 
 const CustomDropdown = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState('------');
+  const [selectedStatus, setSelectedStatus] = useState('Select payment');
   const paymentStatuses = ['Unpaid', 'Paid', 'Partially Paid'];
 
   // Toggle the visibility of the modal
@@ -55,7 +55,8 @@ const CustomDropdown = () => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    width:"50%",
+    width:"60%",
+
   },
 
   dropdownButton: {

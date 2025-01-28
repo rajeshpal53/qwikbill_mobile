@@ -6,9 +6,10 @@ import CustomerDetailsCard from "../../Component/Cards/CustomerDetailsCard";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
 import EditCustomerDetailsModal from "../../Modal/EditCustomerDetailsModal";
 import ProductDetailsCard from "../../Component/Cards/ProductDetailsCard";
-import { setProduct } from "../../Redux/CartProductRedux/ProductSlice";
+import { setProductitem } from "../../Redux/CartProductRedux/ProductSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { ProductItems } from "../../../ProductItems";
+
 
 const ProductDetailsScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -20,13 +21,11 @@ const ProductDetailsScreen = ({ navigation }) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(setProduct(ProductItems));
+    dispatch(setProductitem(ProductItems));
   }, []);
 
-console.log("Value is123 ",products )
-
   const filteredData = products.filter((item) =>
-    item.productName.toLowerCase().includes(searchQuery.toLowerCase())
+    item.productName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const openEditModal = (item) => {

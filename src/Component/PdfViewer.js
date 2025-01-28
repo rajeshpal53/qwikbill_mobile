@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
+import { View, Button, StyleSheet } from "react-native";
 import { WebView } from "react-native-webview";
+import Share from "react-native-share"; // Import for sharing functionality
 
 const PdfScreen = ({ route }) => {
   const { formData } = route.params;
+  const [isGenerated, setIsGenerated] = useState(false); // State to track PDF generation
 
   const generatePDF = (values) => {
-    // Map through products to create a list of items
     const productDetails = values.Product.map(
       (item) => `
         <tr>
@@ -14,9 +16,8 @@ const PdfScreen = ({ route }) => {
           <td>$${item.price}</td>
           <td>$${item.totalprice}</td>
         </tr>`
-    ).join(""); // Join to combine all rows into a single string
+    ).join("");
 
-    // Create the HTML content for the PDF
     const htmlContent = `
       <html>
         <head>
@@ -49,15 +50,6 @@ const PdfScreen = ({ route }) => {
               display: inline;
               font-size: 16px;
             }
-            .row {
-              display: flex;
-              justify-content: space-between;
-              margin-bottom: 10px;
-            }
-            .row div {
-              flex: 1;
-              padding: 5px;
-            }
             table {
               width: 100%;
               border-collapse: collapse;
@@ -78,18 +70,12 @@ const PdfScreen = ({ route }) => {
               justify-content: space-between;
               margin-top: 20px;
             }
-            .price-section div {
-              flex: 1;
-              padding: 5px;
-            }
           </style>
         </head>
         <body>
           <div class="container">
             <h1>Invoice</h1>
             <h1>QwikBill pvt. ltd. </h1>
-
-            <!-- Shop and Customer Information in individual sections -->
             <div class="section">
               <label>Name:</label>
               <p>${values.name}</p>
@@ -106,8 +92,6 @@ const PdfScreen = ({ route }) => {
               <label>GST Number:</label>
               <p>${values.gstNumber}</p>
             </div>
-
-            <!-- Product Information in a Table -->
             <div class="section">
               <label>Products:</label>
               <table>
@@ -120,12 +104,10 @@ const PdfScreen = ({ route }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  ${productDetails} <!-- Insert product rows here -->
+                  ${productDetails}
                 </tbody>
               </table>
             </div>
-
-            <!-- Price Details Section with Space Between for each detail -->
             <div class="section">
               <label>Total Price:</label>
               <p>$${values.Pricedetails[0].TotalPrice}</p>
@@ -138,21 +120,56 @@ const PdfScreen = ({ route }) => {
               <label>Amount to Pay:</label>
               <p>$${values.Pricedetails[0].PayAmount}</p>
             </div>
-
           </div>
         </body>
       </html>
     `;
-    return htmlContent; // Return the HTML content for the PDF
+    return htmlContent;
+  };
+
+  const handleGenerate = () => {
+    // setIsGenerated(true); // Trigger PDF generation when the button is pressed
+    console.log("Button pressed");
+  };
+
+  const handleShare = async () => {
+    // You can use the react-native-share library to share the PDF
+    const shareOptions = {
+      title: "Share Invoice",
+      message: "Check out this invoice",
+      url: `data:text/html;base64,${btoa(generatePDF(formData))}`, // Using base64 encoding for inline content
+      type: "text/html",
+    };
+
+    try {
+      await Share.open(shareOptions); // Open native share options
+    } catch (error) {
+      console.log("Error sharing the document", error);
+    }
   };
 
   return (
-    <WebView
-      originWhitelist={["*"]}
-      source={{ html: generatePDF(formData) }} // Pass formData to the PDF generation function
-      style={{ height: "100%" }} // Make the WebView take up full screen
-    />
+    <View style={{ flex: 1 }}>
+      <View style={styles.buttonsContainer}>
+        <Button title="Generate" onPress={handleGenerate} />
+        <Button title="Share" onPress={handleShare} />
+      </View>
+
+      <WebView
+        originWhitelist={["*"]}
+        source={{ html: generatePDF(formData) }} // Pass formData to the PDF generation function
+        style={{ height: "100%" }}
+      />
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  buttonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 20,
+  },
+});
 
 export default PdfScreen;
