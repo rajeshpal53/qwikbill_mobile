@@ -50,7 +50,7 @@ export default function HomeScreen({ navigation }) {
   // const {overlayHeight} = useContext(AuthContext);
   const [isLoading,setIsLoading]=useState(false)
   const pickerRef = useRef();
-  const {width, height} = useWindowDimensions(); 
+  const {width, height} = useWindowDimensions();
   console.log(width, "  ", height)
   // const overlayHeight = (0.20*windowHeight);
   // console.log(responsiveHeight(80), "    --- responsiveHeight");
@@ -87,7 +87,7 @@ useEffect(()=>{
         console.log("Failed to fetch login details:", error);
       }
     };
-  
+
     getItem();
   }, []);
 
@@ -104,7 +104,7 @@ useEffect(()=>{
     pickerRef.current.blur();
   }
 
-  
+
   const goToHandler = (Screen) => {
     // navigation.navigate("wertone", {screen:'CreateInvoice'});
     // console.log("Pra ", item)
@@ -135,12 +135,12 @@ useEffect(()=>{
             <View style={{ flex: 0.6 }}>
               <Card style={styles.card}>
                 <View>
- 
+
                   <Card.Content style={styles.cardContent}>
                     <View style={styles.dropDownContainer}>
                     <DropDownList options={vendorsDetails}/>
                     </View>
-                         
+
                     <View style={styles.viewsContainer}>
                       <Pressable  style={styles.allThreeViews} onPress={() => navigation.navigate("Customer")}>
                       <Text style={styles.whiteColor}>View Customers</Text>
@@ -152,7 +152,7 @@ useEffect(()=>{
                         height:"50%"
                         }}></View>
 
-                      <Pressable  style={styles.allThreeViews} 
+                      <Pressable  style={styles.allThreeViews}
                       onPress={() => goToHandler("Invoices")}>
                       <Text style={styles.whiteColor}>View Invoices</Text>
                       </Pressable>
@@ -167,6 +167,7 @@ useEffect(()=>{
                 </View>
               </Card>
             </View>
+
             <View style={{ flex: 2}}>
               {vendorsDetails.length==0?(
                  <FlatList
@@ -195,7 +196,6 @@ useEffect(()=>{
                     <Button mode="contained"> Please Become a vendor </Button>
                   </View>
               )}
-             
 
             </View>
           </View>
@@ -244,14 +244,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop:10
     //  fontFamily:'Roboto_700Bold'
-    
+
   },
   // headerText1: {
   //   color: "#fff",
   //   fontSize: responsiveFontSize(2.5),
   //   // fontWeight: "bold",
   //   fontFamily:"Roboto_300Light_Italic"
-    
+
   // },
   subHeaderText: {
     color: "#fff",
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: responsiveWidth(3),
   },
   whiteColor: {
-     color: "#26a0df", 
+     color: "#26a0df",
      fontSize:16
   },
 });

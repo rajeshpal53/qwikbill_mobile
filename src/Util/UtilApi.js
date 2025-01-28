@@ -2,6 +2,8 @@ import axios from 'axios';
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
 
+const API_BASE_URL = "http://192.168.1.35:2235/";
+
 
 export const API_BASE_URL = "http://192.168.1.9:2235/";
 

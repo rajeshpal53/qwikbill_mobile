@@ -20,6 +20,7 @@ function DropDownList({options}) {
   console.log(shopDetails, "newShopDetails");
   const pickerRef = useRef();
 
+
   // async function fetchOptions() {
   //   try {
   //     setIsLoading(true);
@@ -42,7 +43,6 @@ function DropDownList({options}) {
   //   // Adjust according to your API respons
   //   // setSelectedOption(data.result[0].shopname)
   // }
-
   // useEffect(() => {
   //   fetchOptions();
   // }, []);
@@ -65,7 +65,6 @@ function DropDownList({options}) {
   }, [selectedShop]);
 
   return (
-    
     <View style={styles.pickerContainer}>
       {isLoading && <ActivityIndicator size="small" />}
       <Picker
@@ -92,7 +91,6 @@ function DropDownList({options}) {
         />
       ))}
     </Picker>
-
       <TouchableOpacity
         style={{ justifyContent: "center" }}
       >
@@ -113,9 +111,7 @@ const styles = StyleSheet.create({
 
 export default DropDownList;
 
-
-//----------------------------------------------------------------------------  
-
+//----------------------------------------------------------------------------
 
 // import React, { useContext, useState, useEffect, useRef } from "react";
 // import { ShopDetailContext } from "../Store/ShopDetailContext";
@@ -155,9 +151,7 @@ export default DropDownList;
 //     }finally{
 //       setIsLoading(false);
 //     }
-   
 
-    
 //     // Adjust according to your API respons
 //     // setSelectedOption(data.result[0].shopname)
 //   }
@@ -222,7 +216,7 @@ export default DropDownList;
 //           </ScrollView>
 //         </List.Accordion>
 //       </View>
-    
+
 //   );
 // }
 // const styles = StyleSheet.create({

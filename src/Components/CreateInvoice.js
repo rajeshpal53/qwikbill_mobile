@@ -6,6 +6,8 @@ import {
   useWindowDimensions,
   StyleSheet,
   Image,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { AuthContext } from "../Store/AuthContext";
@@ -21,51 +23,48 @@ import AddInvoiceScreen from "../Screen/AddInvoiceScreen";
 import DropDownList from "../UI/DropDownList";
 import ThreeToggleBtns from "./ThreeToggleBtns";
 import { ShopDetailContext } from "../Store/ShopDetailContext";
-
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import ItemDataTable from "../Component/Cards/ItemDataTable";
+import CreateInvoiveForm from "../Component/Form/CreateInvoiveForm";
 
 export default function CreateInvoice({ navigation }) {
   const windowWidth = useWindowDimensions().width;
   const windowHeight = useWindowDimensions().height;
   const { selectedShop, setSelectedShop } = useContext(AuthContext);
-  const [invoiceType, setInvoiceType] = useState("provInvoice")
+  const [invoiceType, setInvoiceType] = useState("provInvoice");
   const pickerRef = useRef();
-  const{shopDetails}=useContext(ShopDetailContext)
-  const invoiceNumber=1000+shopDetails.count+1
+  const { shopDetails } = useContext(ShopDetailContext);
+  const invoiceNumber = 1000 + shopDetails.count + 1;
   // const [buttonsModes, setButtonsModes] = useState({
   //   recentButtonMode: false,
   //   provInvoiceButtonMode: true,
   //   gstInvoiceButtonMode: false,
   // });
 
-  
   const [buttonsModes, setButtonsModes] = useState({
     firstButtonMode: false,
     secondButtonMode: true,
     thirdButtonMode: false,
-    
   });
 
   const toggleButtonsTexts = {
     first: "Recent",
     second: "Prov Invoice",
-    third: "GST Invoice"
-  }
+    third: "GST Invoice",
+  };
 
-  
   useEffect(() => {
-
-    function setInvoiceHandler(){
-
-      if(buttonsModes.firstButtonMode){
+    function setInvoiceHandler() {
+      if (buttonsModes.firstButtonMode) {
         setInvoiceType("recent");
-      }else if(buttonsModes.secondButtonMode){
+      } else if (buttonsModes.secondButtonMode) {
         setInvoiceType("provInvoice");
-      }else{
+      } else {
         setInvoiceType("gstInvoice");
       }
     }
 
-      setInvoiceHandler()
+    setInvoiceHandler();
   }, [buttonsModes]);
 
   const handleButtonPress = (button) => {
@@ -76,10 +75,7 @@ export default function CreateInvoice({ navigation }) {
           secondButtonMode: false,
           thirdButtonMode: false,
         };
-      } else if (
-        button === "second" &&
-        !prevstate.secondButtonMode
-      ) {
+      } else if (button === "second" && !prevstate.secondButtonMode) {
         return {
           firstButtonMode: false,
           secondButtonMode: true,
@@ -96,10 +92,10 @@ export default function CreateInvoice({ navigation }) {
       }
     });
 
-    if(button === "first"){
+    if (button === "first") {
       data = {
         filteredBy: "recent",
-      }
+      };
       navigation.navigate("StackNavigator", {
         screen: "ViewInvoices",
         params: {
@@ -109,135 +105,206 @@ export default function CreateInvoice({ navigation }) {
     }
   };
 
-  function open() {
-    pickerRef.current.focus();
-  }
-
-  function close() {
-    pickerRef.current.blur();
-  }
-
-  const validationSchema = Yup.object().shape({
-    customerName: Yup.string().required("name is required"),
-    mobile: Yup.string().required("mobile is required"),
-    address: Yup.string().required("address is required"),
-    productName: Yup.string().required("Product name is required"),
-    quantity: Yup.string().required("quantity is required"),
-    // password: Yup.string()
-    //   .min(6, 'Password must be at least 6 characters')
-    //   .required('Password is required')
-  });
-      console.log(invoiceType,  "invoice Type")
   return (
-    <View style={styles.container}>
-      <ScrollView
-        style={styles.ScrollView}
-        contentContainerStyle={styles.contentContainer}
-      >
-        {/* 1 */}
-        {/* <View>
-          <Text style={styles.shopText}>Shop</Text>
-        </View> */}
-
-        {/* 2 */}
-        <View>
+    <ScrollView style={styles.scrollView}>
+      <TouchableWithoutFeedback>
+        <View style={styles.container}>
           <View style={styles.logoPickerContainer}>
-            {/* <Entypo name="shop" size={30} color="#0c3b73" /> */}
+            <Entypo name="shop" size={30} color="#0c3b73" />
             <View style={styles.pickerContainer}>
              <DropDownList options={[]}/>
             </View>
           </View>
-        </View>
 
-        {/* 3 */}
-        <ThreeToggleBtns 
-        buttonsModes={buttonsModes}
-        setButtonsModes={setButtonsModes}
-        navigation={navigation}
-        toggleButtonsTexts={toggleButtonsTexts}
-        handleButtonPress={handleButtonPress}/>
-        
-        <View style={styles.formContainer}>
-          <View style={styles.formHeading}>
-            <Text style={{ fontSize: 13 }}>Provisional Invoice No :- </Text>
-            <Text style={{ fontSize: 13 }}>{invoiceNumber}</Text>
+          <ThreeToggleBtns
+            buttonsModes={buttonsModes}
+            setButtonsModes={setButtonsModes}
+            navigation={navigation}
+            toggleButtonsTexts={toggleButtonsTexts}
+            handleButtonPress={handleButtonPress}
+          />
+
+          <View style={styles.MainContainer}>
+            <View style={styles.TextView}>
+              <Text style={styles.headerText}>
+                Provisional Invoice No: - 1002
+              </Text>
+              <CreateInvoiveForm />
+            </View>
           </View>
-
-          {/* <AddInvoice initialValues={initialValues}/> */}
-          <AddInvoiceScreen navigation={navigation} invoiceType={invoiceType} invoiceNumber={invoiceNumber} />
         </View>
-        {/* 6 */}
-        <View></View>
-        {/* 7 */}
-        <View></View>
-      </ScrollView>
-    </View>
+      </TouchableWithoutFeedback>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  ScrollView: {
+  scrollView: {
     flex: 1,
-    paddingHorizontal: 10,
-  },
-  contentContainer: {
-    gap: 18,
-  },
-  shopText: {
-    color: "black",
-    fontSize: 20,
-    fontWeight: "bold",
+    backgroundColor: "#fff",
   },
   container: {
     flex: 1,
+    padding: 16,
+    backgroundColor: "#fff",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   pickerContainer: {
+    borderColor: "#0c3b73",
     borderRadius: 10,
     width: "90%",
-    justifySelf:"center",
-
   },
   logoPickerContainer: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  icon: {
+    padding: 8,
+  },
+  shopInfo: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 16,
+  },
+  tabContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    marginVertical: 16,
+  },
+  card: {
+    marginVertical: 16,
+  },
+  cardText: {
+    fontSize: 18,
+    textAlign: "center",
+  },
+  paidUnpaidBtnContainer: {
+    // backgroundColor:"orange",
+    flexDirection: "row",
     justifyContent: "center",
   },
   buttonContainer: {
     flexDirection: "row",
-    width: "100%",
-    elevation: 5,
+    justifyContent: "space-evenly",
+    marginVertical: 16,
   },
-  favPersonContainer: {
-    
-    justifyContent: "center",
-   
+  row: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    marginVertical: 8,
+    // backgroundColor:"purple"
   },
-  formHeading: {
-    flexDirection: "row",
-    // justifyContent: "center",
+  label: {
+    marginRight: 8,
   },
-  formContainer: {
-    gap: 15,
-    paddingHorizontal: 5,
+  radioBtnContainer: {
+    alignItems: "flex-start",
+    paddingLeft: 10,
+  },
+  datePickerButton: {
+    marginTop: 16,
+    padding: 10,
+    // backgroundColor: "#f0f0f0",
+
+    backgroundColor: "#777",
+    borderRadius: 5,
+  },
+  dateText: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "#fff",
+  },
+  buttonView: {
+    alignItems: "flex-end", // Moves the button to the right side
+    marginTop: 10,
+  },
+
+  addButton: {
+    flexDirection: "row", // Align icon and text horizontally
+    alignItems: "center", // Center vertically
+    justifyContent: "center", // Center horizontally
+    padding: 10,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+
+  addButtonText: {
+    marginLeft: 5, // Space between icon and text
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "black",
+  },
+  MainContainer: {
+    marginHorizontal: 10,
+  },
+  TextView: {
+    marginVertical: 8,
+    paddingVertical: 8,
+  },
+  headerText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "black",
   },
   input: {
+    flex: 1,
+    backgroundColor: "#f9f9f9",
     height: 40,
-    borderWidth: 1,
-    paddingHorizontal: 8,
-  },
-  inputContainer: {
-    width: "90%",
-    justifyContent: "center",
-  },
-  inputAndLabelContainer: {
-  },
-  formikChild: {
-    gap: 20,
-  },
-  error: {
-    color: "red",
-  },
-  reviewAndPayBtn: {
-    backgroundColor: "#6dbbc7",
+    marginTop: 10,
   },
 });
+
+// <View style={styles.container}>
+//   <ScrollView
+//     style={styles.ScrollView}
+//     contentContainerStyle={styles.contentContainer}
+//   >
+//     {/* 1 */}
+//     {/* <View>
+//       <Text style={styles.shopText}>Shop</Text>
+//     </View> */}
+
+//     {/* 2 */}
+//     <View>
+//       <View style={styles.logoPickerContainer}>
+//         {/* <Entypo name="shop" size={30} color="#0c3b73" /> */}
+//         <View style={styles.pickerContainer}>
+//          <DropDownList/>
+//         </View>
+//       </View>
+//     </View>
+
+//     {/* 3 */}
+//     <ThreeToggleBtns
+//     buttonsModes={buttonsModes}
+//     setButtonsModes={setButtonsModes}
+//     navigation={navigation}
+//     toggleButtonsTexts={toggleButtonsTexts}
+//     handleButtonPress={handleButtonPress}/>
+
+//     <View style={styles.formContainer}>
+//       <View style={styles.formHeading}>
+//         <Text style={{ fontSize: 13 }}>Provisional Invoice No :- </Text>
+//         <Text style={{ fontSize: 13 }}>{invoiceNumber}</Text>
+//       </View>
+
+//       {/* <AddInvoice initialValues={initialValues}/> */}
+//       <AddInvoiceScreen navigation={navigation} invoiceType={invoiceType} invoiceNumber={invoiceNumber} />
+//     </View>
+//     {/* 6 */}
+//     <View></View>
+//     {/* 7 */}
+//     <View></View>
+//   </ScrollView>
+// </View>

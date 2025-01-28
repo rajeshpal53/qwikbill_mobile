@@ -6,57 +6,10 @@ import CustomerDetailsCard from "../../Component/Cards/CustomerDetailsCard";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
 import EditCustomerDetailsModal from "../../Modal/EditCustomerDetailsModal";
 import ProductDetailsCard from "../../Component/Cards/ProductDetailsCard";
-const ProduchItem = [
-  {
-    id: 1,
-    Name: "Camera",
-    "Selling Price": 67,
-    Img: "null",
-    "Market Price": 687,
-    Available: true,
-    itemCount:25
-  },
-  {
-    id: 2,
-    Name: "Camera",
-    "Selling Price": 67,
-    Img: "null",
-    "Market Price": 687,
-    Available: true,
-    itemCount:25
+import { setProductitem } from "../../Redux/CartProductRedux/ProductSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { ProductItems } from "../../../ProductItems";
 
-  },
-  {
-    id: 3,
-    Name: "Camera",
-    "Selling Price": 67,
-    Img: "null",
-    "Market Price": 687,
-    Available: false,
-    itemCount:25
-
-  },
-  {
-    id: 4,
-    Name: "Camera",
-    "Selling Price": 67,
-    Img: "null",
-    "Market Price": 687,
-    Available: true,
-    itemCount:25
-
-  },
-  {
-    id: 5,
-    Name: "Camera",
-    "Selling Price": 67,
-    Img: "null",
-    "Market Price": 687,
-    Available: false,
-    itemCount:25
-
-  },
-];
 
 const ProductDetailsScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -64,9 +17,15 @@ const ProductDetailsScreen = ({ navigation }) => {
   const [transcript, setTranscript] = useState(""); // State for transcript
   const [SelectedEditItem, setSelectedEditItem] = useState(null);
   const [editmodal, seteditmodal] = useState(false);
+  const products = useSelector((state) => state.product.products);
+  const dispatch = useDispatch()
 
-  const filteredData = ProduchItem.filter((item) =>
-    item.Name.toLowerCase().includes(searchQuery.toLowerCase())
+  useEffect(() => {
+    dispatch(setProductitem(ProductItems));
+  }, []);
+
+  const filteredData = products.filter((item) =>
+    item.productName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const openEditModal = (item) => {
@@ -109,13 +68,13 @@ const ProductDetailsScreen = ({ navigation }) => {
         onPress={() => navigation.navigate("AddProduct")}
       />
 
-      {/* {editmodal && (
+      {editmodal && (
         <EditCustomerDetailsModal
           visible={editmodal}
           seteditmodal={seteditmodal}
           SelectedEditItem={SelectedEditItem}
         />
-      )} */}
+      )}
     </View>
   );
 };
