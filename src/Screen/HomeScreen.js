@@ -2,7 +2,7 @@
 
 import React, { useState, useContext, useEffect } from "react";
 import { useRef } from "react";
-import { View, Text, useWindowDimensions, Pressable } from "react-native";
+import { View, Text, useWindowDimensions, Pressable,Image } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import {
   SafeAreaView,
@@ -19,7 +19,7 @@ import {
   FontAwesome5,
   Ionicons,
 } from "@expo/vector-icons";
-import { Card, TextInput } from "react-native-paper";
+import { Button, Card, TextInput } from "react-native-paper";
 import { AuthContext } from "../Store/AuthContext";
 import { useFocusEffect } from "@react-navigation/native";
 import { services } from "../tempList/ServicesList";
@@ -36,8 +36,7 @@ import {
 } from "react-native-responsive-dimensions";
 import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
 import { useFonts } from "expo-font";
-import { Roboto_400Regular, Roboto_700Bold, Roboto_300Light_Italic } from "@expo-google-fonts/roboto";
-
+import UserDataContext from "../Store/UserDataContext";
 
 export default function HomeScreen({ navigation }) {
 
@@ -45,16 +44,37 @@ export default function HomeScreen({ navigation }) {
   // const [lastLoginTime, setLastLoginTime] = useState(route.params.previousLoginTime);
   // const { getData } = useContext(AuthContext);
   const [loginDetail, setLoginDetail] = useState({});
-
+  const[vendorsDetails,setVendorDetails]=useState([])
   const [searchQuery, setSearchQuery] = useState("");
   const { searchMode, setSearchMode } = useContext(AuthContext);
   // const {overlayHeight} = useContext(AuthContext);
+  const [isLoading,setIsLoading]=useState(false)
   const pickerRef = useRef();
   const {width, height} = useWindowDimensions();
   console.log(width, "  ", height)
   // const overlayHeight = (0.20*windowHeight);
   // console.log(responsiveHeight(80), "    --- responsiveHeight");
   // console.log(verticalScale(700), "    --- verticalscale");
+const{userData}=useContext(UserDataContext)
+
+useEffect(()=>{
+  const fetchVendorData= async()=>{
+    try{
+      setIsLoading(true)
+      const response =await readApi(`qapi/vendors/${userData?.user?.id}`)
+      console.log(response)
+      setVendorDetails(response)
+    } 
+    catch(err){
+        setVendorDetails([])
+    }
+    finally{
+      setIsLoading(false)
+    }
+ 
+  }
+  fetchVendorData();
+},[])
 
   useEffect(() => {
     const getItem = async () => {
@@ -70,6 +90,11 @@ export default function HomeScreen({ navigation }) {
 
     getItem();
   }, []);
+
+
+
+
+
 
   function open() {
     pickerRef.current.focus();
@@ -98,12 +123,10 @@ export default function HomeScreen({ navigation }) {
       <View
         style={styles.overlay}
       ></View>
-
       <View style={styles.scrollView}>
-
           <View style={styles.container}>
             <View style={styles.header}>
-              <Text style={styles.headerText}>{`Welcome, ${loginDetail.name} ${loginDetail.surname}`}</Text>
+              <Text style={styles.headerText}>Welcome {userData?.user?.name?`${userData?.user?.name}`: `${userData?.user?.mobile}`}</Text>
               {/* <Text style={styles.headerText1}>{`Welcome ${loginDetail.name} ${loginDetail.surname}`}</Text> */}
               <Text style={styles.subHeaderText}>
                 Last Login: {lastLoginTime}
@@ -115,7 +138,7 @@ export default function HomeScreen({ navigation }) {
 
                   <Card.Content style={styles.cardContent}>
                     <View style={styles.dropDownContainer}>
-                    <DropDownList/>
+                    <DropDownList options={vendorsDetails}/>
                     </View>
 
                     <View style={styles.viewsContainer}>
@@ -144,33 +167,38 @@ export default function HomeScreen({ navigation }) {
                 </View>
               </Card>
             </View>
-            <View style={{ flex: 2 }}>
-              <FlatList
-                style={styles.flatList}
-                data={services}
-                numColumns={3}
-                renderItem={({ item ,index}) => (
-                  <TouchableOpacity
-                    style={styles.item}
-                    key={index}
-                    onPress={() => goToHandler(item.navigateTo)}
-                  >
-                    <View style={{ alignItems: "center" }}>
-                      {item.icon}
-                      <Text style={styles.itemText}>{item.name}</Text>
-                    </View>
-                  </TouchableOpacity>
-                )}
-                keyExtractor={(item,index) =>index}
 
-                // ItemSeparatorComponent={<View style={{height:10}} />}
-                ListEmptyComponent={<Text>No Items Found</Text>}
-                // ListHeaderComponent={<Text style={styles.listHeader}>List</Text>}
-                // ListFooterComponent={<Text>List end</Text>}
-              />
+            <View style={{ flex: 2}}>
+              {vendorsDetails.length==0?(
+                 <FlatList
+                 style={styles.flatList}
+                 data={services}
+                 numColumns={3}
+                 renderItem={({ item ,index}) => (
+                   <TouchableOpacity
+                     style={styles.item}
+                     key={index}
+                     onPress={() => goToHandler(item.navigateTo)}
+                   >
+                     <View style={{ alignItems: "center" }}>
+                       {item.icon}
+                       <Text style={styles.itemText}>{item.name}</Text>
+                     </View>
+                   </TouchableOpacity>
+                 )}
+                 keyExtractor={(item,index) =>index}
+                 ListEmptyComponent={<Text>No Items Found</Text>}
+               />
+              ):(
+                <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
+                  <Image source={require("../../assets/invoiceGenrate.png")} style={{width:300,height:250}}/>
+                    <Text style={styles.vendorText}> To Genrate New Invoice</Text>
+                    <Button mode="contained"> Please Become a vendor </Button>
+                  </View>
+              )}
+
             </View>
           </View>
-        {/* </TouchableWithoutFeedback> */}
       </View>
     </SafeAreaView>
   );
@@ -184,7 +212,12 @@ const styles = StyleSheet.create({
   scrollView: {
     height: "100%",
   },
-  container: {
+    vendorText:{
+        fontWeight:"bold",
+        marginVertical:20,
+        fontSize:18
+    },
+  container: { 
     marginHorizontal: responsiveWidth(5),
     // backgroundColor:"orange",
     height: verticalScale(578)
