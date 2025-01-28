@@ -128,6 +128,7 @@ import AllItemProduct from "../../src/StackScreen/AllItemProduct.js";
 import CustomerDetailScreen from "../Screen/CustomerDetailScreen.js";
 import EnterNumberScreen from "../Screen/StackScreen/EnterNumberScreen.js";
 import UserDataContext from "../Store/UserDataContext.js";
+import PdfScreen from "../Component/PdfViewer.js";
 import EditProfileScreen from "../Screen/StackScreen/EditProfileScreen.js";
 export default function StackNavigator() {
   const Stack = createStackNavigator();
@@ -386,8 +387,6 @@ export default function StackNavigator() {
           }}
         />
 
-       
-
         <Stack.Screen
           name="AllItemProduct"
           component={AllItemProduct}
@@ -453,10 +452,6 @@ export default function StackNavigator() {
           }}
         />
 
-     
-       
-     
-
         <Stack.Screen
           name="CustomerDetails"
           component={CustomerDetails}
@@ -475,6 +470,14 @@ export default function StackNavigator() {
               // backgroundColor: "#fff"
             },
             headerLeft: () => <CustomBackButton />,
+          }}
+        />
+
+        <Stack.Screen
+          name="PDFScreen"
+          component={PdfScreen}
+          screenOptions={{
+            headerTitle: "Create Invoice",
           }}
         />
       </Stack.Navigator>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Image,
   Text,
@@ -8,67 +8,81 @@ import {
   ScrollView,
 } from "react-native";
 import { Card } from "react-native-paper";
-import IncAndDicButton from "../IncAndDicButton";
+import IncAndDicButton from "../../Redux/IncAndDicButton";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, removeFromCart } from "../../Redux/CartProductRedux/CartSlice";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
-const ProductCardDetails = ({ item, setshowOverlay }) => {
-  const [inCart, setInCart] = useState(false);
-  const [quantity, setQuantity] = useState(1);
-  const [selectedProduct, setSelectedProduct] = useState(0);
+const ProductCardDetails = ({ item }) => {
+  const dispatch = useDispatch();
+  const cartItems = useSelector((state) => state.cart.Carts);
+  const isInCart = cartItems.some((cartItem) => cartItem.id === item.id); 
+  const inCart = cartItems.find((cartItem) => cartItem.id === item.id) || null;
+
 
   const handleAddToCart = (item) => {
-    console.log("Value of item", item);
-    setInCart(true);
+    dispatch(addToCart(item));
   };
+
+  const handleDeletetocart = (item) =>{
+    dispatch(removeFromCart(item?.id))
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <Card style={styles.card}>
-        <View style={styles.container}>
-          {/* Product Image */}
-          {/* <Image
-            source={require("../../../assets/profile.png")}
-            style={styles.productImage}
-            resizeMode="contain"
-          /> */}
-
-          {/* Product Details */}
-          <View style={styles.detailsContainer}>
-            <Text style={styles.productName}>{item.Name}</Text>
-            <Text style={styles.productInfo}>{item.info}</Text>
-
-            {/* Price and Button */}
-            <View style={styles.textButtonView}>
-              <Text style={styles.productPrice}>${item["Selling Price"]}</Text>
-              {/* Conditional rendering of 'Add to Cart' or quantity controls */}
-              {
-                !inCart ? (
-                  <TouchableOpacity
-                    style={styles.addButton}
-                    onPress={() => handleAddToCart(item)}
-                  >
-                    <Text style={styles.addButtonText}>Add to Cart</Text>
-                  </TouchableOpacity>
-                ) : (
-                  <IncAndDicButton inCart={inCart} setInCart={setInCart} />
-                )
-                // (
-                //   <View style={styles.quantityControlContainer}>
-                //     <TouchableOpacity
-                //       onPress={decreaseQuantity}
-                //       style={styles.quantityButton}
-                //     >
-                //       <Text style={styles.quantityButtonText}>-</Text>
-                //     </TouchableOpacity>
-                //     <Text style={styles.quantityText}>{quantity}</Text>
-                //     <TouchableOpacity
-                //       onPress={increaseQuantity}
-                //       style={styles.quantityButton}
-                //     >
-                //       <Text style={styles.quantityButtonText}>+</Text>
-                //     </TouchableOpacity>
-                //   </View>
-                // )
-              }
+        <View style={styles.mainContainer}>
+          <View style={styles.container}>
+            {/* Product Details */}
+            <View style={styles.detailsContainer}>
+              <Text style={styles.productName}>{item.Name}</Text>
+              <Text style={styles.productInfo}>{item.info}</Text>
+              <Text style={styles.productPrice}>$ {item.Price}</Text>
             </View>
+          </View>
+
+          {/* Add Button Positioned at the Bottom */}
+          <View style={styles.ButtonAndDeleteView}>
+            {isInCart ? (
+              <>
+                <View
+                  style={{
+                    justifyContent: "space-between",
+                    flex: 1,
+                    alignItems: "center",
+                    marginVertical:5
+                  }}
+                >
+                  {/* Remove from Cart Button */}
+                  <View>
+                    <TouchableOpacity
+                      style={styles.removeButton}
+                      onPress={()=>handleDeletetocart(item)}
+                    >
+                      <MaterialIcons name="delete" size={25} color="red" />
+                    </TouchableOpacity>
+                  </View>
+                  <View
+                    style={{
+                      justifyContent: "flex-end",
+                      alignItems: "flex-end",
+                    }}
+                  >
+                    {/* Increment/Decrement Controls */}
+                    <IncAndDicButton
+                      item = {inCart}
+                    />
+                  </View>
+                </View>
+              </>
+            ) : (
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => handleAddToCart(item)}
+              >
+                <Text style={styles.addButtonText}>Add</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </Card>
@@ -86,43 +100,46 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "#fff",
     marginHorizontal: 10,
-    marginVertical: 2,
+    // marginVertical: 2,
+    // borderWidth:1
+  },
+  mainContainer: {
+    flexDirection: "row",
+    // paddingHorizontal: 5,
+    // paddingVertical: 10,
+    marginVertical: 15,
   },
   container: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 10,
-  },
-  productImage: {
-    width: 70,
-    height: 90,
-    borderRadius: 10,
-    backgroundColor: "#f9f9f9",
+    // flexDirection: "row",
+    flex: 1,
   },
   detailsContainer: {
     marginLeft: 15,
-    justifyContent: "center",
+    // justifyContent: "center",
     flex: 1,
   },
   productName: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#333",
+    marginVertical: 5,
   },
   productInfo: {
     fontSize: 14,
     color: "#666",
     marginTop: 4,
+    marginVertical: 2,
   },
   productPrice: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#000",
+    marginVertical: 5,
   },
   textButtonView: {
     marginTop: 10,
-    flexDirection: "row",
-    alignItems: "center",
+    // flexDirection: "row",
+    // alignItems: "center",
     justifyContent: "space-between",
   },
   addButton: {
@@ -137,8 +154,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   quantityControlContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    // flexDirection: "row",
+    // alignItems: "center",
   },
   quantityButton: {
     backgroundColor: "#f0f0f0",
@@ -155,6 +172,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#333",
+  },
+  ButtonAndDeleteView: {
+    justifyContent: "flex-end",
+    marginRight: 8,
   },
 });
 

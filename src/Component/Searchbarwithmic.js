@@ -8,11 +8,11 @@ import {
   Text,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-// import { Modal } from "react-native-paper";
-// import {
-//   ExpoSpeechRecognitionModule,
-//   useSpeechRecognitionEvent,
-// } from "expo-speech-recognition";
+import { Modal } from "react-native-paper";
+import {
+  ExpoSpeechRecognitionModule,
+  useSpeechRecognitionEvent,
+} from "expo-speech-recognition";
 import { Platform, PermissionsAndroid } from "react-native";
 import OpenmiqModal from "../Modal/Openmicmodal";
 import { Searchbar } from "react-native-paper";
@@ -40,16 +40,16 @@ const Searchbarwithmic = ({
 
   // Request microphone permission
   const requestMicrophonePermission = async () => {
-    // const permissionGranted = await AsyncStorage.getItem(
-    //   "microphonePermissionGranted"
-    // );
+    const permissionGranted = await AsyncStorage.getItem(
+      "microphonePermissionGranted"
+    );
 
 
-    // // If permission has already been granted, don't request again
-    // if (permissionGranted === "true") {
-    //   console.log("Microphone permission already granted.");
-    //   return;
-    // }
+    // If permission has already been granted, don't request again
+    if (permissionGranted === "true") {
+      console.log("Microphone permission already granted.");
+      return;
+    }
 
     if (Platform.OS === "android") {
       const granted = await PermissionsAndroid.request(
@@ -62,18 +62,18 @@ const Searchbarwithmic = ({
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         console.log("Microphone permission granted");
-        // await AsyncStorage.setItem('microphonePermissionGranted', 'true');
+        await AsyncStorage.setItem('microphonePermissionGranted', 'true');
       } else {
         console.log("Microphone permission denied");
-        // await AsyncStorage.setItem('microphonePermissionGranted', 'false');
+        await AsyncStorage.setItem('microphonePermissionGranted', 'false');
       }
     }
   };
 
   // Request microphone permission when the component mounts
-  // useEffect(() => {
-  //   requestMicrophonePermission();
-  // }, []);
+  useEffect(() => {
+    requestMicrophonePermission();
+  }, []);
 
   // Request permission to use speech recognition
   const handleStart = async () => {
@@ -105,39 +105,39 @@ const Searchbarwithmic = ({
     }
   };
 
-  // // Handle the microphone button press
-  // const handleMicPress = () => {
-  //   setsearchmodal(true); // Open the modal when the mic button is pressed
-  //   handleStart(); // Start speech recognition when the modal opens
-  // };
+  // Handle the microphone button press
+  const handleMicPress = () => {
+    setsearchmodal(true); // Open the modal when the mic button is pressed
+    handleStart(); // Start speech recognition when the modal opens
+  };
 
-  // // Listen to speech recognition events
-  // useSpeechRecognitionEvent("start", () => {
-  //   setTranscript("");
-  //   setRecognizing(true);
-  //   console.log("Recognition started");
-  // });
+  // Listen to speech recognition events
+  useSpeechRecognitionEvent("start", () => {
+    setTranscript("");
+    setRecognizing(true);
+    console.log("Recognition started");
+  });
 
-  // useSpeechRecognitionEvent("end", () => {
-  //   setRecognizing(false);
-  //   ExpoSpeechRecognitionModule.stop();
-  //   setsearchmodal(false);
-  //   console.log("Recognition ended");
-  // });
+  useSpeechRecognitionEvent("end", () => {
+    setRecognizing(false);
+    ExpoSpeechRecognitionModule.stop();
+    setsearchmodal(false);
+    console.log("Recognition ended");
+  });
 
-  // useSpeechRecognitionEvent("result", (event) => {
-  //   if (event.results.length > 0) {
-  //     const fullTranscript = event.results[0]?.transcript;
-  //     setTranscript(fullTranscript);
-  //     setSearchQuery(fullTranscript);
-  //   }
-  // });
+  useSpeechRecognitionEvent("result", (event) => {
+    if (event.results.length > 0) {
+      const fullTranscript = event.results[0]?.transcript;
+      setTranscript(fullTranscript);
+      setSearchQuery(fullTranscript);
+    }
+  });
 
-  // useSpeechRecognitionEvent("error", (event) => {
-  //   // console.log("error code:", event.error, "error message:", event.message);
-  //   showSnackbar(event.message,"error"); // Show error message in the search input
-  //   console.log( "error message:", event.message);
-  // });
+  useSpeechRecognitionEvent("error", (event) => {
+    // console.log("error code:", event.error, "error message:", event.message);
+    showSnackbar(event.message,"error"); // Show error message in the search input
+    console.log( "error message:", event.message);
+  });
 
   const isArray = Array.isArray(placeholderText);
 
@@ -218,7 +218,7 @@ const Searchbarwithmic = ({
                 <TouchableOpacity
                   style={{ marginRight: 10 }}
                   // onPress={handleMicPress}
-                  onPress={()=>console.log("Button pressed")}
+                  onPress={handleMicPress}
                 >
                   <MaterialIcons name="mic" size={24} color="black" />
                 </TouchableOpacity>
