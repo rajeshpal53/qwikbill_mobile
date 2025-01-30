@@ -20,6 +20,8 @@ function DropDownList({options}) {
   console.log(shopDetails, "newShopDetails");
   const pickerRef = useRef();
 
+  console.log("Vakue is option", options)
+
 
   // async function fetchOptions() {
   //   try {
@@ -37,9 +39,9 @@ function DropDownList({options}) {
   //   }finally{
   //     setIsLoading(false);
   //   }
-   
 
-    
+
+
   //   // Adjust according to your API respons
   //   // setSelectedOption(data.result[0].shopname)
   // }
@@ -76,11 +78,11 @@ function DropDownList({options}) {
       onValueChange={(itemValue) => setSelectedShop(itemValue)}
     >
       {/* Default placeholder */}
-      <Picker.Item 
-        label="Please select your Shop" 
-        value="" 
-        color="#888888" 
-        enabled={false} 
+      <Picker.Item
+        label="Please select your Shop"
+        value=""
+        color="#888888"
+        enabled={false}
       />
       {options.map((option, index) => (
         <Picker.Item

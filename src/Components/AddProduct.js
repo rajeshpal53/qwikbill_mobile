@@ -1,157 +1,144 @@
-import React, { useState, useContext, useId } from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import {
-  TextInput,
-  Button,
-  Card,
-  Title,
-  HelperText,
-  List,
-  Text,
-  Divider,
-} from "react-native-paper";
+import { RadioButton, Text, TextInput } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { readApi } from "../Util/UtilApi";
-const fetchOptions = async (input) => {
-  const response = await readApi(
-    `api/productcategory/search?fields=name&q=${input}&page=1&items=10`
-  );
-  const data = await response;
-  return data.result; // Adjust according to your API response
-};
-const fetchHsnOptions = async (input) => {
-  const response = await readApi(
-    `api/taxes/list?fields=taxName&q=${input}&page=1&items=10`
-  );
-  const data = await response;
-  return data.result; // Adjust according to your API response
-};
-const validationSchema = Yup.object().shape({
-  name: Yup.string().required("Name is required"),
-  sellingPrice: Yup.number()
-    .required("Selling price is required")
-    .typeError("Selling price must be a number"),
-  taxValue: Yup.number()
-    // .required("Tax value is required")
-    .typeError("Tax value must be a number"),
-  purchasePrice: Yup.number()
-    .required("Purchase price is required")
-    .typeError("Purchase price must be a number"),
-  // hsncode: Yup.string().required("HSN code is required"),
-});
+import { createApi, readApi } from "../Util/UtilApi";
+import CategoryDropDown from "../UI/DropDown/CategoryDropdown";
 
-const AddProduct = ({ navigation, initialValues, handleSubmit, buttonText = "Add Product" }) => {
-  console.log("in addproduct ", initialValues);
+const AddProduct = ({ navigation }) => {
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [showHsnOptions, setShowHsnOptions] = useState(false);
+
+  const validationSchema = Yup.object().shape({
+    ProductCategory: Yup.string().required("Product category is required"),
+    ProductName: Yup.string().required("Product name is required"),
+    SellingPrice: Yup.number()
+      .required("Selling price is required")
+      .typeError("Selling price must be a number"),
+    taxValue: Yup.number().typeError("Tax value must be a number"),
+    PurchasePrice: Yup.number()
+      .required("Purchase price is required")
+      .typeError("Purchase price must be a number"),
+    // hsncode: Yup.string().required("HSN code is required"),
+    IsStockData: Yup.boolean().nullable().required("Stock status is required"),
+  });
+
+  // Fetch HSN Codes
+  // const fetchHsnOptions = async (input) => {
+  //   const response = await readApi(
+  //     `api/taxes/list?fields=taxName&q=${input}&page=1&items=10`
+  //   );
+  //   const data = await response;
+  //   return data.result; // Adjust according to your API response
+  // };
+
   return (
-    <Formik
-      initialValues={initialValues} 
-      validationSchema={validationSchema}
-      onSubmit={async (values) => {
-        handleSubmit(values);
-      }}
-    >
-      {({
-        handleChange,
-        handleBlur,
-        handleSubmit,
-        values,
-        errors,
-        touched,
-        setFieldValue,
-      }) => (
-        <View style={styles.container}>
-        <ScrollView contentContainerStyle={{paddingVertical:10,}} >
-        <View style={styles.form}>
-          <View
-            style={{
-              marginHorizontal: 2,
-              position: "relative",
-            }}
-          >
+    <ScrollView contentContainerStyle={{}}>
+      <Formik
+        initialValues={{
+          ProductCategory: "",
+          ProductName: "",
+          PurchasePrice: "",
+          SellingPrice: "",
+          TaxRate: "",
+          HSNCode: "",
+          IsStockData: null,
+        }}
+        validationSchema={validationSchema}
+        onSubmit={async (values, { resetForm }) => {
+          const ProductData = {
+            productcategoryfk: values?.ProductCategory,
+            name: values?.ProductName,
+            costPrice: values?.PurchasePrice,
+            sellPrice: values?.SellingPrice,
+            taxRate: values?.TaxRate,
+            // hsncodefk: values?.HSNCode,
+            isStock: values?.IsStockData,
+          };
+          console.log("Data is 15863", ProductData);
+          try {
+            await createApi(`qapi/products/`, ProductData);
+            resetForm();
+            navigation.goBack();
+          } catch (error) {
+            console.log("Unable to Upload data ", error);
+          }
+        }}
+      >
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          errors,
+          touched,
+          setFieldValue,
+        }) => (
+          <View style={styles.container}>
+            {/* Product Category */}
+            <CategoryDropDown
+              selectedCat={values.ProductCategory}
+              setSelectedCat={(categoryId) =>
+                setFieldValue("ProductCategory", categoryId)
+              }
+            />
+            {touched.ProductCategory && errors.ProductCategory && (
+              <Text style={styles.errorText}>{errors.ProductCategory}</Text>
+            )}
+
+            {/* Product Name */}
             <TextInput
               label="Product Name"
-              underlineColor="gray"
-              mode="flat"
-              onChangeText={handleChange("name")}
-              onBlur={handleBlur("name")}
-              value={values.name}
+              mode="outlined"
               style={styles.input}
-              error={touched.name && !!errors.name}
+              onChangeText={handleChange("ProductName")}
+              onBlur={handleBlur("ProductName")}
+              value={values.ProductName}
+              error={touched.ProductName && !!errors.ProductName}
             />
-            <HelperText type="error" visible={touched.name && !!errors.name}>
-              {errors.name}
-            </HelperText>
-          </View>
+            {touched.ProductName && errors.ProductName && (
+              <Text style={styles.errorText}>{errors.ProductName}</Text>
+            )}
 
-          <View
-            style={{
-              marginHorizontal: 2,
-              position: "relative",
-            }}
-          >
+            {/* Purchase Price */}
             <TextInput
-              label="Pruchase Price"
-              underlineColor="gray"
-              keyboardType="phone-pad"
-              mode="flat"
-              onChangeText={handleChange("purchasePrice")}
-              onBlur={handleBlur("purchasePrice")}
-              value={values.purchasePrice}
+              label="Purchase Price"
+              keyboardType="numeric"
+              mode="outlined"
               style={styles.input}
-              error={touched.purchasePrice && !!errors.purchasePrice}
+              onChangeText={handleChange("PurchasePrice")}
+              onBlur={handleBlur("PurchasePrice")}
+              value={values.PurchasePrice}
+              error={touched.PurchasePrice && !!errors.PurchasePrice}
             />
-            <HelperText
-              type="error"
-              visible={touched.purchasePrice && !!errors.purchasePrice}
-            >
-              {errors.purchasePrice}
-            </HelperText>
-          </View>
+            {touched.PurchasePrice && errors.PurchasePrice && (
+              <Text style={styles.errorText}>{errors.PurchasePrice}</Text>
+            )}
 
-          <View
-            style={{
-              // marginVertical: 10,
-              marginHorizontal: 2,
-              // marginBottom: 10,
-              position: "relative",
-            }}
-          >
+            {/* Selling Price */}
             <TextInput
-              underlineColor="gray"
               label="Selling Price"
-              keyboardType="phone-pad"
-              mode="flat"
-              onChangeText={handleChange("sellingPrice")}
-              onBlur={handleBlur("sellingPrice")}
-              value={values.sellingPrice}
+              keyboardType="numeric"
+              mode="outlined"
               style={styles.input}
-              error={touched.sellingPrice && !!errors.sellingPrice}
+              onChangeText={handleChange("SellingPrice")}
+              onBlur={handleBlur("SellingPrice")}
+              value={values.SellingPrice}
+              error={touched.SellingPrice && !!errors.SellingPrice}
             />
-            <HelperText
-              type="error"
-              visible={touched.sellingPrice && !!errors.sellingPrice}
-            >
-              {errors.sellingPrice}
-            </HelperText>
-          </View>
-          <View
-            style={{
-              // marginVertical: 10,
-              marginHorizontal: 2,
-              // marginBottom: 10,
-              position: "relative",
-            }}
-          >
+            {touched.SellingPrice && errors.SellingPrice && (
+              <Text style={styles.errorText}>{errors.SellingPrice}</Text>
+            )}
+
+            {/* HSN Code */}
             <TextInput
-              underlineColor="gray"
               label="HSN Code"
-              mode="flat"
+              mode="outlined"
+              style={styles.input}
               onChangeText={async (text) => {
-                handleChange("hsncode")(text);
+                handleChange("HSNCode")(text);
                 if (text.length > 1) {
                   const fetchedOptions = await fetchHsnOptions(text);
                   setOptions(fetchedOptions);
@@ -160,144 +147,211 @@ const AddProduct = ({ navigation, initialValues, handleSubmit, buttonText = "Add
                   setShowHsnOptions(false);
                 }
               }}
-              onBlur={handleBlur("hsncode")}
-              value={values.hsncode}
-              style={styles.input}
-              error={touched.hsncode && !!errors.hsncode}
+              onBlur={handleBlur("HSNCode")}
+              value={values.HSNCode}
+              error={touched.HSNCode && !!errors.HSNCode}
             />
-            <HelperText
-              type="error"
-              visible={touched.hsncode && !!errors.hsncode}
-            >
-              {errors.hsncode}
-            </HelperText>
+            {touched.HSNCode && errors.HSNCode && (
+              <Text style={styles.errorText}>{errors.HSNCode}</Text>
+            )}
+
+            {/* Tax Value */}
+            <TextInput
+              label="Tax Value"
+              keyboardType="numeric"
+              mode="outlined"
+              style={styles.input}
+              value={values.taxValue}
+              error={touched.taxValue && !!errors.taxValue}
+            />
+
+            {/* Stock Status (Radio Button) */}
+            <View style={styles.radioGroup}>
+              <Text>Is in Stock?</Text>
+              <RadioButton.Group
+                onValueChange={(value) => handleChange("IsStockData")(value)} // Ensure correct name IsStockData
+                value={values.IsStockData} // Bind to IsStockData
+              >
+                <View style={styles.radioButton}>
+                  <RadioButton value={"true"} />
+                  <Text>Yes</Text>
+                </View>
+                <View style={styles.radioButton}>
+                  <RadioButton value={"false"} />
+                  <Text>No</Text>
+                </View>
+              </RadioButton.Group>
+              {touched.IsStockData &&
+                errors.IsStockData && ( // Ensure to use IsStockData here
+                  <Text style={styles.errorText}>{errors.IsStockData}</Text>
+                )}
+            </View>
+
+            {/* Suggestions for HSN Code */}
             {showHsnOptions && (
               <View style={styles.suggestionsContainer}>
                 <ScrollView style={styles.suggestionsList}>
                   {options.map((option, index) => (
                     <React.Fragment key={index}>
-                      <List.Item
-                        // key={index}
-                        title={option.taxName}
-                        onPress={async () => {
-                          setFieldValue("hsncode", option.taxName);
-                          setFieldValue("taxValue", option.taxValue.toString());
+                      <TouchableOpacity
+                        style={styles.suggestionItem}
+                        onPress={() => {
+                          handleChange("HSNCode")(option.taxName);
+                          handleChange("taxValue")(option.taxValue.toString());
                           setShowHsnOptions(false);
                         }}
-                      ></List.Item>
-                      <Divider />
+                      >
+                        <Text>{option.taxName}</Text>
+                      </TouchableOpacity>
                     </React.Fragment>
                   ))}
                 </ScrollView>
               </View>
             )}
-          </View>
 
-          <View
-            style={{
-              // marginVertical: 10,
-              marginHorizontal: 2,
-              // marginBottom: 10,
-              position: "relative",
-            }}
-          >
-            <TextInput
-              underlineColor="gray"
-              label="Tax Value"
-              keyboardType="phone-pad"
-              mode="flat"
-              disabled = "true"
-              onChangeText={handleChange("taxValue")}
-              onBlur={handleBlur("taxValue")}
-              value={values.taxValue}
-              style={styles.input}
-              error={touched.taxValue && !!errors.taxValue}
-            />
-            <HelperText
-              type="error"
-              visible={touched.taxValue && !!errors.taxValue}
+            {/* Submit Button */}
+            <TouchableOpacity
+              style={styles.submitButton}
+              onPress={handleSubmit}
             >
-              {errors.taxValue}
-            </HelperText>
+              <Text style={styles.submitButtonText}>Submit</Text>
+            </TouchableOpacity>
           </View>
-          <Button mode="contained" onPress={handleSubmit} style={styles.button}>
-            {buttonText}
-          </Button>
-        </View>
-        </ScrollView>
-        </View>
-      )}
-    </Formik>
+        )}
+      </Formik>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  suggestionsContainer: {
-    position: "absolute",
-    top: 55, // Adjust based on your input height and margin
-    width: "100%",
-    maxHeight: 200, // Adjust height as needed
-    elevation: 2,
-    zIndex: 1,
-    backgroundColor: "white",
-  },
-  suggestionsList: {
-    width: "100%",
-    borderWidth: 0,
-  },
-  form: {
-    // backgroundColor: "#fff",
-    backgroundColor: "rgba(0, 0, 0, 0)",
-    // height:"100%",
-    // margin: 10,
-    padding: 25,
-    borderRadius: 10,
-    // elevation: 5, // For shadow on Android
-    // shadowColor: "#000", // For shadow on iOS
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.2,
-    // shadowRadius: 2,
-    // paddingHorizontal: 20,
-    // gap:10,
-    flex: 1,
-    justifyContent: "center",
-  },
   container: {
     backgroundColor: "#fff",
-    // backgroundColor: "lightblue",
-    
-    margin: 10,
-    // padding: 25,
-    borderRadius: 10,
-    elevation: 5, // For shadow on Android
-    shadowColor: "#000", // For shadow on iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    // marginVertical: 10,
+    margin: 20,
+    padding: 20,
+    borderRadius: 15,
+    elevation: 5,
     flex: 1,
-    // height: "100%",
   },
   input: {
-    // marginBottom: 5,
-    backgroundColor: "rgba(0,0,0,0)",
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.8,
-    // shadowRadius: 2,
-    // elevation: 4,
-    overflow: "hidden",
+    marginBottom: 15,
+    backgroundColor: "#fff",
   },
-  error: {
+  errorText: {
     fontSize: 12,
     color: "red",
     marginBottom: 10,
   },
-  button: {
+  suggestionsContainer: {
+    position: "absolute",
+    top: 170, // Adjust based on input field height
+    width: "100%",
+    maxHeight: 200,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    elevation: 5,
+  },
+  suggestionsList: {
+    width: "100%",
+  },
+  suggestionItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderColor: "#f1f1f1",
+  },
+  submitButton: {
+    backgroundColor: "#007bff",
+    paddingVertical: 15,
+    borderRadius: 10,
     marginTop: 20,
-    width: "90%",
-    alignSelf: "center",
-    marginBottom: 10,
+    alignItems: "center",
+  },
+  submitButtonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  radioGroup: {
+    marginBottom: 15,
+  },
+  radioButton: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
 
 export default AddProduct;
+
+// {showHsnOptions && (
+//   <View style={styles.suggestionsContainer}>
+//     <ScrollView style={styles.suggestionsList}>
+//       {options.map((option, index) => (
+//         <React.Fragment key={index}>
+//           <List.Item
+//             // key={index}
+//             title={option.taxName}
+//             onPress={async () => {
+//               setFieldValue("HSNCode", option.taxName);
+//               setFieldValue(
+//                 "taxValue",
+//                 option.taxValue.toString()
+//               );
+//               setShowHsnOptions(false);
+//             }}
+//           ></List.Item>
+//           <Divider />
+//         </React.Fragment>
+//       ))}
+//     </ScrollView>
+//   </View>
+// )}
+
+// const fetchCategoryOptions = async (input) => {
+//   const response = await readApi(
+//     `api/productcategory/search?fields=name&q=${input}&page=1&items=10`
+//   );
+//   const data = await response;
+//   return data.result; // Adjust according to your API response
+// };
+
+// // Fetch HSN Codes
+// const fetchHsnOptions = async (input) => {
+//   const response = await readApi(
+//     `api/taxes/list?fields=taxName&q=${input}&page=1&items=10`
+//   );
+//   const data = await response;
+//   return data.result; // Adjust according to your API response
+// };
+
+// Validation Schema for Formik
+
+// const fetchOptions = async (input) => {
+//   const response = await readApi(
+//     `api/productcategory/search?fields=name&q=${input}&page=1&items=10`
+//   );
+//   const data = await response;
+//   return data.result; // Adjust according to your API response
+// };
+// const fetchHsnOptions = async (input) => {
+//   const response = await readApi(
+//     `api/taxes/list?fields=taxName&q=${input}&page=1&items=10`
+//   );
+//   const data = await response;
+//   return data.result; // Adjust according to your API response
+// };
+
+// // Fetch Category Options
+// const fetchCategoryOptions = async (input) => {
+//   const response = await readApi(
+//     `api/productcategory/search?fields=name&q=${input}&page=1&items=10`
+//   );
+//   const data = await response;
+//   return data.result;
+// };
+
+// // Fetch HSN Code Options
+// const fetchHsnOptions = async (input) => {
+//   const response = await readApi(
+//     `api/taxes/list?fields=taxName&q=${input}&page=1&items=10`
+//   );
+//   const data = await response;
+//   return data.result;
+// };

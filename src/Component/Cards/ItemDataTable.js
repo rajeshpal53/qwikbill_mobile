@@ -57,7 +57,7 @@ const ItemDataTable = () => {
           )}
         />
       </Card>
-      <PriceDetails />
+      {/* <PriceDetails /> */}
     </>
   );
 };

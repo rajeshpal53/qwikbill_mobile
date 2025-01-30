@@ -1,4 +1,10 @@
-import { Text, View, StyleSheet, FlatList } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { FAB, Searchbar } from "react-native-paper";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -8,8 +14,9 @@ import EditCustomerDetailsModal from "../../Modal/EditCustomerDetailsModal";
 import ProductDetailsCard from "../../Component/Cards/ProductDetailsCard";
 import { setProductitem } from "../../Redux/CartProductRedux/ProductSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { ProductItems } from "../../../ProductItems";
-
+// import { ProductItems } from "../../../ProductItems";
+import { readApi } from "../../Util/UtilApi";
+import { useIsFocused } from "@react-navigation/native";
 
 const ProductDetailsScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -18,15 +25,37 @@ const ProductDetailsScreen = ({ navigation }) => {
   const [SelectedEditItem, setSelectedEditItem] = useState(null);
   const [editmodal, seteditmodal] = useState(false);
   const products = useSelector((state) => state.product.products);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const [Productdata, SetProductData] = useState([]);
+  const isfocused = useIsFocused()
+
+  // useEffect(() => {
+  //   dispatch(setProductitem(ProductItems));
+  // }, []);
+
+  console.log("DATA IS REDUX PRODUCT",products)
 
   useEffect(() => {
-    dispatch(setProductitem(ProductItems));
-  }, []);
+    const getproductdata = async () => {
+      try {
+        const api = `qapi/products/`;
+        const response = await readApi(api);
+        dispatch(setProductitem(response));
+        SetProductData(response);
+      } catch (error) {
+        console.log("Unable to fetch Data", error);
+      }
+    };
+    getproductdata();
+  }, [isfocused]);
+
+  console.log("Productdata ------------", Productdata);
 
   const filteredData = products.filter((item) =>
-    item.productName?.toLowerCase().includes(searchQuery.toLowerCase())
+    item?.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  console.log("DATA IS FILTER ",filteredData)
 
   const openEditModal = (item) => {
     setSelectedEditItem(item); // Set selected offer
@@ -60,6 +89,13 @@ const ProductDetailsScreen = ({ navigation }) => {
           />
         )}
         keyExtractor={(item) => item.id.toString()}
+        ListEmptyComponent={() => (
+          <View style={{ alignItems: "center", marginTop: 20 }}>
+            <Text style={{ fontSize: 16, color: "gray" }}>
+              No products found.
+            </Text>
+          </View>
+        )}
       />
 
       <FAB

@@ -237,7 +237,7 @@ export default function FilterInvoiceScreen() {
 
   return (
     <ScrollView style={styles.scrollView}>
-      <TouchableWithoutFeedback onPress={handlePressOutside}>
+      {/* <TouchableWithoutFeedback onPress={handlePressOutside}> */}
         <View style={styles.container}>
           <View style={styles.logoPickerContainer}>
             <Entypo name="shop" size={30} color="#0c3b73" />
@@ -285,8 +285,7 @@ export default function FilterInvoiceScreen() {
           </Button>
           <Button mode="outlined">Download</Button>
         </View>
-      </View>
-    </TouchableWithoutFeedback>
+    {/* </TouchableWithoutFeedback> */}
     </ScrollView>
   );
 }

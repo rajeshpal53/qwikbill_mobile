@@ -130,6 +130,7 @@ import EnterNumberScreen from "../Screen/StackScreen/EnterNumberScreen.js";
 import UserDataContext from "../Store/UserDataContext.js";
 import PdfScreen from "../Component/PdfViewer.js";
 import EditProfileScreen from "../Screen/StackScreen/EditProfileScreen.js";
+import CategoryDropDown from "../UI/DropDown/CategoryDropdown.js";
 export default function StackNavigator() {
   const Stack = createStackNavigator();
   const [isConnected, setIsConnected] = useState(false);
@@ -185,7 +186,6 @@ export default function StackNavigator() {
 
         <Stack.Screen name="viewClient" component={ViewClientScreen} />
         <Stack.Screen name="EditProfilePage" component={EditProfileScreen} />
-
 
         <Stack.Screen
           name="hsncode"
