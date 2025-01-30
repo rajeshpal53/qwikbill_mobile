@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   ScrollView,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
   StyleSheet,
+  Alert,
 } from "react-native";
 import { TextInput } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -15,16 +16,20 @@ import ItemDataTable from "../Cards/ItemDataTable";
 import { useDispatch, useSelector } from "react-redux";
 import { readApi } from "../../Util/UtilApi";
 import { clearCart } from "../../Redux/CartProductRedux/CartSlice";
+import PriceDetails from "../PriceDetails";
+import UserDataContext from "../../Store/UserDataContext";
 
-
-const CreateInvoiceForm = () => {
+const CreateInvoiceForm = ({}) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const carts = useSelector((state) => state.cart.Carts);
-  const [shopData, setShopData] = useState(null); // To store the shop data response
+  const [User, setUser] = useState(null);
   const cartsValue = useSelector((state) => state.cart);
+  const [PaymentStatus, setPaymentStatus] = useState("");
+  const submit = useRef(false);
+  const{userData}=useContext(UserDataContext)
 
-
+console.log("Data of user123456 ", userData.token)
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
@@ -36,26 +41,68 @@ const CreateInvoiceForm = () => {
   });
 
   const handlePhoneBlur = async (phoneNumber) => {
+    console.log("Phone number ", phoneNumber);
+
     if (/^\d{10}$/.test(phoneNumber)) {
       try {
-        const api = `/getUserByMobile/:${phoneNumber}`;
+        const api = `qapi/users/getUserByMobile/${phoneNumber}`;
         const response = await readApi(api);
-        setShopData(response); // Assuming the response contains shop data
-        console.log("Shop Data:", data);
+
+        setUser(response);
       } catch (error) {
-        console.error("Error fetching shop data:", error);
+        console.error("Error fetching User data:", error);
       }
     }
   };
+
+  console.log("User dtat -----",User)
+
+  useEffect(() => {
+    const handleBackPress = navigation.addListener("beforeRemove", (e) => {
+      const hasFilledForm = (
+        carts.length > 0 ||
+        User?.name ||
+        User?.address ||
+        User?.gstNumber ||
+        User?.phone
+      );
+
+      if (hasFilledForm && !submit.current) {
+        e.preventDefault();
+
+        Alert.alert(
+          "Warning!",
+          "If you go back, all of your filled form data will be lost. Are you sure you want to go back?",
+          [
+            {
+              text: "Cancel",
+              style: "cancel",
+            },
+            {
+              text: "Yes",
+              style: "destructive",
+              onPress: () => {
+                navigation.dispatch(e.data.action);
+                dispatch(clearCart());
+                return true;
+              },
+            },
+          ]
+        );
+      }
+    });
+
+    return handleBackPress;
+  }, [navigation, carts, User]);
 
   return (
     <ScrollView>
       <Formik
         initialValues={{
-          name: "",
-          address: "",
-          gstNumber: "",
-          phone: "",
+          name: User?.name || "",
+          address: User?.address || "",
+          gstNumber:User?.name ||  "",
+          phone: User?.mobile || "",
         }}
         validationSchema={validationSchema}
         onSubmit={(values, { resetForm }) => {
@@ -73,11 +120,14 @@ const CreateInvoiceForm = () => {
                 TotalPrice: cartsValue.totalPrice,
                 Discount: cartsValue.discount,
                 PayAmount: cartsValue.afterdiscount,
+                PartiallyAmount: cartsValue.PartiallyAmount,
+                PaymentMethod: PaymentStatus,
               },
             ],
           };
           console.log("Form Submitted Data:", formData);
-          navigation.navigate("PDFScreen",{formData})
+          submit.current = true;
+          navigation.navigate("PDFScreen", { formData });
           resetForm();
           dispatch(clearCart());
         }}
@@ -152,8 +202,13 @@ const CreateInvoiceForm = () => {
                 <Text style={styles.addButtonText}>Add Items</Text>
               </TouchableOpacity>
             </View>
-            {carts.length > 0 && <ItemDataTable carts={carts} />}
             {/* Item Data Table */}
+            {carts.length > 0 && (
+              <>
+                <ItemDataTable carts={carts} />
+                <PriceDetails setPaymentStatus={setPaymentStatus}/>
+              </>
+            )}
 
             {/* Submit Button */}
             <TouchableOpacity

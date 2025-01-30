@@ -57,6 +57,8 @@ export default function HomeScreen({ navigation }) {
   // console.log(verticalScale(700), "    --- verticalscale");
 const{userData}=useContext(UserDataContext)
 
+console.log("Data of user15789 ", userData)
+
 useEffect(()=>{
   const fetchVendorData= async()=>{
     try{
@@ -64,14 +66,14 @@ useEffect(()=>{
       const response =await readApi(`qapi/vendors/${userData?.user?.id}`)
       console.log(response)
       setVendorDetails(response)
-    } 
+    }
     catch(err){
         setVendorDetails([])
     }
     finally{
       setIsLoading(false)
     }
- 
+
   }
   fetchVendorData();
 },[])
@@ -138,7 +140,7 @@ useEffect(()=>{
 
                   <Card.Content style={styles.cardContent}>
                     <View style={styles.dropDownContainer}>
-                    <DropDownList options={vendorsDetails}/>
+                    <DropDownList options={[]}/>
                     </View>
 
                     <View style={styles.viewsContainer}>
@@ -169,7 +171,7 @@ useEffect(()=>{
             </View>
 
             <View style={{ flex: 2}}>
-              {vendorsDetails.length==0?(
+              {vendorsDetails.length >=0?(
                  <FlatList
                  style={styles.flatList}
                  data={services}
@@ -217,7 +219,7 @@ const styles = StyleSheet.create({
         marginVertical:20,
         fontSize:18
     },
-  container: { 
+  container: {
     marginHorizontal: responsiveWidth(5),
     // backgroundColor:"orange",
     height: verticalScale(578)

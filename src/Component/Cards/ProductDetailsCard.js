@@ -34,12 +34,12 @@ const ProductDetailsCard = ({ item }) => {
             )}
           </View>
           <View style={styles.TextView}>
-            <Text style={styles.itemname}>{item.productName}</Text>
+            <Text style={styles.itemname}>{item.name}</Text>
             <Text style={styles.priceText}>
-              Selling Price: ${item.sellingPrice}
+              Selling Price: ${item.sellPrice}
             </Text>
             <Text style={styles.priceText}>
-              Market Price: ${item.marketPrice}
+              Cost Price: ${item.costPrice}
             </Text>
           </View>
 
@@ -63,8 +63,8 @@ const ProductDetailsCard = ({ item }) => {
               </View>
             </View>
             <View style={styles.Availabletext}>
-              <Text style={item.Available ? styles.inStock : styles.outOfStock}>
-                {item.Available
+              <Text style={item.isStock ? styles.inStock : styles.outOfStock}>
+                {item.isStock
                   ? `In Stock(${item.numberOfProducts})`
                   : "Out of Stock"}
               </Text>
@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     elevation: 3,
     flex: 1,
+    backgroundColor:"#fff"
 
     // alignContent:"center"
   },
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
     marginVertical:2,
   },
   avatar: {
-    backgroundColor: "#fff",
+    backgroundColor: "black",
   },
   avatarPlaceholder: {
     backgroundColor: "#ccc",

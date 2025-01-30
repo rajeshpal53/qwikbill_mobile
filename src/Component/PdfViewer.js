@@ -10,13 +10,31 @@ const PdfScreen = ({ route }) => {
   const generatePDF = (values) => {
     const productDetails = values.Product.map(
       (item) => `
-        <tr>
-          <td>${item.productName}</td>
+        <tr class="item-row">
+          <td colspan="2">${item.productName}</td>
           <td>${item.quantity}</td>
-          <td>$${item.price}</td>
-          <td>$${item.totalprice}</td>
+          <td>$${item.price.toFixed(2)}</td>
+          <td>$${item.totalprice.toFixed(2)}</td>
         </tr>`
     ).join("");
+
+    const partiallyPaidSection = values.Pricedetails[0].PartiallyPaid
+      ? `
+        <tr class="details-row">
+          <td><strong>Partially Paid:</strong></td>
+          <td colspan="4">$${values.Pricedetails[0].PartiallyPaid.toFixed(
+            2
+          )}</td>
+        </tr>`
+      : "";
+
+    // Formatting for the total price, discount, and final amount after considering partial payment
+    const totalPrice = values.Pricedetails[0].TotalPrice;
+    const discount = values.Pricedetails[0].Discount;
+    const payAmount = values.Pricedetails[0].PayAmount;
+    const partiallyAmount = values.Pricedetails[0].PartiallyAmount;
+    const paymentmethod = values.Pricedetails[0].PaymentMethod;
+
 
     const htmlContent = `
       <html>
@@ -24,102 +42,144 @@ const PdfScreen = ({ route }) => {
           <style>
             body {
               font-family: Arial, sans-serif;
-              margin: 20px;
-            }
-            .container {
-              width: 100%;
-              max-width: 800px;
-              margin: 0 auto;
+              margin: 0;
               padding: 20px;
-              border: 1px solid #ccc;
-              border-radius: 8px;
-              box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             }
+
             h1 {
               text-align: center;
-              color: #333;
             }
-            .section {
-              margin-bottom: 10px;
-            }
-            .section label {
-              font-weight: bold;
-              margin-right: 5px;
-            }
-            .section p {
-              display: inline;
+
+            .invoice-box {
+              max-width: 800px;
+              margin: auto;
+              padding: 30px;
+              border: 1px solid #eee;
+              box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
               font-size: 16px;
+              line-height: 24px;
+              color: #555;
             }
-            table {
+
+            .invoice-box table {
               width: 100%;
               border-collapse: collapse;
-              margin-top: 20px;
-            }
-            table, th, td {
-              border: 1px solid #ccc;
-            }
-            th, td {
-              padding: 8px;
+              line-height: inherit;
               text-align: left;
             }
-            th {
-              background-color: #f2f2f2;
+
+            .invoice-box table td,
+            .invoice-box table th {
+              padding: 10px;
+              vertical-align: top;
+              border: 1px solid #ddd;
             }
-            .price-section {
-              display: flex;
-              justify-content: space-between;
-              margin-top: 20px;
+
+            .invoice-box table th {
+              background-color: #f5f5f5;
+              font-weight: bold;
+            }
+
+            .invoice-box .details-row td {
+              background-color: #f9f9f9;
+              text-align: right;
+            }
+
+            .invoice-box .total-row td {
+              border-top: 2px solid #eee;
+              font-weight: bold;
+              text-align: right;
+            }
+
+            .item-row td {
+              text-align: center;
+            }
+
+            .item-row td:first-child {
+              text-align: left;
             }
           </style>
         </head>
         <body>
-          <div class="container">
-            <h1>Invoice</h1>
-            <h1>QwikBill pvt. ltd. </h1>
-            <div class="section">
-              <label>Name:</label>
-              <p>${values.name}</p>
-            </div>
-            <div class="section">
-              <label>Phone:</label>
-              <p>${values.phone}</p>
-            </div>
-            <div class="section">
-              <label>Address:</label>
-              <p>${values.address}</p>
-            </div>
-            <div class="section">
-              <label>GST Number:</label>
-              <p>${values.gstNumber}</p>
-            </div>
-            <div class="section">
-              <label>Products:</label>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Product Name</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${productDetails}
-                </tbody>
-              </table>
-            </div>
-            <div class="section">
-              <label>Total Price:</label>
-              <p>$${values.Pricedetails[0].TotalPrice}</p>
-            </div>
-            <div class="section">
-              <label>Discount:</label>
-              <p>$${values.Pricedetails[0].Discount}</p>
-            </div>
-            <div class="section">
-              <label>Amount to Pay:</label>
-              <p>$${values.Pricedetails[0].PayAmount}</p>
-            </div>
+          <div class="invoice-box">
+            <table cellpadding="0" cellspacing="0">
+              <!-- Invoice Header -->
+              <tr>
+                <td colspan="5" style="text-align: center; font-size: 24px; padding: 20px 0;">
+                  <strong>Invoice</strong>
+                </td>
+              </tr>
+              <!-- Invoice Information -->
+              <tr>
+                <td colspan="2">
+                  <strong>Invoice Number:</strong> ${values.invoiceNumber}<br>
+                  <strong>Date:</strong> ${
+                    values.createdAt
+                      ? new Date(values.order?.createdAt).toLocaleDateString()
+                      : "N/A"
+                  }
+                </td>
+                <td colspan="3">
+                  <strong>Shop Name:</strong> ${
+                    values?.serviceProvider?.shopname || "N/A"
+                  }<br>
+                  <strong>Shop Contact:</strong> ${
+                    values?.serviceProvider?.user?.mobile || "N/A"
+                  }
+                </td>
+              </tr>
+              <!-- Customer Information -->
+              <tr>
+                <td colspan="2">
+                  <strong>Customer Name:</strong> ${values.name || "N/A"}<br>
+                  <strong>Customer Contact:</strong> ${
+                    values.phone || "N/A"
+                  } <br>
+                  <strong>Address:</strong> ${values.address || "N/A"}
+                </td>
+                <td colspan="3"></td>
+              </tr>
+              <!-- Payment Details -->
+              <tr class="details-row">
+                <td><strong>Payment Method:</strong></td>
+                <td colspan="4">${values.paymentMethod || "N/A"}</td>
+              </tr>
+              <tr class="details-row">
+                <td><strong>Status:</strong></td>
+                <td colspan="4">${paymentmethod || "Pending"}</td>
+
+              </tr>
+              <!-- Item Details -->
+              <tr>
+                <th colspan="2">Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+              </tr>
+              ${productDetails}
+              <!-- Grand Total -->
+              <tr class="total-row">
+                <td colspan="4" style="text-align: right;"><strong>Grand Total:</strong></td>
+                <td>$${totalPrice.toFixed(2)}</td>
+              </tr>
+              <!-- Discount -->
+              <tr class="total-row">
+                <td colspan="4" style="text-align: right;"><strong>Discount:</strong></td>
+                <td>$${discount.toFixed(2)}</td>
+              </tr>
+              <!-- Partially Pay -->
+              <tr class="total-row">
+                <td colspan="4" style="text-align: right;"><strong>Partially Pay:</strong></td>
+                <td>$${partiallyAmount.toFixed(2)}</td>
+              </tr>
+              <!-- Amount to Pay -->
+              <tr class="total-row">
+                <td colspan="4" style="text-align: right;"><strong>Amount to Pay:</strong></td>
+                <td>$${payAmount.toFixed(2)}</td>
+              </tr>
+              <!-- Partially Paid (if exists) -->
+              ${partiallyPaidSection}
+            </table>
           </div>
         </body>
       </html>

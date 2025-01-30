@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from 'react-native';
 
-const CustomDropdown = () => {
+const CustomDropdown = ({paymentStatuses, setSelectedStatus, selectedStatus}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState('Select payment');
-  const paymentStatuses = ['Unpaid', 'Paid', 'Partially Paid'];
+  // const [selectedStatus, setSelectedStatus] = useState('Select payment');
+  // const paymentStatuses = ['Unpaid', 'Paid', 'Partially Paid'];
 
   // Toggle the visibility of the modal
   const toggleModal = () => {
