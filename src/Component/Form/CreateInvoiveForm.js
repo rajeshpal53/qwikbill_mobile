@@ -27,9 +27,9 @@ const CreateInvoiceForm = ({}) => {
   const cartsValue = useSelector((state) => state.cart);
   const [PaymentStatus, setPaymentStatus] = useState("");
   const submit = useRef(false);
-  const{userData}=useContext(UserDataContext)
+  const { userData } = useContext(UserDataContext);
 
-console.log("Data of user123456 ", userData.token)
+  console.log("Data of user123456 ", userData.token);
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
@@ -46,7 +46,19 @@ console.log("Data of user123456 ", userData.token)
     if (/^\d{10}$/.test(phoneNumber)) {
       try {
         const api = `qapi/users/getUserByMobile/${phoneNumber}`;
-        const response = await readApi(api);
+        const headers = {
+          Authorization: `Bearer ${userData?.token}`, // Add token to headers
+        };
+        const response = await readApi(api, headers);
+        if (response) {
+          setUser(response);
+          // setValues({
+          //   name: response?.name || "",
+          //   address: response?.address || "",
+          //   gstNumber: response?.gstNumber || "",
+          //   phone: response?.mobile || phoneNumber,
+          // });
+        }
 
         setUser(response);
       } catch (error) {
@@ -55,17 +67,16 @@ console.log("Data of user123456 ", userData.token)
     }
   };
 
-  console.log("User dtat -----",User)
+
 
   useEffect(() => {
     const handleBackPress = navigation.addListener("beforeRemove", (e) => {
-      const hasFilledForm = (
+      const hasFilledForm =
         carts.length > 0 ||
         User?.name ||
         User?.address ||
         User?.gstNumber ||
-        User?.phone
-      );
+        User?.phone;
 
       if (hasFilledForm && !submit.current) {
         e.preventDefault();
@@ -98,10 +109,11 @@ console.log("Data of user123456 ", userData.token)
   return (
     <ScrollView>
       <Formik
+        enableReinitialize={true}
         initialValues={{
           name: User?.name || "",
           address: User?.address || "",
-          gstNumber:User?.name ||  "",
+          gstNumber: User?.name || "",
           phone: User?.mobile || "",
         }}
         validationSchema={validationSchema}
@@ -147,7 +159,7 @@ console.log("Data of user123456 ", userData.token)
               mode="flat"
               style={styles.input}
               onChangeText={handleChange("phone")}
-              onBlur={() => handlePhoneBlur(values.phone)} // Trigger API call on blur
+              onBlur={() => handlePhoneBlur(values.phone,)}
               value={values.phone}
             />
             {touched.phone && errors.phone && (
@@ -163,7 +175,7 @@ console.log("Data of user123456 ", userData.token)
               value={values.name}
             />
             {touched.name && errors.name && (
-              <Text style={styles.errorText}>{errors.name}</Text>
+              <Text style={styles.errorText}>{errors.name }</Text>
             )}
 
             {/* Address Field */}
@@ -206,7 +218,7 @@ console.log("Data of user123456 ", userData.token)
             {carts.length > 0 && (
               <>
                 <ItemDataTable carts={carts} />
-                <PriceDetails setPaymentStatus={setPaymentStatus}/>
+                <PriceDetails setPaymentStatus={setPaymentStatus} />
               </>
             )}
 

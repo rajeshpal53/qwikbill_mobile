@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { FAB, Searchbar } from "react-native-paper";
+import { FAB, Searchbar, Portal, PaperProvider } from "react-native-paper";
 import Icon from "react-native-vector-icons/Ionicons";
 import CustomerDetailsCard from "../../Component/Cards/CustomerDetailsCard";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
@@ -27,13 +27,10 @@ const ProductDetailsScreen = ({ navigation }) => {
   const products = useSelector((state) => state.product.products);
   const dispatch = useDispatch();
   const [Productdata, SetProductData] = useState([]);
-  const isfocused = useIsFocused()
+  const isfocused = useIsFocused();
+  const [open, setOpen] = useState(false);
+  const onStateChange = (state) => setOpen(state.open);
 
-  // useEffect(() => {
-  //   dispatch(setProductitem(ProductItems));
-  // }, []);
-
-  console.log("DATA IS REDUX PRODUCT",products)
 
   useEffect(() => {
     const getproductdata = async () => {
@@ -49,13 +46,9 @@ const ProductDetailsScreen = ({ navigation }) => {
     getproductdata();
   }, [isfocused]);
 
-  console.log("Productdata ------------", Productdata);
-
   const filteredData = products.filter((item) =>
     item?.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  console.log("DATA IS FILTER ",filteredData)
 
   const openEditModal = (item) => {
     setSelectedEditItem(item); // Set selected offer
@@ -89,6 +82,7 @@ const ProductDetailsScreen = ({ navigation }) => {
           />
         )}
         keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={styles.flatListContainer}
         ListEmptyComponent={() => (
           <View style={{ alignItems: "center", marginTop: 20 }}>
             <Text style={{ fontSize: 16, color: "gray" }}>
@@ -97,12 +91,41 @@ const ProductDetailsScreen = ({ navigation }) => {
           </View>
         )}
       />
-
-      <FAB
+      {/* <FAB
         icon={() => <Icon name="add" size={25} color="#fff" />}
         style={styles.fab}
         onPress={() => navigation.navigate("AddProduct")}
-      />
+      /> */}
+          <FAB.Group
+            open={open}
+            visible
+            icon={open ? "close" : "plus"}
+            actions={[
+              {
+                icon: "plus",
+                label: "Add Product",
+                onPress: () => navigation.navigate("AddProduct"),
+                style: { backgroundColor: '#2196F3' },
+              },
+              {
+                icon: "archive",
+                label: "Bulk Product",
+                onPress: () => console.log("Pressed notifications"),
+                style: { backgroundColor: '#2196F3' },
+              },
+            ]}
+            onStateChange={onStateChange}
+            style={{
+              // position: 'absolute',
+              // right: 10,
+              // bottom: 20,
+              // elevation: 5, // To give the button a floating effect on Android
+            }}
+            fabStyle={{
+              backgroundColor: '#0c3b73', // This style applies to the main FAB button itself (the one with the "plus" icon)
+            }}
+          />
+
 
       {editmodal && (
         <EditCustomerDetailsModal
@@ -123,6 +146,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#0c3b73",
     justifyContent: "center",
     alignItems: "center",
+  },
+  flatListContainer: {
+    paddingBottom: 70, // Add padding to the bottom of the FlatList content
   },
 });
 

@@ -65,7 +65,7 @@ const ProductDetailsCard = ({ item }) => {
             <View style={styles.Availabletext}>
               <Text style={item.isStock ? styles.inStock : styles.outOfStock}>
                 {item.isStock
-                  ? `In Stock(${item.numberOfProducts})`
+                  ? `In Stock`
                   : "Out of Stock"}
               </Text>
             </View>
@@ -134,6 +134,8 @@ const styles = StyleSheet.create({
   inStock: {
     color: "green",
     fontSize: 12,
+    textAlign:"right",
+    marginRight:8
 
   },
   outOfStock: {
@@ -146,3 +148,7 @@ const styles = StyleSheet.create({
 });
 
 export default ProductDetailsCard;
+
+
+
+// (${item.numberOfProducts})
