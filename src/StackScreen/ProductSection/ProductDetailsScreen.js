@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 // import { ProductItems } from "../../../ProductItems";
 import { readApi } from "../../Util/UtilApi";
 import { useIsFocused } from "@react-navigation/native";
+import FileUploadModal from "../../Components/BulkUpload/FileUploadModal";
 
 const ProductDetailsScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,7 +31,7 @@ const ProductDetailsScreen = ({ navigation }) => {
   const isfocused = useIsFocused();
   const [open, setOpen] = useState(false);
   const onStateChange = (state) => setOpen(state.open);
-
+  const [bulkUploadModalVisible, setBulkUploadModalVisible] = useState(false);
 
   useEffect(() => {
     const getproductdata = async () => {
@@ -59,6 +60,11 @@ const ProductDetailsScreen = ({ navigation }) => {
       seteditmodal(true);
     }
   }, [SelectedEditItem]);
+
+  const handleBulkproduct = () => {
+    setBulkUploadModalVisible(true);
+    <FileUploadModal />;
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -96,36 +102,40 @@ const ProductDetailsScreen = ({ navigation }) => {
         style={styles.fab}
         onPress={() => navigation.navigate("AddProduct")}
       /> */}
-          <FAB.Group
-            open={open}
-            visible
-            icon={open ? "close" : "plus"}
-            actions={[
-              {
-                icon: "plus",
-                label: "Add Product",
-                onPress: () => navigation.navigate("AddProduct"),
-                style: { backgroundColor: '#2196F3' },
-              },
-              {
-                icon: "archive",
-                label: "Bulk Product",
-                onPress: () => console.log("Pressed notifications"),
-                style: { backgroundColor: '#2196F3' },
-              },
-            ]}
-            onStateChange={onStateChange}
-            style={{
-              // position: 'absolute',
-              // right: 10,
-              // bottom: 20,
-              // elevation: 5, // To give the button a floating effect on Android
-            }}
-            fabStyle={{
-              backgroundColor: '#0c3b73', // This style applies to the main FAB button itself (the one with the "plus" icon)
-            }}
-          />
+      <FAB.Group
+        open={open}
+        visible
+        icon={open ? "close" : "plus"}
+        actions={[
+          {
+            icon: "plus",
+            label: "Add Product",
+            onPress: () => navigation.navigate("AddProduct"),
+            style: { backgroundColor: "#2196F3" },
+          },
+          {
+            icon: "archive",
+            label: "Bulk Product",
+            onPress: handleBulkproduct,
+            style: { backgroundColor: "#2196F3" },
+          },
+        ]}
+        onStateChange={onStateChange}
+        style={
+          {
+            // position: 'absolute',
+            // right: 10,
+            // bottom: 20,
+            // elevation: 5, // To give the button a floating effect on Android
+          }
+        }
+        fabStyle={{
+          backgroundColor: "#0c3b73", //
+        }}
+      />
 
+      {/* Bulk Upload Modal */}
+      {bulkUploadModalVisible && <FileUploadModal setBulkUploadModalVisible = {setBulkUploadModalVisible}/>}
 
       {editmodal && (
         <EditCustomerDetailsModal
