@@ -15,6 +15,7 @@ import {
   removeFromCart,
 } from "../../Redux/CartProductRedux/CartSlice";
 import PriceDetails from "../PriceDetails";
+import { fontSize } from "../../Util/UtilApi";
 
 const ItemDataTable = () => {
   const carts = useSelector((state) => state.cart.Carts);
@@ -35,7 +36,7 @@ const ItemDataTable = () => {
         {/* Items List */}
         <FlatList
           data={carts}
-          keyExtractor={(item) => item.id.toString()}  // Using a unique `id` as key
+          keyExtractor={(item) => item.id.toString()} // Using a unique `id` as key
           renderItem={({ item, index }) => (
             <View style={styles.row}>
               <Text style={[styles.cell, styles.smallCell]}>{index + 1}</Text>
@@ -88,7 +89,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 5,
-    fontSize: 12,
+    fontFamily: "Poppins-Regular",
+    fontSize: fontSize.label,
   },
   smallCell: {
     textAlign: "center",

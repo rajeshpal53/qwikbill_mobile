@@ -3,6 +3,7 @@ import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { Card, Avatar } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { fontSize } from "../../Util/UtilApi";
 
 const CustomerDetailsCard = ({ item, onEdit }) => {
   const [Opendetails, setOpendetails] = useState(false);
@@ -16,13 +17,11 @@ const CustomerDetailsCard = ({ item, onEdit }) => {
       <Card.Title
         title={item.Name}
         subtitle={item.Number}
+        titleStyle={styles.title}
+        subtitleStyle={styles.subtitle}
         left={(props) =>
           item.Img !== "null" ? (
-            <Avatar.Image
-              size={50}
-              source={item.Img}
-              style={styles.avatar}
-            />
+            <Avatar.Image size={50} source={item.Img} style={styles.avatar} />
           ) : (
             <Avatar.Text
               size={50}
@@ -63,6 +62,16 @@ const styles = StyleSheet.create({
   editIcon: {
     marginRight: 10, // Adds spacing from the edge
   },
+  title: {
+    fontFamily: "Poppins-Medium",
+    fontSize: fontSize.headingSmall,
+  },
+  subtitle:{
+    fontFamily: "Poppins-Medium",
+    fontSize: fontSize.labelMedium,
+    color:"rgba(0, 0, 0, 0.6)"
+
+  }
 });
 
 export default CustomerDetailsCard;

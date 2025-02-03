@@ -26,6 +26,7 @@ import { ShopDetailContext } from "../Store/ShopDetailContext";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import ItemDataTable from "../Component/Cards/ItemDataTable";
 import CreateInvoiveForm from "../Component/Form/CreateInvoiveForm";
+import { fontFamily, fontSize } from "../Util/UtilApi";
 
 export default function CreateInvoice({ navigation }) {
   const windowWidth = useWindowDimensions().width;
@@ -253,9 +254,11 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   headerText: {
-    fontSize: 16,
     fontWeight: "bold",
-    color: "black",
+    // color: "black",
+    fontWeight: "medium",
+    fontFamily:"Poppins-Medium",
+    fontSize: fontSize.headingSmall
   },
   input: {
     flex: 1,

@@ -14,7 +14,6 @@ import {
   useSpeechRecognitionEvent,
 } from "expo-speech-recognition";
 import { Platform, PermissionsAndroid } from "react-native";
-import OpenmiqModal from "../Modal/Openmicmodal";
 import { Searchbar } from "react-native-paper";
 // import { fontSize } from "../Util/UtilApi";
 // import { useTranslation } from "react-i18next";
@@ -44,7 +43,6 @@ const Searchbarwithmic = ({
       "microphonePermissionGranted"
     );
 
-
     // If permission has already been granted, don't request again
     if (permissionGranted === "true") {
       console.log("Microphone permission already granted.");
@@ -62,10 +60,10 @@ const Searchbarwithmic = ({
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         console.log("Microphone permission granted");
-        await AsyncStorage.setItem('microphonePermissionGranted', 'true');
+        await AsyncStorage.setItem("microphonePermissionGranted", "true");
       } else {
         console.log("Microphone permission denied");
-        await AsyncStorage.setItem('microphonePermissionGranted', 'false');
+        await AsyncStorage.setItem("microphonePermissionGranted", "false");
       }
     }
   };
@@ -88,7 +86,7 @@ const Searchbarwithmic = ({
       }
 
       if (!recognizing) {
-        setsearchmodal(true)
+        setsearchmodal(true);
         // Start speech recognition
         ExpoSpeechRecognitionModule.start({
           lang: language,
@@ -135,8 +133,8 @@ const Searchbarwithmic = ({
 
   useSpeechRecognitionEvent("error", (event) => {
     // console.log("error code:", event.error, "error message:", event.message);
-    showSnackbar(event.message,"error"); // Show error message in the search input
-    console.log( "error message:", event.message);
+    showSnackbar(event.message, "error"); // Show error message in the search input
+    console.log("error message:", event.message);
   });
 
   const isArray = Array.isArray(placeholderText);

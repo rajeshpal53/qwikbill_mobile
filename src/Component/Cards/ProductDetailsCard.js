@@ -9,38 +9,31 @@ import {
 import { Card, Avatar } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { fontSize } from "../../Util/UtilApi";
 
 const ProductDetailsCard = ({ item }) => {
   const [Opendetails, setOpendetails] = useState(false);
   const navigation = useNavigation();
-
+  console.log("Value of item", item);
   return (
     <ScrollView>
       <Card style={styles.card}>
         <View style={styles.container}>
           <View style={styles.ImageView}>
-            {item.Img !== "null" ? (
-              <Avatar.Image
-                size={55}
-                source={{ uri: item.Img }}
-                style={styles.avatar}
-              />
-            ) : (
+            {
               <Avatar.Text
                 size={55}
-                label={item.Name.charAt(0)}
+                label={item?.name.charAt(0)}
                 style={styles.avatarPlaceholder}
               />
-            )}
+            }
           </View>
           <View style={styles.TextView}>
             <Text style={styles.itemname}>{item.name}</Text>
             <Text style={styles.priceText}>
               Selling Price: ${item.sellPrice}
             </Text>
-            <Text style={styles.priceText}>
-              Cost Price: ${item.costPrice}
-            </Text>
+            <Text style={styles.priceText}>Cost Price: ${item.costPrice}</Text>
           </View>
 
           <View style={styles.ButtonTextView}>
@@ -64,9 +57,7 @@ const ProductDetailsCard = ({ item }) => {
             </View>
             <View style={styles.Availabletext}>
               <Text style={item.isStock ? styles.inStock : styles.outOfStock}>
-                {item.isStock
-                  ? `In Stock`
-                  : "Out of Stock"}
+                {item.isStock ? `In Stock` : "Out of Stock"}
               </Text>
             </View>
           </View>
@@ -84,7 +75,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     elevation: 3,
     flex: 1,
-    backgroundColor:"#fff"
+    backgroundColor: "#fff",
 
     // alignContent:"center"
   },
@@ -92,8 +83,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     paddingVertical: 10,
-    marginVertical:5,
-
+    marginVertical: 5,
   },
   ImageView: {
     paddingHorizontal: 7,
@@ -105,7 +95,7 @@ const styles = StyleSheet.create({
   ButtonTextView: {
     justifyContent: "space-between",
     flex: 1,
-    marginRight:5
+    marginRight: 5,
     // borderWidth: 2,
   },
   ButtonView: {
@@ -113,15 +103,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-end",
   },
-  itemname:{
-    fontWeight:"bold",
-    marginVertical:2,
+  itemname: {
+    fontWeight: "bold",
+    marginVertical: 2,
+    fontFamily: "Poppins-Medium",
+    fontSize: fontSize.labelLarge,
   },
   avatar: {
-    backgroundColor: "black",
+    // backgroundColor: "black",
   },
   avatarPlaceholder: {
-    backgroundColor: "#ccc",
+    // backgroundColor: "#ccc",
   },
   iconButton: {
     marginRight: 10, // Adds spacing between buttons
@@ -129,18 +121,22 @@ const styles = StyleSheet.create({
   priceText: {
     fontSize: 14,
     color: "#555",
-
+    fontFamily: "Poppins-Medium",
+    fontSize: fontSize.labelMedium,
   },
   inStock: {
     color: "green",
-    fontSize: 12,
-    textAlign:"right",
-    marginRight:8
-
+    // fontSize: 12,
+    textAlign: "right",
+    marginRight: 8,
+    fontFamily: "Poppins-Medium",
+    fontSize: fontSize.label,
   },
   outOfStock: {
     color: "red",
-    fontSize: 12,
+    // fontSize: 12,
+    fontFamily: "Poppins-Medium",
+    fontSize: fontSize.label,
   },
   //   Availabletext:{
   //     marginRight:2
@@ -148,7 +144,5 @@ const styles = StyleSheet.create({
 });
 
 export default ProductDetailsCard;
-
-
 
 // (${item.numberOfProducts})

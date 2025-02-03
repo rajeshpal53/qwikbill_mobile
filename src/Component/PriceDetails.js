@@ -7,8 +7,9 @@ import {
 import { useEffect, useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import CustomDropdown from "./CustomeDropdown";
+import { fontSize } from "../Util/UtilApi";
 
-const PriceDetails = ({setPaymentStatus}) => {
+const PriceDetails = ({ setPaymentStatus }) => {
   const dispatch = useDispatch();
   const totalPrice = useSelector((state) => state.cart.totalPrice);
   const afterdiscount = useSelector((state) => state.cart.afterdiscount);
@@ -18,10 +19,9 @@ const PriceDetails = ({setPaymentStatus}) => {
   const [selectedStatus, setSelectedStatus] = useState("Select payment");
   const paymentStatuses = ["Unpaid", "Paid", "Partially Paid"];
 
-
-  useEffect(()=>{
-    setPaymentStatus(selectedStatus)
-  },[selectedStatus])
+  useEffect(() => {
+    setPaymentStatus(selectedStatus);
+  }, [selectedStatus]);
 
   const handleDiscountChange = (value) => {
     const parsedDiscount =
@@ -96,7 +96,7 @@ const PriceDetails = ({setPaymentStatus}) => {
       {/* Total Amount  */}
       <View style={styles.priceView}>
         <Text style={styles.Totallabel}>Total Amount</Text>
-        <Text style={styles.value}>{`$ ${afterdiscount.toFixed(2)}`}</Text>
+        <Text style={[styles.value,{ fontSize: fontSize.labelLarge }]}>{`$ ${afterdiscount.toFixed(2)}`}</Text>
       </View>
     </View>
   );
@@ -112,10 +112,11 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   headerText: {
-    fontSize: 18,
-    fontWeight: "bold",
+    fontWeight:"bold",
     marginBottom: 10,
     textAlign: "center",
+    fontFamily: "Poppins-Medium",
+    fontSize: fontSize.labelLarge,
   },
   priceView: {
     flexDirection: "row",
@@ -126,18 +127,23 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   label: {
-    fontSize: 16,
     color: "#333",
+    fontFamily: "Poppins-Medium",
+    fontSize: fontSize.labelMedium,
   },
   value: {
-    fontSize: 16,
+    // fontSize: 16,
     fontWeight: "bold",
     color: "#333",
+    fontFamily: "Poppins-Medium",
+    fontSize: fontSize.labelMedium,
   },
   Totallabel: {
-    fontSize: 18,
+    // fontSize: 18,
     color: "#333",
     fontWeight: "bold",
+    fontFamily: "Poppins-Medium",
+    fontSize: fontSize.labelLarge,
   },
   discountInputWrapper: {
     flex: 1,
@@ -158,7 +164,10 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ddd",
   },
 
-  input: {},
+  input: {
+    fontFamily: "Poppins-Medium",
+    fontSize: fontSize.labelMedium,
+  },
 });
 
 export default PriceDetails;

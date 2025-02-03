@@ -20,9 +20,6 @@ function DropDownList({options}) {
   console.log(shopDetails, "newShopDetails");
   const pickerRef = useRef();
 
-  console.log("Vakue is option", options)
-
-
   // async function fetchOptions() {
   //   try {
   //     setIsLoading(true);
