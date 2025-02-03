@@ -10,8 +10,9 @@ const FileUploadModal = ({ visible, onUpload, setBulkUploadModalVisible }) => {
   // Function to pick a file
   const pickFile = async () => {
     try {
+      // Restrict file picker to .xlsx files
       const result = await DocumentPicker.getDocumentAsync({
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // Only XLSX
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
 
       console.log("Result:", result);
@@ -19,11 +20,9 @@ const FileUploadModal = ({ visible, onUpload, setBulkUploadModalVisible }) => {
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const file = result.assets[0];
 
-        // Validate XLSX file extension
+        // Validate XLSX file extension (further check for files that might bypass the type)
         if (file.name.endsWith(".xlsx")) {
           setSelectedFile(file);
-
-          console.log("File selected:", file);
         } else {
           console.log("Invalid file type. Please select an XLSX file.");
           alert("Invalid file type. Please select an XLSX file.");
@@ -77,7 +76,6 @@ const FileUploadModal = ({ visible, onUpload, setBulkUploadModalVisible }) => {
   // };
 
   const handleCloseModal = () => {
-    onClose();
     setBulkUploadModalVisible(false);
   };
   return (

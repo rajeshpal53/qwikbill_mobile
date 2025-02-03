@@ -65,3 +65,11 @@ export const updateApi = async (endpoint, data, headers) => {
     labelXSmall:9,
     labelXXSmall:8,
   };
+
+
+  export const fontFamily = {
+    regular: "Poppins-Regular",
+    bold: "Poppins-Bold",
+    medium: "Poppins-Medium",
+    thin: "Poppins-Thin",
+  };

@@ -14,7 +14,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import ItemDataTable from "../Cards/ItemDataTable";
 import { useDispatch, useSelector } from "react-redux";
-import { readApi } from "../../Util/UtilApi";
+import { fontSize, readApi } from "../../Util/UtilApi";
 import { clearCart } from "../../Redux/CartProductRedux/CartSlice";
 import PriceDetails from "../PriceDetails";
 import UserDataContext from "../../Store/UserDataContext";
@@ -210,7 +210,7 @@ const CreateInvoiceForm = ({}) => {
                 style={styles.addButton}
                 onPress={() => navigation.navigate("AllItemProduct")}
               >
-                <MaterialIcons name="add" size={24} color="black" />
+                <MaterialIcons name="add" size={20} color="black" />
                 <Text style={styles.addButtonText}>Add Items</Text>
               </TouchableOpacity>
             </View>
@@ -252,16 +252,19 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
   },
   addButtonText: {
-    marginLeft: 5,
-    fontSize: 16,
+    marginLeft: 2,
+    // fontSize: 16,
     fontWeight: "bold",
-    color: "black",
+    // color: "black",
+    fontFamily:"Poppins-Medium",
+    fontSize:fontSize.labelLarge
   },
   input: {
     flex: 1,
     backgroundColor: "#f9f9f9",
     height: 45,
     marginTop: 10,
+    fontFamily:"Poppins-Medium",
   },
   errorText: {
     color: "red",
@@ -277,8 +280,10 @@ const styles = StyleSheet.create({
   },
   submitButtonText: {
     color: "white",
-    fontWeight: "bold",
-    fontSize: 16,
+    // fontWeight: "bold",
+    // fontSize: 16,
+    fontFamily:"Poppins-Regular",
+    fontSize:fontSize.labelLarge
   },
 });
 

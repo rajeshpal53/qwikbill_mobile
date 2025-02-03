@@ -10,23 +10,26 @@ import {
 import { Card } from "react-native-paper";
 import IncAndDicButton from "../../Redux/IncAndDicButton";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart, removeFromCart } from "../../Redux/CartProductRedux/CartSlice";
+import {
+  addToCart,
+  removeFromCart,
+} from "../../Redux/CartProductRedux/CartSlice";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { fontSize } from "../../Util/UtilApi";
 
 const ProductCardDetails = ({ item }) => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.Carts);
-  const isInCart = cartItems.some((cartItem) => cartItem.id === item.id); 
+  const isInCart = cartItems.some((cartItem) => cartItem.id === item.id);
   const inCart = cartItems.find((cartItem) => cartItem.id === item.id) || null;
-
 
   const handleAddToCart = (item) => {
     dispatch(addToCart(item));
   };
 
-  const handleDeletetocart = (item) =>{
-    dispatch(removeFromCart(item?.id))
-  }
+  const handleDeletetocart = (item) => {
+    dispatch(removeFromCart(item?.id));
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -50,14 +53,14 @@ const ProductCardDetails = ({ item }) => {
                     justifyContent: "space-between",
                     flex: 1,
                     alignItems: "center",
-                    marginVertical:5
+                    marginVertical: 5,
                   }}
                 >
                   {/* Remove from Cart Button */}
                   <View>
                     <TouchableOpacity
                       style={styles.removeButton}
-                      onPress={()=>handleDeletetocart(item)}
+                      onPress={() => handleDeletetocart(item)}
                     >
                       <MaterialIcons name="delete" size={25} color="red" />
                     </TouchableOpacity>
@@ -69,9 +72,7 @@ const ProductCardDetails = ({ item }) => {
                     }}
                   >
                     {/* Increment/Decrement Controls */}
-                    <IncAndDicButton
-                      item = {inCart}
-                    />
+                    <IncAndDicButton item={inCart} />
                   </View>
                 </View>
               </>
@@ -119,22 +120,26 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   productName: {
-    fontSize: 18,
     fontWeight: "bold",
-    color: "#333",
+    // color: "#333",
     marginVertical: 5,
+    fontFamily: "Poppins-Bold",
+    fontSize: fontSize.headingSmall,
   },
   productInfo: {
-    fontSize: 14,
     color: "#666",
     marginTop: 4,
     marginVertical: 2,
+    fontFamily: "Poppins-Medium",
+    fontSize: fontSize.labelMedium,
   },
   productPrice: {
     fontSize: 16,
-    fontWeight: "bold",
+    // fontWeight: "bold",
     color: "#000",
     marginVertical: 5,
+    fontFamily: "Poppins-Medium",
+    fontSize: fontSize.labelLarge,
   },
   textButtonView: {
     marginTop: 10,
@@ -150,8 +155,10 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     color: "#fff",
-    fontWeight: "bold",
-    fontSize: 14,
+    // fontWeight: "bold",
+    // fontSize: 14,
+    fontSize: fontSize.labelMedium,
+    fontFamily: "Poppins-Medium",
   },
   quantityControlContainer: {
     // flexDirection: "row",

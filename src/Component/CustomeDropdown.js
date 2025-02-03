@@ -1,7 +1,19 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from 'react-native';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  FlatList,
+} from "react-native";
+import { fontSize } from "../Util/UtilApi";
 
-const CustomDropdown = ({paymentStatuses, setSelectedStatus, selectedStatus}) => {
+const CustomDropdown = ({
+  paymentStatuses,
+  setSelectedStatus,
+  selectedStatus,
+}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   // const [selectedStatus, setSelectedStatus] = useState('Select payment');
   // const paymentStatuses = ['Unpaid', 'Paid', 'Partially Paid'];
@@ -54,32 +66,32 @@ const CustomDropdown = ({paymentStatuses, setSelectedStatus, selectedStatus}) =>
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
-    width:"60%",
-
+    backgroundColor: "#fff",
+    width: "60%",
   },
 
   dropdownButton: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     justifyContent: "flex-end",
     alignItems: "flex-end",
-    paddingVertical:2,
-    borderRadius:10
-
+    paddingVertical: 2,
+    borderRadius: 10,
   },
   dropdownText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+    // fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+    fontFamily: "Poppins-Medium",
+    fontSize: fontSize.labelMedium,
   },
   modalOverlay: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)', // Overlay background color
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)", // Overlay background color
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     width: 250,
     borderRadius: 8,
     padding: 10,
@@ -88,11 +100,11 @@ const styles = StyleSheet.create({
   modalItem: {
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    borderBottomColor: "#ddd",
   },
   modalItemText: {
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
 });
 
