@@ -62,9 +62,6 @@ export default function HomeScreen({ navigation }) {
   const { userData } = useContext(UserDataContext);
   const isFocused = useIsFocused();
 
-  console.log("Data of Vender details ", vendorsDetails);
-  console.log("Data of user details ", userData?.user?.id);
-
   useEffect(() => {
     const fetchVendorData = async () => {
       try {

@@ -49,7 +49,7 @@ const apiRequest = async (method, url, data = null, headers) => {
 
 // UPDATE
 export const updateApi = async (endpoint, data, headers) => {
-    return apiRequest('patch', endpoint, data, headers);
+    return apiRequest('put', endpoint, data, headers);
   };
 
   // DELETE

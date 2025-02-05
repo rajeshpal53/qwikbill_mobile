@@ -31,17 +31,19 @@ const TaxModel = ({
   navigation,
   setRefresh,
   setOpenTax,
+  setEditData,
 }) => {
   const { showSnackbar } = useSnackbar();
   const initialValues = {
-    taxName: data?.taxName || "",
-    taxValue: data?.taxValue.toString() || "",
+    taxName: data?.code || "",
+    taxValue: data?.taxrate || "",
     enable: data?.enable || "enabled",
     productname: data?.productname || "",
   };
-
+  console.log("Modal data", data);
   const Handleclosemodal = () => {
     setOpenTax(false);
+    setEditData(null);
   };
 
   return (
@@ -54,8 +56,10 @@ const TaxModel = ({
               validationSchema={validationSchema}
               onSubmit={async (values, { resetForm }) => {
                 const postData = {
-                  ...values,
-                  isDefault: false,
+                  code: values?.taxName, // assuming hsnCode is a field in the form
+                  taxrate: values?.taxValue, // another example
+                  productname: values?.productname, // for example, a rate or tax field
+                  isDefault: false, // if this is a necessary field for your API
                 };
                 console.log("This is a value : ", postData);
                 if (data) {
@@ -65,8 +69,9 @@ const TaxModel = ({
                       postData
                     );
                     console.log("response is , ", response);
+                    setOpenTax(false);
+                    setEditData(null);
                     showSnackbar("HSNCODE updated successfully", "success");
-                    navigation.goBack();
                     resetForm();
                   } catch (error) {
                     console.log("error is ", error);
@@ -81,7 +86,8 @@ const TaxModel = ({
                       postData
                     );
                     console.log("create a HSN code", response);
-                    navigation.goBack();
+                    setOpenTax(false);
+                    setEditData(null);
                     resetForm();
                     showSnackbar("HSNCODE added successfully", "success");
                   } catch (error) {

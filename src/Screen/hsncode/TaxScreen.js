@@ -1,25 +1,7 @@
-// import React, { useState } from 'react'
-// import { View } from 'react-native'
-// import { Button, Text } from 'react-native-paper'
-// import TaxModel from './TaxModel'
-// function TaxScreen() {
-//     const[isModalVisible,setIsModalVisible]=useState(false)
-//    const handleOpen=()=> setIsModalVisible(true)
-//     const handleClose = () => setIsModalVisible(false);
-//   return (
-//     <View>
-//         <Button onPress={handleOpen}>Add hsncode</Button>
-//         <TaxModel visible={isModalVisible} close={handleClose}/>
-
-//     </View>
-//   )
-// }
-
-// export default TaxScreen
 import React, { useState, useEffect, useContext } from "react";
 import { Text, ActivityIndicator, FAB } from "react-native-paper";
 import Icon from "react-native-vector-icons/Ionicons";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useIsFocused } from "@react-navigation/native";
 import { AuthContext } from "../../Store/AuthContext";
@@ -44,7 +26,7 @@ const fetchSearchData = async (searchQuery) => {
 export default function TaxScreen({ navigation }) {
   const [taxes, setTaxes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [deleteId, setDeleteId] = useState();
+  // const [deleteId, setDeleteId] = useState();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const isFocused = useIsFocused();
   const { showSnackbar } = useSnackbar();
@@ -71,10 +53,23 @@ export default function TaxScreen({ navigation }) {
         console.error("error", error);
       } finally {
         setIsLoading(false);
+        setRefresh(false);
       }
     };
     fetchData();
-  }, [isFocused]);
+  }, [isFocused, refresh]);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator
+          animating={isLoading}
+          color={"#FFC107"}
+          size="large"
+        />
+      </View>
+    );
+  }
 
   // useEffect(() => {
   //   const fetchSearchingData = async () => {
@@ -86,17 +81,18 @@ export default function TaxScreen({ navigation }) {
   //   fetchSearchingData();
   // }, [searchQuery]);
 
-  if (isLoading) {
-    return <ActivityIndicator size="large" />;
-  }
-  const handleDelete = async (item) => {
-    const updatedtaxes = taxes.filter((item) => item._id !== deleteId);
-
+  const handleDelete = async () => {
+    console.log("editData.id", editData.id);
     try {
-      const response = await deleteApi(`api/taxes/delete/${deleteId}`);
+      const response = await deleteApi(`qapi/hsn-codes/${editData}`);
+      console.log("Value of responce", response);
+
+      const updatedTaxes = taxes.filter((item) => item.id !== response?.id);
+      setTaxes(updatedTaxes); // Update the state with the filtered list
       setIsModalVisible(false);
+      setEditData(null);
+      setRefresh(true);
       showSnackbar("Tax delete successfully", "success");
-      setTaxes(updatedtaxes);
     } catch (error) {
       console.error("Error:", error);
       showSnackbar("Failed to delete the Tax", "error");
@@ -104,61 +100,71 @@ export default function TaxScreen({ navigation }) {
   };
 
   const handleEdit = (item) => {
-    console.log("item under edit ", item)
+    console.log("item under edit ", item);
     setEditData(item);
     handleOpen();
   };
-
-  const handleView = (id) => {
-    // navigation.navigate("CustomerDetail", { customerId: id });
-  };
-
   const setModalVisible = (item) => {
-    setDeleteId(item._id);
+    console.log("Item data is ", item);
+    setEditData(item?.id);
     setIsModalVisible(true);
   };
 
-  const renderExpandedContent = (item) => (
-    <View>
-      <Text style={{ color: "#777", fontSize: 12 }}>
-        {" "}
-        Default :{item.isDefault ? "Yes" : "No"}
-      </Text>
-    </View>
-  );
+  // const handleView = (id) => {
+  //   // navigation.navigate("CustomerDetail", { customerId: id });
+  // };
+
+  // const renderExpandedContent = (item) => (
+  //   <View>
+  //     <Text style={{ color: "#777", fontSize: 12 }}>
+  //       {" "}
+  //       Default :{item.isDefault ? "Yes" : "No"}
+  //     </Text>
+  //   </View>
+  // );
 
   // const setModalVisible = (item) => {
   //   setDeleteId(item._id);
   //   setIsModalVisible(true);
   // };
 
-  const menuItems = [
-    // { title: "View", onPress: (id) => handleView(id) },
-    { title: "Edit", onPress: (item) => handleEdit(item) },
-    { title: "Delete", onPress: (item) => setModalVisible(item) },
-  ];
+  // const menuItems = [
+  //   // { title: "View", onPress: (id) => handleView(id) },
+  //   { title: "Edit", onPress: (item) => handleEdit(item) },
+  //   { title: "Delete", onPress: (item) => setModalVisible(item) },
+  // ];
 
   return (
     <>
-      <View style={styles.container}>
-        <TaxModel
-          visible={openTax}
-          data={editData}
-          navigation={navigation}
-          setRefresh={setRefresh}
-          setOpenTax={setOpenTax}
-        />
-        <ItemList
-          data={taxes}
-          titleKey="taxName"
-          subtitleKey="taxValue"
-          onDelete={setIsModalVisible}
-          onEdit={handleEdit}
-          onView={handleView}
-          expandedItems={renderExpandedContent}
-          menuItems={menuItems}
-        />
-      </View>
+      <FlatList
+        data={taxes}
+        renderItem={({ item }) => (
+          <ItemList
+            item={item}
+            onEdit={() => handleEdit(item)}
+            onDelete={() => setModalVisible(item)}
+          />
+        )}
+        keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={styles.flatListContainer}
+        ListEmptyComponent={() => (
+          <View style={{ alignItems: "center", marginTop: 20 }}>
+            <Text style={{ fontSize: 16, color: "gray" }}>
+              No products found.
+            </Text>
+          </View>
+        )}
+      />
+
+      <TaxModel
+        visible={openTax}
+        data={editData}
+        navigation={navigation}
+        setRefresh={setRefresh}
+        setOpenTax={setOpenTax}
+        setEditData={setEditData}
+      />
+
       <FAB
         icon={() => <Icon name="add-outline" size={25} color="black" />}
         theme={{ colors: { primary: "#fff" } }}
@@ -178,16 +184,6 @@ export default function TaxScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   fab: {
-    // position: "absolute",
-    // margin: 13,
-    // right: 0,
-    // bottom: 0,
-    // // padding:0,
-    // color: "black",
-    // // backgroundColor: "#96214e",
-    // zIndex: 100,
-    // color: "white",
-
     position: "absolute",
     right: 25,
     bottom: 25,

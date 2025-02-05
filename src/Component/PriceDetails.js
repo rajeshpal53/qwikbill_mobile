@@ -50,7 +50,7 @@ const PriceDetails = ({ setPaymentStatus }) => {
       {/* Price  */}
       <View style={styles.priceView}>
         <Text style={styles.label}>Price ({carts.length})</Text>
-        <Text style={styles.value}>{`$ ${totalPrice.toFixed(2)}`}</Text>
+        <Text style={styles.value}>{`₹ ${totalPrice.toFixed(2)}`}</Text>
       </View>
 
       {/* Discount  */}
@@ -96,7 +96,7 @@ const PriceDetails = ({ setPaymentStatus }) => {
       {/* Total Amount  */}
       <View style={styles.priceView}>
         <Text style={styles.Totallabel}>Total Amount</Text>
-        <Text style={[styles.value,{ fontSize: fontSize.labelLarge }]}>{`$ ${afterdiscount.toFixed(2)}`}</Text>
+        <Text style={[styles.value,{ fontSize: fontSize.labelLarge }]}>{`₹ ${afterdiscount.toFixed(2)}`}</Text>
       </View>
     </View>
   );
