@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   RefreshControl,
-  Image
+  Image,
 } from "react-native";
 import { Avatar, Button, Card, Menu, Text } from "react-native-paper";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -24,6 +24,8 @@ export default function ItemList({
   const [visible, setVisible] = useState(false);
   const [expandedId, setExpandedId] = useState(null);
   const [currentItem, setCurrentItem] = useState(null);
+
+  console.log(data, "Value of data");
 
   console.log("data is , ", typeof data);
   const toggleExpand = (id) => {
@@ -85,7 +87,9 @@ export default function ItemList({
               />
 
               <View style={styles.itemContent}>
-                <Text style={styles.title}>{item[titleKey]?.toUpperCase()}</Text>
+                <Text style={styles.title}>
+                  {item[titleKey]?.toUpperCase()}
+                </Text>
                 <Text style={styles.subtitle}>{item[subtitleKey]}</Text>
                 {console.log("item --- , ", item[subtitleKey])}
                 {isExpanded && expandedItems(item)}
@@ -178,24 +182,43 @@ export default function ItemList({
       </View>
     );
   };
-  return data.length > 0 ? (
+  return (
     <FlatList
       data={data}
-      style={{ backgroundColor: "#fff", marginTop: 10 }}
-      renderItem={renderInternalItem}
-      keyExtractor={(item, index) => index}
+      renderItem={({ item, index }) => renderInternalItem({ item, index })}
+      keyExtractor={(item) => item.id.toString()}
+      contentContainerStyle={styles.flatListContainer}
+      ListEmptyComponent={() => (
+        <View style={{ alignItems: "center", backgroundColor: "white" }}>
+          <Image
+            source={require("../../../assets/noDataFoundImage2.jpg")}
+            style={{ width: 300, height: 300 }}
+          ></Image>
+          <Text variant="titleLarge" style={{ color: "#555" }}>
+            No data found
+          </Text>
+        </View>
+      )}
     />
-  ) : (
-    <View style={{alignItems:"center",backgroundColor:"white"}}>
-      <Image
-        source={require("../../../assets/noDataFoundImage2.jpg")}
-        style={{width:300, height:300}}
-      ></Image>
-      <Text variant="titleLarge" style={{ color: "#555" }}>
-        No data found
-      </Text>
-    </View>
   );
+
+  //   <FlatList
+  //     data={data}
+  //     style={{ backgroundColor: "#fff", marginTop: 10 }}
+  //     renderItem={renderInternalItem}
+  //     keyExtractor={(item, index) => index}
+  //   />
+  // ) : (
+  //   <View style={{ alignItems: "center", backgroundColor: "white" }}>
+  //     <Image
+  //       source={require("../../../assets/noDataFoundImage2.jpg")}
+  //       style={{ width: 300, height: 300 }}
+  //     ></Image>
+  //     <Text variant="titleLarge" style={{ color: "#555" }}>
+  //       No data found
+  //     </Text>
+  //   </View>
+  // );
 }
 
 const styles = StyleSheet.create({
@@ -212,7 +235,7 @@ const styles = StyleSheet.create({
   },
   itemContent: {
     flex: 1,
-    backgroundColor:"white"
+    backgroundColor: "white",
     // marginLeft: 20,
     // backgroundColor:"lightblue"
   },

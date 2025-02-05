@@ -1,34 +1,28 @@
-
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import React, { useRef, useState } from "react";
 import { Checkbox, Divider, TextInput } from "react-native-paper";
 import { useTranslation } from "react-i18next";
-
 import { ScrollView } from "react-native-gesture-handler";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import ServiceImagePicker from "../../../../Components/ServiceImagePicker";
-// import { useLocation } from "../../../../Store/LocationContext";
-// import { useFontsLoaded } from "../../../../../Store/FontProvider";
-// import GenericDropdown from "../../../../UI/DropDown/GenericDropDown";
 import GenericSwitch from "../../../../UI/GenericSwitch";
 import { useSnackbar } from "../../../../Store/SnackbarContext";
-// import { actions, RichEditor, RichToolbar } from "react-native-pell-rich-editor";
-import {actions, RichEditor, RichToolbar} from "react-native-pell-rich-editor";
+import {
+  actions,
+  RichEditor,
+  RichToolbar,
+} from "react-native-pell-rich-editor";
 
 const ProviderServiceForm = ({
-  title,
   handleBlur,
   handleChange,
   setFieldValue,
   values,
   touched,
   errors,
-  getLatAndLong,
-  navigation,
+
   isAdmin,
-  richText,
-  editorContent,
-  setEditorContent,
+
   textInputMode,
   shopImageField,
 }) => {
@@ -38,16 +32,18 @@ const ProviderServiceForm = ({
   const scrollViewRef = useRef();
   // const { getAddressAllDetails } = useLocation();
   const { showSnackbar } = useSnackbar();
+  const richText = useRef();
+  const [editorContent, setEditorContent] = useState("");
 
-  const handleHeightChange = (height) => {
-    if (height > editorHeight) {
-      // If editor grows in height, scroll to bottom
-      setEditorHeight(height);
-      scrollViewRef.current?.scrollToEnd({ animated: true });
-    }
-  };
+  // const handleHeightChange = (height) => {
+  //   if (height > editorHeight) {
+  //     // If editor grows in height, scroll to bottom
+  //     setEditorHeight(height);
+  //     scrollViewRef.current?.scrollToEnd({ animated: true });
+  //   }
+  // };
 
-  console.log("hellow service")
+  console.log("hellow service");
 
   const setLocationFields = async (data, setFieldValue) => {
     if (data?.latitude && data?.longitude) {
@@ -63,15 +59,17 @@ const ProviderServiceForm = ({
       setFieldValue("location", data?.showAddress);
 
       showSnackbar("Location Selected Successfully", "success");
-      
     }
   };
 
   const showPopUpMessage = (massage, msgType) => {
+    showSnackbar(massage, msgType);
+  };
 
-    showSnackbar(massage, msgType)
-  }
-
+  const handleEditorChange = (content) => {
+    setEditorContent(content); // Update local state
+    setFieldValue("editorContent", content); // Update Formik state (if needed)
+  };
 
   return (
     <View style={{ gap: 10 }}>
@@ -122,6 +120,44 @@ const ProviderServiceForm = ({
         )}
       </View>
 
+      <View style={{ width: "100%" }}>
+        <RichToolbar
+          editor={richText}
+          actions={[
+            actions.setBold,
+            actions.setItalic,
+            actions.setUnderline,
+            actions.insertBulletsList,
+            actions.insertOrderedList,
+            actions.insertLink,
+            actions.undo,
+            actions.redo,
+          ]}
+        />
+      </View>
+
+      {/* <ScrollView
+        ref={scrollViewRef}
+        nestedScrollEnabled={true}
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
+        <RichEditor
+          ref={richText}
+          placeholder="Start writing here..."
+          onChange={handleEditorChange}
+          initialContentHTML={editorContent}
+          // initialContentHTML={editorContent || ""}
+          // onChange={(text) => {
+          //   setEditorContent(text);
+          //   // handleContentChange();
+          // }}
+          // // scrollEnabled={true}
+          // // scrollEnabled={true}
+          // onHeightChange={handleHeightChange}
+          // onScroll={() => console.log("scrolling ")}
+        />
+      </ScrollView> */}
+
       {/* <View>
         <TextInput
           label={t("Kilometer Radius")}
@@ -141,7 +177,7 @@ const ProviderServiceForm = ({
 
       {/* <View>
         {/* {console.log("values address", values.showAddress)} */}
-        {/* <TextInput
+      {/* <TextInput
           label={t("Address Details")}
           mode={textInputMode}
           style={{ backgroundColor: "transparent" }}
@@ -150,10 +186,10 @@ const ProviderServiceForm = ({
           value={values.showAddress}
           // error={touched.location && errors.location}
         /> */}
-        {/* {touched.location && errors.location && (
+      {/* {touched.location && errors.location && (
           <Text style={{ color: "red" }}>{errors.location}</Text>
         )} */}
-      {/* </View> */} 
+      {/* </View> */}
 
       {/* <View>
         <TextInput
@@ -221,19 +257,23 @@ const ProviderServiceForm = ({
       </View> */}
       {/* Checkboxes */}
 
-      {isAdmin && <View style={{
-        backgroundColor:"#fff", 
-        elevation:5, 
-        paddingHorizontal:5,
-        gap:8
-        }}>
-        <View style={{ 
-          flexDirection: "row", 
-          alignItems: "center", 
-          justifyContent:"space-between" 
-          }}>
-
-          {/* <GenericSwitch
+      {isAdmin && (
+        <View
+          style={{
+            backgroundColor: "#fff",
+            elevation: 5,
+            paddingHorizontal: 5,
+            gap: 8,
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            {/* <GenericSwitch
             label="Is Online"
             value={values?.isOnline}
             onValueChange={(newValue) => {
@@ -244,8 +284,7 @@ const ProviderServiceForm = ({
             labelStyle={{ fontFamily: "Poppins-Regular" }}
           /> */}
 
-          {isAdmin && (
-  
+            {isAdmin && (
               <GenericSwitch
                 label="Approved"
                 value={values?.isApproved}
@@ -256,12 +295,11 @@ const ProviderServiceForm = ({
                 containerStyle={styles.switchComponentStyle}
                 labelStyle={{ fontFamily: "Poppins-Regular" }}
               />
+            )}
+          </View>
 
-            )} 
-        </View>
-
-          <Divider style={{width:"70%", height:0.2, alignSelf:"center"}} />
-        {/* <View
+          <Divider style={{ width: "70%", height: 0.2, alignSelf: "center" }} />
+          {/* <View
           style={{
             flexDirection: "row",
             alignItems: "center",
@@ -292,9 +330,9 @@ const ProviderServiceForm = ({
           />
           )}
         </View> */}
-      </View>}
+        </View>
+      )}
 
-         
       {/* <View style={{ padding: 5 }}>
         <View
           style={{
@@ -343,11 +381,9 @@ const ProviderServiceForm = ({
             />
           </ScrollView>
 
- 
+
         </View>
       </View> */}
-
-      
     </View>
   );
 };

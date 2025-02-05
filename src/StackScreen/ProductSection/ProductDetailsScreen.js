@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { FAB, Searchbar, Portal, PaperProvider } from "react-native-paper";
+import { FAB, Searchbar, Portal, PaperProvider, ActivityIndicator } from "react-native-paper";
 import Icon from "react-native-vector-icons/Ionicons";
 import CustomerDetailsCard from "../../Component/Cards/CustomerDetailsCard";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { readApi } from "../../Util/UtilApi";
 import { useIsFocused } from "@react-navigation/native";
 import FileUploadModal from "../../Components/BulkUpload/FileUploadModal";
-
+//
 const ProductDetailsScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchmodal, setsearchmodal] = useState(false); // State for modal visibility
@@ -32,16 +32,20 @@ const ProductDetailsScreen = ({ navigation }) => {
   const [open, setOpen] = useState(false);
   const onStateChange = (state) => setOpen(state.open);
   const [bulkUploadModalVisible, setBulkUploadModalVisible] = useState(false);
+  const [loader, setloader] = useState(false);
 
   useEffect(() => {
     const getproductdata = async () => {
       try {
+        setloader(true)
         const api = `qapi/products/`;
         const response = await readApi(api);
         dispatch(setProductitem(response));
         SetProductData(response);
       } catch (error) {
         console.log("Unable to fetch Data", error);
+      }finally{
+        setloader(false)
       }
     };
     getproductdata();
@@ -66,6 +70,14 @@ const ProductDetailsScreen = ({ navigation }) => {
     <FileUploadModal />;
   };
 
+  if (loader) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator animating={loader} color={"#FFC107"} size="large" />
+      </View>
+    );
+  }
+
   return (
     <View style={{ flex: 1 }}>
       <Searchbarwithmic
@@ -85,6 +97,7 @@ const ProductDetailsScreen = ({ navigation }) => {
             index={index}
             navigation={navigation}
             onEdit={() => openEditModal(item)}
+            setloader
           />
         )}
         keyExtractor={(item) => item.id.toString()}
