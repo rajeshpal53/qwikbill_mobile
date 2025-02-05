@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { RadioButton, Text, TextInput } from "react-native-paper";
 import { Formik } from "formik";
@@ -11,38 +11,50 @@ const AddProduct = ({ navigation }) => {
   const [showOptions, setShowOptions] = useState(false);
   const [showHsnOptions, setShowHsnOptions] = useState(false);
 
+
   const validationSchema = Yup.object().shape({
     ProductCategory: Yup.string().required("Product category is required"),
     ProductName: Yup.string().required("Product name is required"),
     SellingPrice: Yup.number()
       .required("Selling price is required")
       .typeError("Selling price must be a number"),
-    taxValue: Yup.number().typeError("Tax value must be a number"),
+    TaxRate: Yup.number().typeError("Tax value must be a number"),
     PurchasePrice: Yup.number()
       .required("Purchase price is required")
       .typeError("Purchase price must be a number"),
-    // hsncode: Yup.string().required("HSN code is required"),
     IsStockData: Yup.boolean().nullable().required("Stock status is required"),
   });
 
-  // Fetch HSN Codes
-  // const fetchHsnOptions = async (input) => {
-  //   const response = await readApi(
-  //     `api/taxes/list?fields=taxName&q=${input}&page=1&items=10`
-  //   );
-  //   const data = await response;
-  //   return data.result; // Adjust according to your API response
-  // };
+
+  const HandleHsnCode = async (hsncode, setFieldValue) => {
+    try {
+      const api = `qapi/hsn-codes`;
+      const response = await readApi(api);
+      if (response) {
+        const tex = response.filter((item) => item?.code === hsncode);
+        console.log("Match data is ", tex);
+        if (tex.length > 0) {
+          setFieldValue("TaxRate", tex[0]?.taxrate);
+        } else {
+          console.log("No matching HSN code found");
+          setFieldValue("TaxRate", "");
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching User data:", error);
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={{}}>
       <Formik
+      enableReinitialize={true}
         initialValues={{
           ProductCategory: "",
           ProductName: "",
           PurchasePrice: "",
           SellingPrice: "",
-          TaxRate: "",
+          TaxRate:  "",
           HSNCode: "",
           IsStockData: null,
         }}
@@ -137,17 +149,8 @@ const AddProduct = ({ navigation }) => {
               label="HSN Code"
               mode="outlined"
               style={styles.input}
-              onChangeText={async (text) => {
-                handleChange("HSNCode")(text);
-                if (text.length > 1) {
-                  const fetchedOptions = await fetchHsnOptions(text);
-                  setOptions(fetchedOptions);
-                  setShowHsnOptions(true);
-                } else {
-                  setShowHsnOptions(false);
-                }
-              }}
-              onBlur={handleBlur("HSNCode")}
+              onChangeText={handleChange("HSNCode")}
+              onBlur={() => HandleHsnCode(values?.HSNCode, setFieldValue)}
               value={values.HSNCode}
               error={touched.HSNCode && !!errors.HSNCode}
             />
@@ -161,7 +164,7 @@ const AddProduct = ({ navigation }) => {
               keyboardType="numeric"
               mode="outlined"
               style={styles.input}
-              value={values.taxValue}
+              value={values.TaxRate || ""}
               error={touched.taxValue && !!errors.taxValue}
             />
 

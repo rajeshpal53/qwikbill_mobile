@@ -50,12 +50,6 @@ const CreateInvoiceForm = ({}) => {
         const response = await readApi(api, headers);
         if (response) {
           setUser(response);
-          // setValues({
-          //   name: response?.name || "",
-          //   address: response?.address || "",
-          //   gstNumber: response?.gstNumber || "",
-          //   phone: response?.mobile || phoneNumber,
-          // });
         }
 
         setUser(response);

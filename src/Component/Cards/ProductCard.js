@@ -40,7 +40,7 @@ const ProductCardDetails = ({ item }) => {
             <View style={styles.detailsContainer}>
               <Text style={styles.productName}>{item.Name}</Text>
               <Text style={styles.productInfo}>{item.info}</Text>
-              <Text style={styles.productPrice}>$ {item.Price}</Text>
+              <Text style={styles.productPrice}>₹ {item.Price}</Text>
             </View>
           </View>
 

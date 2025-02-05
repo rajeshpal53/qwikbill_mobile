@@ -31,9 +31,9 @@ const ProductDetailsCard = ({ item }) => {
           <View style={styles.TextView}>
             <Text style={styles.itemname}>{item.name}</Text>
             <Text style={styles.sellPrice}>
-              Selling Price: ${item.sellPrice}
+              Selling Price: ₹{item.sellPrice}
             </Text>
-            <Text style={styles.priceText}>Cost Price: ${item.costPrice}</Text>
+            <Text style={styles.priceText}>Cost Price: ₹{item.costPrice}</Text>
           </View>
 
           <View style={styles.ButtonTextView}>
@@ -151,4 +151,4 @@ const styles = StyleSheet.create({
 
 export default ProductDetailsCard;
 
-// (${item.numberOfProducts})
+// (₹{item.numberOfProducts})
