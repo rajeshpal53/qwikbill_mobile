@@ -72,7 +72,7 @@ const CategoryDropDown = ({setSelectedCat}) => {
 const styles = StyleSheet.create({
   main: {
     borderWidth: 1,
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 5,
     borderRadius: 5,
     marginBottom:15,

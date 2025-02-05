@@ -1,5 +1,3 @@
-
-
 import React, { useState, useRef, useEffect, useContext } from "react";
 import {
   View,
@@ -28,9 +26,7 @@ import * as Yup from "yup";
 import { useIsFocused, useRoute } from "@react-navigation/native";
 // import SelectionDropdown from "../../../../ComponentContainer/SelectionDropdown";
 
-
-import { API_BASE_URL } from "../../../../Util/UtilApi";
-
+import { API_BASE_URL, createApi, readApi } from "../../../../Util/UtilApi";
 
 // import UserDataContext from "../../../../Store/UserDataContext";
 import { useSnackbar } from "../../../../Store/SnackbarContext";
@@ -50,7 +46,6 @@ import Icon from "react-native-vector-icons/AntDesign";
 import axios from "axios";
 import UserDataContext from "../../../../Store/UserDataContext";
 import ProviderMoreDetails from "./ProviderMoreDetails";
-
 
 // Form validation schema using Yup
 
@@ -98,47 +93,43 @@ const ProfileValidationSchema = Yup.object().shape({
   profileImage: Yup.mixed().required("profile image is required"),
   name: Yup.string().required("name is required"),
   whatsappNumber: Yup.string()
-  .required("WhatsApp number is required")
-  .matches(/^[6-9]\d{9}$/, "Invalid WhatsApp number"),
+    .required("WhatsApp number is required")
+    .matches(/^[6-9]\d{9}$/, "Invalid WhatsApp number"),
 
-  mobile: Yup.string()
-  .required("mobile number is required"),
+  mobile: Yup.string().required("mobile number is required"),
   // .matches(/^[6-9]\d{9}$/, "Invalid Mobile Number")
   // email: Yup.string().email("Invalid email"),
-      // .required("Email is required"),
+  // .required("Email is required"),
   gender: Yup.string().required("Gender is required"),
-  dob: Yup.string().required("DOB is required")
-    .test(
-      "min-age",
-      "You must be at least 5 years old",
-      function (value) {
-        if (!value) return false;
+  dob: Yup.string()
+    .required("DOB is required")
+    .test("min-age", "You must be at least 5 years old", function (value) {
+      if (!value) return false;
 
-        // Parse the entered DOB
-        const enteredDate = new Date(value);
+      // Parse the entered DOB
+      const enteredDate = new Date(value);
 
-        // Ensure it's a valid date
-        if (isNaN(enteredDate.getTime())) return false;
+      // Ensure it's a valid date
+      if (isNaN(enteredDate.getTime())) return false;
 
-        // Get today's date
-        const today = new Date();
+      // Get today's date
+      const today = new Date();
 
-        // Calculate the minimum age date (5 years ago from today)
-        const minAgeDate = new Date(
-          today.getFullYear() - 5,
-          today.getMonth(),
-          today.getDate()
-        );
+      // Calculate the minimum age date (5 years ago from today)
+      const minAgeDate = new Date(
+        today.getFullYear() - 5,
+        today.getMonth(),
+        today.getDate()
+      );
 
-        // The entered DOB must be earlier than or equal to minAgeDate
-        return enteredDate <= minAgeDate;
-      }
-    ),
+      // The entered DOB must be earlier than or equal to minAgeDate
+      return enteredDate <= minAgeDate;
+    }),
 
   //------------------------------------------------
 
-    // userAddress : Yup.string()
-    // .required("address is required"),
+  // userAddress : Yup.string()
+  // .required("address is required"),
   // age: Yup.number()
   //   .required("age is required")
   //   .min(5, "age is atleast 5 years") // Minimum age limit
@@ -146,7 +137,20 @@ const ProfileValidationSchema = Yup.object().shape({
 });
 
 const CreateShopScreen = ({ navigation }) => {
-  let months = ['January','Feburary','March','April','May','June','July','August','September','October','November','December']
+  let months = [
+    "January",
+    "Feburary",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
   const [pages, setPages] = useState([1, 2, 3]);
   const [currentStep, setCurrentStep] = useState(0);
@@ -165,10 +169,14 @@ const CreateShopScreen = ({ navigation }) => {
   // const { location } = useLocation();
   // const { getAddressFrom } = useLocation();
   const submit = useRef(false);
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+
+  const [role, Setrole] = useState("");
+  const [roleId, setroleId] = useState(null);
 
   const { t } = useTranslation();
 
-  const { userData, saveUserData } = useContext(UserDataContext)
+  const { userData, saveUserData } = useContext(UserDataContext);
   const [genderList, setGenderList] = useState([
     { label: "Select Gender", value: null },
     { label: "Male", value: "male" },
@@ -193,19 +201,19 @@ const CreateShopScreen = ({ navigation }) => {
       console.log("userData , ", userData);
       console.log("found gender is , ", gender);
       return gender?.value || userData?.user?.gender || "";
-    } else if(!isAdmin){
+    } else if (!isAdmin) {
       const gender = genderList.find((item) => {
         return item?.value?.toLocaleLowerCase() === userData?.user?.gender;
       });
 
-      return gender?.gender || userData?.user?.gender || ""
+      return gender?.gender || userData?.user?.gender || "";
     } else {
       return "Select Gender";
     }
   });
 
   // console.log("route data is , ", routeData)
-  console.log("userData is , ", userData)
+  console.log("userData is , ", userData);
 
   const [initialData, setInitialData] = useState({
     name: "",
@@ -233,7 +241,7 @@ const CreateShopScreen = ({ navigation }) => {
 
   useEffect(() => {
     const handleBackPress = navigation.addListener("beforeRemove", (e) => {
-      if (!submit.current) {
+      if (!submit.current && !isFormSubmitted) {
         e.preventDefault();
 
         Alert.alert(
@@ -258,7 +266,7 @@ const CreateShopScreen = ({ navigation }) => {
     });
 
     return handleBackPress;
-  }, [navigation]);
+  }, [navigation, isFormSubmitted]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -266,19 +274,15 @@ const CreateShopScreen = ({ navigation }) => {
     });
 
     const setContent = () => {
-      
-      console.log("content is the , ", routeData)
+      console.log("content is the , ", routeData);
       if (routeData) {
-        if(routeData?.details ){
-
-          if(routeData.details == "undefined"){
-            setEditorContent("")
+        if (routeData?.details) {
+          if (routeData.details == "undefined") {
+            setEditorContent("");
+          } else {
+            setEditorContent(routeData.details);
           }
-          else{
-            setEditorContent(routeData.details)
-          }
-        }
-        else{
+        } else {
           setEditorContent("");
         }
       }
@@ -291,17 +295,12 @@ const CreateShopScreen = ({ navigation }) => {
     console.log("selected Gender ", selectedGender);
   }, [selectedGender]);
 
- 
-
   useEffect(() => {
-
-    if(routeData){
+    if (routeData) {
       setRouteData();
-    }
-    else if(!isAdmin){
+    } else if (!isAdmin) {
       setDataWithoutRouteData();
     }
-    
   }, [routeData]);
 
   const parseServerDate = (dateString) => {
@@ -325,78 +324,80 @@ const CreateShopScreen = ({ navigation }) => {
     return `${day} ${month} ${year}`; // Concatenate in "DD Month YYYY" format
   };
 
- 
   const setRouteData = async () => {
-
-    try{
-
+    try {
       setIsLoading(true);
       console.log("sdfsdfh, toute , ", routeData);
-    if (routeData) {
-      console.log("sdfsdfh, toute 1 is, ", routeData?.user);
-      // const tempShowAddress = await getAddressFrom(
-      //   routeData?.latitude,
-      //   routeData?.longitude
-      // );
+      if (routeData) {
+        console.log("sdfsdfh, toute 1 is, ", routeData?.user);
+        // const tempShowAddress = await getAddressFrom(
+        //   routeData?.latitude,
+        //   routeData?.longitude
+        // );
 
-      console.log("under if routeData ", routeData.whatsappnumber);
-      // console.log(
-      //   "under if routeData tempshowaddress ",
-      //   tempShowAddress?.formatted_address
-      // );
-      setInitialData({
-        name: routeData?.user?.name || "",
-        mobile: routeData?.user?.mobile || "",
-        email: routeData?.user?.email || "",
-        gender: routeData?.user?.gender || userData?.user?.gender || "",
-        dob:
-          (routeData?.user?.dob && parseServerDate(routeData?.user?.dob)) ||
-          new Date() ||
-          null,
+        console.log("under if routeData ", routeData.whatsappnumber);
+        // console.log(
+        //   "under if routeData tempshowaddress ",
+        //   tempShowAddress?.formatted_address
+        // );
+        setInitialData({
+          name: routeData?.user?.name || "",
+          mobile: routeData?.user?.mobile || "",
+          email: routeData?.user?.email || "",
+          gender: routeData?.user?.gender || userData?.user?.gender || "",
+          dob:
+            (routeData?.user?.dob && parseServerDate(routeData?.user?.dob)) ||
+            new Date() ||
+            null,
           userAddress: routeData?.user?.address || "",
           pincode: routeData?.user?.pincode || "",
-        shopName: routeData?.shopname || "",
-        shopAddress: routeData?.shopAddress || "",
-        whatsappNumber: routeData?.whatsappnumber || "",
-        aadhaarNumber: routeData?.aadharCard || routeData?.user?.aadharCard || "",
-        
-        kilometerRadius: routeData?.drange || "",
-        latitude: routeData?.latitude || "",
-        longitude: routeData?.longitude || "",
-        isApproved: routeData?.isApprove || false,
-        isOnline: routeData?.isOnline || false,
-        isVerified: routeData?.isVerified || false,
-        homeDelivery: routeData?.homeServiceProvide || false,
-        // showAddress: tempShowAddress?.formatted_address || "",
-        shopImage:
-          (routeData?.shopImage && formatUrl(routeData?.shopImage, "shopImage")) ||
-          null,
-        aadharFrontImage:
-          (routeData?.user?.aadharCardFronturl &&
-            formatUrl(routeData?.user?.aadharCardFronturl, "aadharCardFronturl")) ||
-          null,
-        aadharBackImage:
-          (routeData?.user?.aadharCardBackurl &&
-            formatUrl(routeData?.user?.aadharCardBackurl, "aadharCardBackurl")) ||
-          null,
-        profileImage:
-          (routeData?.user?.profilePicurl &&
-            formatUrl(routeData?.user?.profilePicurl, "profilePicurl")) ||
-          null,
-      });
+          shopName: routeData?.shopname || "",
+          shopAddress: routeData?.shopAddress || "",
+          whatsappNumber: routeData?.whatsappnumber || "",
+          aadhaarNumber:
+            routeData?.aadharCard || routeData?.user?.aadharCard || "",
 
+          kilometerRadius: routeData?.drange || "",
+          latitude: routeData?.latitude || "",
+          longitude: routeData?.longitude || "",
+          isApproved: routeData?.isApprove || false,
+          isOnline: routeData?.isOnline || false,
+          isVerified: routeData?.isVerified || false,
+          homeDelivery: routeData?.homeServiceProvide || false,
+          // showAddress: tempShowAddress?.formatted_address || "",
+          shopImage:
+            (routeData?.shopImage &&
+              formatUrl(routeData?.shopImage, "shopImage")) ||
+            null,
+          aadharFrontImage:
+            (routeData?.user?.aadharCardFronturl &&
+              formatUrl(
+                routeData?.user?.aadharCardFronturl,
+                "aadharCardFronturl"
+              )) ||
+            null,
+          aadharBackImage:
+            (routeData?.user?.aadharCardBackurl &&
+              formatUrl(
+                routeData?.user?.aadharCardBackurl,
+                "aadharCardBackurl"
+              )) ||
+            null,
+          profileImage:
+            (routeData?.user?.profilePicurl &&
+              formatUrl(routeData?.user?.profilePicurl, "profilePicurl")) ||
+            null,
+        });
+      }
+    } catch (error) {
+      console.log("eror is , ", error);
+    } finally {
+      setIsLoading(false);
     }
-    }catch(error){
-      console.log("eror is , ", error)
-    }finally{
-      setIsLoading(false)
-    }
-    
   };
 
-  const setDataWithoutRouteData = async() => {
-    try{
-
+  const setDataWithoutRouteData = async () => {
+    try {
       setIsLoading(true);
 
       setInitialData((prevData) => ({
@@ -405,29 +406,35 @@ const CreateShopScreen = ({ navigation }) => {
         mobile: userData?.user?.mobile || "",
         email: userData?.user?.email || "",
         gender: userData?.user?.gender || "",
-        dob: ( userData?.user?.dob && parseServerDate(userData?.user?.dob) ) || new Date(),
+        dob:
+          (userData?.user?.dob && parseServerDate(userData?.user?.dob)) ||
+          new Date(),
         profileImage:
-            (userData?.user?.profilePicurl &&
-              formatUrl(userData?.user?.profilePicurl, "profilePicurl")) ||
-            null,
-            aadharFrontImage:
-            (userData?.user?.aadharCardFronturl &&
-              formatUrl(userData?.user?.aadharCardFronturl, "aadharCardFronturl")) ||
-            null,
-          aadharBackImage:
-            (userData?.user?.aadharCardBackurl &&
-              formatUrl(userData?.user?.aadharCardBackurl, "aadharCardBackurl")) ||
-            null,
+          (userData?.user?.profilePicurl &&
+            formatUrl(userData?.user?.profilePicurl, "profilePicurl")) ||
+          null,
+        aadharFrontImage:
+          (userData?.user?.aadharCardFronturl &&
+            formatUrl(
+              userData?.user?.aadharCardFronturl,
+              "aadharCardFronturl"
+            )) ||
+          null,
+        aadharBackImage:
+          (userData?.user?.aadharCardBackurl &&
+            formatUrl(
+              userData?.user?.aadharCardBackurl,
+              "aadharCardBackurl"
+            )) ||
+          null,
         aadhaarNumber: userData?.user?.aadharCard || "",
       }));
-
-    }catch(error){
-      console.log("eror is , ", error)
-    }finally{
-      setIsLoading(false)
+    } catch (error) {
+      console.log("eror is , ", error);
+    } finally {
+      setIsLoading(false);
     }
-    
-  }
+  };
 
   const formatUrl = (url, imageDetail) => {
     const imageFile = {
@@ -522,7 +529,7 @@ const CreateShopScreen = ({ navigation }) => {
       console.log("validation failed ", errors);
       return false;
     } else if (currentStep < 2) {
-      console.log("next steop")
+      console.log("next steop");
       setCurrentStep((prev) => prev + 1);
     }
   };
@@ -547,8 +554,28 @@ const CreateShopScreen = ({ navigation }) => {
   //   console.log(" values are m  ini", initialData);
   // }, [initialData]);
 
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const api = `qapi/roles`;
+        const response = await readApi(api);
+        Setrole(response); // Ensure response is an array
+
+        if (role.length > 0) {
+          const { id } = role[0];
+          setroleId(id);
+          console.log("Data of id:", id);
+        }
+      } catch (error) {
+        console.log("Unable to fetch role data", error);
+      }
+    };
+    fetchRoles();
+  }, []);
+
+
   return (
-    <Formik 
+    <Formik
       initialValues={initialData}
       enableReinitialize={true}
       validationSchema={
@@ -558,216 +585,80 @@ const CreateShopScreen = ({ navigation }) => {
           ? ShopValidataionSchema
           : uploadImagesSchema
       }
-      
-      onSubmit={async (values,) => {
+      onSubmit={async (values, { resetForm }) => {
+        const formattedDate = formatDate(values?.dob);
+        console.log("Data of date", values?.dob);
         console.log("hi prathesm");
         console.log("submitted Values are ", values);
-
-        // return ;
-        // usersfk in s-diaryy
-        let createdUserId = null;
-
-        const updateUserPayloadData = new FormData();
-
-      
-        updateUserPayloadData.append("name", values?.name);
-        updateUserPayloadData.append("mobile", values?.mobile);
-        updateUserPayloadData.append("aadharCard", values?.aadhaarNumber);
-
-       
-        const formattedDate = formatDate(values?.dob);
-        updateUserPayloadData.append("dob", formattedDate);
-
-        updateUserPayloadData.append("email", values?.email || "");
-        updateUserPayloadData.append("gender", values?.gender);
-
-        // console.log("gender is , ", values?.gender);
-        if (values?.profileImage) {
-          console.log("profdkdkd 111, ", values?.profileImage);
-          updateUserPayloadData.append("profilePicurl", values?.profileImage);
-        }
-        if (values?.aadharFrontImage) {
-          updateUserPayloadData.append(
-            "aadharCardFronturl",
-            values?.aadharFrontImage
-          );
-        }
-
-        if (values?.aadharBackImage) {
-          updateUserPayloadData.append(
-            "aadharCardBackurl",
-            values?.aadharBackImage
-          );
-        }
-
-        updateUserPayloadData.append("password", userData?.user?.password)
-
-        // updateUserPayloadData.append("roles", "admin");
-
-        // console.log("router ddd , data is , ", routeData);
-        console.log("updateUserPayloadData is the , ", updateUserPayloadData);
-        console.log("userApi , ", `${API_BASE_URL}qapi/users/upsertOnlyUserProfileImg`);
-        console.log("userData token , ", `${userData?.token}`);
-
-      
-        try {
-          const response = await axios.post(
-            `${API_BASE_URL}qapi/users/upsertOnlyUserProfileImg`,
-            updateUserPayloadData,
+        const DataContainer = {
+          ...values,
+          VenderData: [
             {
-              headers: {
-                Authorization: `Bearer ${userData?.token}`,
-                "Content-Type": "multipart/form-data",
-              },
-            }
-          );
-
-          console.log(
-            "response of user updated or created is , ",
-            response?.data
-          );
-          createdUserId = response?.data?.id;
-
-          if (!isAdmin || routeData?.user?.mobile === userData?.user?.mobile) {
-            const saveUser = {
-              token: userData?.token,
-              user: response?.data,
-            };
-
-            saveUserData(saveUser);
-          }
-
-          showSnackbar(t("Your profile has been updated"), "success");
-        } catch (error) {
-          console.log("Error creating or updating user , ", error);
-        } finally {
-        }
-
-        const data = new FormData();
-        // data.append("aadharCard", values?.aadhaarNumber);
-
-    
-        data.append("whatsappnumber", values?.whatsappNumber || "");
-        data.append("shopname", values?.shopName);
-        // data.append("homeServiceProvide", values?.homeDelivery);
-        // if(editorContent){
-          data.append("details", editorContent);
-        // }
-        data.append("address", values?.shopAddress);
-        data.append("latitude", values?.latitude || "213.234");
-        data.append("longitude", values?.longitude || "213.234");
-        // data.append("drange", values?.kilometerRadius);
-        // data.append("isOnline", values?.isOnline);
-
-        if (isAdmin) {
-          // data.append("isVerified", values?.isVerified);
-          data.append("isApprove", values?.isApproved);
-        } else if (!isAdmin && routeData) {
-          // data.append("isVerified", routeData?.isVerified);
-          data.append("isApprove", routeData?.isApprove);
-        } else {
-          // data.append("isVerified", false);
-          data.append("isApprove", false);
-        }
-
-        const userfk = routeData ? routeData?.user?.id : createdUserId;
-
-        data.append("usersfk", userfk);
-
-        if (routeData) {
-          data.append("id", routeData?.id);
-        }
-
-        // If the image is a local file, include it as a binary file
-        if (values?.shopImage) {
-          data.append("shopImage", values?.shopImage);
-        }
-
-        // if (values?.aadharImage) {
-        //   data.append("aadharCardurl", aadharImage);
-        // }
-
-        // console.log("image si , ", shopImage);
-        console.log("updateProviderPayload is , ", data);
-
+              whatsappnumber: values?.whatsappNumber,
+              details: values?.whatsappNumber || "",
+              shopAddress: values?.shopAddress,
+              pincode: values.pincode,
+              isApprove: values?.isOnline,
+              usersfk: userData?.user?.id,
+              shopImage: values?.shopImage || null,
+              latitude: 213.234, //values?.latitude ||
+              longitude: 213.234, //values?.longitude,
+              shopname: values?.shopName,
+            },
+          ],
+          UserData: [
+            {
+              mobile: values?.mobile || "",
+              aadharCard: values?.aadhaarNumber || "",
+              aadharCardFronturl: values?.aadharFrontImage?.uri || "",
+              aadharCardBackurl: values?.aadharBackImage?.uri || "",
+              profilePicurl: values?.profileImage?.uri || "",
+              name: values?.name || "",
+              dob: formattedDate,
+              gender: values?.gender || "",
+              email: values?.email || "",
+              address: values?.shopAddress || "",
+              pincode: values?.pincode || "",
+              password: userData?.user?.password || "",
+              token_validity: values?.token_validity || null,
+              latitude: 213.234 || "",
+              longitude: 213.234 || "",
+              fcmtokens: userData?.token || "",
+              rolesfk: roleId,
+            },
+          ],
+        };
         try {
-          if (!isLoading) {
-            setIsLoading(true);
-          }
-
-          if (routeData) {
-            const response = await axios.put(
-              `${API_BASE_URL}qapi/vendors/updateVendorWithImage/${routeData?.id}`,
-              data,
-              {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                  Authorization: `Bearer ${userData?.token}`,
-                },
-              }
+          if (DataContainer.VenderData) {
+            const api = `qapi/vendors`;
+            const headers = {
+              Authorization: `Bearer ${userData?.token}`, // Add token to headers
+            };
+            const VenderResponse = await createApi(
+              api,
+              DataContainer.VenderData[0],
+              headers
             );
-
-            console.log("Service provider Updated successfullyyy: ", response);
-
-            showSnackbar(t("Service provider Updated successfully"), "success");
-
-            // navigation.navigate("ViewEditServicesScreen", {
-            //   Admin: isAdmin,
-            // });
-            submit.current = true;
-            // navigation.pop(2);
-            navigation.goBack();
-          } else {
-            const response = await axios.post(
-              `${API_BASE_URL}qapi/vendors/createVendorWithImage`,
-              data,
-              {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                  Authorization: `Bearer ${userData?.token}`,
-                },
-              }
-            );
-
-            console.log("Service provider Created Successfully ", response);
-
-            showSnackbar(t("Service provider Created Successfully"), "success");
-
-            // navigation.navigate("ViewEditServicesScreen", {
-            //   Admin: isAdmin,
-            // });
-            submit.current = true;
-            // navigation.pop(2);
-            navigation.goBack();
+            console.log("Vender Data Created", VenderResponse);
           }
+          if (DataContainer.UserData) {
+            const api = `qapi/users/upsertOnlyUserProfileImg`;
+            const headers = {
+              Authorization: `Bearer ${userData?.token}`, // Add token to headers
+            };
+            const UserResponse = await createApi(
+              api,
+              DataContainer.UserData[0],
+              headers
+            );
+            console.log(" User Data Created", UserResponse);
+          }
+          setIsFormSubmitted(true);
+          submit.current = true;
+          resetForm();
+          navigation.goBack();
         } catch (error) {
-          if (isLoading) {
-            setIsLoading(false);
-          }
-
-          if (routeData) {
-            console.log(
-              "Something went Wrong Updating Service Provider",
-              error
-            );
-
-            showSnackbar(
-              t("Something went Wrong Updating Service Provider"),
-              "error"
-            );
-          } else {
-            console.log(
-              "Something went Wrong Creating Service Provider",
-              error
-            );
-
-            showSnackbar(
-              t("Something went Wrong Creating Service Provider"),
-              "error"
-            );
-          }
-        } finally {
-          setIsLoading(false);
+          console.log("Unable to create a data", error);
         }
       }}
     >
@@ -782,8 +673,6 @@ const CreateShopScreen = ({ navigation }) => {
         errors,
         touched,
       }) => {
-       
-
         return (
           <View
             style={{
@@ -985,6 +874,223 @@ const styles = StyleSheet.create({
 
 export default CreateShopScreen;
 
+//-----------------------------------Submit Code------------------------------------------------------
+
+// return ;
+//   // usersfk in s-diaryy
+//   let createdUserId = null;
+
+//   const updateUserPayloadData = new FormData();
+
+//   updateUserPayloadData.append("name", values?.name);
+//   updateUserPayloadData.append("mobile", values?.mobile);
+//   updateUserPayloadData.append("aadharCard", values?.aadhaarNumber);
+
+//   const formattedDate = formatDate(values?.dob);
+//   updateUserPayloadData.append("dob", formattedDate);
+
+//   updateUserPayloadData.append("email", values?.email || "");
+//   updateUserPayloadData.append("gender", values?.gender);
+
+//   // console.log("gender is , ", values?.gender);
+//   if (values?.profileImage) {
+//     console.log("profdkdkd 111, ", values?.profileImage);
+//     updateUserPayloadData.append("profilePicurl", values?.profileImage);
+//   }
+//   if (values?.aadharFrontImage) {
+//     updateUserPayloadData.append(
+//       "aadharCardFronturl",
+//       values?.aadharFrontImage
+//     );
+//   }
+
+//   if (values?.aadharBackImage) {
+//     updateUserPayloadData.append(
+//       "aadharCardBackurl",
+//       values?.aadharBackImage
+//     );
+//   }
+
+//   updateUserPayloadData.append("password", userData?.user?.password)
+
+//   // updateUserPayloadData.append("roles", "admin");
+
+//   // console.log("router ddd , data is , ", routeData);
+//   console.log("updateUserPayloadData is the , ", updateUserPayloadData);
+//   console.log("userApi , ", `${API_BASE_URL}qapi/users/upsertOnlyUserProfileImg`);
+//   console.log("userData token , ", `${userData?.token}`);
+
+//   try {
+//     const response = await axios.post(
+//       `${API_BASE_URL}qapi/users/upsertOnlyUserProfileImg`,
+//       updateUserPayloadData,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${userData?.token}`,
+//           "Content-Type": "multipart/form-data",
+//         },
+//       }
+//     );
+
+//     console.log(
+//       "response of user updated or created is , ",
+//       response?.data
+//     );
+//     createdUserId = response?.data?.id;
+
+//     if (!isAdmin || routeData?.user?.mobile === userData?.user?.mobile) {
+//       const saveUser = {
+//         token: userData?.token,
+//         user: response?.data,
+//       };
+
+//       saveUserData(saveUser);
+//     }
+
+//     showSnackbar(t("Your profile has been updated"), "success");
+//   } catch (error) {
+//     console.log("Error creating or updating user , ", error);
+//   } finally {
+//   }
+
+//   try{
+//     const api = `qapi/users/upsertOnlyUserProfileImg`
+//     const headers = {
+//       Authorization: `Bearer ${userData?.token}`, // Add token to headers
+//     };
+//     const response = readApi(api, updateUserPayloadData, headers)
+
+//   }catch (error){
+//     console.log("Unable to upload data", error)
+//   }
+
+//   const data = new FormData();
+//   // data.append("aadharCard", values?.aadhaarNumber);
+
+//   data.append("whatsappnumber", values?.whatsappNumber || "");
+//   data.append("shopname", values?.shopName);
+//   // data.append("homeServiceProvide", values?.homeDelivery);
+//   // if(editorContent){
+//     data.append("details", editorContent);
+//   // }
+//   data.append("address", values?.shopAddress);
+//   data.append("latitude", values?.latitude || "213.234");
+//   data.append("longitude", values?.longitude || "213.234");
+//   // data.append("drange", values?.kilometerRadius);
+//   // data.append("isOnline", values?.isOnline);
+
+//   if (isAdmin) {
+//     // data.append("isVerified", values?.isVerified);
+//     data.append("isApprove", values?.isApproved);
+//   } else if (!isAdmin && routeData) {
+//     // data.append("isVerified", routeData?.isVerified);
+//     data.append("isApprove", routeData?.isApprove);
+//   } else {
+//     // data.append("isVerified", false);
+//     data.append("isApprove", false);
+//   }
+
+//   const userfk = routeData ? routeData?.user?.id : createdUserId;
+
+//   data.append("usersfk", userfk);
+
+//   if (routeData) {
+//     data.append("id", routeData?.id);
+//   }
+
+//   // If the image is a local file, include it as a binary file
+//   if (values?.shopImage) {
+//     data.append("shopImage", values?.shopImage);
+//   }
+
+//   // if (values?.aadharImage) {
+//   //   data.append("aadharCardurl", aadharImage);
+//   // }
+
+//   // console.log("image si , ", shopImage);
+//   console.log("updateProviderPayload is , ", data);
+
+//   try {
+//     if (!isLoading) {
+//       setIsLoading(true);
+//     }
+
+//     if (routeData) {
+//       const response = await axios.put(
+//         `${API_BASE_URL}qapi/vendors/updateVendorWithImage/${routeData?.id}`,
+//         data,
+//         {
+//           headers: {
+//             "Content-Type": "multipart/form-data",
+//             Authorization: `Bearer ${userData?.token}`,
+//           },
+//         }
+//       );
+
+//       console.log("Service provider Updated successfullyyy: ", response);
+
+//       showSnackbar(t("Service provider Updated successfully"), "success");
+
+//       // navigation.navigate("ViewEditServicesScreen", {
+//       //   Admin: isAdmin,
+//       // });
+//       submit.current = true;
+//       // navigation.pop(2);
+//       navigation.goBack();
+//     } else {
+//       const response = await axios.post(
+//         `${API_BASE_URL}qapi/vendors/createVendorWithImage`,
+//         data,
+//         {
+//           headers: {
+//             "Content-Type": "multipart/form-data",
+//             Authorization: `Bearer ${userData?.token}`,
+//           },
+//         }
+//       );
+
+//       console.log("Service provider Created Successfully ", response);
+
+//       showSnackbar(t("Service provider Created Successfully"), "success");
+
+//       // navigation.navigate("ViewEditServicesScreen", {
+//       //   Admin: isAdmin,
+//       // });
+//       submit.current = true;
+//       // navigation.pop(2);
+//       navigation.goBack();
+//     }
+//   } catch (error) {
+//     if (isLoading) {
+//       setIsLoading(false);
+//     }
+
+//     if (routeData) {
+//       console.log(
+//         "Something went Wrong Updating Service Provider",
+//         error
+//       );
+
+//       showSnackbar(
+//         t("Something went Wrong Updating Service Provider"),
+//         "error"
+//       );
+//     } else {
+//       console.log(
+//         "Something went Wrong Creating Service Provider",
+//         error
+//       );
+
+//       showSnackbar(
+//         t("Something went Wrong Creating Service Provider"),
+//         "error"
+//       );
+//     }
+//   } finally {
+//     setIsLoading(false);
+//   }
+// }}
+
 //-------------------------------------------------------------------------------------------------------------------------
 // import React, { useState } from "react";
 // import { View, StyleSheet, ScrollView } from "react-native";
@@ -1112,7 +1218,7 @@ export default CreateShopScreen;
 //               }else{
 //                 navigation.navigate("ViewShops");
 //               }
-              
+
 //             } catch (error) {
 //               console.log("error is ", error);
 //               showSnackbar("error to create new product", "error");
@@ -1308,7 +1414,7 @@ export default CreateShopScreen;
 //     borderRadius: 10,
 //     gap:10,
 //     // elevation: 5, // For shadow on Android
-    
+
 //     margin: 10,
 //   },
 //   button: {

@@ -30,7 +30,7 @@ const ProductDetailsCard = ({ item }) => {
           </View>
           <View style={styles.TextView}>
             <Text style={styles.itemname}>{item.name}</Text>
-            <Text style={styles.priceText}>
+            <Text style={styles.sellPrice}>
               Selling Price: ${item.sellPrice}
             </Text>
             <Text style={styles.priceText}>Cost Price: ${item.costPrice}</Text>
@@ -108,6 +108,7 @@ const styles = StyleSheet.create({
     marginVertical: 2,
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.labelLarge,
+    paddingVertical:2
   },
   avatar: {
     // backgroundColor: "black",
@@ -119,10 +120,15 @@ const styles = StyleSheet.create({
     marginRight: 10, // Adds spacing between buttons
   },
   priceText: {
-    fontSize: 14,
+    // fontSize: 14,
     color: "#555",
     fontFamily: "Poppins-Medium",
-    fontSize: fontSize.labelMedium,
+    fontSize: fontSize.label,
+  },
+  sellPrice:{
+    color: "#555",
+    fontFamily: "Poppins-Medium",
+    fontSize: fontSize.label,
   },
   inStock: {
     color: "green",

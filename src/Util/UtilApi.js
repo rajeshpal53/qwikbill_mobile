@@ -2,7 +2,10 @@ import axios from 'axios';
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
 
-export const API_BASE_URL = "http://192.168.1.35:2235/";
+export const API_BASE_URL = "https://rajeshpal.online/";
+
+// export const API_BASE_URL = "http://192.168.1.35:2235/";
+
 
 
 export const NORM_URL="https://dailysabji.com/"
@@ -73,3 +76,10 @@ export const updateApi = async (endpoint, data, headers) => {
     medium: "Poppins-Medium",
     thin: "Poppins-Thin",
   };
+
+
+
+
+export const ButtonColor  = {
+  SubmitBtn :"#007bff",
+}

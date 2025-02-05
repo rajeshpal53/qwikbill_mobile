@@ -12,13 +12,15 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { ActivityIndicator, List } from "react-native-paper";
 
-function DropDownList({options}) {
+function DropDownList({ options }) {
   const { addShopDetails, shopDetails } = useContext(ShopDetailContext);
   const [isLoading, setIsLoading] = useState(false);
   // const [options, setOptions] = useState([]);
   const [selectedShop, setSelectedShop] = useState("");
   console.log(shopDetails, "newShopDetails");
   const pickerRef = useRef();
+
+  console.log("Dataof option ", options);
 
   // async function fetchOptions() {
   //   try {
@@ -36,8 +38,6 @@ function DropDownList({options}) {
   //   }finally{
   //     setIsLoading(false);
   //   }
-
-
 
   //   // Adjust according to your API respons
   //   // setSelectedOption(data.result[0].shopname)
@@ -67,15 +67,15 @@ function DropDownList({options}) {
     <View style={styles.pickerContainer}>
       {isLoading && <ActivityIndicator size="small" />}
       <Picker
-      enabled={options.length > 0} // Disable the picker if options.length is 0
-      mode="dropdown"
-      style={{ width: "95%" }}
-      ref={pickerRef}
-      selectedValue={selectedShop}
-      onValueChange={(itemValue) => setSelectedShop(itemValue)}
-    >
-      {/* Default placeholder */}
-      <Picker.Item
+        enabled={options.length > 0} // Disable the picker if options.length is 0
+        mode="dropdown"
+        style={{ width: "95%" }}
+        ref={pickerRef}
+        selectedValue={selectedShop}
+        onValueChange={(itemValue) => setSelectedShop(itemValue)}
+      >
+        {/* Default placeholder */}
+        {/* <Picker.Item
         label="Please select your Shop"
         value=""
         color="#888888"
@@ -88,11 +88,23 @@ function DropDownList({options}) {
           label={option?.shopname}
           color="#555555"
         />
-      ))}
-    </Picker>
-      <TouchableOpacity
-        style={{ justifyContent: "center" }}
-      >
+      ))} */}
+        <Picker.Item
+          label="Please select your Shop"
+          value=""
+          color="#888888"
+          enabled={false}
+        />
+        {options.map((item, index) => (
+          <Picker.Item
+            key={index}
+            value={item?.shopname}
+            label={item?.shopname}
+            color="#555555"
+          />
+        ))}
+      </Picker>
+      <TouchableOpacity style={{ justifyContent: "center" }}>
         <MaterialCommunityIcons name="reload" size={20} />
       </TouchableOpacity>
     </View>

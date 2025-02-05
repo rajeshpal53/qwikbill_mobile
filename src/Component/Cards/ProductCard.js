@@ -15,7 +15,7 @@ import {
   removeFromCart,
 } from "../../Redux/CartProductRedux/CartSlice";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { fontSize } from "../../Util/UtilApi";
+import { ButtonColor, fontSize } from "../../Util/UtilApi";
 
 const ProductCardDetails = ({ item }) => {
   const dispatch = useDispatch();
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   addButton: {
-    backgroundColor: "#1e90ff",
+    backgroundColor: ButtonColor.SubmitBtn,
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 5,

@@ -14,7 +14,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import ItemDataTable from "../Cards/ItemDataTable";
 import { useDispatch, useSelector } from "react-redux";
-import { fontSize, readApi } from "../../Util/UtilApi";
+import { ButtonColor, fontSize, readApi } from "../../Util/UtilApi";
 import { clearCart } from "../../Redux/CartProductRedux/CartSlice";
 import PriceDetails from "../PriceDetails";
 import UserDataContext from "../../Store/UserDataContext";
@@ -28,8 +28,6 @@ const CreateInvoiceForm = ({}) => {
   const [PaymentStatus, setPaymentStatus] = useState("");
   const submit = useRef(false);
   const { userData } = useContext(UserDataContext);
-
-  console.log("Data of user123456 ", userData.token);
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
@@ -137,7 +135,7 @@ const CreateInvoiceForm = ({}) => {
               },
             ],
           };
-          console.log("Form Submitted Data:", formData);
+          console.log("Form Submitted Data:", formData?.Product);
           submit.current = true;
           navigation.navigate("PDFScreen", { formData });
           resetForm();
@@ -210,7 +208,7 @@ const CreateInvoiceForm = ({}) => {
                 style={styles.addButton}
                 onPress={() => navigation.navigate("AllItemProduct")}
               >
-                <MaterialIcons name="add" size={20} color="black" />
+                <MaterialIcons name="add" size={20} color="white" />
                 <Text style={styles.addButtonText}>Add Items</Text>
               </TouchableOpacity>
             </View>
@@ -246,7 +244,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 8,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: ButtonColor.SubmitBtn,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#ccc",
@@ -257,7 +255,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     // color: "black",
     fontFamily:"Poppins-Medium",
-    fontSize:fontSize.labelLarge
+    fontSize:fontSize.labelLarge,
+    color:"#fff"
   },
   input: {
     flex: 1,
@@ -273,7 +272,7 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     marginTop: 20,
-    backgroundColor: "#007bff",
+    backgroundColor: ButtonColor.SubmitBtn,
     padding: 10,
     borderRadius: 8,
     alignItems: "center",

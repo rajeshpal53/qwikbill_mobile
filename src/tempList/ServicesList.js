@@ -11,7 +11,7 @@ import {
     Feather
   } from "@expo/vector-icons";
 import { responsiveFontSize } from "react-native-responsive-dimensions";
-  
+
 export const services = [
     {
       name: "Create Invoice",
@@ -38,7 +38,7 @@ export const services = [
       navigateTo:"CreateShopScreen"
     },
     {
-      name: " Add HSN Code",
+      name: "Add HSN Code",
       icon: <FontAwesome5 name="user" size={30} color="#26a0df" />,
       key: "5",
       navigateTo:"hsncode"
@@ -55,7 +55,7 @@ export const services = [
       key: "7",
       navigateTo:"ViewShops"
     },
-    
+
     {
       name: "Favourites",
       icon: <Ionicons name="heart-outline" size={30} color="#26a0df" />,
@@ -93,7 +93,7 @@ export const services = [
     //   key: "8",
     //   navigateTo:"CreateInvoice"
     // },
-   
+
     // {
     //   name: "Deposits",
     //   icon: <FontAwesome5 name="piggy-bank" size={30} color="#0c3b73" />,
@@ -282,4 +282,3 @@ export const services = [
     // },
   ];
 
-  
