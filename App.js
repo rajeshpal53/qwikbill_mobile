@@ -15,7 +15,7 @@ import { LoginTimeProvider } from "./src/Store/LoginTimeContext.js";
 import { PasskeyProvider } from "./src/Store/PasskeyContext.js";
 // import i18n from "./src/Locale";
 import i18n from "./src/Locale/index.js";
-  import { Provider } from "react-redux";
+import { Provider } from "react-redux";
 import { Store } from "./src/Redux/Store.js";
 import { UserDataProvider } from "./src/Store/UserDataContext.js";
 import * as Font from "expo-font";
@@ -51,36 +51,33 @@ export default function App() {
   });
   return (
     <SafeAreaProvider>
-
       <UserDataProvider>
         <ShopDetailProvider>
           <PasskeyProvider>
             <SnackbarProvider>
               <Provider store={Store}>
-              <I18nextProvider i18n={i18n}>
-              <PaperProvider theme={customTheme}>
-                <NavigationContainer>
-                  <AuthProvider>
-                    <LoginTimeProvider>
-                      <FontProvider>
-                        {fontsLoaded ? (
-                          <StackNavigator />
-                        ) : (
-                          <ActivityIndicator size={"large"} />
-                        )}
-                      </FontProvider>
-
-                    </LoginTimeProvider>
-                  </AuthProvider>
-                </NavigationContainer>
-              </PaperProvider>
-              </I18nextProvider>
+                <I18nextProvider i18n={i18n}>
+                  <PaperProvider theme={customTheme}>
+                    <NavigationContainer>
+                      <AuthProvider>
+                        <LoginTimeProvider>
+                          <FontProvider>
+                            {fontsLoaded ? (
+                              <StackNavigator />
+                            ) : (
+                              <ActivityIndicator size={"large"} />
+                            )}
+                          </FontProvider>
+                        </LoginTimeProvider>
+                      </AuthProvider>
+                    </NavigationContainer>
+                  </PaperProvider>
+                </I18nextProvider>
               </Provider>
             </SnackbarProvider>
           </PasskeyProvider>
         </ShopDetailProvider>
       </UserDataProvider>
-
     </SafeAreaProvider>
   );
 }

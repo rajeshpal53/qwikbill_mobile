@@ -33,6 +33,7 @@ const CategoryDropDown = ({setSelectedCat}) => {
   }, []);
 
   const handleCategorySelect = (categoryName) => {
+    console.log("Data of cat is ",categoryName)
     setSelectedCategory(categoryName?.name);
     setSelectedCat(categoryName?.id)
     setPressed(false); // Collapse the dropdown after selecting a category

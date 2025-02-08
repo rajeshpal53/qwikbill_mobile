@@ -5,15 +5,17 @@ import CategoryDropDown from "../../UI/DropDown/CategoryDropdown";
 import { createApi, fontSize } from "../../Util/UtilApi";
 import Icon from "react-native-vector-icons/Ionicons";
 
-const FileUploadModal = ({ visible, onUpload, setBulkUploadModalVisible }) => {
+const FileUploadModal = ({ visible, setBulkUploadModalVisible }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [SelectedCat, setSelectedCat] = useState("");
+  console.log("Selected Cat is ", SelectedCat);
 
   const pickFile = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
+
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const file = result.assets[0];
@@ -38,6 +40,10 @@ const FileUploadModal = ({ visible, onUpload, setBulkUploadModalVisible }) => {
       alert("Please select a category and a file before uploading.");
       return;
     }
+
+    const categoryId = parseInt(SelectedCat, 10);
+
+
     const formData = new FormData();
     formData.append("excelFile", {
       uri: selectedFile.uri,
@@ -45,20 +51,26 @@ const FileUploadModal = ({ visible, onUpload, setBulkUploadModalVisible }) => {
       type:
         selectedFile.mimeType ||
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
     });
-    formData.append("productcategoryfk", SelectedCat);
+    formData.append("productcategoryfk", 6);
 
     console.log("DATA OF EXCEL SHEET ", formData);
+
     try {
       const url = `qapi/products/bulkCreateProducts`;
       const response = await createApi(url, formData);
       console.log("Responce data is ", response);
+      if (response.error) {
+        alert(response.error);
+      } else {
+        alert("File uploaded successfully!");
+      }
     } catch (error) {
       console.log("Unable to fetch Data", error);
+      alert("Error uploading the file. Please try again.");
     }
   };
-
-
 
   const handleCloseModal = () => {
     setBulkUploadModalVisible(false);
@@ -162,7 +174,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontFamily: "Poppins-Regular",
     fontSize: fontSize.labelLarge,
-    marginLeft:8
+    marginLeft: 8,
   },
   fileName: {
     fontSize: 14,

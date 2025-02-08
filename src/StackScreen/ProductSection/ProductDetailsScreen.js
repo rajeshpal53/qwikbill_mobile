@@ -6,7 +6,13 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { FAB, Searchbar, Portal, PaperProvider, ActivityIndicator } from "react-native-paper";
+import {
+  FAB,
+  Searchbar,
+  Portal,
+  PaperProvider,
+  ActivityIndicator,
+} from "react-native-paper";
 import Icon from "react-native-vector-icons/Ionicons";
 import CustomerDetailsCard from "../../Component/Cards/CustomerDetailsCard";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
@@ -37,15 +43,15 @@ const ProductDetailsScreen = ({ navigation }) => {
   useEffect(() => {
     const getproductdata = async () => {
       try {
-        setloader(true)
+        setloader(true);
         const api = `qapi/products/`;
         const response = await readApi(api);
         dispatch(setProductitem(response));
         SetProductData(response);
       } catch (error) {
         console.log("Unable to fetch Data", error);
-      }finally{
-        setloader(false)
+      } finally {
+        setloader(false);
       }
     };
     getproductdata();
@@ -67,7 +73,7 @@ const ProductDetailsScreen = ({ navigation }) => {
 
   const handleBulkproduct = () => {
     setBulkUploadModalVisible(true);
-    <FileUploadModal />;
+    // <FileUploadModal />;
   };
 
   if (loader) {
@@ -148,7 +154,11 @@ const ProductDetailsScreen = ({ navigation }) => {
       />
 
       {/* Bulk Upload Modal */}
-      {bulkUploadModalVisible && <FileUploadModal setBulkUploadModalVisible = {setBulkUploadModalVisible}/>}
+      {bulkUploadModalVisible && (
+        <FileUploadModal
+          setBulkUploadModalVisible={setBulkUploadModalVisible}
+        />
+      )}
 
       {editmodal && (
         <EditCustomerDetailsModal

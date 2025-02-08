@@ -14,7 +14,6 @@ import { fontSize } from "../../Util/UtilApi";
 const ProductDetailsCard = ({ item }) => {
   const [Opendetails, setOpendetails] = useState(false);
   const navigation = useNavigation();
-  console.log("Value of item", item);
   return (
     <ScrollView>
       <Card style={styles.card}>

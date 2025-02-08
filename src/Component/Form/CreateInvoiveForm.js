@@ -130,6 +130,7 @@ const CreateInvoiceForm = ({}) => {
             ],
           };
           console.log("Form Submitted Data:", formData?.Product);
+          console.log("Form Submitted Data:", formData);
           submit.current = true;
           navigation.navigate("PDFScreen", { formData });
           resetForm();

@@ -10,7 +10,9 @@ const AddProduct = ({ navigation }) => {
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [showHsnOptions, setShowHsnOptions] = useState(false);
+  const [HSNCode, SetHSNCode] = useState();
 
+  console.log("DATA OF HSNCODE IS ", HSNCode);
 
   const validationSchema = Yup.object().shape({
     ProductCategory: Yup.string().required("Product category is required"),
@@ -25,36 +27,38 @@ const AddProduct = ({ navigation }) => {
     IsStockData: Yup.boolean().nullable().required("Stock status is required"),
   });
 
-
   const HandleHsnCode = async (hsncode, setFieldValue) => {
     try {
       const api = `qapi/hsn-codes`;
       const response = await readApi(api);
       if (response) {
-        const tex = response.filter((item) => item?.code === hsncode);
-        console.log("Match data is ", tex);
-        if (tex.length > 0) {
-          setFieldValue("TaxRate", tex[0]?.taxrate);
+        const matchedHsnCode = response.find((item) => item?.code === hsncode);
+        console.log("Matched HSN code is", matchedHsnCode);
+        if (matchedHsnCode) {
+          setFieldValue("HSNCode", matchedHsnCode?.code);
+          setFieldValue("TaxRate", matchedHsnCode?.taxrate);
+          SetHSNCode(matchedHsnCode);
         } else {
           console.log("No matching HSN code found");
           setFieldValue("TaxRate", "");
+          setFieldValue("HSNCode", "");
         }
       }
     } catch (error) {
-      console.error("Error fetching User data:", error);
+      console.error("Error fetching HSN code data:", error);
     }
   };
 
   return (
     <ScrollView contentContainerStyle={{}}>
       <Formik
-      enableReinitialize={true}
+        enableReinitialize={true}
         initialValues={{
           ProductCategory: "",
           ProductName: "",
           PurchasePrice: "",
           SellingPrice: "",
-          TaxRate:  "",
+          TaxRate: "",
           HSNCode: "",
           IsStockData: null,
         }}
@@ -66,7 +70,7 @@ const AddProduct = ({ navigation }) => {
             costPrice: values?.PurchasePrice,
             sellPrice: values?.SellingPrice,
             taxRate: values?.TaxRate,
-            // hsncodefk: values?.HSNCode,
+            hsncodefk: HSNCode?.id,
             isStock: values?.IsStockData,
           };
           console.log("Data is 15863", ProductData);
@@ -172,8 +176,8 @@ const AddProduct = ({ navigation }) => {
             <View style={styles.radioGroup}>
               <Text>Is in Stock?</Text>
               <RadioButton.Group
-                onValueChange={(value) => handleChange("IsStockData")(value)} // Ensure correct name IsStockData
-                value={values.IsStockData} // Bind to IsStockData
+                onValueChange={(value) => handleChange("IsStockData")(value)}
+                value={values.IsStockData}
               >
                 <View style={styles.radioButton}>
                   <RadioButton value={"true"} />
@@ -190,7 +194,7 @@ const AddProduct = ({ navigation }) => {
                 )}
             </View>
 
-            {/* Suggestions for HSN Code */}
+            {/* Suggestions for HSN Code
             {showHsnOptions && (
               <View style={styles.suggestionsContainer}>
                 <ScrollView style={styles.suggestionsList}>
@@ -210,7 +214,7 @@ const AddProduct = ({ navigation }) => {
                   ))}
                 </ScrollView>
               </View>
-            )}
+            )} */}
 
             {/* Submit Button */}
             <TouchableOpacity
