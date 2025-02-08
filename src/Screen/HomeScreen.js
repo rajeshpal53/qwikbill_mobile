@@ -23,7 +23,7 @@ import {
   FontAwesome5,
   Ionicons,
 } from "@expo/vector-icons";
-import { Button, Card, TextInput } from "react-native-paper";
+import { Button, Card, TextInput, ActivityIndicator } from "react-native-paper";
 import { AuthContext } from "../Store/AuthContext";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { services } from "../tempList/ServicesList";
@@ -68,11 +68,14 @@ export default function HomeScreen({ navigation }) {
         setIsLoading(true);
         const token = userData?.token;
         // const api = `qapi/vendors/${userData?.user?.id}`
-        const response = await readApi(`qapi/vendors//getVendorsByUserId/${userData?.user?.id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await readApi(
+          `qapi/vendors//getVendorsByUserId/${userData?.user?.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         console.log(response);
         setVendorDetails(response);
       } catch (err) {
@@ -118,6 +121,18 @@ export default function HomeScreen({ navigation }) {
     // navigation.navigate("StackNavigator", { screen: Screen });
     navigation.navigate(Screen);
   };
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator
+          animating={isLoading}
+          color={"#FFC107"}
+          size="large"
+        />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeContainer}>
