@@ -42,11 +42,11 @@
 //         );
 //       }
 //       navigation.navigate("login");
-    
+
 //     }catch(err){
 //       console.error("failed to logout",err)
 //     }
-   
+
 //   };
 //   useEffect(() => {
 //     async function loginDetailHandler() {
@@ -79,10 +79,9 @@
 //           label={login.name?.charAt(0)}
 //           style={styles.avatar}
 //         />
-   
 
 //         </View>
-      
+
 //         <Card.Content style={{ alignSelf: "center",margin:20}}>
 //           <Title
 //             style={styles.titleStyle}
@@ -105,7 +104,7 @@
 //         onPress={logoutHandler}
 //         mode="contained"
 //         labelStyle={styles.buttonText}
-       
+
 //       >
 //         LogOut
 //       </Button>
@@ -129,7 +128,7 @@
 //     width: "100%",
 //     height:"100%",
 //     color: "#fff",
-    
+
 //     justifyContent:"center"
 //   },
 //   logout:{ alignSelf: "flex-end", marginBottom: 10, backgroundColor:"#0c3b73"},
@@ -160,7 +159,15 @@
 // export default ProfileSetting;
 
 import React, { useContext, useEffect, useState } from "react";
-import { View, ScrollView, StyleSheet, Modal, TouchableOpacity, SafeAreaView, Image } from "react-native";
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Modal,
+  TouchableOpacity,
+  SafeAreaView,
+  Image,
+} from "react-native";
 import { Text, Card, Avatar, Button } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialIcons";
 // import ChangeLanguageModal from "../Modal/ChangeLanguageModal";
@@ -172,9 +179,12 @@ import { useIsFocused } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
 // import { WalletContext } from "../Store/WalletContext";
 import FastImage from "react-native-fast-image";
-import auth from '@react-native-firebase/auth';
+import auth from "@react-native-firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSnackbar } from "../Store/SnackbarContext";
+import ChangeLanguageModal from "../Modal/ChangeLanguageModal";
+
+
 const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
   const [isFullImageModalVisible, setIsFullImageModalVisible] = useState(false);
   const [selectedImageUri, setSelectedImageUri] = useState(null);
@@ -183,10 +193,8 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
   const [languageModalvisible, setLanguageModalVisible] = useState(false);
   const [language, setLanguage] = useState("English"); // Default language
   const [visible, setVisible] = useState(false);
-  const [imageUrl, setImageUrl] = useState(
-    `${NORM_URL}assets/mobile/male.png`
-  );
-  const {showSnackbar}=useSnackbar();
+  const [imageUrl, setImageUrl] = useState(`${NORM_URL}assets/mobile/male.png`);
+  const { showSnackbar } = useSnackbar();
   const { userData, clearUserData } = useContext(UserDataContext);
   // const { setCreateuser } = useContext(WalletContext);
 
@@ -204,62 +212,72 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
   ];
   // const [sameMenuItems, setSameMeuItems] = useState()
   const [menuItems, setMenuItems] = useState();
-  useEffect(()=>{
-      if(myOrdersTabShow){
-        setMenuItems([
-          ...(userData
-            ? [
-                {
-                  icon: "language",
-                  label: "Address",
-                  value: "Address",
-                },
-              ]
-            : []),
-          {
-            icon: "language",
-            label: "Change Language",
-            value: "changeLanguage",
-          },
-            {
-                  icon: "flag",
-                  label: "Edit  a Vendor ",
-                  value: "Edit a Vendor",
-                 
-            },     
-          ...(userData?.user?.roles === "admin" ? AdminOption : []),
-      
-          { icon: "policy", label: "Policies", value: "Policies" },
-          ...(userData ? [{ icon: "logout", label: "Logout", value: "Logout" }] : []),
-        ])
-      }else{
-        setMenuItems([
-          ...(userData
-            ? [
-                {
-                  icon: "language",
-                  label: "Address",
-                  value: "Address",
-                },
-              ]
-            : []),
-          {
-            icon: "language",
-            label: "Change Language",
-            value: "changeLanguage",
-          },
-            {
-                  icon: "flag",
-                  label: "Become a Vendor",
-                  value: "Become a Vendor",
-            },     
-          ...(userData?.user?.roles === "admin" ? AdminOption : []),
-      
-          { icon: "policy", label: "Policies", value: "Policies" },
-          ...(userData ? [ { icon: "person-add", label: "Assign New Role", value: "Assign New Role" },{ icon: "logout", label: "Logout", value: "Logout" }] : []),
-        ])
-      }
-  },[myOrdersTabShow,isFocused,userData])
+  useEffect(() => {
+    if (myOrdersTabShow) {
+      setMenuItems([
+        ...(userData
+          ? [
+              {
+                icon: "language",
+                label: "Address",
+                value: "Address",
+              },
+            ]
+          : []),
+        {
+          icon: "language",
+          label: "Change Language",
+          value: "changeLanguage",
+        },
+        {
+          icon: "flag",
+          label: "Edit  a Vendor ",
+          value: "Edit a Vendor",
+        },
+        ...(userData?.user?.roles === "admin" ? AdminOption : []),
+
+        { icon: "policy", label: "Policies", value: "Policies" },
+        ...(userData
+          ? [{ icon: "logout", label: "Logout", value: "Logout" }]
+          : []),
+      ]);
+    } else {
+      setMenuItems([
+        ...(userData
+          ? [
+              {
+                icon: "language",
+                label: "Address",
+                value: "Address",
+              },
+            ]
+          : []),
+        {
+          icon: "language",
+          label: "Change Language",
+          value: "changeLanguage",
+        },
+        {
+          icon: "flag",
+          label: "Become a Vendor",
+          value: "Become a Vendor",
+        },
+        ...(userData?.user?.roles === "admin" ? AdminOption : []),
+
+        { icon: "policy", label: "Policies", value: "Policies" },
+        ...(userData
+          ? [
+              {
+                icon: "person-add",
+                label: "Assign New Role",
+                value: "Assign New Role",
+              },
+              { icon: "logout", label: "Logout", value: "Logout" },
+            ]
+          : []),
+      ]);
+    }
+  }, [myOrdersTabShow, isFocused, userData]);
 
   // useEffect(() => {
   //   if (userData) {
@@ -282,9 +300,8 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
 
   useEffect(() => {
     if (userData) {
-
       if (userData?.user?.profilePicurl) {
-        const nevVar=`${NORM_URL}/${userData?.user?.profilePicurl}`
+        const nevVar = `${NORM_URL}/${userData?.user?.profilePicurl}`;
         setImageUrl(nevVar);
       } else if (userData?.user?.gender == null) {
         setImageUrl(`${NORM_URL}assets/mobile/neutral.png`);
@@ -295,7 +312,6 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
         userData?.user?.gender === "male"
       ) {
         setImageUrl(`${NORM_URL}assets/mobile/male.png`);
-
       } else {
         setImageUrl(`${NORM_URL}assets/mobile/neutral.png`);
       }
@@ -303,7 +319,6 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
       setImageUrl(`${NORM_URL}assets/mobile/neutral.png`);
     }
   }, [isFocused, userData]); // Removed imageUrl from dependency array
-  
 
   const languageModalOpen = () => {
     setLanguageModalVisible(true);
@@ -324,6 +339,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
   };
 
   const handlePress = (value) => {
+    console.log("Data of value ", value);
     if (value == "Address") {
       navigation.navigate("Address");
       // navigation.navigate("TestingScreen");
@@ -350,20 +366,27 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
       setVisible(true);
     } else if (value === "AdminSection") {
       navigation.navigate("AdminSection");
+    } else if (value === "Assign New Role") {
+      navigation.navigate("AddroleScreen");
     }
   };
-  const logoutHandler =async () => {
+  const logoutHandler = async () => {
     try {
-      const response= createApi("qapi/users/logout",{mobile:userData?.user?.mobile},{ "Content-Type": "application/json",
-        Authorization: `Bearer ${userData.token}`,
-       })
-      console.log("response",response)
-      showSnackbar("Logged out successfully","success")
-      await auth().signOut()
+      const response = createApi(
+        "qapi/users/logout",
+        { mobile: userData?.user?.mobile },
+        {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userData.token}`,
+        }
+      );
+      console.log("response", response);
+      showSnackbar("Logged out successfully", "success");
+      await auth().signOut();
       await clearUserData();
       // setCreateuser(null);
       setVisible(false);
-      
+
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -371,10 +394,9 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
         })
       );
     } catch (error) {
-      showSnackbar("Error logging out","error")
-      console.log("error logging out - ", error)
+      showSnackbar("Error logging out", "error");
+      console.log("error logging out - ", error);
     }
-
 
     // navigation.navigate("EnterNumber");
   };
@@ -409,20 +431,26 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
                   backgroundColor: "#fff",
                 }}
               >
-                 <TouchableOpacity onPress={() => {
-                    if(userData?.user?.profilePicurl){
-                        openImageModal(`${NORM_URL}/${userData?.user?.profilePicurl}?${new Date().getTime()}`)
+                <TouchableOpacity
+                  onPress={() => {
+                    if (userData?.user?.profilePicurl) {
+                      openImageModal(
+                        `${NORM_URL}/${
+                          userData?.user?.profilePicurl
+                        }?${new Date().getTime()}`
+                      );
                     }
-                    }}>
-                <FastImage
-                  source={{
-                    uri: `${imageUrl}?${new Date().getTime()}`
-                    // headers: { Accept: "*/*" },
-                    // priority: FastImage.priority.high,
-                    // cache: FastImage.cacheControl.web,
                   }}
-                  style={styles.avatar}
-                />
+                >
+                  <FastImage
+                    source={{
+                      uri: `${imageUrl}?${new Date().getTime()}`,
+                      // headers: { Accept: "*/*" },
+                      // priority: FastImage.priority.high,
+                      // cache: FastImage.cacheControl.web,
+                    }}
+                    style={styles.avatar}
+                  />
                 </TouchableOpacity>
                 {/* <Avatar.Image
                 size={100}
@@ -431,26 +459,33 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
               /> */}
                 {userData ? (
                   <View style={{ alignItems: "center" }}>
-                    <Text style={{ fontSize: 20, fontFamily: "Poppins-Bold", color:"#7E8A8C" }}>
-                      {userData?.user?.name|| userData?.user?.mobile}</Text>
-                  <TouchableOpacity
-                    onPress={handleEditPress}
-                    style={{
-                      height: 50,
-                      justifyContent: "center",
-                      width: 150,
-                      alignItems: "center",
-                    }}
-                  >
-                    <Button
-                      icon="pencil"
-                      mode="contained"
-                      buttonColor="#0c3b73"
-                      style={styles.button}
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        fontFamily: "Poppins-Bold",
+                        color: "#7E8A8C",
+                      }}
                     >
-                      {t("Edit")}
-                    </Button>
-                  </TouchableOpacity>
+                      {userData?.user?.name || userData?.user?.mobile}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={handleEditPress}
+                      style={{
+                        height: 50,
+                        justifyContent: "center",
+                        width: 150,
+                        alignItems: "center",
+                      }}
+                    >
+                      <Button
+                        icon="pencil"
+                        mode="contained"
+                        buttonColor="#0c3b73"
+                        style={styles.button}
+                      >
+                        {t("Edit")}
+                      </Button>
+                    </TouchableOpacity>
                   </View>
                 ) : (
                   <Button
@@ -491,7 +526,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
           </View>
         </ScrollView>
       </SafeAreaView>
-      {/* <ChangeLanguageModal
+      <ChangeLanguageModal
         languageModalvisible={languageModalvisible}
         setLanguageModalVisible={setLanguageModalVisible}
         languageModalOpen={languageModalOpen}
@@ -500,7 +535,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
         setLanguage={setLanguage}
         t={t}
         i18nChangeLanguage={i18n.changeLanguage}
-      /> */}
+      />
       {loginConfirmModalVisible && (
         <ConfirmModal
           visible={loginConfirmModalVisible}
