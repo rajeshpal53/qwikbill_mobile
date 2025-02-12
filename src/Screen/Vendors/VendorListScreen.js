@@ -11,6 +11,7 @@ import { ShopDetailContext } from "../../Store/ShopDetailContext";
 import { useSnackbar } from "../../Store/SnackbarContext";
 import DeleteModal from "../../UI/DeleteModal";
 import InvoiceFilterModel from "../../Components/Modal/InvoiceFilterModel";
+import UserDataContext from "../../Store/UserDataContext";
 
 const fetchSearchData = async (searchQuery) => {
   try {
@@ -25,7 +26,7 @@ const fetchSearchData = async (searchQuery) => {
 
 export default function VendorListScreen() {
   const navigation = useNavigation();
-  const [vendors, setVendors] = useState([]);
+  const [vendors, setVendors] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [deleteId, setDeleteId] = useState();
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -34,25 +35,54 @@ export default function VendorListScreen() {
   const { shopDetails } = useContext(ShopDetailContext);
   const { searchQuery } = useContext(AuthContext);
   const [filterModal, setFilterModal] = useState(false);
-  const [fetchingUrl, setFetchingurl] = useState(`api/vendor/list?shop=`);
+  // const [fetchingUrl, setFetchingurl] = useState(`api/vendor/list?shop=`);
+  const { userData } = useContext(UserDataContext);
+
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     setIsLoading(true);
+  //     try {
+  //       const url=`${fetchingUrl}${shopDetails._id}`
+  //       const response = await readApi(url);
+  //       setVendors(response.result);
+  //     } catch (error) {
+  //       console.error("error", error);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   }
+  //   fetchData();
+  // }, [isFocused, fetchingUrl]);
 
   useEffect(() => {
-    async function fetchData() {
-      setIsLoading(true);
+    const fetchVendorData = async () => {
+      console.log("Working function");
       try {
-        const url=`${fetchingUrl}${shopDetails._id}`
-        const response = await readApi(url);
-        setVendors(response.result);
-      } catch (error) {
-        console.error("error", error);
+        setIsLoading(true);
+        const token = userData?.token;
+        // const api = `qapi/vendors/${userData?.user?.id}`
+        const response = await readApi(
+          `qapi/vendors//getVendorsByUserId/${userData?.user?.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log("RES -------------", response);
+        setVendors(response);
+      } catch (err) {
+        setVendors([]);
       } finally {
         setIsLoading(false);
       }
-    }
-    fetchData();
-  }, [isFocused, fetchingUrl]);
+    };
+
+    fetchVendorData();
+  }, [isFocused,userData]);
 
   useEffect(() => {
+    console.log("Working function fetchSearchingData")
     const fetchSearchingData = async () => {
       const newData = await fetchSearchData(searchQuery);
 
@@ -104,7 +134,7 @@ export default function VendorListScreen() {
 
   const toggleModal = (sortBy) => {
     // Check if invoiceData is empty
-    if (vendors.length === 0) {
+    if (vendors.length > 0) {
       setModalVisible(!isModalVisible);
       return;
     }
@@ -113,9 +143,7 @@ export default function VendorListScreen() {
     let noFound = <Text>NO Data found</Text>;
 
     if (sortBy === "paid") {
-      setFetchingurl(
-        `api/vendor/filter?filter=paymentStatus&equal=paid&shop=`
-      );
+      setFetchingurl(`api/vendor/filter?filter=paymentStatus&equal=paid&shop=`);
     } else if (sortBy === "unpaid") {
       setFetchingurl(
         `api/vendor/filter?filter=paymentStatus&equal=unpaid&shop=`
@@ -125,7 +153,6 @@ export default function VendorListScreen() {
     }
     // Only update if filterData is not empty
     if (filterData.length > 0) {
-
     }
     setFilterModal(!filterModal);
   };
@@ -140,7 +167,6 @@ export default function VendorListScreen() {
   ];
 
   return (
-
     <View style={styles.container}>
       <View>
         <ItemList
@@ -160,13 +186,15 @@ export default function VendorListScreen() {
         style={styles.fab}
         onPress={() => navigation.navigate("VendorForm")}
       />
-      {(vendors.length > 0) && (<FAB
-        icon="filter"
-        style={styles.filterfab}
-        onPress={() => {
-          openModel();
-        }}
-      />)}
+      {vendors.length > 0 && (
+        <FAB
+          icon="filter"
+          style={styles.filterfab}
+          onPress={() => {
+            openModel();
+          }}
+        />
+      )}
 
       <InvoiceFilterModel
         style={{ backgroundColor: "lightblue" }}
@@ -213,6 +241,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "white",
     flex: 1,
-
   },
 });

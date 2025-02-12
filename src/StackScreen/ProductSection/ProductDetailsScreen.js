@@ -62,7 +62,7 @@ const ProductDetailsScreen = ({ navigation }) => {
   );
 
   const openEditModal = (item) => {
-    setSelectedEditItem(item); // Set selected offer
+    setSelectedEditItem(item); 
   };
 
   useEffect(() => {

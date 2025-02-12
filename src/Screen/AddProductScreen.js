@@ -59,7 +59,7 @@ const AddProductScreen = ({ navigation }) => {
     // </ScrollView>
   );
 };
-styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
   },

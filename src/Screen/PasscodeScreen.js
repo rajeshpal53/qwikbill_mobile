@@ -35,7 +35,6 @@ import { Linking } from "react-native";
 import { usePasskey } from "../Store/PasskeyContext";
 import { LoginTimeContext } from "../Store/LoginTimeContext";
 import { useWindowDimensions } from "react-native";
-
 export default function PasscodeScreen({ navigation }) {
   // const navigation = useNavigation();
   const { currentLoginTime, lastLoginTime, storeTime } =
@@ -56,6 +55,10 @@ export default function PasscodeScreen({ navigation }) {
   const [isBiometricSupported, setIsBiometricSupported] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+
+
+
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -160,14 +163,11 @@ export default function PasscodeScreen({ navigation }) {
     }
   };
 
- 
-
   const handleEyePress = () => {
     setSecureTextEntry(!secureTextEntry);
     setEyeOn(!eyeOn);
   };
 
- 
   const handleButtonPress = (button) => {
     setButtonsModes((prevstate) => {
       if (button === "passcode" && !prevstate.passcodeButtonMode) {
@@ -206,236 +206,240 @@ export default function PasscodeScreen({ navigation }) {
     <>
       <StatusBar style="light" backgroundColor={"#0c3b73"} />
       <SafeAreaView style={styles.SafeAreaView}>
-        <KeyboardAvoidingView style={{ flex:1 }}>
-          <View style={[styles1.overlay, {height:0.30*height}]}></View>
+        <KeyboardAvoidingView style={{ flex: 1 }}>
+          <View style={[styles1.overlay, { height: 0.3 * height }]}></View>
 
           <ScrollView>
-          <View style={[styles.scrollViewChild, {height:height}]}>
-            <View
-              style={{
-                // flex:1,
-                // backgroundColor: "orange",
-                // height: "25%",
-                flex: 1,
-                width: "100%",
-                alignItems: "center",
-              }}
-            >
-              <View style={{ flex: 2 }}>
-                <Image
-                  source={require("../../assets/aaaa_transparent.png")}
-                  style={styles.img}
-                />
-              </View>
-
+            <View style={[styles.scrollViewChild, { height: height }]}>
               <View
                 style={{
-                  // backgroundColor:"pink",
-                  alignItems: "center",
+                  // flex:1,
+                  // backgroundColor: "orange",
+                  // height: "25%",
                   flex: 1,
+                  width: "100%",
+                  alignItems: "center",
                 }}
               >
-                <Text
-                  variant="titleMedium"
-                  style={{ color: "white", fontSize: 18, fontWeight: "bold" }}
+                <View style={{ flex: 2 }}>
+                  <Image
+                    source={require("../../assets/aaaa_transparent.png")}
+                    style={styles.img}
+                  />
+                </View>
+
+                <View
+                  style={{
+                    // backgroundColor:"pink",
+                    alignItems: "center",
+                    flex: 1,
+                  }}
                 >
-                  WERTONE
-                </Text>
-                <Text style={{ color: "white", letterSpacing: 3 }}>
-                  Billing Software
-                </Text>
-              </View>
-            </View>
-
-            <Card style={styles.card}>
-              <Card.Content style={styles1.cardContent}>
-                {!isKeyboardVisible && (
-                  <View style={styles.myShopImageContainer}>
-                    <Image
-                      source={require("../../assets/shopImg1.jpeg")}
-                      style={styles.myShopeImage}
-                    ></Image>
-                  </View>
-                )}
-
-                <View style={{ alignItems: "center", gap: 5 }}>
-                  <Text variant="titleSmall">Welcome</Text>
                   <Text
                     variant="titleMedium"
-                    style={{ color: "#392de0" }}
-                  >{`${loginDetail1.name} ${loginDetail1.surname}`}</Text>
+                    style={{ color: "white", fontSize: 18, fontWeight: "bold" }}
+                  >
+                    WERTONE
+                  </Text>
+                  <Text style={{ color: "white", letterSpacing: 3 }}>
+                    Billing Software
+                  </Text>
                 </View>
+              </View>
 
-                <View style={{gap:5}}>
-                <View style={styles.buttonContainer}>
-                  <Button
-                    style={{
-                      width: "50%",
-                      backgroundColor: buttonsModes.passcodeButtonMode
-                        ? "#26a0df"
-                        : "transparent",
-                    }}
-                    mode={
-                      buttonsModes.passcodeButtonMode
-                        ? "contained"
-                        : "contained-disabled"
-                    }
-                    onPress={() => handleButtonPress("passcode")}
-                  >
-                    PASSCODE
-                  </Button>
-                  <Button
-                    style={{
-                      width: "50%",
-                      fontSize: 12,
-                      backgroundColor: buttonsModes.domainButtonMode
-                        ? "#6dbbc7"
-                        : "transparent",
-                    }}
-                    mode={
-                      buttonsModes.domainButtonMode
-                        ? "contained"
-                        : "contained-disabled"
-                    }
-                    onPress={() => handleButtonPress("domain")}
-                  >
-                    DOMAIN
-                  </Button>
-                </View>
+              <Card style={styles.card}>
+                <Card.Content style={styles1.cardContent}>
+                  {!isKeyboardVisible && (
+                    <View style={styles.myShopImageContainer}>
+                      <Image
+                        source={require("../../assets/shopImg1.jpeg")}
+                        style={styles.myShopeImage}
+                      ></Image>
+                    </View>
+                  )}
 
-                <View>
-                  <Formik
+                  <View style={{ alignItems: "center", gap: 5 }}>
+                    <Text variant="titleSmall">Welcome</Text>
+                    <Text
+                      variant="titleMedium"
+                      style={{ color: "#392de0" }}
+                    >{`${loginDetail1.name} ${loginDetail1.surname}`}</Text>
+                  </View>
 
-                  // initialValues={{ email: '', password: '' }}
-                  // validationSchema={validationSchema}
-                  // onSubmit={handleLogin}
-                  >
-                    <View
-                      style={{
-                        display: "flex",
-                        gap: 20,
-                      }}
-                    >
-                      <View
+                  <View style={{ gap: 5 }}>
+                    <View style={styles.buttonContainer}>
+                      <Button
                         style={{
-                          width: "100%",
-                          display: "flex",
-                          flexDirection: "row",
-                          gap: 10,
+                          width: "50%",
+                          backgroundColor: buttonsModes.passcodeButtonMode
+                            ? "#26a0df"
+                            : "transparent",
                         }}
+                        mode={
+                          buttonsModes.passcodeButtonMode
+                            ? "contained"
+                            : "contained-disabled"
+                        }
+                        onPress={() => handleButtonPress("passcode")}
                       >
-                        {/* first */}
-                        <View style={{ width: "72%" }}>
-                          <TextInput
-                            style={{ backgroundColor: "#f4f4f9" }}
-                            placeholder="Enter App Passcode"
-                            keyboardType="numeric"
-                            secureTextEntry={secureTextEntry}
-                            onChangeText={(value) => {
-                              setenteredPasscode(value);
-                            }}
-                          />
-                        </View>
+                        PASSCODE
+                      </Button>
+                      <Button
+                        style={{
+                          width: "50%",
+                          fontSize: 12,
+                          backgroundColor: buttonsModes.domainButtonMode
+                            ? "#6dbbc7"
+                            : "transparent",
+                        }}
+                        mode={
+                          buttonsModes.domainButtonMode
+                            ? "contained"
+                            : "contained-disabled"
+                        }
+                        onPress={() => handleButtonPress("domain")}
+                      >
+                        DOMAIN
+                      </Button>
+                    </View>
 
-                        {/* second */}
-                        <View style={{ justifyContent: "center" }}>
-                          <Tooltip
-                            isVisible={tooltipVisible}
-                            content={
-                              <View style={styles.tooltipContent}>
-                                <Text
-                                  style={styles.tooltipText}
-                                  textColor="6dbbc7"
-                                >
-                                  pascode is used for prevent unautherized
-                                  access.
-                                </Text>
-                              </View>
-                            }
-                            placement="bottom"
-                            onClose={() => setTooltipVisible(false)}
-                            arrowSize={{ width: 16, height: 8 }}
-                            backgroundColor="transparent"
-                          >
-                            <AntDesign
-                              name="infocirlceo"
-                              size={20}
-                              color="#6dbbc7"
-                              onPress={() => {
-                                setTooltipVisible(true);
-                              }}
-                            />
-                          </Tooltip>
-                        </View>
+                    <View>
+                      <Formik
 
-                        {/* third */}
-
+                      // initialValues={{ email: '', password: '' }}
+                      // validationSchema={validationSchema}
+                      // onSubmit={handleLogin}
+                      >
                         <View
                           style={{
-                            // backgroundColor:"white",
-                            justifyContent: "center",
+                            display: "flex",
+                            gap: 20,
                           }}
                         >
-                          <TouchableOpacity onPress={handleEyePress}>
-                            {eyeOn ? (
-                              <Feather name="eye" size={20} color="#6dbbc7" />
-                            ) : (
-                              <Feather
-                                name="eye-off"
-                                size={20}
-                                color="#6dbbc7"
+                          <View
+                            style={{
+                              width: "100%",
+                              display: "flex",
+                              flexDirection: "row",
+                              gap: 10,
+                            }}
+                          >
+                            {/* first */}
+                            <View style={{ width: "72%" }}>
+                              <TextInput
+                                style={{ backgroundColor: "#f4f4f9" }}
+                                placeholder="Enter App Passcode"
+                                keyboardType="numeric"
+                                secureTextEntry={secureTextEntry}
+                                onChangeText={(value) => {
+                                  setenteredPasscode(value);
+                                }}
                               />
-                            )}
-                          </TouchableOpacity>
+                            </View>
+
+                            {/* second */}
+                            <View style={{ justifyContent: "center" }}>
+                              <Tooltip
+                                isVisible={tooltipVisible}
+                                content={
+                                  <View style={styles.tooltipContent}>
+                                    <Text
+                                      style={styles.tooltipText}
+                                      textColor="6dbbc7"
+                                    >
+                                      pascode is used for prevent unautherized
+                                      access.
+                                    </Text>
+                                  </View>
+                                }
+                                placement="bottom"
+                                onClose={() => setTooltipVisible(false)}
+                                arrowSize={{ width: 16, height: 8 }}
+                                backgroundColor="transparent"
+                              >
+                                <AntDesign
+                                  name="infocirlceo"
+                                  size={20}
+                                  color="#6dbbc7"
+                                  onPress={() => {
+                                    setTooltipVisible(true);
+                                  }}
+                                />
+                              </Tooltip>
+                            </View>
+
+                            {/* third */}
+
+                            <View
+                              style={{
+                                // backgroundColor:"white",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <TouchableOpacity onPress={handleEyePress}>
+                                {eyeOn ? (
+                                  <Feather
+                                    name="eye"
+                                    size={20}
+                                    color="#6dbbc7"
+                                  />
+                                ) : (
+                                  <Feather
+                                    name="eye-off"
+                                    size={20}
+                                    color="#6dbbc7"
+                                  />
+                                )}
+                              </TouchableOpacity>
+                            </View>
+
+                            <View />
+                          </View>
+
+                          <View style={{ width: "100%" }}>
+                            <Button
+                              textColor="white"
+                              buttonColor="grey"
+                              style={{ borderRadius: 0 }}
+                              onPress={handleOnLoginPress}
+                            >
+                              Login
+                            </Button>
+                          </View>
                         </View>
-
-                        <View />
-                      </View>
-
-                      <View style={{ width: "100%" }}>
-                        <Button
-                          textColor="white"
-                          buttonColor="grey"
-                          style={{ borderRadius: 0 }}
-                          onPress={handleOnLoginPress}
-                        >
-                          Login
-                        </Button>
-                      </View>
+                      </Formik>
                     </View>
-                  </Formik>
-                </View>
-                </View>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("forgetPasscode")}
-                >
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("forgetPasscode")}
+                  >
+                    <Text variant="titleSmall" style={{ color: "#6dbbc7" }}>
+                      Forgot App Passcode?
+                    </Text>
+                  </TouchableOpacity>
+                </Card.Content>
+              </Card>
+              <View style={styles.loginWithFingerContainer}>
+                <View style={styles.loginWithFinger}>
                   <Text variant="titleSmall" style={{ color: "#6dbbc7" }}>
-                    Forgot App Passcode?
+                    Login with fingerprint
                   </Text>
-                </TouchableOpacity>
-              </Card.Content>
-            </Card>
-            <View style={styles.loginWithFingerContainer}>
-              <View style={styles.loginWithFinger}>
-                <Text variant="titleSmall" style={{ color: "#6dbbc7" }}>
-                  Login with fingerprint
-                </Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    handleLocalAuthentication();
-                  }}
-                  style={{ justifyContent: "center", marginTop: "20" }}
-                >
-                  <Ionicons
-                    name="finger-print"
-                    size={50}
-                    color="#26a0df"
-                    style={{ justifySelf: "center", marginTop: 20 }}
-                  />
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleLocalAuthentication();
+                    }}
+                    style={{ justifyContent: "center", marginTop: "20" }}
+                  >
+                    <Ionicons
+                      name="finger-print"
+                      size={50}
+                      color="#26a0df"
+                      style={{ justifySelf: "center", marginTop: 20 }}
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-          </View>
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>

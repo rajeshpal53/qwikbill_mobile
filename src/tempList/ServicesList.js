@@ -17,50 +17,58 @@ export const services = [
       name: "Create Invoice",
       icon: <FontAwesome5 name="file-invoice" size={30} color="#26a0df" />,
       key: "1",
-      navigateTo:"CreateInvoice"
+      navigateTo:"CreateInvoice",
+      testID :"Create-Invoice"
     },
     {
       name: "Add Product",
       icon: <Ionicons name="bag-add-outline" size={30} color="#26a0df" />,
       key: "2",
-      navigateTo:"AddProduct"
+      navigateTo:"AddProduct",
+      testID:"Add-Product"
     },
     {
       name: "Add Customer",
       icon: <AntDesign name="adduser" size={30} color="#26a0df" />,
       key: "3",
-      navigateTo:"AddCustomer"
+      navigateTo:"AddCustomer",
+      testID:"Add-Customer"
     },
     {
       name: "Add Shop",
       icon:<MaterialIcons name="add-business" size={30} color="#26a0df" />,
       key: "4",
-      navigateTo:"CreateShopScreen"
+      navigateTo:"CreateShopScreen",
+      testID:"Create-ShopScreen"
     },
     {
       name: "Add HSN Code",
       icon: <FontAwesome5 name="user" size={30} color="#26a0df" />,
       key: "5",
-      navigateTo:"hsncode"
+      navigateTo:"hsncode",
+      testID:"hsn-code"
     },
     {
       name: "View Vendors",
       icon: <FontAwesome name="group" size={30} color="#26a0df" />,
       key: "6",
-      navigateTo:"ViewVendor"
+      navigateTo:"ViewVendor",
+      testID:"View-Vendor"
     },
     {
       name: "View Your Shops",
       icon: <FontAwesome5 name="store" size={30} color="#26a0df" />,
       key: "7",
-      navigateTo:"ViewShops"
+      navigateTo:"ViewShops",
+      testID:"View-Shops"
     },
 
     {
       name: "Favourites",
       icon: <Ionicons name="heart-outline" size={30} color="#26a0df" />,
       key: "8",
-      navigateTo:"CreateInvoice"
+      navigateTo:"CreateInvoice",
+      testID:"Create-Invoice"
     },
     {
       name: "",
