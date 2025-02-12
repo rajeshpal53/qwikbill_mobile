@@ -60,71 +60,6 @@ import CustomBackButton from "../Component/CustomBackButton.js";
 import CustomerDetails from "../StackScreen/Customerdetails.js";
 import AddCustomerScreen from "../Screen/AddCustomerScreen";
 import AllItemProduct from "../../src/StackScreen/AllItemProduct.js";
-// <<<<<<< Akash
-
-// export default function StackNavigator() {
-//   const Stack = createStackNavigator();
-//   const [isConnected, setIsConnected] = useState(false);
-//   const [isLandscape, setIsLandscape] = useState(false);
-//   const { isAuthenticated, isLoading, searchMode } = useContext(AuthContext);
-//   const { shopDetails } = useContext(ShopDetailContext);
-
-//   if (isLoading) {
-//     return (
-//       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-//         <ActivityIndicator size="large" />
-//       </View>
-//     );
-//   }
-//   console.log(isLoading);
-//   console.log(isAuthenticated, "akdskddkfkfkf");
-//   return (
-//     <>
-//       <Stack.Navigator
-//         initialRouteName={isAuthenticated ? "Passcode" : "login"}
-//         screenOptions={{
-//           headerStyle: {
-//             backgroundColor: "#0c3b73", // Set your desired header background color here
-//           },
-//           headerTitleAlign: "center",
-//           headerTintColor: "white", // Set your desired header text color here
-//           headerTitleStyle: {
-//             fontWeight: "bold", // Optional: Set your desired font weight
-//           },
-//           headerLeft: searchMode ? () => null : undefined, // This removes the back button
-//         }}
-//       >
-//         <Stack.Screen
-//           name="wertone"
-//           component={BottomNavigator}
-//           options={{ headerShown: false }}
-//         />
-//         <Stack.Screen
-//           name="local"
-//           component={LocalAuthScreen}
-//           screenOptions={{ headerShown: false }}
-//         />
-//         <Stack.Screen
-//           name="login"
-//           component={LoginScreen}
-//           screenOptions={{ headerShown: false }}
-//           // options={{ title: 'Login '}}
-//           options={{
-//             headerShown: false,
-//           }}
-//         />
-//         <Stack.Screen
-//           name="Signup"
-//           component={SignupScreen}
-//           screenOptions={{ headerShown: false }}
-//           options={{
-//             headerShown: false,
-//           }}
-//         />
-//         <Stack.Screen
-//           name="AddInvoice"
-//           component={AddInvoiceScreen}
-// =======
 import CustomerDetailScreen from "../Screen/CustomerDetailScreen.js";
 import EnterNumberScreen from "../Screen/StackScreen/EnterNumberScreen.js";
 import UserDataContext from "../Store/UserDataContext.js";
@@ -132,6 +67,8 @@ import PdfScreen from "../Component/PdfViewer.js";
 import EditProfileScreen from "../Screen/StackScreen/EditProfileScreen.js";
 import CategoryDropDown from "../UI/DropDown/CategoryDropdown.js";
 import AddRole from "../Screen/StackScreen/Addrole.js";
+import { withCopilot } from 'react-native-copilot';
+
 export default function StackNavigator() {
   const Stack = createStackNavigator();
   const [isConnected, setIsConnected] = useState(false);
@@ -139,6 +76,9 @@ export default function StackNavigator() {
   const { isAuthenticated, isLoading, searchMode } = useContext(AuthContext);
   const { userData } = useContext(UserDataContext);
   const { shopDetails } = useContext(ShopDetailContext);
+
+  // const ViewCustomerWithTour  = withCopilot(AddCustomerScreen)
+
 
   if (isLoading) {
     return (

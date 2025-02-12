@@ -21,6 +21,8 @@ import { UserDataProvider } from "./src/Store/UserDataContext.js";
 import * as Font from "expo-font";
 import StackNavigator from "./src/NavigatorContainer/stackNavigator.js";
 import { FontProvider } from "./src/Store/FontProvider.js";
+// import { CopilotProvider } from "react-native-copilot";
+import { TourGuideProvider } from "rn-tourguide";
 
 const customTheme = {
   ...DefaultTheme,
@@ -58,19 +60,21 @@ export default function App() {
               <Provider store={Store}>
                 <I18nextProvider i18n={i18n}>
                   <PaperProvider theme={customTheme}>
-                    <NavigationContainer>
-                      <AuthProvider>
-                        <LoginTimeProvider>
-                          <FontProvider>
-                            {fontsLoaded ? (
-                              <StackNavigator />
-                            ) : (
-                              <ActivityIndicator size={"large"} />
-                            )}
-                          </FontProvider>
-                        </LoginTimeProvider>
-                      </AuthProvider>
-                    </NavigationContainer>
+                    <TourGuideProvider {...{ borderRadius: 16,backdropColor: 'hsla(64, 5.80%, 47.50%, 0.39)' }}>
+                      <NavigationContainer>
+                        <AuthProvider>
+                          <LoginTimeProvider>
+                            <FontProvider>
+                              {fontsLoaded ? (
+                                <StackNavigator />
+                              ) : (
+                                <ActivityIndicator size={"large"} />
+                              )}
+                            </FontProvider>
+                          </LoginTimeProvider>
+                        </AuthProvider>
+                      </NavigationContainer>
+                    </TourGuideProvider>
                   </PaperProvider>
                 </I18nextProvider>
               </Provider>

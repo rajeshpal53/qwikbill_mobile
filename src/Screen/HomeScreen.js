@@ -1,14 +1,10 @@
-import React, { useState, useContext, useEffect } from "react";
-import { useRef } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import {
   View,
   Text,
   useWindowDimensions,
   Pressable,
   Image,
-} from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import {
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -18,6 +14,7 @@ import {
   BackHandler,
   TouchableOpacity,
 } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import {
   MaterialCommunityIcons,
   FontAwesome5,
@@ -41,6 +38,12 @@ import {
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { useFonts } from "expo-font";
 import UserDataContext from "../Store/UserDataContext";
+import {
+  TourGuideProvider,
+  TourGuideZone,
+  TourGuideZoneByPosition,
+  useTourGuideController,
+} from "rn-tourguide";
 
 export default function HomeScreen({ navigation }) {
   const { currentLoginTime, lastLoginTime, storeTime } =
@@ -61,6 +64,64 @@ export default function HomeScreen({ navigation }) {
   // console.log(verticalScale(700), "    --- verticalscale");
   const { userData } = useContext(UserDataContext);
   const isFocused = useIsFocused();
+  const [currentStep, setCurrentStep] = useState(0);
+
+  const { canStart, start, stop, eventEmitter } = useTourGuideController();
+
+  useEffect(() => {
+    const checkIfTourSeen = async () => {
+      try {
+        const hasSeenTour = await AsyncStorage.getItem("hasSeenTour");
+        if (!hasSeenTour && canStart) {
+          start();
+        }
+      } catch (error) {
+        console.log("Error checking tour guide status", error);
+      }
+    };
+
+    checkIfTourSeen();
+  }, [canStart]);
+
+  // const handleSkipTour = async () => {
+  //   stop(); // This will stop the tour
+  //   await AsyncStorage.setItem("hasSeenTour", "true"); // Marks the tour as skipped/completed
+  //   console.log("Tour skipped");
+  // };
+
+  const handleNextStep = () => {
+    setCurrentStep((prevStep) => {
+      const newStep = prevStep + 1;
+      if (newStep === 13) {
+        AsyncStorage.setItem("hasSeenTour", "true");
+        console.log("Tour completed");
+      }
+      return newStep;
+    });
+  };
+
+  useEffect(() => {
+    if (currentStep === 13) {
+      console.log("Tour completed");
+      AsyncStorage.setItem("hasSeenTour", "true");
+    }
+  }, [currentStep]);
+
+  const handleOnStart = () => console.log("start");
+  const handleOnStop = () => console.log("stop");
+  const handleOnStepChange = () => console.log(`stepChange`);
+
+  useEffect(() => {
+    eventEmitter.on("start", handleOnStart);
+    eventEmitter.on("stop", handleOnStop);
+    eventEmitter.on("stepChange", handleOnStepChange);
+
+    return () => {
+      eventEmitter.off("start", handleOnStart);
+      eventEmitter.off("stop", handleOnStop);
+      eventEmitter.off("stepChange", handleOnStepChange);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchVendorData = async () => {
@@ -138,15 +199,54 @@ export default function HomeScreen({ navigation }) {
     <SafeAreaView style={styles.safeContainer}>
       <View style={styles.overlay}></View>
       <View style={styles.scrollView}>
+        <TourGuideZoneByPosition
+          zone={0}
+          shape={"circle"}
+          isTourGuide
+          top={200}
+          // left={50}
+          // width={64}
+          // height={64}
+          text={"Welcome to the QwikBill"}
+        />
         <View style={styles.container}>
           <View style={styles.header}>
+            <TourGuideZone
+              zone={1}
+              text={"User Name"}
+              shape="rectangle"
+              // tooltipBottomOffset={20} // Adjusts vertical position
+              keepTooltipPosition={true} // Keeps the tooltip in place
+              style={{
+                position: "absolute",
+                width: "100%",
+                top: 36,
+                height: 32,
+              }}
+              onPress={handleNextStep}
+            />
             <Text style={styles.headerText}>
               Welcome{" "}
               {userData?.user?.name
                 ? `${userData?.user?.name}`
                 : `${userData?.user?.mobile}`}
             </Text>
+
             {/* <Text style={styles.headerText1}>{`Welcome ${loginDetail.name} ${loginDetail.surname}`}</Text> */}
+            <TourGuideZone
+              zone={2}
+              text={"Last login"}
+              shape="rectangle"
+              // tooltipBottomOffset={20} // Adjusts vertical position
+              keepTooltipPosition={true} // Keeps the tooltip in place
+              style={{
+                position: "absolute",
+                width: "100%",
+                top: 70,
+                height: 18,
+              }}
+              onPress={handleNextStep}
+            />
             <Text style={styles.subHeaderText}>
               Last Login: {lastLoginTime}
             </Text>
@@ -156,17 +256,46 @@ export default function HomeScreen({ navigation }) {
               <View>
                 <Card.Content style={styles.cardContent}>
                   <View style={styles.dropDownContainer}>
+                    <TourGuideZone
+                      zone={3}
+                      text={"See all the vender in dropdown"}
+                      shape="rectangle"
+                      // tooltipBottomOffset={20} // Adjusts vertical position
+                      // keepTooltipPosition={true} // Keeps the tooltip in place
+                      style={{
+                        position: "absolute",
+                        width: "80%",
+                        top: 50,
+                        height: 32,
+                        marginLeft: 30,
+                      }}
+                      onPress={handleNextStep}
+                    />
                     <DropDownList options={vendorsDetails} />
                   </View>
 
                   <View style={styles.viewsContainer}>
+                    <TourGuideZone
+                      zone={4}
+                      text={"View Customer"}
+                      shape="rectangle"
+                      // tooltipBottomOffset={20} // Adjusts vertical position
+                      // keepTooltipPosition={true} // Keeps the tooltip in place
+                      style={{
+                        position: "absolute",
+                        width: "45%",
+                        top: 45,
+                        height: 32,
+                        marginLeft: 20,
+                      }}
+                      onPress={handleNextStep}
+                    />
                     <Pressable
                       style={styles.allThreeViews}
                       onPress={() => navigation.navigate("Customer")}
                     >
-                      <Text style={styles.whiteColor}>View Customers</Text>
+                      <Text style={styles.whiteColor}>View Customer</Text>
                     </Pressable>
-
                     <View
                       style={{
                         backgroundColor: "rgba(0,0,0,0.3)",
@@ -174,7 +303,21 @@ export default function HomeScreen({ navigation }) {
                         height: "50%",
                       }}
                     ></View>
-
+                    <TourGuideZone
+                      zone={5}
+                      text={"View Invoices"}
+                      shape="rectangle"
+                      // tooltipBottomOffset={20} // Adjusts vertical position
+                      // keepTooltipPosition={true} // Keeps the tooltip in place
+                      style={{
+                        position: "absolute",
+                        width: "45%",
+                        top: 45,
+                        height: 32,
+                        marginLeft: 162,
+                      }}
+                      onPress={handleNextStep}
+                    />
                     <Pressable
                       style={styles.allThreeViews}
                       onPress={() => goToHandler("Invoices")}
@@ -199,16 +342,29 @@ export default function HomeScreen({ navigation }) {
                 data={services}
                 numColumns={3}
                 renderItem={({ item, index }) => (
-                  <TouchableOpacity
-                    style={styles.item}
-                    key={index}
-                    onPress={() => goToHandler(item.navigateTo)}
-                  >
-                    <View style={{ alignItems: "center" }}>
-                      {item.icon}
-                      <Text style={styles.itemText}>{item.name}</Text>
-                    </View>
-                  </TouchableOpacity>
+                  <>
+                    <TourGuideZone
+                      key={index}
+                      zone={6 + index}
+                      text={`Go to ${item.name}`}
+                      onPress={handleNextStep}
+                      shape={"circle"}
+                      // tooltipBottomOffset={20} // Adjusts vertical position
+                      // keepTooltipPosition={true} // Keeps the tooltip in place
+                      style={[styles.tourGuideZone, styles.item]}
+                    >
+                      <TouchableOpacity
+                        style={styles.item}
+                        // key={index}
+                        onPress={() => goToHandler(item.navigateTo)}
+                      >
+                        <View style={{ alignItems: "center" }}>
+                          {item.icon}
+                          <Text style={styles.itemText}>{item.name}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    </TourGuideZone>
+                  </>
                 )}
                 keyExtractor={(item, index) => index}
                 ListEmptyComponent={<Text>No Items Found</Text>}
@@ -289,6 +445,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginTop: 10,
+
     //  fontFamily:'Roboto_700Bold'
   },
   // headerText1: {
@@ -379,5 +536,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 10,
     backgroundColor: ButtonColor.SubmitBtn,
+  },
+  tourGuideZone: {
+    // position: "absolute",
+    // top: 40,
+    // left: 16,
+    // // width: 80,
+    // height: 80,
+    // borderRadius: 25,
+    backgroundColor: "transparent",
   },
 });

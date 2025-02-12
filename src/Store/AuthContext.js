@@ -1,9 +1,11 @@
  //AuthContext.js
-import React, { createContext, useState, useEffect, useMemo } from "react";
+import React, { createContext, useState, useEffect, useMemo, useContext } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from '@react-navigation/native';
+import UserDataContext from "./UserDataContext";
 // Create the context
 export const AuthContext = createContext();
+
 
 // Create a provider component
 export const AuthProvider = ({ children }) => {
@@ -15,6 +17,8 @@ export const AuthProvider = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedShop, setSelectedShop] = useState('');
   const [overlayHeight, setOverlayHeight] = useState('25%')
+  const { userData } = useContext(UserDataContext);
+
   // Check if user is logged in on app startup
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -22,11 +26,12 @@ export const AuthProvider = ({ children }) => {
         const token = await AsyncStorage.getItem("userToken");
         // const token2= await AsyncStorage.getItem("loginDetail");
         //   console.log(token2,"token2")
-        //   console.log(token,"token")
+          console.log(token,"token12345")
         //   setLoginDetail(token2)
+
         if (token) {
           setIsAuthenticated(true);
-         
+
         }
       } catch (e) {
         console.error(e);
@@ -39,14 +44,16 @@ export const AuthProvider = ({ children }) => {
   }, [isFocused]);
 
   const login = async (token) => {
+    console.log("Data of tokes", token)
     try {
-      await AsyncStorage.setItem("userToken", token);
+      await AsyncStorage.setItem("userToken", userData?.token);
       setIsAuthenticated(true);
     } catch (e) {
       console.error(e);
     }
   };
   const storeData = async (key, value) => {
+    console.log(`Value is key ${key},${value}`)
     try {
       await AsyncStorage.setItem(key, JSON.stringify(value));
       if(key==="loginDetail"){
@@ -111,7 +118,7 @@ export const AuthProvider = ({ children }) => {
            setSearchMode,
            searchQuery,
            setSearchQuery,
-           selectedShop, 
+           selectedShop,
            setSelectedShop,
            overlayHeight,
            setOverlayHeight

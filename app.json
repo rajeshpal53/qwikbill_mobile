@@ -8,7 +8,7 @@
     "icon": "./assets/qLogo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/qwikBill-logo.png",
+      "image": "./assets/qLogo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
