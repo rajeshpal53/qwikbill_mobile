@@ -68,20 +68,20 @@ export default function HomeScreen({ navigation }) {
 
   const { canStart, start, stop, eventEmitter } = useTourGuideController();
 
-  useEffect(() => {
-    const checkIfTourSeen = async () => {
-      try {
-        const hasSeenTour = await AsyncStorage.getItem("hasSeenTour");
-        if (!hasSeenTour && canStart) {
-          start();
-        }
-      } catch (error) {
-        console.log("Error checking tour guide status", error);
-      }
-    };
+  // useEffect(() => {
+  //   const checkIfTourSeen = async () => {
+  //     try {
+  //       const hasSeenTour = await AsyncStorage.getItem("hasSeenTour");
+  //       if (!hasSeenTour && canStart) {
+  //         start();
+  //       }
+  //     } catch (error) {
+  //       console.log("Error checking tour guide status", error);
+  //     }
+  //   };
 
-    checkIfTourSeen();
-  }, [canStart]);
+  //   checkIfTourSeen();
+  // }, [canStart]);
 
   // const handleSkipTour = async () => {
   //   stop(); // This will stop the tour
@@ -111,17 +111,17 @@ export default function HomeScreen({ navigation }) {
   const handleOnStop = () => console.log("stop");
   const handleOnStepChange = () => console.log(`stepChange`);
 
-  useEffect(() => {
-    eventEmitter.on("start", handleOnStart);
-    eventEmitter.on("stop", handleOnStop);
-    eventEmitter.on("stepChange", handleOnStepChange);
+  // useEffect(() => {
+  //   eventEmitter.on("start", handleOnStart);
+  //   eventEmitter.on("stop", handleOnStop);
+  //   eventEmitter.on("stepChange", handleOnStepChange);
 
-    return () => {
-      eventEmitter.off("start", handleOnStart);
-      eventEmitter.off("stop", handleOnStop);
-      eventEmitter.off("stepChange", handleOnStepChange);
-    };
-  }, []);
+  //   return () => {
+  //     eventEmitter.off("start", handleOnStart);
+  //     eventEmitter.off("stop", handleOnStop);
+  //     eventEmitter.off("stepChange", handleOnStepChange);
+  //   };
+  // }, []);
 
   useEffect(() => {
     const fetchVendorData = async () => {
