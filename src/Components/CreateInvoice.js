@@ -27,6 +27,8 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import ItemDataTable from "../Component/Cards/ItemDataTable";
 import CreateInvoiveForm from "../Component/Form/CreateInvoiveForm";
 import { fontFamily, fontSize } from "../Util/UtilApi";
+import { ShopContext } from "../Store/ShopContext";
+import CustomToggleButton from "../Component/CustomToggleButton";
 
 export default function CreateInvoice({ navigation }) {
   const windowWidth = useWindowDimensions().width;
@@ -34,13 +36,30 @@ export default function CreateInvoice({ navigation }) {
   const { selectedShop, setSelectedShop } = useContext(AuthContext);
   const [invoiceType, setInvoiceType] = useState("provInvoice");
   const pickerRef = useRef();
-  const { shopDetails } = useContext(ShopDetailContext);
-  const invoiceNumber = 1000 + shopDetails.count + 1;
+  const { allShops } = useContext(ShopContext);
+  // const { shopDetails } = useContext(ShopDetailContext);
+  // const invoiceNumber = 1000 + shopDetails.count + 1;
   // const [buttonsModes, setButtonsModes] = useState({
   //   recentButtonMode: false,
   //   provInvoiceButtonMode: true,
   //   gstInvoiceButtonMode: false,
   // });
+  //--------------------------------------------------
+
+  const [selectedValue, setSelectedValue] = useState("recent");
+
+  // const toggleOptions = [
+  //   { label: 'Left', value: 'left' },
+  //   { label: 'Center', value: 'center' },
+  //   { label: 'Right', value: 'right' },
+  // ];
+  const toggleOptions = [
+    { value: "recent", label: "Recent" },
+    { value: "provisional", label: "Prov Invoice" },
+    { value: "gst", label: "GST Invoice" },
+  ];
+
+  //----------------------------------------------------
 
   const [buttonsModes, setButtonsModes] = useState({
     firstButtonMode: false,
@@ -68,6 +87,9 @@ export default function CreateInvoice({ navigation }) {
     setInvoiceHandler();
   }, [buttonsModes]);
 
+  useEffect(() => {
+    console.log("selected Value is , ", selectedValue);
+  }, [selectedValue])
   const handleButtonPress = (button) => {
     setButtonsModes((prevstate) => {
       if (button === "first" && !prevstate.firstButtonMode) {
@@ -113,24 +135,32 @@ export default function CreateInvoice({ navigation }) {
           <View style={styles.logoPickerContainer}>
             <Entypo name="shop" size={30} color="#0c3b73" />
             <View style={styles.pickerContainer}>
-             <DropDownList options={[]}/>
+              <DropDownList options={allShops} />
             </View>
           </View>
 
-          <ThreeToggleBtns
+          {/* <ThreeToggleBtns
             buttonsModes={buttonsModes}
             setButtonsModes={setButtonsModes}
             navigation={navigation}
             toggleButtonsTexts={toggleButtonsTexts}
             handleButtonPress={handleButtonPress}
-          />
+          /> */}
+          <CustomToggleButton
+                options={toggleOptions}
+                value={selectedValue}
+                onChange={setSelectedValue}
+              />
 
           <View style={styles.MainContainer}>
             <View style={styles.TextView}>
+              {selectedValue == "provisional" && 
               <Text style={styles.headerText}>
                 Provisional Invoice No: - 1002
               </Text>
-              <CreateInvoiveForm />
+}
+              
+              <CreateInvoiveForm selectedButton = {selectedValue} />
             </View>
           </View>
         </View>
@@ -257,8 +287,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     // color: "black",
     fontWeight: "medium",
-    fontFamily:"Poppins-Medium",
-    fontSize: fontSize.headingSmall
+    fontFamily: "Poppins-Medium",
+    fontSize: fontSize.headingSmall,
   },
   input: {
     flex: 1,

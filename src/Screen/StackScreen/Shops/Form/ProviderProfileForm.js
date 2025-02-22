@@ -52,6 +52,7 @@ const ProviderProfileForm = ({
 
       <View>
         {/* <Card style={{ backgroundColor:"#fff", padding:10}}> */}
+        {console.log("proiileImage is , ", values?.profileImage)}
         <ServiceImagePicker
           image={values?.profileImage}
           label="Profile Image"

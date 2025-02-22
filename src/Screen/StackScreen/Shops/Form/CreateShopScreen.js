@@ -46,6 +46,7 @@ import Icon from "react-native-vector-icons/AntDesign";
 import axios from "axios";
 import UserDataContext from "../../../../Store/UserDataContext";
 import ProviderMoreDetails from "./ProviderMoreDetails";
+import { ShopContext } from "../../../../Store/ShopContext";
 
 // Form validation schema using Yup
 
@@ -152,6 +153,7 @@ const CreateShopScreen = ({ navigation }) => {
     "December",
   ];
 
+  const {fetchShopsFromServer} = useContext(ShopContext);
   const [pages, setPages] = useState([1, 2, 3]);
   const [currentStep, setCurrentStep] = useState(0);
   const [editorContent, setEditorContent] = useState("");
@@ -296,6 +298,25 @@ const CreateShopScreen = ({ navigation }) => {
   }, [selectedGender]);
 
   useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const api = `qapi/roles`;
+        const response = await readApi(api);
+        Setrole(response); // Ensure response is an array
+
+        if (role.length > 0) {
+          const { id } = role[0];
+          setroleId(id);
+          console.log("Data of id:", id);
+        }
+      } catch (error) {
+        console.log("Unable to fetch role data", error);
+      }
+    };
+    fetchRoles();
+  }, []);
+
+  useEffect(() => {
     if (routeData) {
       setRouteData();
     } else if (!isAdmin) {
@@ -438,7 +459,7 @@ const CreateShopScreen = ({ navigation }) => {
 
   const formatUrl = (url, imageDetail) => {
     const imageFile = {
-      uri: `${url}`,
+      uri: `${API_BASE_URL}${url}`,
       // uri: `${NORM_URL}/${url}`,
       name: `${imageDetail}.jpeg`,
       type: `image/jpeg`,
@@ -554,24 +575,7 @@ const CreateShopScreen = ({ navigation }) => {
   //   console.log(" values are m  ini", initialData);
   // }, [initialData]);
 
-  useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        const api = `qapi/roles`;
-        const response = await readApi(api);
-        Setrole(response); // Ensure response is an array
 
-        if (role.length > 0) {
-          const { id } = role[0];
-          setroleId(id);
-          console.log("Data of id:", id);
-        }
-      } catch (error) {
-        console.log("Unable to fetch role data", error);
-      }
-    };
-    fetchRoles();
-  }, []);
 
 
   return (
@@ -585,82 +589,297 @@ const CreateShopScreen = ({ navigation }) => {
           ? ShopValidataionSchema
           : uploadImagesSchema
       }
-      onSubmit={async (values, { resetForm }) => {
-        const formattedDate = formatDate(values?.dob);
-        console.log("Data of date", values?.dob);
+      onSubmit={async (values,) => {
         console.log("hi prathesm");
         console.log("submitted Values are ", values);
-        const DataContainer = {
-          ...values,
-          VenderData: [
-            {
-              whatsappnumber: values?.whatsappNumber,
-              details: values?.whatsappNumber || "",
-              shopAddress: values?.shopAddress,
-              pincode: values.pincode,
-              isApprove: values?.isOnline,
-              usersfk: userData?.user?.id,
-              shopImage: values?.shopImage || null,
-              latitude: 213.234, //values?.latitude ||
-              longitude: 213.234, //values?.longitude,
-              shopname: values?.shopName,
-            },
-          ],
-          UserData: [
-            {
-              mobile: values?.mobile || "",
-              aadharCard: values?.aadhaarNumber || "",
-              aadharCardFronturl: values?.aadharFrontImage?.uri || "",
-              aadharCardBackurl: values?.aadharBackImage?.uri || "",
-              profilePicurl: values?.profileImage?.uri || "",
-              name: values?.name || "",
-              dob: formattedDate,
-              gender: values?.gender || "",
-              email: values?.email || "",
-              address: values?.shopAddress || "",
-              pincode: values?.pincode || "",
-              password: userData?.user?.password || "",
-              token_validity: values?.token_validity || null,
-              latitude: 213.234 || "",
-              longitude: 213.234 || "",
-              fcmtokens: userData?.token || "",
-              rolesfk: roleId,
-            },
-          ],
-        };
+
+        // return ;
+        // usersfk in s-diaryy
+        let createdUserId = null;
+
+        const updateUserPayloadData = new FormData();
+
+      
+        updateUserPayloadData.append("name", values?.name);
+        updateUserPayloadData.append("mobile", values?.mobile);
+        updateUserPayloadData.append("aadharCard", values?.aadhaarNumber);
+
+       
+        const formattedDate = formatDate(values?.dob);
+        updateUserPayloadData.append("dob", formattedDate);
+
+        updateUserPayloadData.append("email", values?.email || "");
+        updateUserPayloadData.append("gender", values?.gender);
+
+        // console.log("gender is , ", values?.gender);
+        if (values?.profileImage) {
+          console.log("profdkdkd 111, ", values?.profileImage);
+          updateUserPayloadData.append("profilePicurl", values?.profileImage);
+        }
+        if (values?.aadharFrontImage) {
+          updateUserPayloadData.append(
+            "aadharCardFronturl",
+            values?.aadharFrontImage
+          );
+        }
+
+        if (values?.aadharBackImage) {
+          updateUserPayloadData.append(
+            "aadharCardBackurl",
+            values?.aadharBackImage
+          );
+        }
+
+        updateUserPayloadData.append("password", userData?.user?.password)
+
+        // updateUserPayloadData.append("roles", "admin");
+
+        // console.log("router ddd , data is , ", routeData);
+        console.log("updateUserPayloadData is the , ", updateUserPayloadData);
+        console.log("userApi , ", `${API_BASE_URL}qapi/users/upsertOnlyUserProfileImg`);
+        console.log("userData token , ", `${userData?.token}`);
+
+      
         try {
-          if (DataContainer.VenderData) {
-            const api = `qapi/vendors`;
-            const headers = {
-              Authorization: `Bearer ${userData?.token}`, // Add token to headers
+          const response = await axios.post(
+            `${API_BASE_URL}qapi/users/upsertOnlyUserProfileImg`,
+            updateUserPayloadData,
+            {
+              headers: {
+                Authorization: `Bearer ${userData?.token}`,
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
+
+          console.log(
+            "response of user updated or created is , ",
+            response?.data
+          );
+          createdUserId = response?.data?.id;
+
+          if (!isAdmin || routeData?.user?.mobile === userData?.user?.mobile) {
+            const saveUser = {
+              token: userData?.token,
+              user: response?.data,
             };
-            const VenderResponse = await createApi(
-              api,
-              DataContainer.VenderData[0],
-              headers
-            );
-            console.log("Vender Data Created", VenderResponse);
+
+            saveUserData(saveUser);
           }
-          if (DataContainer.UserData) {
-            const api = `qapi/users/upsertOnlyUserProfileImg`;
-            const headers = {
-              Authorization: `Bearer ${userData?.token}`, // Add token to headers
-            };
-            const UserResponse = await createApi(
-              api,
-              DataContainer.UserData[0],
-              headers
-            );
-            console.log(" User Data Created", UserResponse);
-          }
-          setIsFormSubmitted(true);
-          submit.current = true;
-          resetForm();
-          navigation.goBack();
+
+          showSnackbar(t("Your profile has been updated"), "success");
         } catch (error) {
-          console.log("Unable to create a data", error);
+          console.log("Error creating or updating user , ", error);
+        } finally {
+        }
+
+        const data = new FormData();
+        // data.append("aadharCard", values?.aadhaarNumber);
+
+    
+        data.append("whatsappnumber", values?.whatsappNumber || "");
+        data.append("shopname", values?.shopName);
+        // data.append("homeServiceProvide", values?.homeDelivery);
+        // if(editorContent){
+          data.append("details", editorContent);
+        // }
+        data.append("shopAddress", values?.shopAddress);
+        data.append("latitude", values?.latitude || "213.234");
+        data.append("longitude", values?.longitude || "213.234");
+        // data.append("drange", values?.kilometerRadius);
+        // data.append("isOnline", values?.isOnline);
+
+        if (isAdmin) {
+          // data.append("isVerified", values?.isVerified);
+          data.append("isApprove", values?.isApproved);
+        } else if (!isAdmin && routeData) {
+          // data.append("isVerified", routeData?.isVerified);
+          data.append("isApprove", routeData?.isApprove);
+        } else {
+          // data.append("isVerified", false);
+          data.append("isApprove", false);
+        }
+
+        const userfk = routeData ? routeData?.user?.id : createdUserId;
+
+        data.append("usersfk", userfk);
+
+        if (routeData) {
+          data.append("id", routeData?.id);
+        }
+
+        // If the image is a local file, include it as a binary file
+        if (values?.shopImage) {
+          data.append("shopImage", values?.shopImage);
+        }
+
+        // if (values?.aadharImage) {
+        //   data.append("aadharCardurl", aadharImage);
+        // }
+
+        // console.log("image si , ", shopImage);
+        console.log("updateProviderPayload is , ", data);
+
+        try {
+          if (!isLoading) {
+            setIsLoading(true);
+          }
+
+          if (routeData) {
+            const response = await axios.put(
+              `${API_BASE_URL}qapi/vendors/updateVendorWithImage/${routeData?.id}`,
+              data,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                  Authorization: `Bearer ${userData?.token}`,
+                },
+              }
+            );
+
+            console.log("Service provider Updated successfullyyy: ", response);
+
+            showSnackbar(t("Service provider Updated successfully"), "success");
+
+            // navigation.navigate("ViewEditServicesScreen", {
+            //   Admin: isAdmin,
+            // });
+            submit.current = true;
+            // navigation.pop(2);
+            navigation.goBack();
+          } else {
+            const response = await axios.post(
+              `${API_BASE_URL}qapi/vendors/createVendorWithImage`,
+              data,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                  Authorization: `Bearer ${userData?.token}`,
+                },
+              }
+            );
+
+            console.log("Service provider Created Successfully ", response);
+
+            showSnackbar(t("Service provider Created Successfully"), "success");
+
+            // navigation.navigate("ViewEditServicesScreen", {
+            //   Admin: isAdmin,
+            // });
+
+            if(!isAdmin){
+              await fetchShopsFromServer();
+            }
+            submit.current = true;
+            // navigation.pop(2);
+            navigation.goBack();
+          }
+        } catch (error) {
+          if (isLoading) {
+            setIsLoading(false);
+          }
+
+          if (routeData) {
+            console.log(
+              "Something went Wrong Updating Service Provider",
+              error
+            );
+
+            showSnackbar(
+              t("Something went Wrong Updating Service Provider"),
+              "error"
+            );
+          } else {
+            console.log(
+              "Something went Wrong Creating Service Provider",
+              error
+            );
+
+            showSnackbar(
+              t("Something went Wrong Creating Service Provider"),
+              "error"
+            );
+          }
+        } finally {
+          setIsLoading(false);
         }
       }}
+      // onSubmit={async (values, { resetForm }) => {
+      //   const formattedDate = formatDate(values?.dob);
+      //   console.log("Data of date", values?.dob);
+      //   console.log("hi prathesm");
+      //   console.log("submitted Values are ", values);
+      //   const DataContainer = {
+      //     ...values,
+      //     VenderData: [
+      //       {
+      //         whatsappnumber: values?.whatsappNumber,
+      //         details: values?.whatsappNumber || "",
+      //         shopAddress: values?.shopAddress,
+      //         pincode: values.pincode,
+      //         isApprove: values?.isOnline,
+      //         usersfk: userData?.user?.id,
+      //         shopImage: values?.shopImage || null,
+      //         latitude: 213.234, //values?.latitude ||
+      //         longitude: 213.234, //values?.longitude,
+      //         shopname: values?.shopName,
+      //       },
+      //     ],
+      //     UserData: [
+      //       {
+      //         mobile: values?.mobile || "",
+      //         aadharCard: values?.aadhaarNumber || "",
+      //         aadharCardFronturl: values?.aadharFrontImage?.uri || "",
+      //         aadharCardBackurl: values?.aadharBackImage?.uri || "",
+      //         profilePicurl: values?.profileImage?.uri || "",
+      //         name: values?.name || "",
+      //         dob: formattedDate,
+      //         gender: values?.gender || "",
+      //         email: values?.email || "",
+      //         address: values?.shopAddress || "",
+      //         pincode: values?.pincode || "",
+      //         password: userData?.user?.password || "",
+      //         token_validity: values?.token_validity || null,
+      //         latitude: 213.234 || "",
+      //         longitude: 213.234 || "",
+      //         fcmtokens: userData?.token || "",
+      //         rolesfk: roleId,
+      //       },
+      //     ],
+      //   };
+      //   try {
+      //     if (DataContainer.VenderData) {
+      //       const api = `qapi/vendors`;
+      //       const headers = {
+      //         Authorization: `Bearer ${userData?.token}`, // Add token to headers
+      //       };
+      //       const VenderResponse = await createApi(
+      //         api,
+      //         DataContainer.VenderData[0],
+      //         headers
+      //       );
+      //       console.log("Vender Data Created", VenderResponse);
+      //     }
+      //     if (DataContainer.UserData) {
+      //       const api = `qapi/users/upsertOnlyUserProfileImg`;
+      //       const headers = {
+      //         Authorization: `Bearer ${userData?.token}`, // Add token to headers
+      //       };
+      //       const UserResponse = await createApi(
+      //         api,
+      //         DataContainer.UserData[0],
+      //         headers
+      //       );
+      //       console.log(" User Data Created", UserResponse);
+      //     }
+      //     setIsFormSubmitted(true);
+      //     submit.current = true;
+      //     resetForm();
+      //     navigation.goBack();
+      //   } catch (error) {
+      //     console.log("Unable to create a data", error);
+      //   }
+      // }}
     >
       {({
         handleChange,

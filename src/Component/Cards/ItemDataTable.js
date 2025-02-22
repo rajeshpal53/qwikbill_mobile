@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   applyDiscount,
   removeFromCart,
-} from "../../Redux/CartProductRedux/CartSlice";
+} from "../../Redux/slices/CartSlice";
 import PriceDetails from "../PriceDetails";
 import { fontSize } from "../../Util/UtilApi";
 

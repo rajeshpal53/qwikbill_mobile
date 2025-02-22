@@ -10,19 +10,24 @@ import {
 import { Card } from "react-native-paper";
 import IncAndDicButton from "../../Redux/IncAndDicButton";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addToCart,
-  removeFromCart,
-} from "../../Redux/CartProductRedux/CartSlice";
+// import {
+//   addToCart,
+//   removeFromCart,
+// } from "../../Redux/CartProductRedux/CartSlice";
+import { addToCart, removeFromCart } from "../../Redux/slices/CartSlice";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ButtonColor, fontSize } from "../../Util/UtilApi";
 
 const ProductCardDetails = ({ item }) => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.Carts);
-  const isInCart = cartItems.some((cartItem) => cartItem.id === item.id);
+  // const isInCart = cartItems.some((cartItem) => cartItem.id === item.id);
   const inCart = cartItems.find((cartItem) => cartItem.id === item.id) || null;
 
+
+  useEffect(() => {
+    console.log("InCart is , ", inCart);
+  }, [inCart]);
   const handleAddToCart = (item) => {
     dispatch(addToCart(item));
   };
@@ -38,15 +43,17 @@ const ProductCardDetails = ({ item }) => {
           <View style={styles.container}>
             {/* Product Details */}
             <View style={styles.detailsContainer}>
-              <Text style={styles.productName}>{item.Name}</Text>
-              <Text style={styles.productInfo}>{item.info}</Text>
-              <Text style={styles.productPrice}>₹ {item.Price}</Text>
+              <Text style={styles.productName}>{item?.name}</Text>
+              <Text style={styles.productInfo}>cost Price = ₹ {item?.costPrice}</Text>
+              <Text style={styles.productInfo}>sell Price = ₹ {item?.sellPrice}</Text>
+              <Text style={styles.productInfo}>{item?.isStock ? "in stock" : "out of stock"}</Text>
+              {/* <Text style={styles.productPrice}>₹ {item.Price}</Text> */}
             </View>
           </View>
 
           {/* Add Button Positioned at the Bottom */}
           <View style={styles.ButtonAndDeleteView}>
-            {isInCart ? (
+            {inCart ? (
               <>
                 <View
                   style={{

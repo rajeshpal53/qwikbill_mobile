@@ -15,11 +15,12 @@ import * as Yup from "yup";
 import ItemDataTable from "../Cards/ItemDataTable";
 import { useDispatch, useSelector } from "react-redux";
 import { ButtonColor, fontSize, readApi } from "../../Util/UtilApi";
-import { clearCart } from "../../Redux/CartProductRedux/CartSlice";
+import { clearCart } from "../../Redux/slices/CartSlice";
 import PriceDetails from "../PriceDetails";
 import UserDataContext from "../../Store/UserDataContext";
+import { ShopContext } from "../../Store/ShopContext";
 
-const CreateInvoiceForm = ({}) => {
+const CreateInvoiceForm = ({ selectedButton }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const carts = useSelector((state) => state.cart.Carts);
@@ -28,11 +29,17 @@ const CreateInvoiceForm = ({}) => {
   const [PaymentStatus, setPaymentStatus] = useState("");
   const submit = useRef(false);
   const { userData } = useContext(UserDataContext);
-
+  const {selectedShop} = useContext(ShopContext);
+  console.log("selected shop is , ", selectedShop)
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
     address: Yup.string().required("Address is required"),
-    gstNumber: Yup.string().required("GST Number is required"),
+    // gstNumber: Yup.string().required("GST Number is required"),
+    gstNumber: Yup.string().when([], {
+      is: () => selectedButton === "gst",
+      then: (schema) => schema.required("GST Number is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
     phone: Yup.string()
       .required("Phone is required")
       .matches(/^\d{10}$/, "Phone must be 10 digits"),
@@ -48,6 +55,7 @@ const CreateInvoiceForm = ({}) => {
           Authorization: `Bearer ${userData?.token}`, // Add token to headers
         };
         const response = await readApi(api, headers);
+        // console.log("response of getting userbyMobile is , ", response)
         if (response) {
           setUser(response);
         }
@@ -58,8 +66,6 @@ const CreateInvoiceForm = ({}) => {
       }
     }
   };
-
-
 
   useEffect(() => {
     const handleBackPress = navigation.addListener("beforeRemove", (e) => {
@@ -98,6 +104,15 @@ const CreateInvoiceForm = ({}) => {
     return handleBackPress;
   }, [navigation, carts, User]);
 
+  const getStatusFk = () => {
+    if(PaymentStatus == "Unpaid"){
+      return 1;
+    }else if(PaymentStatus == "Paid"){
+      return 2;
+    }else {
+      return 3;
+    }
+  }
   return (
     <ScrollView>
       <Formik
@@ -105,36 +120,60 @@ const CreateInvoiceForm = ({}) => {
         initialValues={{
           name: User?.name || "",
           address: User?.address || "",
-          gstNumber: User?.name || "",
+          gstNumber: "",
           phone: User?.mobile || "",
         }}
         validationSchema={validationSchema}
         onSubmit={(values, { resetForm }) => {
-          const formData = {
-            ...values,
-            Product: carts.map((item) => ({
-              productId: item?.id,
-              productName: item?.Name,
+          console.log("values are , ", values);
+          
+          const extraData = {
+            usersfk: User?.id,
+            vendorfk: selectedShop?.id,
+            statusfk: getStatusFk(),
+            subtotal: cartsValue?.totalPrice,
+            address: "123 Main Street, City, Country",
+            discount: cartsValue?.discount,
+            finaltotal: cartsValue?.afterdiscount,
+            // vendorprofit: 100,
+            paymentMode: "COD",
+            ...((PaymentStatus == "Unpaid" || PaymentStatus == "Partially Paid") ? {remainingamount: cartsValue?.afterdiscount} : {}),
+
+            ...(selectedButton == "provisional" ? {provisionNumber: "1002020"} : {}),
+          };
+
+
+          carts?.map((item) => {
+            console.log("single item is , ", item);
+          });
+     
+          const payload = {
+            ...extraData,
+            userData: User,
+            serviceProviderData: selectedShop,
+            products: carts.map((item) => ({
+              id: item?.id,
+              productname: item?.Name,
               price: item?.Price,
-              totalprice: item?.totalPrice,
+              // totalprice: item?.totalPrice,
               quantity: item?.quantity,
             })),
-            Pricedetails: [
-              {
-                TotalPrice: cartsValue.totalPrice,
-                Discount: cartsValue.discount,
-                PayAmount: cartsValue.afterdiscount,
-                PartiallyAmount: cartsValue.PartiallyAmount,
-                PaymentMethod: PaymentStatus,
-              },
-            ],
+            // Pricedetails: [
+            //   {
+            //     TotalPrice: cartsValue.totalPrice,
+            //     Discount: cartsValue.discount,
+            //     PayAmount: cartsValue.afterdiscount,
+            //     PartiallyAmount: cartsValue.PartiallyAmount,
+            //     PaymentMethod: PaymentStatus,
+            //   },
+            // ],
           };
-          console.log("Form Submitted Data:", formData?.Product);
-          console.log("Form Submitted Data:", formData);
+          console.log("Form Submitted Data:", payload?.products);
+          console.log("Form Submitted Data:", payload);
           submit.current = true;
-          navigation.navigate("PDFScreen", { formData });
-          resetForm();
-          dispatch(clearCart());
+          navigation.navigate("PDFScreen", { formData: payload });
+          // resetForm();
+          // dispatch(clearCart());
         }}
       >
         {({
@@ -152,7 +191,7 @@ const CreateInvoiceForm = ({}) => {
               mode="flat"
               style={styles.input}
               onChangeText={handleChange("phone")}
-              onBlur={() => handlePhoneBlur(values.phone,)}
+              onBlur={() => handlePhoneBlur(values.phone)}
               value={values.phone}
             />
             {touched.phone && errors.phone && (
@@ -168,7 +207,7 @@ const CreateInvoiceForm = ({}) => {
               value={values.name}
             />
             {touched.name && errors.name && (
-              <Text style={styles.errorText}>{errors.name }</Text>
+              <Text style={styles.errorText}>{errors.name}</Text>
             )}
 
             {/* Address Field */}
@@ -185,18 +224,21 @@ const CreateInvoiceForm = ({}) => {
             )}
 
             {/* GST Number Field */}
-            <TextInput
-              label="GST Number"
-              mode="flat"
-              style={styles.input}
-              onChangeText={handleChange("gstNumber")}
-              onBlur={handleBlur("gstNumber")}
-              value={values.gstNumber}
-            />
-            {touched.gstNumber && errors.gstNumber && (
-              <Text style={styles.errorText}>{errors.gstNumber}</Text>
+            {selectedButton == "gst" && (
+              <>
+                <TextInput
+                  label="GST Number"
+                  mode="flat"
+                  style={styles.input}
+                  onChangeText={handleChange("gstNumber")}
+                  onBlur={handleBlur("gstNumber")}
+                  value={values.gstNumber}
+                />
+                {touched.gstNumber && errors.gstNumber && (
+                  <Text style={styles.errorText}>{errors.gstNumber}</Text>
+                )}
+              </>
             )}
-
             {/* Add Items Button */}
             <View style={styles.buttonView}>
               <TouchableOpacity
@@ -217,7 +259,11 @@ const CreateInvoiceForm = ({}) => {
 
             {/* Submit Button */}
             <TouchableOpacity
-              style={styles.submitButton}
+              disabled={carts?.length <= 0}
+              style={[
+                styles.submitButton,
+                { opacity: carts?.length <= 0 ? 0.5 : 1 },
+              ]}
               onPress={handleSubmit}
             >
               <Text style={styles.submitButtonText}>Submit</Text>
@@ -249,16 +295,16 @@ const styles = StyleSheet.create({
     // fontSize: 16,
     fontWeight: "bold",
     // color: "black",
-    fontFamily:"Poppins-Medium",
-    fontSize:fontSize.labelLarge,
-    color:"#fff"
+    fontFamily: "Poppins-Medium",
+    fontSize: fontSize.labelLarge,
+    color: "#fff",
   },
   input: {
     flex: 1,
     backgroundColor: "#f9f9f9",
     height: 45,
     marginTop: 10,
-    fontFamily:"Poppins-Medium",
+    fontFamily: "Poppins-Medium",
   },
   errorText: {
     color: "red",
@@ -276,8 +322,8 @@ const styles = StyleSheet.create({
     color: "white",
     // fontWeight: "bold",
     // fontSize: 16,
-    fontFamily:"Poppins-Regular",
-    fontSize:fontSize.labelLarge
+    fontFamily: "Poppins-Regular",
+    fontSize: fontSize.labelLarge,
   },
 });
 
