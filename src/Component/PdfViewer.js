@@ -1,40 +1,48 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, Button, StyleSheet } from "react-native";
 import { WebView } from "react-native-webview";
 import Share from "react-native-share"; // Import for sharing functionality
+import { createApi, fontSize } from "../Util/UtilApi";
+import UserDataContext from "../Store/UserDataContext";
+import { useRoute } from "@react-navigation/native";
+import { useSnackbar } from "../Store/SnackbarContext";
+import { Text } from "react-native-paper";
+import { useDispatch } from "react-redux";
+import { clearCart } from "../Redux/slices/CartSlice";
 
-const PdfScreen = ({ route }) => {
-  const { formData } = route.params;
+
+const PdfScreen = ({ navigation }) => {
+  const { formData } = useRoute().params;
+  const dispatch = useDispatch();
   const [isGenerated, setIsGenerated] = useState(false); // State to track PDF generation
-
+  const { userData } = useContext(UserDataContext);
+  const {showSnackbar} = useSnackbar();
   const generatePDF = (values) => {
-    const productDetails = values.Product.map(
+    console.log("values of formdata is , ", values)
+    const productDetails = values?.products.map(
       (item) => `
         <tr class="item-row">
-          <td colspan="2">${item.productName}</td>
-          <td>${item.quantity}</td>
-          <td>$${item.price.toFixed(2)}</td>
-          <td>$${item.totalprice.toFixed(2)}</td>
+          <td colspan="2">${item?.productname}</td>
+          <td>${item?.quantity}</td>
+          <td>₹${item?.price.toFixed(2)}</td>
+          
         </tr>`
     ).join("");
 
-    const partiallyPaidSection = values.Pricedetails[0].PartiallyPaid
+    const partiallyPaidSection = values?.statusfk == 3
       ? `
         <tr class="details-row">
           <td><strong>Partially Paid:</strong></td>
-          <td colspan="4">$${values.Pricedetails[0].PartiallyPaid.toFixed(
-            2
-          )}</td>
+          <td colspan="4">₹${50}</td>
         </tr>`
       : "";
 
     // Formatting for the total price, discount, and final amount after considering partial payment
-    const totalPrice = values.Pricedetails[0].TotalPrice;
-    const discount = values.Pricedetails[0].Discount;
-    const payAmount = values.Pricedetails[0].PayAmount;
-    const partiallyAmount = values.Pricedetails[0].PartiallyAmount;
-    const paymentmethod = values.Pricedetails[0].PaymentMethod;
-
+    const totalPrice = values?.subtotal;
+    const discount = values?.discount;
+    const payAmount = values?.finaltotal;
+    const partiallyAmount = values?.io || 0;
+    const paymentmethod = "cod";
 
     const htmlContent = `
       <html>
@@ -112,37 +120,37 @@ const PdfScreen = ({ route }) => {
               <!-- Invoice Information -->
               <tr>
                 <td colspan="2">
-                  <strong>Invoice Number:</strong> ${values.invoiceNumber}<br>
+                  <strong>Invoice Number:</strong> ${values?.invoiceNumber || "INV123"}<br>
                   <strong>Date:</strong> ${
-                    values.createdAt
-                      ? new Date(values.order?.createdAt).toLocaleDateString()
+                    values?.createdAt
+                      ? new Date(values?.order?.createdAt).toLocaleDateString()
                       : "N/A"
                   }
                 </td>
                 <td colspan="3">
                   <strong>Shop Name:</strong> ${
-                    values?.serviceProvider?.shopname || "N/A"
+                    values?.serviceProviderData?.shopname || "N/A"
                   }<br>
                   <strong>Shop Contact:</strong> ${
-                    values?.serviceProvider?.user?.mobile || "N/A"
+                    values?.serviceProviderData?.whatsappnumber || "N/A"
                   }
                 </td>
               </tr>
               <!-- Customer Information -->
               <tr>
                 <td colspan="2">
-                  <strong>Customer Name:</strong> ${values.name || "N/A"}<br>
+                  <strong>Customer Name:</strong> ${values?.userData?.name || "N/A"}<br>
                   <strong>Customer Contact:</strong> ${
-                    values.phone || "N/A"
+                    values?.userData?.mobile || "N/A"
                   } <br>
-                  <strong>Address:</strong> ${values.address || "N/A"}
+                  <strong>Address:</strong> ${values?.address || "N/A"}
                 </td>
                 <td colspan="3"></td>
               </tr>
               <!-- Payment Details -->
               <tr class="details-row">
                 <td><strong>Payment Method:</strong></td>
-                <td colspan="4">${values.paymentMethod || "N/A"}</td>
+                <td colspan="4">${values?.statusfk == 3 && "Partially Paid" || values?.statusfk == 2 && "Paid" || values?.statusfk == 1 && "Unpaid" || "N/A"}</td>
               </tr>
               <tr class="details-row">
                 <td><strong>Status:</strong></td>
@@ -160,22 +168,22 @@ const PdfScreen = ({ route }) => {
               <!-- Grand Total -->
               <tr class="total-row">
                 <td colspan="4" style="text-align: right;"><strong>Grand Total:</strong></td>
-                <td>$${totalPrice.toFixed(2)}</td>
+                <td>₹${totalPrice.toFixed(2)}</td>
               </tr>
               <!-- Discount -->
               <tr class="total-row">
                 <td colspan="4" style="text-align: right;"><strong>Discount:</strong></td>
-                <td>$${discount.toFixed(2)}</td>
+                <td>₹${discount.toFixed(2)}</td>
               </tr>
               <!-- Partially Pay -->
               <tr class="total-row">
                 <td colspan="4" style="text-align: right;"><strong>Partially Pay:</strong></td>
-                <td>$${partiallyAmount.toFixed(2)}</td>
+                <td>₹${partiallyAmount.toFixed(2)}</td>
               </tr>
               <!-- Amount to Pay -->
               <tr class="total-row">
                 <td colspan="4" style="text-align: right;"><strong>Amount to Pay:</strong></td>
-                <td>$${payAmount.toFixed(2)}</td>
+                <td>₹${payAmount.toFixed(2)}</td>
               </tr>
               <!-- Partially Paid (if exists) -->
               ${partiallyPaidSection}
@@ -187,8 +195,27 @@ const PdfScreen = ({ route }) => {
     return htmlContent;
   };
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     // setIsGenerated(true); // Trigger PDF generation when the button is pressed
+    try {
+      let api = "qapi/invoice/invoices";
+
+      
+      const {userData, serviceProviderData, ...payloadData} = formData;
+      console.log("after removing someData, payloadData is , ", payloadData);
+  
+      const response = await createApi(api, formData, {
+        Authorization: `Bearer ${userData?.token}`,
+      });
+
+      console.log("response of create invoice is, ", response);
+      showSnackbar("Invoice Created Successfully", "success");
+      dispatch(clearCart());
+      navigation.pop(2);
+    } catch (error) {
+      console.log("error creating invoice is , ", error);
+      showSnackbar("Something went wrong creating Invoice is", "error");
+    }
     console.log("Button pressed");
   };
 
@@ -210,16 +237,21 @@ const PdfScreen = ({ route }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={styles.buttonsContainer}>
-        <Button title="Generate" onPress={handleGenerate} />
-        <Button title="Share" onPress={handleShare} />
-      </View>
+      
+      {/* <View style={{alignItems:"center"}}>
+        <Text style={{fontFamily:"Poppins-Bold", fontSize:fontSize.headingSmall}}>Invoice Preview</Text>
+      </View> */}
 
       <WebView
         originWhitelist={["*"]}
         source={{ html: generatePDF(formData) }} // Pass formData to the PDF generation function
         style={{ height: "100%" }}
       />
+
+<View style={styles.buttonsContainer}>
+        <Button title="Generate" onPress={handleGenerate} />
+        <Button title="Share" onPress={handleShare} />
+      </View>
     </View>
   );
 };
@@ -227,7 +259,9 @@ const PdfScreen = ({ route }) => {
 const styles = StyleSheet.create({
   buttonsContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
+    justifyContent:"flex-end",
+    gap:20,
     padding: 20,
   },
 });

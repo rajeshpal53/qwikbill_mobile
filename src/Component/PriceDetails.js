@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   applyDiscount,
   applyPartiallyAmount,
-} from "../Redux/CartProductRedux/CartSlice";
+} from "../Redux/slices/CartSlice";
 import { useEffect, useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import CustomDropdown from "./CustomeDropdown";
@@ -50,7 +50,7 @@ const PriceDetails = ({ setPaymentStatus }) => {
       {/* Price  */}
       <View style={styles.priceView}>
         <Text style={styles.label}>Price ({carts.length})</Text>
-        <Text style={styles.value}>{`₹ ${totalPrice.toFixed(2)}`}</Text>
+        <Text style={styles.value}>{`₹ ${totalPrice?.toFixed(2) || "total"}`}</Text>
       </View>
 
       {/* Discount  */}

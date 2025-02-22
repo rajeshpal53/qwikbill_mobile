@@ -44,6 +44,7 @@ import {
   TourGuideZoneByPosition,
   useTourGuideController,
 } from "rn-tourguide";
+import { ShopContext } from "../Store/ShopContext";
 
 export default function HomeScreen({ navigation }) {
   const { currentLoginTime, lastLoginTime, storeTime } =
@@ -51,7 +52,7 @@ export default function HomeScreen({ navigation }) {
   // const [lastLoginTime, setLastLoginTime] = useState(route.params.previousLoginTime);
   // const { getData } = useContext(AuthContext);
   const [loginDetail, setLoginDetail] = useState({});
-  const [vendorsDetails, setVendorDetails] = useState([]);
+  // const [vendorsAll, setVendorDetails] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const { searchMode, setSearchMode } = useContext(AuthContext);
   // const {overlayHeight} = useContext(AuthContext);
@@ -63,11 +64,17 @@ export default function HomeScreen({ navigation }) {
   // console.log(responsiveHeight(80), "    --- responsiveHeight");
   // console.log(verticalScale(700), "    --- verticalscale");
   const { userData } = useContext(UserDataContext);
+  const {allShops} = useContext(ShopContext);
   const isFocused = useIsFocused();
   const [currentStep, setCurrentStep] = useState(0);
 
   const { canStart, start, stop, eventEmitter } = useTourGuideController();
 
+  
+
+  useEffect(() => {
+    console.log("allshops in homescreen 1, ", allShops)
+  }, [allShops])
   // useEffect(() => {
   //   const checkIfTourSeen = async () => {
   //     try {
@@ -123,31 +130,31 @@ export default function HomeScreen({ navigation }) {
   //   };
   // }, []);
 
-  useEffect(() => {
-    const fetchVendorData = async () => {
-      try {
-        setIsLoading(true);
-        const token = userData?.token;
-        // const api = `qapi/vendors/${userData?.user?.id}`
-        const response = await readApi(
-          `qapi/vendors//getVendorsByUserId/${userData?.user?.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        console.log(response);
-        setVendorDetails(response);
-      } catch (err) {
-        setVendorDetails([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchVendorData = async () => {
+  //     try {
+  //       setIsLoading(true);
+  //       const token = userData?.token;
+  //       // const api = `qapi/vendors/${userData?.user?.id}`
+  //       const response = await readApi(
+  //         `qapi/vendors/getVendorsByUserId/${userData?.user?.id}`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       );
+  //       console.log(response);
+  //       setVendorDetails(response);
+  //     } catch (err) {
+  //       setVendorDetails([]);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
 
-    fetchVendorData();
-  }, [isFocused]);
+  //   fetchVendorData();
+  // }, [isFocused]);
 
   useEffect(() => {
     const getItem = async () => {
@@ -271,7 +278,7 @@ export default function HomeScreen({ navigation }) {
                       }}
                       onPress={handleNextStep}
                     />
-                    <DropDownList options={vendorsDetails} />
+                    <DropDownList options={allShops} />
                   </View>
 
                   <View style={styles.viewsContainer}>
@@ -336,7 +343,7 @@ export default function HomeScreen({ navigation }) {
           </View>
 
           <View style={{ flex: 2 }}>
-            {vendorsDetails.length > 0 ? (
+            {allShops?.length > 0 ? (
               <FlatList
                 style={styles.flatList}
                 data={services}

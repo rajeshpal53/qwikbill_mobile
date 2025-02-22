@@ -5,11 +5,13 @@ import { createApi } from '../Util/UtilApi'
 import { ShopDetailContext } from '../Store/ShopDetailContext'
 import { ActivityIndicator } from 'react-native-paper'
 import { useSnackbar } from '../Store/SnackbarContext'
+import { ShopContext } from '../Store/ShopContext'
 
 const AddCustomerScreen = ({navigation}) => {
 
   const [isLoading, setIsLoading] = useState(false)
-  const {shopDetails} = useContext(ShopDetailContext);
+  // const {selectedShop} = useContext(ShopDetailContext);
+  const {selectedShop} = useContext(ShopContext);
  const initialValues={
   name: '',
   gstnumber: '',
@@ -23,7 +25,7 @@ const AddCustomerScreen = ({navigation}) => {
  const handleSubmit=async (values)=>{
   const postData={
     ...values,
-    shop: shopDetails._id
+    shop: selectedShop._id
     // country: "USA",
 // people: "6655af58afe60865000019cc",
 }
@@ -33,7 +35,7 @@ const headers= {
   "Content-Type": "application/json",
 }
 setIsLoading(true);
-const response = await createApi(`api/people/create?shop=${shopDetails._id}`,postData,headers);
+const response = await createApi(`api/people/create?shop=${selectedShop._id}`,postData,headers);
   console.log("response",response)
   showSnackbar("add customer Successfully","success")
     navigation.navigate('Customer')

@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { RadioButton, Text, TextInput } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { createApi, readApi } from "../Util/UtilApi";
 import CategoryDropDown from "../UI/DropDown/CategoryDropdown";
+import { ShopContext } from "../Store/ShopContext";
 
 const AddProduct = ({ navigation }) => {
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [showHsnOptions, setShowHsnOptions] = useState(false);
   const [HSNCode, SetHSNCode] = useState();
+  const {selectedShop} = useContext(ShopContext);
 
   console.log("DATA OF HSNCODE IS ", HSNCode);
 
@@ -72,6 +74,7 @@ const AddProduct = ({ navigation }) => {
             taxRate: values?.TaxRate,
             hsncodefk: HSNCode?.id,
             isStock: values?.IsStockData,
+            vendorfk: selectedShop.id,
           };
           console.log("Data is 15863", ProductData);
           try {
