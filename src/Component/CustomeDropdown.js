@@ -50,7 +50,7 @@ const CustomDropdown = ({
               keyExtractor={(item, index) => index.toString()}
               renderItem={({ item }) => (
                 <TouchableOpacity
-                  style={styles.modalItem}
+                  style={[styles.modalItem, {backgroundColor: selectedStatus == item ? "rgba(0, 0, 0, 0.2)" : "#fff"}]}
                   onPress={() => selectStatus(item)} // Set selected item and close modal
                 >
                   <Text style={styles.modalItemText}>{item}</Text>
@@ -94,13 +94,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     width: 250,
     borderRadius: 8,
-    padding: 10,
+    overflow:"hidden",
+    // padding: 10,
     elevation: 5, // Shadow for Android
   },
   modalItem: {
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
+    backgroundColor:"orange",
+    padding:10
   },
   modalItemText: {
     fontSize: 16,

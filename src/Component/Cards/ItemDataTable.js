@@ -40,16 +40,16 @@ const ItemDataTable = () => {
           renderItem={({ item, index }) => (
             <View style={styles.row}>
               <Text style={[styles.cell, styles.smallCell]}>{index + 1}</Text>
-              <Text style={[styles.cell, styles.flexCell]}>{item?.Name}</Text>
+              <Text style={[styles.cell, styles.flexCell]}>{item?.name}</Text>
               <Text style={[styles.cell, styles.smallCell]}>
-                ${(item?.Price * item?.quantity).toFixed(2)}
+              ₹{(item?.sellPrice * item?.quantity).toFixed(2)}
               </Text>
               <View style={[styles.cell, styles.smallCell]}>
                 <IncAndDicButton item={item} />
               </View>
               <View style={[styles.cell, styles.smallCell]}>
                 <TouchableOpacity
-                  onPress={() => dispatch(removeFromCart(item?.id))}
+                  onPress={() => dispatch(removeFromCart(item))}
                 >
                   <MaterialIcons name="delete" size={20} color="red" />
                 </TouchableOpacity>
