@@ -12,6 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 import { fontSize } from "../../Util/UtilApi";
 
 const ProductDetailsCard = ({ item }) => {
+  console.log("Value of data is itemmmmmmm",item)
   const [Opendetails, setOpendetails] = useState(false);
   const navigation = useNavigation();
   return (
@@ -33,6 +34,8 @@ const ProductDetailsCard = ({ item }) => {
               Selling Price: ₹{item.sellPrice}
             </Text>
             <Text style={styles.priceText}>Cost Price: ₹{item.costPrice}</Text>
+            <Text style={styles.priceText}>HSN Code: {item.hsncode}</Text>
+            <Text style={styles.priceText}>Tax Rate: {item.taxRate}</Text>
           </View>
 
           <View style={styles.ButtonTextView}>
@@ -107,7 +110,7 @@ const styles = StyleSheet.create({
     marginVertical: 2,
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.labelLarge,
-    paddingVertical:2
+    paddingVertical: 2,
   },
   avatar: {
     // backgroundColor: "black",
@@ -124,7 +127,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.label,
   },
-  sellPrice:{
+  sellPrice: {
     color: "#555",
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.label,
