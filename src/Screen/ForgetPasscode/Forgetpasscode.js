@@ -65,9 +65,10 @@ function CustomerVerification({ loginDetail1, setIsOtp, setOtpValue }) {
               {loginDetail1 && loginDetail1.email} address
             </Text>
             <TextInput
-              placeholder="Email Adress"
+            style={{width:"100%"}}
+              placeholder="Mobile Number"
               value={text}
-              style={{ alignSelf: "stretch" }}
+              keyboardType="number-pad"
               onChangeText={(newText) => setText(newText)}
             />
             <Button

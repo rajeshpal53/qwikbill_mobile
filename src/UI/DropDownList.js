@@ -11,68 +11,40 @@ import {
 } from "react-native-responsive-dimensions";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { ActivityIndicator, List } from "react-native-paper";
+import { ShopContext } from "../Store/ShopContext";
 
 function DropDownList({ options }) {
-  const { addShopDetails, shopDetails } = useContext(ShopDetailContext);
+  // const { addShopDetails, shopDetails } = useContext(ShopDetailContext);
+  const {selectedShop, updateSelectedShop} = useContext(ShopContext);
   const [isLoading, setIsLoading] = useState(false);
   // const [options, setOptions] = useState([]);
-  const [selectedShop, setSelectedShop] = useState("");
-  console.log(selectedShop, "newShopDetails");
+
+  // const [selectedShop, setSelectedShop] = useState("");
+  // console.log(shopDetails, "newShopDetails");
+
   const pickerRef = useRef();
 
   console.log("Dataof option ", options);
 
-  // async function fetchOptions() {
-  //   try {
-  //     setIsLoading(true);
-  //     const response = await readApi(`api/shop/list`);
-  //     setOptions(response.result);
-  //     const newResponse = await readApi(
-  //       `api/invoice/list?shop=${response?.result[0]?._id}`
-  //     );
-  //     const count = newResponse.result.length;
-  //     addShopDetails({ ...response.result[0], count: count });
-
-  //   } catch (error) {
-  //     console.log("error getting shops , ", error)
-  //   }finally{
-  //     setIsLoading(false);
-  //   }
-
-  //   // Adjust according to your API respons
-  //   // setSelectedOption(data.result[0].shopname)
-  // }
-  // useEffect(() => {
-  //   fetchOptions();
-  // }, []);
-
-  const getSelectedOption = async () => {
-    // const selectedId = options.find(
-    //   (option) => option.shopname === selectedShop
-    // );
-    // const newResponse = await readApi(
-    //   `api/invoice/list?shop=${selectedId._id}`
-    // );
-    // count = newResponse.result.length;
-    // addShopDetails({ ...selectedId, count: count });
-  };
-
   useEffect(() => {
-    if (selectedShop) {
-      getSelectedOption();
-    }
-  }, [selectedShop]);
+    console.log("selectedShop is changed 1 - ", selectedShop)
+  }, [selectedShop])
+
+  
 
   return (
     <View style={styles.pickerContainer}>
       {isLoading && <ActivityIndicator size="small" />}
       <Picker
-        enabled={options.length > 0} // Disable the picker if options.length is 0
+        enabled={options?.length > 0} // Disable the picker if options.length is 0
         mode="dropdown"
         style={{ width: "95%" }}
         ref={pickerRef}
         selectedValue={selectedShop}
-        onValueChange={(itemValue) => setSelectedShop(itemValue)}
+        onValueChange={(itemValue) =>{
+          console.log("itemVaue is , ", itemValue)
+          updateSelectedShop(itemValue)
+        } }
       >
         {/* Default placeholder */}
         {/* <Picker.Item
@@ -95,10 +67,10 @@ function DropDownList({ options }) {
           color="#888888"
           enabled={false}
         />
-        {options.map((item, index) => (
+        {options?.map((item, index) => (
           <Picker.Item
             key={index}
-            value={item?.shopname}
+            value={item}
             label={item?.shopname}
             color="#555555"
           />
