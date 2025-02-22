@@ -73,9 +73,10 @@ const AddProduct = ({ navigation }) => {
             costPrice: values?.PurchasePrice,
             sellPrice: values?.SellingPrice,
             taxRate: values?.TaxRate,
-            hsncodefk: HSNCode?.id,
+            // hsncodefk: HSNCode?.id,
             isStock: values?.IsStockData,
             vendorfk: selectedShop.id,
+            hsncode: parseInt(values.HSNCode),
 
           };
           console.log("Data is 15863", ProductData);

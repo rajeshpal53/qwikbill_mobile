@@ -10,32 +10,35 @@ import { Text } from "react-native-paper";
 import { useDispatch } from "react-redux";
 import { clearCart } from "../Redux/slices/CartSlice";
 
-
 const PdfScreen = ({ navigation }) => {
   const { formData } = useRoute().params;
   const dispatch = useDispatch();
   const [isGenerated, setIsGenerated] = useState(false); // State to track PDF generation
   const { userData } = useContext(UserDataContext);
-  const {showSnackbar} = useSnackbar();
+  const { showSnackbar } = useSnackbar();
   const generatePDF = (values) => {
-    console.log("values of formdata is , ", values)
-    const productDetails = values?.products.map(
-      (item) => `
+    console.log("values of formdata is , ", values);
+    const productDetails = values?.products
+      .map(
+        (item) => `
         <tr class="item-row">
-          <td colspan="2">${item?.productname}</td>
+          <td colspan="2">${item?.name}</td>
           <td>${item?.quantity}</td>
-          <td>₹${item?.price.toFixed(2)}</td>
+          <td>₹${item?.sellPrice?.toFixed(2)}</td>
+          <td>₹${item?.totalPrice?.toFixed(2)}</td>
           
         </tr>`
-    ).join("");
+      )
+      .join("");
 
-    const partiallyPaidSection = values?.statusfk == 3
-      ? `
+    const partiallyPaidSection =
+      values?.statusfk == 3
+        ? `
         <tr class="details-row">
           <td><strong>Partially Paid:</strong></td>
           <td colspan="4">₹${50}</td>
         </tr>`
-      : "";
+        : "";
 
     // Formatting for the total price, discount, and final amount after considering partial payment
     const totalPrice = values?.subtotal;
@@ -120,11 +123,13 @@ const PdfScreen = ({ navigation }) => {
               <!-- Invoice Information -->
               <tr>
                 <td colspan="2">
-                  <strong>Invoice Number:</strong> ${values?.invoiceNumber || "INV123"}<br>
+                  <strong>Invoice Number:</strong> ${
+                    values?.invoiceNumber || "INV123"
+                  }<br>
                   <strong>Date:</strong> ${
                     values?.createdAt
                       ? new Date(values?.order?.createdAt).toLocaleDateString()
-                      : "N/A"
+                      : getTodaysDate()
                   }
                 </td>
                 <td colspan="3">
@@ -139,9 +144,11 @@ const PdfScreen = ({ navigation }) => {
               <!-- Customer Information -->
               <tr>
                 <td colspan="2">
-                  <strong>Customer Name:</strong> ${values?.userData?.name || "N/A"}<br>
+                  <strong>Customer Name:</strong> ${
+                    values?.customerData?.name || "N/A"
+                  }<br>
                   <strong>Customer Contact:</strong> ${
-                    values?.userData?.mobile || "N/A"
+                    values?.customerData?.mobile || "N/A"
                   } <br>
                   <strong>Address:</strong> ${values?.address || "N/A"}
                 </td>
@@ -150,7 +157,12 @@ const PdfScreen = ({ navigation }) => {
               <!-- Payment Details -->
               <tr class="details-row">
                 <td><strong>Payment Method:</strong></td>
-                <td colspan="4">${values?.statusfk == 3 && "Partially Paid" || values?.statusfk == 2 && "Paid" || values?.statusfk == 1 && "Unpaid" || "N/A"}</td>
+                <td colspan="4">${
+                  (values?.statusfk == 3 && "Partially Paid") ||
+                  (values?.statusfk == 2 && "Paid") ||
+                  (values?.statusfk == 1 && "Unpaid") ||
+                  "N/A"
+                }</td>
               </tr>
               <tr class="details-row">
                 <td><strong>Status:</strong></td>
@@ -168,22 +180,22 @@ const PdfScreen = ({ navigation }) => {
               <!-- Grand Total -->
               <tr class="total-row">
                 <td colspan="4" style="text-align: right;"><strong>Grand Total:</strong></td>
-                <td>₹${totalPrice.toFixed(2)}</td>
+                <td>₹${totalPrice?.toFixed(2)}</td>
               </tr>
               <!-- Discount -->
               <tr class="total-row">
                 <td colspan="4" style="text-align: right;"><strong>Discount:</strong></td>
-                <td>₹${discount.toFixed(2)}</td>
+                <td>₹${discount?.toFixed(2)}</td>
               </tr>
               <!-- Partially Pay -->
               <tr class="total-row">
                 <td colspan="4" style="text-align: right;"><strong>Partially Pay:</strong></td>
-                <td>₹${partiallyAmount.toFixed(2)}</td>
+                <td>₹${partiallyAmount?.toFixed(2)}</td>
               </tr>
               <!-- Amount to Pay -->
               <tr class="total-row">
                 <td colspan="4" style="text-align: right;"><strong>Amount to Pay:</strong></td>
-                <td>₹${payAmount.toFixed(2)}</td>
+                <td>₹${payAmount?.toFixed(2)}</td>
               </tr>
               <!-- Partially Paid (if exists) -->
               ${partiallyPaidSection}
@@ -195,16 +207,42 @@ const PdfScreen = ({ navigation }) => {
     return htmlContent;
   };
 
+  const getTodaysDate = () => {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, "0");
+    const month = String(today.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const year = today.getFullYear();
+
+    const formattedDate = `${day}/${month}/${year}`;
+    return formattedDate;
+  };
+
   const handleGenerate = async () => {
     // setIsGenerated(true); // Trigger PDF generation when the button is pressed
     try {
       let api = "qapi/invoice/invoices";
 
-      
-      const {userData, serviceProviderData, ...payloadData} = formData;
-      console.log("after removing someData, payloadData is , ", payloadData);
-  
-      const response = await createApi(api, formData, {
+      const { customerData, serviceProviderData, ...payloadData } = formData;
+
+      const newProducts = payloadData?.products?.map((item) => {
+
+        return ({
+          id: item?.id,
+          productname: item?.name,
+          price: item?.sellPrice,
+          quantity: item?.quantity,
+        });
+      });
+
+      const newPayload = {
+        ...payloadData,
+        products: newProducts,
+      }
+      console.log("after removing someData, payloadData is , ", newPayload);
+      console.log("userData is , ", userData);
+      console.log("userData token is , ", userData?.token);
+
+      const response = await createApi(api, newPayload, {
         Authorization: `Bearer ${userData?.token}`,
       });
 
@@ -237,7 +275,6 @@ const PdfScreen = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      
       {/* <View style={{alignItems:"center"}}>
         <Text style={{fontFamily:"Poppins-Bold", fontSize:fontSize.headingSmall}}>Invoice Preview</Text>
       </View> */}
@@ -248,7 +285,7 @@ const PdfScreen = ({ navigation }) => {
         style={{ height: "100%" }}
       />
 
-<View style={styles.buttonsContainer}>
+      <View style={styles.buttonsContainer}>
         <Button title="Generate" onPress={handleGenerate} />
         <Button title="Share" onPress={handleShare} />
       </View>
@@ -260,8 +297,8 @@ const styles = StyleSheet.create({
   buttonsContainer: {
     flexDirection: "row",
     // justifyContent: "space-between",
-    justifyContent:"flex-end",
-    gap:20,
+    justifyContent: "flex-end",
+    gap: 20,
     padding: 20,
   },
 });

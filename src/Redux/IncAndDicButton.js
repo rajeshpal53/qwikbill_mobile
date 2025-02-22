@@ -12,9 +12,9 @@ const IncAndDicButton = ({item }) => {
 
   const handleDecrement = (item) => {
     if (item.quantity > 1) {
-      dispatch(decreaseQuantity(item.id));
+      dispatch(decreaseQuantity(item));
     }else{
-      dispatch(removeFromCart(item.id));
+      dispatch(removeFromCart(item));
     }
   };
 
@@ -29,7 +29,7 @@ const IncAndDicButton = ({item }) => {
         </TouchableOpacity>
         <Text style={styles.quantityText}>{item.quantity}</Text>
         <TouchableOpacity
-          onPress={() => dispatch(incrementQuantity(item?.id))}
+          onPress={() => dispatch(incrementQuantity(item))}
           style={styles.quantityButton}
         >
           <Text style={styles.quantityButtonText}>+</Text>

@@ -68,6 +68,9 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   };
 
   useEffect(() => {
+    console.log("changed cart is , ", carts)
+  }, [carts])
+  useEffect(() => {
     const handleBackPress = navigation.addListener("beforeRemove", (e) => {
       const hasFilledForm =
         carts.length > 0 ||
@@ -139,7 +142,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
             paymentMode: "COD",
             ...((PaymentStatus == "Unpaid" || PaymentStatus == "Partially Paid") ? {remainingamount: cartsValue?.afterdiscount} : {}),
 
-            ...(selectedButton == "provisional" ? {provisionNumber: "1002020"} : {}),
+            // ...(selectedButton == "provisional" ? {provisionNumber: "12"} : {}),
           };
 
 
@@ -149,15 +152,9 @@ const CreateInvoiceForm = ({ selectedButton }) => {
      
           const payload = {
             ...extraData,
-            userData: User,
+            customerData: User,
             serviceProviderData: selectedShop,
-            products: carts.map((item) => ({
-              id: item?.id,
-              productname: item?.Name,
-              price: item?.Price,
-              // totalprice: item?.totalPrice,
-              quantity: item?.quantity,
-            })),
+            products: carts,
             // Pricedetails: [
             //   {
             //     TotalPrice: cartsValue.totalPrice,
