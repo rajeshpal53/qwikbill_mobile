@@ -5,7 +5,7 @@ import {
   decreaseQuantity,
   incrementQuantity,
   removeFromCart,
-} from "./CartProductRedux/CartSlice";
+} from "./slices/CartSlice";
 
 const IncAndDicButton = ({item }) => {
   const dispatch = useDispatch();

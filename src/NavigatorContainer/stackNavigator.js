@@ -75,7 +75,7 @@ export default function StackNavigator() {
   const [isLandscape, setIsLandscape] = useState(false);
   const { isAuthenticated, isLoading, searchMode } = useContext(AuthContext);
   const { userData } = useContext(UserDataContext);
-  const { shopDetails } = useContext(ShopDetailContext);
+  // const { shopDetails } = useContext(ShopDetailContext);
 
   // const ViewCustomerWithTour  = withCopilot(AddCustomerScreen)
 
@@ -273,7 +273,7 @@ export default function StackNavigator() {
           name="ViewInvoices"
           component={ViewInvoiceScreen}
           options={({ route }) => ({
-            headerTitle: shopDetails.shopname,
+            headerTitle: shopDetails?.shopname,
             headerRight: () => (
               <RotateBtn
                 isLandscape={isLandscape}
@@ -418,7 +418,7 @@ export default function StackNavigator() {
           name="PDFScreen"
           component={PdfScreen}
           screenOptions={{
-            headerTitle: "Create Invoice",
+            headerTitle: "Invoice Preview",
           }}
         />
 

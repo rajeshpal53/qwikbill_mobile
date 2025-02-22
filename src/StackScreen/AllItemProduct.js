@@ -1,12 +1,17 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import Searchbarwithmic from "../../src/Component/Searchbarwithmic";
 import ProductCardDetails from "../Component/Cards/ProductCard";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import ViewCartOverlay from "../Overlays/ViewCartOverlays";
 import { ProductItem } from "../../ProductData";
-import { setProduct } from "../Redux/CartProductRedux/ProductSlice";
+// import { setProduct } from "../Redux/CartProductRedux/ProductSlice";
+import { setProduct } from "../Redux/slices/ProductSlice";
 import { useDispatch, useSelector } from "react-redux";
 import OpenmiqModal from "../Modal/Openmicmodal";
+import { readApi } from "../Util/UtilApi";
+import { ShopContext } from "../Store/ShopContext";
+import UserDataContext from "../Store/UserDataContext";
+import { useSnackbar } from "../Store/SnackbarContext";
 
 const AllItemProduct = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -14,8 +19,34 @@ const AllItemProduct = ({ navigation }) => {
   const [transcript, setTranscript] = useState("");
   const [showOverlay, setshowOverlay] = useState(false);
   const dispatch = useDispatch();
-  const products = useSelector((state) => state.product.products);
+  // const products = useSelector((state) => state.product.products);
+  const [products, setProducts] = useState(null);
   const carts = useSelector((state) => state.cart.Carts);
+  const {selectedShop} = useContext(ShopContext);
+  const {userData} = useContext(UserDataContext);
+  const {showSnackbar} = useSnackbar();
+
+  useEffect(() => {
+
+    const fetchProductData = async() => {
+
+      try {
+        
+        const response = await readApi(`qapi/products/getProductByVendorfk/${selectedShop?.id}?page=1&limit=10`, {
+          Authorization : `Bearer ${userData?.token}`,
+        });
+
+        console.log("response of getting products is , ", response);
+
+        setProducts(response?.products);
+      } catch (error) {
+        console.log("error of getting ", error);
+        showSnackbar("Something went Wrong ", "error");
+      }
+    }
+
+    fetchProductData();
+  }, [])
 
   useEffect(() => {
     if (carts.length > 0) {
@@ -45,7 +76,7 @@ const AllItemProduct = ({ navigation }) => {
         placeholderText="Search User by name ..."
       />
       <FlatList
-        data={filteredData}
+        data={products}
         renderItem={({ item, index }) => (
           <ProductCardDetails
             item={item}

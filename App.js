@@ -23,6 +23,7 @@ import StackNavigator from "./src/NavigatorContainer/stackNavigator.js";
 import { FontProvider } from "./src/Store/FontProvider.js";
 // import { CopilotProvider } from "react-native-copilot";
 import { TourGuideProvider } from "rn-tourguide";
+import { ShopProvider } from "./src/Store/ShopContext.js";
 
 const customTheme = {
   ...DefaultTheme,
@@ -54,7 +55,8 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <UserDataProvider>
-        <ShopDetailProvider>
+        <ShopProvider>
+        {/* <ShopDetailProvider> */}
           <PasskeyProvider>
             <SnackbarProvider>
               <Provider store={Store}>
@@ -80,7 +82,8 @@ export default function App() {
               </Provider>
             </SnackbarProvider>
           </PasskeyProvider>
-        </ShopDetailProvider>
+        {/* </ShopDetailProvider> */}
+        </ShopProvider>
       </UserDataProvider>
     </SafeAreaProvider>
   );
