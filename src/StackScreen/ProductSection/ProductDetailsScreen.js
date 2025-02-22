@@ -5,7 +5,7 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import {
   FAB,
   Searchbar,
@@ -25,7 +25,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { readApi } from "../../Util/UtilApi";
 import { useIsFocused } from "@react-navigation/native";
 import FileUploadModal from "../../Components/BulkUpload/FileUploadModal";
-//
+import { ShopContext } from "../../Store/ShopContext";
+
+
 const ProductDetailsScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchmodal, setsearchmodal] = useState(false); // State for modal visibility
@@ -41,29 +43,42 @@ const ProductDetailsScreen = ({ navigation }) => {
   const [bulkUploadModalVisible, setBulkUploadModalVisible] = useState(false);
   const [loader, setloader] = useState(false);
 
+  const { selectedShop } = useContext(ShopContext);
+  const [page, setPage] = useState(1); // Track the current page
+  const PAGE_SIZE = 10;
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  console.log("DATTTTTTTTTTTTaaaaaaaaaa", Productdata)
+
   useEffect(() => {
     const getproductdata = async () => {
       try {
         setloader(true);
-        const api = `qapi/products/`;
+        const api = `qapi/products/getProductByVendorfk/${selectedShop?.id}?page=${page}&limit=${PAGE_SIZE}`;
         const response = await readApi(api);
-        dispatch(setProductitem(response));
-        SetProductData(response);
+        // dispatch(setProductitem(response));
+        // SetProductData(response);
+        if (page === 1) {
+          console.log("Inside a if condition")
+          console.log("DATA OF RESPONCEEEEEEEEE",response?.products )
+          SetProductData(response?.products);
+        } else {
+          SetProductData((prevData) => [...prevData, ...response?.products]);
+        }
       } catch (error) {
         console.log("Unable to fetch Data", error);
+        SetProductData([]);
       } finally {
         setloader(false);
       }
     };
     getproductdata();
-  }, [isfocused]);
+  }, [page, isfocused, selectedShop?.id]);
 
-  const filteredData = products.filter((item) =>
-    item?.name?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+
 
   const openEditModal = (item) => {
-    setSelectedEditItem(item); 
+    setSelectedEditItem(item);
   };
 
   useEffect(() => {
@@ -97,7 +112,7 @@ const ProductDetailsScreen = ({ navigation }) => {
       />
 
       <FlatList
-        data={filteredData}
+        data={Productdata}
         renderItem={({ item, index }) => (
           <ProductDetailsCard
             item={item}
@@ -116,7 +131,15 @@ const ProductDetailsScreen = ({ navigation }) => {
             </Text>
           </View>
         )}
+        // onEndReached={handleLoadMore} // Trigger when the user scrolls to the end
+        // onEndReachedThreshold={0.5} // Trigger when 50% of the list is scrolled
+        ListFooterComponent={() =>
+          isLoadingMore ? <ActivityIndicator size="large" /> : null
+        }
       />
+
+      {loader && <ActivityIndicator size="large" />}
+
       {/* <FAB
         icon={() => <Icon name="add" size={25} color="#fff" />}
         style={styles.fab}

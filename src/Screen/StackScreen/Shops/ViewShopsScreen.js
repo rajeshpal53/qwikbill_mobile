@@ -167,7 +167,7 @@ export default function ViewShopsScreen() {
           //    refuser={searchBarRef}
         />
 
-        <View style={styles.allbuttonView}>
+        {/* <View style={styles.allbuttonView}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {["AllVenders", "Approved", "Pending", "Reject"].map(
               (suggestbtn, key) => (
@@ -185,7 +185,7 @@ export default function ViewShopsScreen() {
               )
             )}
           </ScrollView>
-        </View>
+        </View> */}
 
         <FlatList
           data={shopData}
