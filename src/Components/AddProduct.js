@@ -8,9 +8,9 @@ import CategoryDropDown from "../UI/DropDown/CategoryDropdown";
 import { ShopContext } from "../Store/ShopContext";
 
 const AddProduct = ({ navigation }) => {
-  const [options, setOptions] = useState([]);
-  const [showOptions, setShowOptions] = useState(false);
-  const [showHsnOptions, setShowHsnOptions] = useState(false);
+  // const [options, setOptions] = useState([]);
+  // const [showOptions, setShowOptions] = useState(false);
+  // const [showHsnOptions, setShowHsnOptions] = useState(false);
   const [HSNCode, SetHSNCode] = useState();
   const {selectedShop} = useContext(ShopContext);
 
@@ -30,6 +30,7 @@ const AddProduct = ({ navigation }) => {
   });
 
   const HandleHsnCode = async (hsncode, setFieldValue) => {
+    console.log("Value of HSN code is -----------",hsncode)
     try {
       const api = `qapi/hsn-codes`;
       const response = await readApi(api);
@@ -43,7 +44,7 @@ const AddProduct = ({ navigation }) => {
         } else {
           console.log("No matching HSN code found");
           setFieldValue("TaxRate", "");
-          setFieldValue("HSNCode", "");
+          setFieldValue("HSNCode", hsncode);
         }
       }
     } catch (error) {
@@ -75,6 +76,7 @@ const AddProduct = ({ navigation }) => {
             hsncodefk: HSNCode?.id,
             isStock: values?.IsStockData,
             vendorfk: selectedShop.id,
+
           };
           console.log("Data is 15863", ProductData);
           try {
@@ -171,6 +173,7 @@ const AddProduct = ({ navigation }) => {
               keyboardType="numeric"
               mode="outlined"
               style={styles.input}
+              onChangeText={handleChange("TaxRate")}
               value={values.TaxRate || ""}
               error={touched.taxValue && !!errors.taxValue}
             />

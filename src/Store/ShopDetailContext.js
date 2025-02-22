@@ -8,6 +8,8 @@ const ShopDetailContext = createContext();
 const ShopDetailProvider = ({ children }) => {
   const [shopDetails, setShopDetails] = useState([]);
 
+  console.log("Available shop is------------ ", shopDetails)
+
   // Load shop details from local storage
   useEffect(() => {
     const loadShopDetails = async () => {
