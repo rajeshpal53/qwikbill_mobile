@@ -18,8 +18,10 @@ function DropDownList({ options }) {
   const {selectedShop, updateSelectedShop} = useContext(ShopContext);
   const [isLoading, setIsLoading] = useState(false);
   // const [options, setOptions] = useState([]);
+
   // const [selectedShop, setSelectedShop] = useState("");
   // console.log(shopDetails, "newShopDetails");
+
   const pickerRef = useRef();
 
   console.log("Dataof option ", options);
