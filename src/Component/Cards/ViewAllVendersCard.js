@@ -3,28 +3,27 @@ import { Card, Avatar } from "react-native-paper";
 import { fontSize } from "../../Util/UtilApi";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-
 const ViewAllVendersCard = ({ item }) => {
-
-
   return (
     <ScrollView>
       <Card style={styles.card}>
-
         <View style={styles.container}>
           <View style={styles.ImageView}>
-            {
-              <Avatar.Text
-                size={40}
-                label={item?.shopname.charAt(0)}
-                style={styles.avatarPlaceholder}
-              />
-            }
-          </View>
-          <View style={styles.detailscontainerView}>
+            <View>
+              {
+                <Avatar.Text
+                  size={40}
+                  label={item?.shopname.charAt(0)}
+                  style={styles.avatarPlaceholder}
+                />
+              }
+            </View>
             <View style={styles.shopnameView}>
               <Text style={styles.shopnameText}>{item?.shopname}</Text>
             </View>
+          </View>
+
+          <View style={styles.detailscontainerView}>
             <View style={styles.InnerDetailsView}>
               <View>
                 <MaterialCommunityIcons
@@ -64,16 +63,28 @@ const ViewAllVendersCard = ({ item }) => {
                 <Text style={styles.detailsText}>{item?.shopAddress}</Text>
               </View>
             </View>
+            <View style={styles.InnerDetailsView}>
+              <View>
+                <MaterialCommunityIcons
+                  name="information-outline"
+                  size={15}
+                  color="rgba(0, 0, 0, 0.6)"
+                  style={styles.icon} // Custom style
+                />
+              </View>
+              <View>
+                <Text style={styles.detailsText}>{item?.details || "Good shop"}</Text>
+              </View>
+            </View>
           </View>
-          <View style={styles.StatusandRatingView}>
+          {/* <View style={styles.StatusandRatingView}>
             <View>
               <Text style={styles.Approvedtext}>Approved</Text>
             </View>
             <View>
               <Text style={styles.rating}>rating</Text>
             </View>
-          </View>
-
+          </View> */}
         </View>
       </Card>
     </ScrollView>
@@ -96,23 +107,24 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 5,
     marginVertical: 5,
-    flexDirection: "row",
+    // flexDirection: "row",
   },
   ImageView: {
     paddingHorizontal: 2,
     marginLeft: 5,
-    flexDirection: "column",
+    flexDirection: "row",
     // borderWidth: 1,
   },
   detailscontainerView: {
     // marginVertical: 5,
-    marginHorizontal: 5,
-    flexDirection: "column",
+    marginHorizontal: 10,
+    marginVertical:5,
+    // flexDirection: "column",
     // borderWidth: 1,
     flex: 1,
   },
   StatusandRatingView: {
-    flexDirection: "column",
+    // flexDirection: "column",
     // borderWidth: 1,
     justifyContent: "space-between",
     alignItems: "center",
@@ -121,6 +133,9 @@ const styles = StyleSheet.create({
 
   shopnameView: {
     flex: 1,
+    // borderWidth:2,
+    paddingHorizontal:5
+
   },
   InnerDetailsView: {
     flex: 1,
@@ -139,7 +154,7 @@ const styles = StyleSheet.create({
   },
   avatarPlaceholder: {
     borderRadius: 8,
-    width: 40,
+    width: 50,
     height: 45,
     justifyContent: "center",
     alignItems: "center",
