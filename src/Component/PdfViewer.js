@@ -9,7 +9,7 @@ import { useSnackbar } from "../Store/SnackbarContext";
 import { Text } from "react-native-paper";
 import { useDispatch } from "react-redux";
 import { clearCart } from "../Redux/slices/CartSlice";
-import RNHTMLtoPDF from "react-native-html-to-pdf";
+// import RNHTMLtoPDF from "react-native-html-to-pdf";
 import { useDownloadInvoice } from "../Util/DownloadInvoiceHandler";
 
 const PdfScreen = ({ navigation }) => {
@@ -299,7 +299,7 @@ const PdfScreen = ({ navigation }) => {
 
     console.log("share 3 , ", options);
 
-    const file = await RNHTMLtoPDF.convert(options)
+    // const file = await RNHTMLtoPDF.convert(options)
 
     console.log("share 4 , ", file);
 
