@@ -1,21 +1,29 @@
-import React, { useContext, useState } from "react";
-import { View, Button, StyleSheet } from "react-native";
+import React, { useContext, useRef, useState } from "react";
+import { View, Button, StyleSheet, Alert, Platform } from "react-native";
 import { WebView } from "react-native-webview";
 import Share from "react-native-share"; // Import for sharing functionality
-import { createApi, fontSize } from "../Util/UtilApi";
+import { API_BASE_URL, createApi, fontSize } from "../Util/UtilApi";
 import UserDataContext from "../Store/UserDataContext";
 import { useRoute } from "@react-navigation/native";
 import { useSnackbar } from "../Store/SnackbarContext";
 import { Text } from "react-native-paper";
 import { useDispatch } from "react-redux";
 import { clearCart } from "../Redux/slices/CartSlice";
+import RNHTMLtoPDF from "react-native-html-to-pdf";
+import { useDownloadInvoice } from "../Util/DownloadInvoiceHandler";
 
 const PdfScreen = ({ navigation }) => {
+  const [pdfPath, setPdfPath] = useState("");
   const { formData } = useRoute().params;
   const dispatch = useDispatch();
   const [isGenerated, setIsGenerated] = useState(false); // State to track PDF generation
   const { userData } = useContext(UserDataContext);
+  const invoiceCreated = useRef(false);
+  const [createdInvoice, setCreatedInvoice] = useState(null);
   const { showSnackbar } = useSnackbar();
+  
+  const { downloadInvoicePressHandler, shareInvoicePressHandler } = useDownloadInvoice();
+
   const generatePDF = (values) => {
     console.log("values of formdata is , ", values);
     const productDetails = values?.products
@@ -204,6 +212,8 @@ const PdfScreen = ({ navigation }) => {
         </body>
       </html>
     `;
+
+    
     return htmlContent;
   };
 
@@ -217,7 +227,7 @@ const PdfScreen = ({ navigation }) => {
     return formattedDate;
   };
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (button = "button") => {
     // setIsGenerated(true); // Trigger PDF generation when the button is pressed
     try {
       let api = "qapi/invoice/invoices";
@@ -248,8 +258,16 @@ const PdfScreen = ({ navigation }) => {
 
       console.log("response of create invoice is, ", response);
       showSnackbar("Invoice Created Successfully", "success");
-      dispatch(clearCart());
-      navigation.pop(2);
+      setCreatedInvoice(response?.customer);
+      
+      invoiceCreated.current = true;
+      if(button == "download"){
+        return response?.customer;
+      }
+      else if(button == "generate"){
+        dispatch(clearCart());
+        navigation.pop(2);
+      }
     } catch (error) {
       console.log("error creating invoice is , ", error);
       showSnackbar("Something went wrong creating Invoice is", "error");
@@ -257,21 +275,64 @@ const PdfScreen = ({ navigation }) => {
     console.log("Button pressed");
   };
 
+  const handleDownload = async () => {
+    let invoiceData = ""
+    if(!createdInvoice){
+      invoiceData = await handleGenerate("download")
+    }
+    console.log("invoice data that we get is , ", invoiceData);
+    await downloadInvoicePressHandler(`${API_BASE_URL}qapi/invoice/downloadInvoice/${invoiceData?.id}`, invoiceData?.id, invoiceData?.name);
+  }
+
   const handleShare = async () => {
-    // You can use the react-native-share library to share the PDF
-    const shareOptions = {
-      title: "Share Invoice",
-      message: "Check out this invoice",
-      url: `data:text/html;base64,${btoa(generatePDF(formData))}`, // Using base64 encoding for inline content
-      type: "text/html",
+    shareInvoicePressHandler(api, id, name);
+    try {
+      // You can use the react-native-share library to share the PDF
+    console.log("share 1")
+    const htmlContent = generatePDF(formData);
+    console.log("share 2")
+    let options = {
+      html: htmlContent,
+      fileName: "Invoice",
+      directory: "Documents",
     };
 
-    try {
+    console.log("share 3 , ", options);
+
+    const file = await RNHTMLtoPDF.convert(options)
+
+    console.log("share 4 , ", file);
+
+    if (!file?.filePath) {
+      Alert.alert("Error", "Generate the PDF first!");
+      return;
+    }
+    
+    const shareOptions = {
+      title: "Share Invoice",
+      // message: "Check out this invoice",
+      url: Platform.OS === "android" ? `file://${file.filePath}` : file,
+      type: "application/pdf",
+    };
+
+    console.log("shareOptions is , ", shareOptions);
+    
       await Share.open(shareOptions); // Open native share options
     } catch (error) {
       console.log("Error sharing the document", error);
     }
   };
+
+  // const downloadInvoiceHandler = async (api, id, name) => {
+  //   console.log("api , ", api);
+  //   console.log("id , ", id);
+  //   console.log("name , ", name);
+  //   await downloadInvoicePressHandler(api, id, name);
+  // };
+
+  // const shareInvoiceHandler = (api, id, name) => {
+  //   shareInvoicePressHandler(api, id, name);
+  // };
 
   return (
     <View style={{ flex: 1 }}>
@@ -286,8 +347,9 @@ const PdfScreen = ({ navigation }) => {
       />
 
       <View style={styles.buttonsContainer}>
-        <Button title="Generate" onPress={handleGenerate} />
+        <Button disabled={createdInvoice ? true : false} title="Generate" onPress={handleGenerate} />
         <Button title="Share" onPress={handleShare} />
+        <Button title="Download" onPress={handleDownload} />
       </View>
     </View>
   );

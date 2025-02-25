@@ -37,7 +37,8 @@ import { LoginTimeContext } from "../Store/LoginTimeContext";
 import { useWindowDimensions } from "react-native";
 export default function PasscodeScreen({ navigation }) {
   // const navigation = useNavigation();
-  const { currentLoginTime, lastLoginTime, storeTime } =
+  const { lastLoginTime, storeCurrentTime,
+    setCurrentAsLastTime, } =
     useContext(LoginTimeContext);
   let { width, height } = useWindowDimensions();
   // height = 0.99*height
@@ -120,7 +121,8 @@ export default function PasscodeScreen({ navigation }) {
 
   const handleNavigation = async () => {
     // const {previousLoginTime} = await storeTime();
-    storeTime();
+    // storeTime();
+    await storeCurrentTime();
 
     if (enteredPasscode === passkey) {
       if (loginDetail1.isshop === false) {
@@ -149,7 +151,7 @@ export default function PasscodeScreen({ navigation }) {
 
     if (result.success) {
       // const {previousLoginTime} = await storeTimes();
-      storeTime();
+      await storeCurrentTime();
       if (loginDetail1.isshop === false) {
         navigation.navigate("CreateShopScreen");
       } else {

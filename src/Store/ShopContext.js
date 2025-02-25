@@ -22,7 +22,10 @@ export const ShopProvider = ({ children }) => {
 
           // Load selected shop if exists
           const storedSelectedShop = await AsyncStorage.getItem("selectedShop");
+          
+          // console.log("json parsed storedSelectedShop is , ", JSON.parse(storedSelectedShop));
           if (storedSelectedShop) {
+            // console.log("storedSelectedShop is , ", storedSelectedShop)
             setSelectedShop(JSON.parse(storedSelectedShop));
           } else {
             setSelectedShop(parsedShops[0]); // Default to first shop
