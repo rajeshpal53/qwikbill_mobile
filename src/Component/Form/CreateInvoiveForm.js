@@ -177,6 +177,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           handleChange,
           handleBlur,
           handleSubmit,
+          setFieldValue,
           values,
           errors,
           touched,
@@ -190,6 +191,16 @@ const CreateInvoiceForm = ({ selectedButton }) => {
               onChangeText={handleChange("phone")}
               onBlur={() => handlePhoneBlur(values.phone)}
               value={values.phone}
+              right={
+                values.phone ? (
+                  <TextInput.Icon
+                    icon="close"
+                    size={20}
+                    style={{ marginBottom:-22}}
+                    onPress={() => setFieldValue("phone", "")} // Clears the input when close icon is pressed
+                  />
+                ) : null
+              }
             />
             {touched.phone && errors.phone && (
               <Text style={styles.errorText}>{errors.phone}</Text>
@@ -202,6 +213,16 @@ const CreateInvoiceForm = ({ selectedButton }) => {
               onChangeText={handleChange("name")}
               onBlur={handleBlur("name")}
               value={values.name}
+              right={
+                values.name ? (
+                  <TextInput.Icon
+                    icon="close"
+                    size={20}
+                    style={{ marginBottom:-22}}
+                    onPress={() => setFieldValue("name", "")} // Clears the input when close icon is pressed
+                  />
+                ) : null
+              }
             />
             {touched.name && errors.name && (
               <Text style={styles.errorText}>{errors.name}</Text>
@@ -215,6 +236,16 @@ const CreateInvoiceForm = ({ selectedButton }) => {
               onChangeText={handleChange("address")}
               onBlur={handleBlur("address")}
               value={values.address}
+              right={
+                values.address ? (
+                  <TextInput.Icon
+                    icon="close"
+                    size={20}
+                    style={{ marginBottom:-22}}
+                    onPress={() => setFieldValue("address", "")} // Clears the input when close icon is pressed
+                  />
+                ) : null
+              }
             />
             {touched.address && errors.address && (
               <Text style={styles.errorText}>{errors.address}</Text>
@@ -230,6 +261,16 @@ const CreateInvoiceForm = ({ selectedButton }) => {
                   onChangeText={handleChange("gstNumber")}
                   onBlur={handleBlur("gstNumber")}
                   value={values.gstNumber}
+                  right={
+                    values.gstNumber ? (
+                      <TextInput.Icon
+                        icon="close"
+                        size={20}
+                        style={{ marginBottom:-22}}
+                        onPress={() => setFieldValue("gstNumber", "")} // Clears the input when close icon is pressed
+                      />
+                    ) : null
+                  }
                 />
                 {touched.gstNumber && errors.gstNumber && (
                   <Text style={styles.errorText}>{errors.gstNumber}</Text>
@@ -248,10 +289,13 @@ const CreateInvoiceForm = ({ selectedButton }) => {
             </View>
             {/* Item Data Table */}
             {carts.length > 0 && (
-              <>
+              <View style={{marginTop:10}}>
+                <TouchableOpacity style={{ alignSelf:"flex-end", marginRight:10}} onPress={() => dispatch(clearCart())}>
+                <Text style={{color:'#007BFF'}}>Clear Cart</Text>
+                </TouchableOpacity>
                 <ItemDataTable carts={carts} />
                 <PriceDetails setPaymentStatus={setPaymentStatus} />
-              </>
+              </View>
             )}
 
             {/* Submit Button */}

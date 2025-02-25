@@ -64,7 +64,7 @@ export default function HomeScreen({ navigation }) {
   // console.log(responsiveHeight(80), "    --- responsiveHeight");
   // console.log(verticalScale(700), "    --- verticalscale");
   const { userData } = useContext(UserDataContext);
-  const {allShops} = useContext(ShopContext);
+  const {allShops, selectedShop} = useContext(ShopContext);
   const isFocused = useIsFocused();
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -278,6 +278,7 @@ export default function HomeScreen({ navigation }) {
                       }}
                       onPress={handleNextStep}
                     />
+                    
                     <DropDownList options={allShops} />
                   </View>
 
