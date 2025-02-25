@@ -28,6 +28,8 @@ import FileUploadModal from "../../Components/BulkUpload/FileUploadModal";
 import { ShopContext } from "../../Store/ShopContext";
 import UserDataContext from "../../Store/UserDataContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import OpenmiqModal from "../../Modal/Openmicmodal";
+import CustomeFilterDropDown from "../../Component/CustomFilterDropDown";
 
 const ProductDetailsScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -51,17 +53,24 @@ const ProductDetailsScreen = ({ navigation }) => {
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 10;
 
+  //Filter Data state
+  const [filtermodal, setFilterModal] = useState(false);
+  const [filterOptionSelect, SetfilterOptionSelect] = useState("");
+  const [filterData, setFilterData] = useState([]);
+
   const FilterOption = [
     "Sort By Name",
     "Low to High Price",
     "High to Low Price",
   ];
-
   useEffect(() => {
     getproductdata(page);
   }, [page, selectedShop]);
 
-  // useEffect(() => {
+
+
+  // console.log("SHOP ID IS ", selectedShop)
+
   const getproductdata = async (pageNum) => {
     const api = `qapi/products/getProductByVendorfk/${selectedShop?.id}?page=${pageNum}&limit=${PAGE_SIZE}`;
 
@@ -85,8 +94,23 @@ const ProductDetailsScreen = ({ navigation }) => {
       setloader(false);
     }
   };
-  //   getproductdata();
-  // }, [page, isfocused, selectedShop?.id]);
+
+  useEffect(() => {
+    if (filterOptionSelect === "Sort By Name") {
+      const sortedData = [...Productdata].sort((a, b) => {
+        return a?.name?.toLowerCase() > b?.name?.toLowerCase() ? 1 : -1;
+      });
+      setFilterData(sortedData);
+    } else if (filterOptionSelect === "Low to High Price") {
+      const sortedData = [...Productdata].sort((a, b) => a?.costPrice - b?.costPrice);
+      setFilterData(sortedData);
+    } else if (filterOptionSelect === "High to Low Price") {
+      const sortedData = [...Productdata].sort((a, b) => b?.costPrice - a?.costPrice);
+      setFilterData(sortedData);
+    }
+  }, [filterOptionSelect]);
+
+
 
   // const fetchSearchedData = async () => {
   //   try {
@@ -115,10 +139,6 @@ const ProductDetailsScreen = ({ navigation }) => {
   //   }
   // };
 
-  // const filteredData = products.filter((item) =>
-  //   item?.name?.toLowerCase().includes(searchQuery.toLowerCase())
-  // );
-
   //  // Load more data when reaching the end
   const loadMoreData = () => {
     if (searchedData?.length <= 0 && !loader && hasMore) {
@@ -139,6 +159,11 @@ const ProductDetailsScreen = ({ navigation }) => {
   const handleBulkproduct = () => {
     setBulkUploadModalVisible(true);
     // <FileUploadModal />;
+  };
+
+  // Filter modal Operation
+  const handleFiltermodal = () => {
+    setFilterModal(true);
   };
 
   const Loader = () => {
@@ -172,28 +197,18 @@ const ProductDetailsScreen = ({ navigation }) => {
           />
         </View>
         <View View style={{ marginRight: 5 }}>
-          <TouchableOpacity
-          onPress={()=>console.log("Button pressed")}>
+          <TouchableOpacity onPress={handleFiltermodal}>
             <MaterialCommunityIcons
               name="menu"
               size={35}
               color="rgba(0, 0, 0, 0.6)"
               style={styles.icon} // Custom style
             />
-            {/* <View style={[styles.priceView]}>
-              <Text style={styles.label}>Status</Text>
-              <CustomDropdown
-                paymentStatuses={paymentStatuses}
-                setSelectedStatus={setSelectedStatus}
-                selectedStatus={selectedStatus}
-              />
-            </View> */}
           </TouchableOpacity>
         </View>
       </View>
-
       <FlatList
-        data={Productdata}
+        data={filterData?.length > 0 ? filterData : Productdata}
         renderItem={({ item, index }) => (
           <ProductDetailsCard
             item={item}
@@ -203,9 +218,10 @@ const ProductDetailsScreen = ({ navigation }) => {
             setloader
           />
         )}
-        keyExtractor={(item, index) =>
-          item.id ? item.id.toString() : index.toString()
-        }
+        // keyExtractor={(item, index) =>
+        //   item.id ? item.id.toString() : index.toString()
+        // }
+        keyExtractor={(item, index) => index}  // Use unique ID
         contentContainerStyle={styles.flatListContainer}
         ListEmptyComponent={() => (
           <View style={{ alignItems: "center", marginTop: 20 }}>
@@ -217,18 +233,8 @@ const ProductDetailsScreen = ({ navigation }) => {
         onEndReached={loadMoreData}
         onEndReachedThreshold={0.5}
         ListFooterComponent={Loader}
-        // ListFooterComponent={() =>
-        //   loader ? <ActivityIndicator size="large" /> : null
-        // }
       />
 
-      {/* {loader && <ActivityIndicator size="large" />} */}
-
-      {/* <FAB
-        icon={() => <Icon name="add" size={25} color="#fff" />}
-        style={styles.fab}
-        onPress={() => navigation.navigate("AddProduct")}
-      /> */}
       <FAB.Group
         open={open}
         visible
@@ -273,6 +279,23 @@ const ProductDetailsScreen = ({ navigation }) => {
           visible={editmodal}
           seteditmodal={seteditmodal}
           SelectedEditItem={SelectedEditItem}
+        />
+      )}
+
+      {searchmodal && (
+        <OpenmiqModal
+          modalVisible={searchmodal}
+          setModalVisible={setsearchmodal}
+          transcript={transcript}
+        />
+      )}
+
+      {filtermodal && (
+        <CustomeFilterDropDown
+          filtermodal={filtermodal}
+          filterOptions={FilterOption}
+          setFilterModal={setFilterModal}
+          SetFilterData={SetfilterOptionSelect}
         />
       )}
     </View>

@@ -12,7 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 import { fontSize } from "../../Util/UtilApi";
 
 const ProductDetailsCard = ({ item }) => {
-  console.log("Value of data is itemmmmmmm",item)
+
   const [Opendetails, setOpendetails] = useState(false);
   const navigation = useNavigation();
   return (
