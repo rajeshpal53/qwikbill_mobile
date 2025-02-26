@@ -45,7 +45,7 @@ const ProductDetailsScreen = ({ navigation }) => {
     const getproductdata = async () => {
       try {
         setloader(true);
-        const api = `qapi/products/`;
+        const api = `products/`;
         const response = await readApi(api);
         dispatch(setProductitem(response));
         SetProductData(response);

@@ -58,7 +58,7 @@ const FileUploadModal = ({ visible, setBulkUploadModalVisible }) => {
     console.log("DATA OF EXCEL SHEET ", formData);
 
     try {
-      const url = `qapi/products/bulkCreateProducts`;
+      const url = `products/bulkCreateProducts`;
       const response = await createApi(url, formData);
       console.log("Responce data is ", response);
       if (response.error) {

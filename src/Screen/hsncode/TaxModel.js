@@ -65,7 +65,7 @@ const TaxModel = ({
                 if (data) {
                   try {
                     const response = await updateApi(
-                      `qapi/hsn-codes/${data?.id}`,
+                      `hsn-codes/${data?.id}`,
                       postData
                     );
                     console.log("response is , ", response);
@@ -82,7 +82,7 @@ const TaxModel = ({
                 } else {
                   try {
                     const response = await createApi(
-                      "qapi/hsn-codes",
+                      "hsn-codes",
                       postData
                     );
                     console.log("create a HSN code", response);
