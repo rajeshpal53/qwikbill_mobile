@@ -6,8 +6,6 @@ export const API_BASE_URL = "https://rajeshpal.online/qapi/";
 
 // export const API_BASE_URL = "http://192.168.1.35:2235/";
 
-
-
 export const NORM_URL="https://dailysabji.com/"
 const apiRequest = async (method, url, data = null, headers) => {
     try {
@@ -81,7 +79,7 @@ export const updateApi = async (endpoint, data, headers) => {
     unpaid:1,
     paid:2,
     partially_paid:3,
-    created:4,
+   
   }
   export const statusName= {
     1:"unpaid",
@@ -102,6 +100,23 @@ const getTodaysDate = () => {
   const formattedDate = `${day}/${month}/${year}`;
   return formattedDate;
 };
+
+export const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  // Ensure we have a valid date
+  if (isNaN(date.getTime())) {
+    return ""; // Return empty string or a default value if invalid date
+  }
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = date.toLocaleString("default", { month: "long" });
+  const year = date.getFullYear();
+
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
+  return `${day} ${month} ${year} ${hours}:${minutes}:${seconds}`;
+};
 export const generatePDF = (values) => {
   console.log("values of formdata is , ", values);
   const productDetails = values?.products
@@ -112,7 +127,6 @@ export const generatePDF = (values) => {
         <td>${item?.quantity}</td>
         <td>₹${item?.sellPrice?.toFixed(2)}</td>
         <td>₹${item?.totalPrice?.toFixed(2)}</td>
-        
       </tr>`
     )
     .join("");

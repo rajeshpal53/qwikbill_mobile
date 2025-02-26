@@ -19,22 +19,70 @@ function ViewInvoiceScreen1({navigation}) {
   const searchBarRef = useRef();
   const [transcript, setTranscript] = useState(""); 
   const [isModalVisible,setModalVisible]=useState(false)
+  const [selected, setSelected] = useState("All");
+  const [sortBy,setSortBy]=useState("")
+  const [date, setDate] = useState({
+    startDate: new Date(),
+    endDate: new Date(),
+  });
   useEffect(()=>{
-    fetchInvoices(page)
+    let api=`invoice/getInvoices?vendorfk=${selectedShop?.id}&page=${page}&size=10`
+    if(sortBy){
+      setPage(1)
+      api=`invoice/getInvoices?vendorfk=${selectedShop?.id}&page=${page}&size=10&dateWise=${sortBy}`
+    }
+    else{
+      api=`invoice/getInvoices?vendorfk=${selectedShop?.id}&page=${page}&size=10`
+    }
+    fetchInvoices(page,api)
     console.log(selectedShop,"selectedShop")
-  },[page])
-  const fetchInvoices=async(pageNum)=>{
+  },[page,sortBy])
+  useEffect(()=>{
+    setPage(1)
+     let api=`invoice/getInvoices?vendorfk=${selectedShop?.id}&page=${page}&size=10&dateWise=${sortBy}`
+    if(selected==="Partially Paid"){
+       api = `invoice/getInvoices?vendorfk=${selectedShop?.id}&page=${page}&size=10${
+        sortBy ? `&dateWise=${sortBy}` : ""
+      }&statusfk=3`
+    }else if(selected==="Unpaid"){
+       api = `invoice/getInvoices?vendorfk=${selectedShop?.id}&page=${page}&size=10${
+        sortBy ? `&dateWise=${sortBy}` : ""
+      }&statusfk=1`
+    }
+    else if(selected==="Paid"){
+       api = `invoice/getInvoices?vendorfk=${selectedShop?.id}&page=${page}&size=10${
+        sortBy ? `&dateWise=${sortBy}` : ""
+      }&statusfk=2`
+    }
+    else if(selected==="All"){
+      api = `invoice/getInvoices?vendorfk=${selectedShop?.id}&page=${page}&size=10${
+        sortBy ? `&dateWise=${sortBy}` : ""
+      }`
+    }
+    fetchInvoices(page,api)
+  },[selected])
+
+
+
+  const fetchInvoices=async(pageNum,api)=>{
     try{
       setIsLoading(true)
-      const response= await readApi(`invoice/getInvoices?vendorfk=${selectedShop?.id}&page=${pageNum}&size=10`)
+      const response= await readApi(api)
     // console.log(JSON.stringify(response))
+      if(page==1){
+        setInvoices(response.invoices)
+      }
+
     if (response?.invoices?.length > 0) {
+
       setInvoices((prevData) => [...prevData, ...response.invoices]);
     } else {
       setHasMore(false);
     }
     }catch(err){
-
+        if (page===1){
+          setInvoices([])
+        }
     }
     finally{
       setIsLoading(false);
@@ -57,8 +105,12 @@ function ViewInvoiceScreen1({navigation}) {
       </View>
     );
   };
+
+
+
+
   return (
-  <View style={{backgroundColor:"#fff"}}>
+  <View style={{backgroundColor:"#fff", flex:1}}>
     <View style={{marginTop:8}}>
      
     <Searchbarwithmic
@@ -70,7 +122,7 @@ function ViewInvoiceScreen1({navigation}) {
         refuser={searchBarRef}
         searchData={fetchSearchedData}
     />
-     <FilterButtons/>
+     <FilterButtons setSelected={setSelected} selected={selected}/>
 
     </View>
 <FlatList
@@ -106,7 +158,7 @@ function ViewInvoiceScreen1({navigation}) {
         style={{  position: "absolute",
           margin: 16,
           right: 5,
-          bottom: 120,
+          bottom: 10,
           backgroundColor: "#26a0df",}}
         icon="filter" // Plus icon for FAB
         onPress={() => {
@@ -126,6 +178,10 @@ function ViewInvoiceScreen1({navigation}) {
         <FilterModal
         setModalVisible={setModalVisible}
         isModalVisible={isModalVisible}
+        setSortBy={setSortBy}
+        sortBy={sortBy}
+        dateRange={date}
+        setDateRange={setDate}
         />    
       )
       }

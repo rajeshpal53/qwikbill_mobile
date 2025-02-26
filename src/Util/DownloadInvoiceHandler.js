@@ -49,7 +49,6 @@ export const useDownloadInvoice = () => {
         // }
       }
     );
-
     // Clean up the listener when the component unmounts
     return () => subscription.remove();
   }, [saveFileUri]);
