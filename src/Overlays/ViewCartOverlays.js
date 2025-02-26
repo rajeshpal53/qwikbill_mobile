@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native";
 import { Text } from "react-native-paper";
 
 const ViewCartOverlay = ({navigation, carts}) => {
+  const {t} = useTranslation();
   // const [selectedTypes, setSelectedTypes] = useState(0);
 
   // useEffect(() => {
@@ -16,7 +18,7 @@ const ViewCartOverlay = ({navigation, carts}) => {
     <View style={styles.container}>
       <View
         style={{
-          backgroundColor: "#fff",
+          backgroundColor: "lightblue",
           width: "100%",
           flexDirection: "row",
           justifyContent: "space-around",
@@ -33,7 +35,7 @@ const ViewCartOverlay = ({navigation, carts}) => {
           }}
         >
           <Text style={{ fontSize: 16, color: "#1c6a4a" }}>
-          Selected Item : {carts.length}
+          {t("Selected Item")} : {carts.length}
           </Text>
         </View>
         <View style={{ }}>
@@ -58,7 +60,7 @@ const ViewCartOverlay = ({navigation, carts}) => {
 
               }}
             >
-              Go to Invoice
+              {t("Go to Invoice")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -73,7 +75,8 @@ const styles = StyleSheet.create({
   container: {
     position: "absolute",
     bottom: "10%",
-    width: "100%",
+    width: "90%",
+    alignSelf:"center",
     alignItems: "center",
   },
 });

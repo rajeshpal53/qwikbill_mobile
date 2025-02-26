@@ -375,7 +375,7 @@ export default function StackNavigator() {
             ),
             headerTitleAlign: "center",
             headerStyle: {
-              backgroundColor: "transparent",
+              // backgroundColor: "transparent",
               // backgroundColor: "#fff"
             },
             headerLeft: () => <CustomBackButton />,
