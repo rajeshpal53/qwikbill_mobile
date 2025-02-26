@@ -6,7 +6,7 @@ import { generatePDF } from '../../Util/UtilApi';
 function InvoicePreviewScreen() {
     const route=useRoute()
     const {params}=route.params||{};
-    console.log(params)
+    console.log(params,"paramsss")
   return (
     <View>
          <WebView

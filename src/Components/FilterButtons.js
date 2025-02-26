@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
 
-const FilterButtons = () => {
-  const [selected, setSelected] = useState("All");
+const FilterButtons = ({selected,setSelected}) => {
 
-  const filters = ["All", "Paid", "Unpaid", "Partially Paid"];
-
+  const filters = ["All", "Unpaid", "Paid", "Partially Paid"];
   return (
     <View style={{ flexDirection: "row", padding: 10 }}>
       <FlatList

@@ -35,6 +35,7 @@ const PdfScreen = ({ navigation }) => {
   const invoiceCreated = useRef(false);
   const [createdInvoice, setCreatedInvoice] = useState(null);
   const { showSnackbar } = useSnackbar();
+
   const { t } = useTranslation();
   const [downloadLoading, setDownloadLoading] = useState(false);
   const [shareLoading, setShareLoading] = useState(false);
@@ -49,7 +50,6 @@ const PdfScreen = ({ navigation }) => {
       setCreatedInvoice(viewInvoiceData);
     }
   }, [viewInvoiceData]);
-
   const getTodaysDate = () => {
     const today = new Date();
     const day = String(today.getDate()).padStart(2, "0");
@@ -139,6 +139,7 @@ const PdfScreen = ({ navigation }) => {
         setDownloadLoading(false);
       }
     }
+
   };
 
   const handleShare = async () => {
