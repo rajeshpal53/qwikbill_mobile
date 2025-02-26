@@ -36,12 +36,10 @@ const AllItemProduct = ({ navigation }) => {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await readApi(
-          `qapi/products/getProductByVendorfk/${selectedShop?.id}?page=1&limit=10`,
-          {
-            Authorization: `Bearer ${userData?.token}`,
-          }
-        );
+        
+        const response = await readApi(`products/getProductByVendorfk/${selectedShop?.id}?page=1&limit=10`, {
+          Authorization : `Bearer ${userData?.token}`,
+        });
 
         console.log("response of getting products is , ", response);
 

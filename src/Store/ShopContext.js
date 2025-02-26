@@ -50,7 +50,7 @@ export const ShopProvider = ({ children }) => {
     try {
          // Fetch from backend
          const response = await readApi(
-            `qapi/vendors/getVendorsByUserId/${userData?.user?.id}`,
+            `vendors/getVendorsByUserId/${userData?.user?.id}`,
             {
                 Authorization: `Bearer ${userData?.token}`,
             }

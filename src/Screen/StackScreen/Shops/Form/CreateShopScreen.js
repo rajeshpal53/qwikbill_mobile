@@ -300,7 +300,7 @@ const CreateShopScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const api = `qapi/roles`;
+        const api = `roles`;
         const response = await readApi(api);
         Setrole(response); // Ensure response is an array
 
@@ -636,13 +636,13 @@ const CreateShopScreen = ({ navigation }) => {
 
         // console.log("router ddd , data is , ", routeData);
         console.log("updateUserPayloadData is the , ", updateUserPayloadData);
-        console.log("userApi , ", `${API_BASE_URL}qapi/users/upsertOnlyUserProfileImg`);
+        console.log("userApi , ", `${API_BASE_URL}users/upsertOnlyUserProfileImg`);
         console.log("userData token , ", `${userData?.token}`);
 
       
         try {
           const response = await axios.post(
-            `${API_BASE_URL}qapi/users/upsertOnlyUserProfileImg`,
+            `${API_BASE_URL}users/upsertOnlyUserProfileImg`,
             updateUserPayloadData,
             {
               headers: {
@@ -727,7 +727,7 @@ const CreateShopScreen = ({ navigation }) => {
 
           if (routeData) {
             const response = await axios.put(
-              `${API_BASE_URL}qapi/vendors/updateVendorWithImage/${routeData?.id}`,
+              `${API_BASE_URL}vendors/updateVendorWithImage/${routeData?.id}`,
               data,
               {
                 headers: {
@@ -749,7 +749,7 @@ const CreateShopScreen = ({ navigation }) => {
             navigation.goBack();
           } else {
             const response = await axios.post(
-              `${API_BASE_URL}qapi/vendors/createVendorWithImage`,
+              `${API_BASE_URL}vendors/createVendorWithImage`,
               data,
               {
                 headers: {
@@ -849,7 +849,7 @@ const CreateShopScreen = ({ navigation }) => {
       //   };
       //   try {
       //     if (DataContainer.VenderData) {
-      //       const api = `qapi/vendors`;
+      //       const api = `vendors`;
       //       const headers = {
       //         Authorization: `Bearer ${userData?.token}`, // Add token to headers
       //       };
@@ -861,7 +861,7 @@ const CreateShopScreen = ({ navigation }) => {
       //       console.log("Vender Data Created", VenderResponse);
       //     }
       //     if (DataContainer.UserData) {
-      //       const api = `qapi/users/upsertOnlyUserProfileImg`;
+      //       const api = `users/upsertOnlyUserProfileImg`;
       //       const headers = {
       //         Authorization: `Bearer ${userData?.token}`, // Add token to headers
       //       };
@@ -1136,12 +1136,12 @@ export default CreateShopScreen;
 
 //   // console.log("router ddd , data is , ", routeData);
 //   console.log("updateUserPayloadData is the , ", updateUserPayloadData);
-//   console.log("userApi , ", `${API_BASE_URL}qapi/users/upsertOnlyUserProfileImg`);
+//   console.log("userApi , ", `${API_BASE_URL}users/upsertOnlyUserProfileImg`);
 //   console.log("userData token , ", `${userData?.token}`);
 
 //   try {
 //     const response = await axios.post(
-//       `${API_BASE_URL}qapi/users/upsertOnlyUserProfileImg`,
+//       `${API_BASE_URL}users/upsertOnlyUserProfileImg`,
 //       updateUserPayloadData,
 //       {
 //         headers: {
@@ -1173,7 +1173,7 @@ export default CreateShopScreen;
 //   }
 
 //   try{
-//     const api = `qapi/users/upsertOnlyUserProfileImg`
+//     const api = `users/upsertOnlyUserProfileImg`
 //     const headers = {
 //       Authorization: `Bearer ${userData?.token}`, // Add token to headers
 //     };
@@ -1236,7 +1236,7 @@ export default CreateShopScreen;
 
 //     if (routeData) {
 //       const response = await axios.put(
-//         `${API_BASE_URL}qapi/vendors/updateVendorWithImage/${routeData?.id}`,
+//         `${API_BASE_URL}vendors/updateVendorWithImage/${routeData?.id}`,
 //         data,
 //         {
 //           headers: {
@@ -1258,7 +1258,7 @@ export default CreateShopScreen;
 //       navigation.goBack();
 //     } else {
 //       const response = await axios.post(
-//         `${API_BASE_URL}qapi/vendors/createVendorWithImage`,
+//         `${API_BASE_URL}vendors/createVendorWithImage`,
 //         data,
 //         {
 //           headers: {

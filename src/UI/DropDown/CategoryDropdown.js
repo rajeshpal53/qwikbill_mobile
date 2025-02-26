@@ -22,7 +22,7 @@ const CategoryDropDown = ({setSelectedCat}) => {
   useEffect(() => {
     const getCategory = async () => {
       try {
-        const api = `qapi/product-categories/`;
+        const api = `product-categories/`;
         const response = await readApi(api);
         setCategoryData(response);
       } catch (error) {

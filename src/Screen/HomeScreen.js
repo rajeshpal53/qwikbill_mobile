@@ -135,9 +135,9 @@ export default function HomeScreen({ navigation }) {
   //     try {
   //       setIsLoading(true);
   //       const token = userData?.token;
-  //       // const api = `qapi/vendors/${userData?.user?.id}`
+  //       // const api = `vendors/${userData?.user?.id}`
   //       const response = await readApi(
-  //         `qapi/vendors/getVendorsByUserId/${userData?.user?.id}`,
+  //         `vendors/getVendorsByUserId/${userData?.user?.id}`,
   //         {
   //           headers: {
   //             Authorization: `Bearer ${token}`,
@@ -185,7 +185,9 @@ export default function HomeScreen({ navigation }) {
     if (Screen === "CreateShopScreen") {
       navigation.navigate(Screen, { isHome: false });
     }
+
     console.log("hi");
+
     // navigation.navigate("StackNavigator", { screen: Screen });
     navigation.navigate(Screen);
   };
@@ -328,7 +330,7 @@ export default function HomeScreen({ navigation }) {
                     />
                     <Pressable
                       style={styles.allThreeViews}
-                      onPress={() => goToHandler("Invoices")}
+                      onPress={() => goToHandler("ViewInvoices1")}
                     >
                       <Text style={styles.whiteColor}>View Invoices</Text>
                     </Pressable>
