@@ -67,8 +67,9 @@ import PdfScreen from "../Component/PdfViewer.js";
 import EditProfileScreen from "../Screen/StackScreen/EditProfileScreen.js";
 import CategoryDropDown from "../UI/DropDown/CategoryDropdown.js";
 import AddRole from "../Screen/StackScreen/Addrole.js";
+import ViewInvoiceScreen1 from "../Screen/Invoices/ViewInvoiceScreen1.js"
 import { withCopilot } from 'react-native-copilot';
-
+import InvoicePreviewScreen from "../Screen/Invoices/InvoicePreviewScreen.js"
 export default function StackNavigator() {
   const Stack = createStackNavigator();
   const [isConnected, setIsConnected] = useState(false);
@@ -280,6 +281,38 @@ export default function StackNavigator() {
                 setIsLandscape={setIsLandscape}
               />
             ),
+            headerLeft: () => (
+              <CustomBackButton
+                isLandscape={isLandscape}
+                setIsLandscape={setIsLandscape}
+              />
+            ),
+          })}
+        />
+        <Stack.Screen
+          name="ViewInvoices1"
+          component={ViewInvoiceScreen1}
+          options={({ route }) => ({
+            headerTitle: "View Invoices",
+            headerRight: () => (
+              <RotateBtn
+                isLandscape={isLandscape}
+                setIsLandscape={setIsLandscape}
+              />
+            ),
+            headerLeft: () => (
+              <CustomBackButton
+                isLandscape={isLandscape}
+                setIsLandscape={setIsLandscape}
+              />
+            ),
+          })}
+        />
+         <Stack.Screen
+          name="InvoicePreviewScreen"
+          component={InvoicePreviewScreen}
+          options={({ route }) => ({
+            headerTitle: "preview Invoices",
             headerLeft: () => (
               <CustomBackButton
                 isLandscape={isLandscape}

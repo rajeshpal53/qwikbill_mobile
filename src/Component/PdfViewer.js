@@ -220,7 +220,7 @@ const PdfScreen = ({ navigation }) => {
   const handleGenerate = async () => {
     // setIsGenerated(true); // Trigger PDF generation when the button is pressed
     try {
-      let api = "qapi/invoice/invoices";
+      let api = "invoice/invoices";
 
       const { customerData, serviceProviderData, ...payloadData } = formData;
 

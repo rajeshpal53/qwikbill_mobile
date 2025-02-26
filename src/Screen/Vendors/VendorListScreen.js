@@ -60,9 +60,9 @@ export default function VendorListScreen() {
       try {
         setIsLoading(true);
         const token = userData?.token;
-        // const api = `qapi/vendors/${userData?.user?.id}`
+        // const api = `vendors/${userData?.user?.id}`
         const response = await readApi(
-          `qapi/vendors//getVendorsByUserId/${userData?.user?.id}`,
+          `vendors//getVendorsByUserId/${userData?.user?.id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
