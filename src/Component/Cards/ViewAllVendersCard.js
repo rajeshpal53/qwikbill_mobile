@@ -1,9 +1,46 @@
-import { ScrollView, Text, View, StyleSheet } from "react-native";
-import { Card, Avatar } from "react-native-paper";
+import {
+  ScrollView,
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+
+} from "react-native";
+import { Card, Avatar,  Menu,  Button,} from "react-native-paper";
 import { fontSize } from "../../Util/UtilApi";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useState } from "react";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useNavigation } from "@react-navigation/native";
+
 
 const ViewAllVendersCard = ({ item }) => {
+  const [selectedModal, setSelectedModal] = useState(null);
+  const navigation = useNavigation()
+
+  console.log("SELECTED MODAL +++++++",selectedModal)
+
+
+
+  const handleModal = (id) => {
+    setSelectedModal(selectedModal === id ? null : id);
+  };
+
+  const handleDelete = () => {
+    setConfirmModalVisible(true);
+    setAddressDeleteId(item?.id);
+    setSelectedModal(null);
+  };
+
+  const handleEdit = (item) => {
+    console.log("DATA OF ITEM IS ", item)
+    setSelectedModal(null);
+    navigation.navigate("CreateShopScreen", {
+      addressDetails: item,
+      isUpdateAddress: true,
+    });
+  };
+
   return (
     <ScrollView>
       <Card style={styles.card}>
@@ -19,7 +56,42 @@ const ViewAllVendersCard = ({ item }) => {
               }
             </View>
             <View style={styles.shopnameView}>
-              <Text style={styles.shopnameText}>{item?.shopname}</Text>
+              <View style={styles.InnershopnameView}>
+                <Text style={styles.shopnameText}>{item?.shopname}</Text>
+              </View>
+              <View style={{width:"20%"}}>
+                {/* <Pressable onPress={() => handleModal(item?.id)}>
+                  <MaterialIcons name="more-vert" size={28} color="black" />
+                </Pressable> */}
+                <Menu
+                  visible={selectedModal === item?.id}
+                  onDismiss={() => setSelectedModal(null)}
+                  anchor={
+                    <View style={{}}>
+                      <Button onPress={() => handleModal(item?.id)}>
+                        <MaterialIcons
+                          name="more-vert"
+                          size={22}
+                          color="black"
+                        />
+                      </Button>
+                    </View>
+                  }
+                  contentStyle={{
+                    padding: 1,
+                    marginRight: 5,
+                    marginTop:30,
+                    backgroundColor: "#F8F8F8",
+                  }} // Content style for Menu items
+                  elevation={1} // Adds shadow to the Menu component
+                  mode="adaptive" // Use the adaptive mode, adjusting based on screen size and space
+
+                  // anchorPosition='bottom'
+                >
+                  <Menu.Item onPress={() => handleEdit(item)} title="Edit" />
+                  <Menu.Item onPress={() => handleDelete()} title="Delete" />
+                </Menu>
+              </View>
             </View>
           </View>
 
@@ -63,7 +135,7 @@ const ViewAllVendersCard = ({ item }) => {
                 <Text style={styles.detailsText}>{item?.shopAddress}</Text>
               </View>
             </View>
-            <View style={styles.InnerDetailsView}>
+            {/* <View style={styles.InnerDetailsView}>
               <View>
                 <MaterialCommunityIcons
                   name="information-outline"
@@ -75,16 +147,26 @@ const ViewAllVendersCard = ({ item }) => {
               <View>
                 <Text style={styles.detailsText}>{item?.details || "Good shop"}</Text>
               </View>
-            </View>
+            </View> */}
           </View>
-          {/* <View style={styles.StatusandRatingView}>
-            <View>
-              <Text style={styles.Approvedtext}>Approved</Text>
-            </View>
-            <View>
-              <Text style={styles.rating}>rating</Text>
-            </View>
-          </View> */}
+          <View style={styles.StatusandRatingView}>
+            <TouchableOpacity
+              onPress={() => console.log("Button pressed")}
+              style={{ flexDirection: "row", alignItems: "center" }}
+            >
+              <View>
+                <Text style={styles.Approvedtext}>View Details</Text>
+              </View>
+              <View>
+                <MaterialCommunityIcons
+                  name="arrow-right"
+                  size={15}
+                  color="#2196F3"
+                  style={styles.icon}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
       </Card>
     </ScrollView>
@@ -93,13 +175,13 @@ const ViewAllVendersCard = ({ item }) => {
 
 const styles = StyleSheet.create({
   card: {
-    marginVertical: 5,
+    marginVertical: 8,
     marginHorizontal: 10,
-    // paddingVertical: 15,
     borderRadius: 8,
     elevation: 3,
     flex: 1,
     backgroundColor: "#fff",
+    paddingHorizontal: 5,
 
     // alignContent:"center"
   },
@@ -118,24 +200,31 @@ const styles = StyleSheet.create({
   detailscontainerView: {
     // marginVertical: 5,
     marginHorizontal: 10,
-    marginVertical:5,
+    marginVertical: 5,
     // flexDirection: "column",
     // borderWidth: 1,
     flex: 1,
   },
   StatusandRatingView: {
-    // flexDirection: "column",
+    flexDirection: "row",
     // borderWidth: 1,
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
     alignItems: "center",
-    marginRight: 5,
+    justifyContent: "flex-end",
+    marginRight: 20,
+    flex: 1,
+    // borderWidth:2
   },
 
   shopnameView: {
     flex: 1,
     // borderWidth:2,
-    paddingHorizontal:5
+    paddingHorizontal: 5,
+    flexDirection:"row"
 
+  },
+  InnershopnameView:{
+    flex: 1,
   },
   InnerDetailsView: {
     flex: 1,
@@ -144,29 +233,30 @@ const styles = StyleSheet.create({
   },
   statusView: {},
   shopnameText: {
-    fontSize: fontSize.labelMedium,
+    fontSize: fontSize.labelLarge,
     fontFamily: "Poppins-Bold",
+    marginTop: 2,
   },
   detailsText: {
     paddingHorizontal: 5,
-    fontSize: fontSize.label,
+    fontSize: fontSize.labelMedium,
     fontFamily: "Poppins-Medium",
   },
   avatarPlaceholder: {
-    borderRadius: 8,
+    // borderRadius: 8,
     width: 50,
-    height: 45,
+    height: 50,
     justifyContent: "center",
     alignItems: "center",
   },
   Approvedtext: {
-    fontSize: fontSize.label,
+    fontSize: fontSize.labelMedium,
     fontFamily: "Poppins-Medium",
     // borderWidth:1,
     borderRadius: 5,
     paddingHorizontal: 5,
-    backgroundColor: "#e1faeb",
-    color: "#22C55E",
+    // backgroundColor: "#e1faeb",
+    color: "#2196F3",
   },
   rating: {
     fontSize: fontSize.label,

@@ -46,6 +46,8 @@ export default function ViewShopsScreen() {
   const [searchmodal, setsearchmodal] = useState(false); // State for modal visibility
   const [transcript, setTranscript] = useState(""); // State for transcript
   const [SelectedBtn, setSelectedBtn] = useState("");
+  const [selectedModal, setSelectedModal] = useState(null); // Track which modal is open by ID
+
   // useEffect(() => {
   //   const getShopData = async () => {
 
@@ -205,6 +207,7 @@ export default function ViewShopsScreen() {
               </Text>
             </View>
           )}
+          contentContainerStyle={styles.flatListContainer}
         />
 
         {/* <ItemList
@@ -283,7 +286,8 @@ const styles = StyleSheet.create({
   suggestbtnText: {
     fontSize: fontSize.labelMedium,
     fontFamily: "Poppins-Medium",
-
-    // backgroundColor:"#F5F5F5"
+  },
+  flatListContainer: {
+    paddingBottom: 70, // Add padding to the bottom of the FlatList content
   },
 });

@@ -8,7 +8,8 @@ import Icon from "react-native-vector-icons/Ionicons";
 const FileUploadModal = ({ visible, setBulkUploadModalVisible }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [SelectedCat, setSelectedCat] = useState("");
-  console.log("Selected Cat is ", SelectedCat);
+
+  console.log("SelectedCat1578", SelectedCat);
 
   const pickFile = async () => {
     try {
@@ -16,19 +17,14 @@ const FileUploadModal = ({ visible, setBulkUploadModalVisible }) => {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
 
-
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const file = result.assets[0];
 
-        // Validate XLSX file extension (further check for files that might bypass the type)
         if (file.name.endsWith(".xlsx")) {
           setSelectedFile(file);
         } else {
-          console.log("Invalid file type. Please select an XLSX file.");
           alert("Invalid file type. Please select an XLSX file.");
         }
-      } else {
-        console.log("File selection was canceled");
       }
     } catch (error) {
       console.log("Error picking file:", error);
@@ -41,9 +37,6 @@ const FileUploadModal = ({ visible, setBulkUploadModalVisible }) => {
       return;
     }
 
-    const categoryId = parseInt(SelectedCat, 10);
-
-
     const formData = new FormData();
     formData.append("excelFile", {
       uri: selectedFile.uri,
@@ -51,23 +44,18 @@ const FileUploadModal = ({ visible, setBulkUploadModalVisible }) => {
       type:
         selectedFile.mimeType ||
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-
     });
     formData.append("productcategoryfk", 6);
-
-    console.log("DATA OF EXCEL SHEET ", formData);
 
     try {
       const url = `qapi/products/bulkCreateProducts`;
       const response = await createApi(url, formData);
-      console.log("Responce data is ", response);
       if (response.error) {
         alert(response.error);
       } else {
         alert("File uploaded successfully!");
       }
     } catch (error) {
-      console.log("Unable to fetch Data", error);
       alert("Error uploading the file. Please try again.");
     }
   };
@@ -76,17 +64,31 @@ const FileUploadModal = ({ visible, setBulkUploadModalVisible }) => {
     setBulkUploadModalVisible(false);
   };
 
+  const DownloadHandler = () => {
+    setBulkUploadModalVisible(false);
+  };
+
   return (
     <Modal visible={visible} animationType="slide" transparent>
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <Text style={styles.title}>Category</Text>
-          <View style={styles.InnermodalContent}>
+          <View style={styles.modalBody}>
             <View style={styles.dropdownContainer}>
               <CategoryDropDown setSelectedCat={setSelectedCat} />
             </View>
+            {!SelectedCat && (
+              <View style={{}}>
+                <Text style={styles.warningtext}>
+                  Please select a category before submitting.
+                </Text>
+              </View>
+            )}
 
-            <TouchableOpacity style={styles.button} onPress={pickFile}>
+            <TouchableOpacity
+              style={styles.filePickerButton}
+              onPress={pickFile}
+            >
               <View style={styles.iconTextContainer}>
                 <Icon name="folder-outline" size={20} color="#fff" />
                 <Text style={styles.buttonText}>Pick a File</Text>
@@ -108,12 +110,20 @@ const FileUploadModal = ({ visible, setBulkUploadModalVisible }) => {
               <Text style={styles.buttonText}>Upload File</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={handleCloseModal}
-            >
-              <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity>
+            <View style={styles.footer}>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={handleCloseModal}
+              >
+                <Text style={styles.closeButtonText}>Close</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.downloadButton}
+                onPress={DownloadHandler}
+              >
+                <Text style={styles.downloadButtonText}>Download Sample</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </View>
@@ -132,42 +142,43 @@ const styles = StyleSheet.create({
     width: "90%",
     backgroundColor: "#fff",
     borderRadius: 15,
-    paddingVertical: 20,
-    paddingHorizontal: 15,
-    // alignItems: "center",
-    elevation: 5,
-  },
-  InnermodalContent: {
-    // width: "90%",
-    paddingVertical: 2,
+    paddingVertical: 10,
     paddingHorizontal: 10,
-    // alignItems: "center",
+    elevation: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 5,
+  },
+  modalBody: {
+    paddingVertical: 10,
+    paddingHorizontal: 5,
   },
   title: {
-    fontSize: 16,
+    fontSize: fontSize.headingSmall,
     fontWeight: "bold",
-    marginBottom: 10,
-    alignSelf: "flex-start",
+    marginBottom: 8,
     fontFamily: "Poppins-Regular",
-    fontSize: fontSize.labelMedium,
+    color: "#333",
   },
   dropdownContainer: {
-    width: "100%",
-    // marginBottom: 10,
+    // marginBottom: 5,
+    // borderWidth:2,
+    // height:"15%"
+  },
+  filePickerButton: {
+    backgroundColor: "#3B82F6",
+    paddingVertical: 12,
+    borderRadius: 10,
+    marginVertical: 10,
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
   },
   iconTextContainer: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  button: {
-    backgroundColor: "#3B82F6",
-    paddingVertical: 10,
-    paddingHorizontal: 25,
-    borderRadius: 8,
-    marginVertical: 5,
-    alignItems: "center",
-    // justifyContent: "center",
-    // width: "80%",
+    justifyContent: "center",
   },
   buttonText: {
     color: "#fff",
@@ -177,40 +188,54 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   fileName: {
-    fontSize: 14,
-    color: "#333",
+    fontSize: fontSize.labelMedium,
+    color: "#555",
     marginBottom: 15,
     fontStyle: "italic",
-    fontFamily: "Poppins-Regular",
-    fontSize: fontSize.labelMedium,
+    textAlign: "center",
   },
   uploadButton: {
     backgroundColor: "#10B981",
-    paddingVertical: 10,
-    // paddingHorizontal: 25,
-    borderRadius: 8,
-    // marginVertical: 10,
+    paddingVertical: 12,
+    borderRadius: 10,
     alignItems: "center",
-    // justifyContent: "center",
-    // width: "80%",
+    marginBottom: 20,
   },
   disabledButton: {
     backgroundColor: "#ddd",
   },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
   closeButton: {
-    marginTop: 20,
-    paddingVertical: 10,
     backgroundColor: "#EF4444",
-    borderRadius: 8,
-    // width: "80%",
+    paddingVertical: 13,
+    borderRadius: 10,
+    flex: 0.45,
     alignItems: "center",
-    // justifyContent: "center",
   },
   closeButtonText: {
     color: "#fff",
     fontWeight: "bold",
-    fontFamily: "Poppins-Regular",
-    fontSize: fontSize.labelLarge,
+    fontSize: fontSize.labelMedium
+  },
+  warningtext: {
+    color: "red",
+    fontSize: fontSize.labelXSmall,
+  },
+  downloadButton: {
+    backgroundColor: "#F59E0B",
+    paddingVertical: 13,
+    borderRadius: 10,
+    flex: 0.50,
+    alignItems: "center",
+  },
+  downloadButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: fontSize.labelMedium
   },
 });
 

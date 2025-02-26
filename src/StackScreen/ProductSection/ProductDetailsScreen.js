@@ -4,6 +4,7 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import React, { useEffect, useState, useContext, useCallback } from "react";
 import {
@@ -22,7 +23,7 @@ import ProductDetailsCard from "../../Component/Cards/ProductDetailsCard";
 import { setProductitem } from "../../Redux/slices/ProductSlice";
 import { useDispatch, useSelector } from "react-redux";
 // import { ProductItems } from "../../../ProductItems";
-import { readApi } from "../../Util/UtilApi";
+import { fontSize, readApi } from "../../Util/UtilApi";
 import { useIsFocused } from "@react-navigation/native";
 import FileUploadModal from "../../Components/BulkUpload/FileUploadModal";
 import { ShopContext } from "../../Store/ShopContext";
@@ -58,18 +59,18 @@ const ProductDetailsScreen = ({ navigation }) => {
   const [filterOptionSelect, SetfilterOptionSelect] = useState("");
   const [filterData, setFilterData] = useState([]);
 
-  const FilterOption = [
-    "Sort By Name",
-    "Low to High Price",
-    "High to Low Price",
-  ];
+  // const FilterOption = [
+  //   "Sort By Name",
+  //   "Low to High Price",
+  //   "High to Low Price",
+  // ];
   useEffect(() => {
     getproductdata(page);
   }, [page, selectedShop]);
 
-
-
-  // console.log("SHOP ID IS ", selectedShop)
+  console.log("SHOP ID IS ", selectedShop?.id);
+  console.log("DATA OF PRODUCT ---------", Productdata);
+  console.log("PAGE NUMBER ------", page);
 
   const getproductdata = async (pageNum) => {
     const api = `qapi/products/getProductByVendorfk/${selectedShop?.id}?page=${pageNum}&limit=${PAGE_SIZE}`;
@@ -82,13 +83,17 @@ const ProductDetailsScreen = ({ navigation }) => {
       if (response?.products?.length > 0) {
         SetProductData((prevData) => [...prevData, ...response?.products]);
       } else {
+        console.log("Inside a else condition ")
         setHasMore(false);
       }
+
     } catch (error) {
       console.log("Unable to fetch Data", error);
       setHasMore(false);
-      if (page == 1) {
+      if (page >= 1) {
+        console.log("Inside a catch if ")
         SetProductData([]);
+        setPage(1)
       }
     } finally {
       setloader(false);
@@ -96,21 +101,29 @@ const ProductDetailsScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    if (filterOptionSelect === "Sort By Name") {
-      const sortedData = [...Productdata].sort((a, b) => {
-        return a?.name?.toLowerCase() > b?.name?.toLowerCase() ? 1 : -1;
-      });
+    setloader(true);
+    const sortData = () => {
+      let sortedData = [];
+
+      if (filterOptionSelect === "Sort By Name") {
+        sortedData = [...Productdata].sort((a, b) => {
+          return a?.name?.toLowerCase() > b?.name?.toLowerCase() ? 1 : -1;
+        });
+      } else if (filterOptionSelect === "Low to High Price") {
+        sortedData = [...Productdata].sort(
+          (a, b) => a?.costPrice - b?.costPrice
+        );
+      } else if (filterOptionSelect === "High to Low Price") {
+        sortedData = [...Productdata].sort(
+          (a, b) => b?.costPrice - a?.costPrice
+        );
+      }
       setFilterData(sortedData);
-    } else if (filterOptionSelect === "Low to High Price") {
-      const sortedData = [...Productdata].sort((a, b) => a?.costPrice - b?.costPrice);
-      setFilterData(sortedData);
-    } else if (filterOptionSelect === "High to Low Price") {
-      const sortedData = [...Productdata].sort((a, b) => b?.costPrice - a?.costPrice);
-      setFilterData(sortedData);
-    }
+      setloader(false);
+    };
+
+    sortData();
   }, [filterOptionSelect]);
-
-
 
   // const fetchSearchedData = async () => {
   //   try {
@@ -162,9 +175,9 @@ const ProductDetailsScreen = ({ navigation }) => {
   };
 
   // Filter modal Operation
-  const handleFiltermodal = () => {
-    setFilterModal(true);
-  };
+  // const handleFiltermodal = () => {
+  //   setFilterModal(true);
+  // };
 
   const Loader = () => {
     if (!loader) return null;
@@ -184,8 +197,10 @@ const ProductDetailsScreen = ({ navigation }) => {
   // }
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      <View
+        style={{ flexDirection: "row", alignItems: "center", marginTop: 5 }}
+      >
         <View style={{ flex: 1 }}>
           <Searchbarwithmic
             searchQuery={searchQuery}
@@ -196,7 +211,7 @@ const ProductDetailsScreen = ({ navigation }) => {
             //    refuser={searchBarRef}
           />
         </View>
-        <View View style={{ marginRight: 5 }}>
+        {/* <View View style={{ marginRight: 5 }}>
           <TouchableOpacity onPress={handleFiltermodal}>
             <MaterialCommunityIcons
               name="menu"
@@ -205,8 +220,32 @@ const ProductDetailsScreen = ({ navigation }) => {
               style={styles.icon} // Custom style
             />
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
+
+      <View style={styles.allbuttonView}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {[
+            "Sort By Name",
+            "Low to High Price",
+            "High to Low Price",
+            "Clear All",
+          ].map((suggestbtn, key) => (
+            <TouchableOpacity
+              key={key}
+              style={[
+                styles.suggestionButton,
+                filterOptionSelect === suggestbtn &&
+                  styles.selectedSuggestionButton,
+              ]}
+              onPress={() => SetfilterOptionSelect(suggestbtn)}
+            >
+              <Text style={styles.suggestbtnText}>{suggestbtn}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
       <FlatList
         data={filterData?.length > 0 ? filterData : Productdata}
         renderItem={({ item, index }) => (
@@ -221,7 +260,7 @@ const ProductDetailsScreen = ({ navigation }) => {
         // keyExtractor={(item, index) =>
         //   item.id ? item.id.toString() : index.toString()
         // }
-        keyExtractor={(item, index) => index}  // Use unique ID
+        keyExtractor={(item, index) => index} // Use unique ID
         contentContainerStyle={styles.flatListContainer}
         ListEmptyComponent={() => (
           <View style={{ alignItems: "center", marginTop: 20 }}>
@@ -290,14 +329,14 @@ const ProductDetailsScreen = ({ navigation }) => {
         />
       )}
 
-      {filtermodal && (
+      {/* {filtermodal && (
         <CustomeFilterDropDown
           filtermodal={filtermodal}
           filterOptions={FilterOption}
           setFilterModal={setFilterModal}
           SetFilterData={SetfilterOptionSelect}
         />
-      )}
+      )} */}
     </View>
   );
 };
@@ -313,6 +352,30 @@ const styles = StyleSheet.create({
   },
   flatListContainer: {
     paddingBottom: 70, // Add padding to the bottom of the FlatList content
+  },
+  allbuttonView: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    marginVertical: 10,
+    // backgroundColor:"#F5F5F5"
+  },
+
+  suggestionButton: {
+    borderWidth: 2,
+    paddingVertical: 5,
+    marginHorizontal: 10,
+    paddingHorizontal: 15,
+    borderRadius: 8,
+    backgroundColor: "#F5F5F5",
+  },
+  suggestbtnText: {
+    fontSize: fontSize.labelMedium,
+    fontFamily: "Poppins-Medium",
+    // backgroundColor:"#F5F5F5"
+  },
+
+  selectedSuggestionButton: {
+    backgroundColor: "#bee2eb",
   },
 });
 
