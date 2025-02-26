@@ -211,11 +211,10 @@ const PdfScreen = ({ navigation }) => {
           </div>
         </body>
       </html>
-    `;
-
-    
+    `;    
     return htmlContent;
   };
+
 
   const getTodaysDate = () => {
     const today = new Date();
@@ -281,7 +280,7 @@ const PdfScreen = ({ navigation }) => {
       invoiceData = await handleGenerate("download")
     }
     console.log("invoice data that we get is , ", invoiceData);
-    await downloadInvoicePressHandler(`${API_BASE_URL}qapi/invoice/downloadInvoice/${invoiceData?.id}`, invoiceData?.id, invoiceData?.name);
+    await downloadInvoicePressHandler(`${API_BASE_URL}invoice/downloadInvoice/${invoiceData?.id}`, invoiceData?.id, invoiceData?.name);
   }
 
   const handleShare = async () => {
