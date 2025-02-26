@@ -32,7 +32,7 @@ const AllItemProduct = ({ navigation }) => {
 
       try {
         
-        const response = await readApi(`qapi/products/getProductByVendorfk/${selectedShop?.id}?page=1&limit=10`, {
+        const response = await readApi(`products/getProductByVendorfk/${selectedShop?.id}?page=1&limit=10`, {
           Authorization : `Bearer ${userData?.token}`,
         });
 

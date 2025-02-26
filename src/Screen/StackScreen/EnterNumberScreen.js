@@ -202,7 +202,7 @@ const EnterNumberScreen = ({ navigation }) => {
     console.log("payload for idToken Api is , ", payload);
 
     try {
-      const response = await createApi("qapi/users/idTokenValidate", payload);
+      const response = await createApi("users/idTokenValidate", payload);
 
       console.log("response status 1 , ", response?.message);
       console.log("response 1 , ", response);
@@ -227,8 +227,8 @@ const EnterNumberScreen = ({ navigation }) => {
     console.log("payload", payload);
     try {
       if (payload?.mobile) {
-        const response = await createApi(`qapi/users/signUp`, payload); // Convert JavaScript object to JSON;
-        console.log("data found 'qapi/users/signUp', ", response);
+        const response = await createApi(`users/signUp`, payload); // Convert JavaScript object to JSON;
+        console.log("data found 'users/signUp', ", response);
         return true;
       }
     } catch (error) {

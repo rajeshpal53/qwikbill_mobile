@@ -45,7 +45,7 @@ export default function TaxScreen({ navigation }) {
       try {
         const response = await readApi(
           // `api/taxes/list?shop=${shopDetails._id}`
-          `qapi/hsn-codes`
+          `hsn-codes`
         );
         console.log("Value response", response);
         setTaxes(response);
@@ -84,7 +84,7 @@ export default function TaxScreen({ navigation }) {
   const handleDelete = async () => {
     console.log("editData.id", editData.id);
     try {
-      const response = await deleteApi(`qapi/hsn-codes/${editData}`);
+      const response = await deleteApi(`hsn-codes/${editData}`);
       console.log("Value of responce", response);
 
       const updatedTaxes = taxes.filter((item) => item.id !== response?.id);

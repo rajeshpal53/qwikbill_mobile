@@ -50,7 +50,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
 
     if (/^\d{10}$/.test(phoneNumber)) {
       try {
-        const api = `qapi/users/getUserByMobile/${phoneNumber}`;
+        const api = `users/getUserByMobile/${phoneNumber}`;
         const headers = {
           Authorization: `Bearer ${userData?.token}`, // Add token to headers
         };
