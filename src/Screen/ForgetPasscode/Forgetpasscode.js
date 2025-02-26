@@ -14,78 +14,273 @@ import {
 import {
   Provider as PaperProvider,
   Text,
-  TextInput,
   Button,
   Card,
 } from "react-native-paper";
+import { TextInput, } from "react-native";
+
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../Store/AuthContext";
 import { createApi } from "../../Util/UtilApi";
+import OTPInputView from "react-native-otp-entry";
+import { fontSize, fontFamily } from "../../Util/UtilApi";
 
-function CustomerVerification({ loginDetail1, setIsOtp, setOtpValue }) {
+
+
+// function CustomerVerification({ loginDetail1, setIsOtp, setOtpValue }) {
+//   const [text, setText] = useState("");
+//   const genrateOTP = async () => {
+//     const obj = { email: text };
+//     console.log("object is ",obj);
+//     if (text === loginDetail1.email) {
+//       const response = await createApi("api/sendotp", obj, {
+//         "Content-Type": "application/json",
+//       });
+//       setOtpValue(response.result);
+//       console.log("jayesh ...",response.result);
+//       setIsOtp(true);
+//     }
+//   };
+//   return (
+//     <ScrollView contentContainerStyle={{ backgroundColor: "gray", elevation: 2 }}>
+//       <View style={stylesVerify.cardContainer}>
+//         <Card style={stylesVerify.card}>
+//           <Card.Content style={stylesVerify.cardContent}>
+//             <View style={stylesVerify.forgetPassImageContainer}>
+//               <Image
+//                 source={require("../../../assets/forgetpassword.jpeg")}
+//                 style={stylesVerify.myShopeImage}
+//               ></Image>
+//             </View>
+//             <View
+//               style={{
+//                 // backgroundColor:"orange",
+//                 alignItems: "center",
+//                 gap: 30,
+//               }}
+//             >
+//               <Text variant="headlineMedium" style={{ color: "black" }}>
+//                 Customer Verification
+//               </Text>
+//               <Text
+//                 variant="labelSmall"
+//                 style={{ color: "grey", textAlign: "center" }}
+//               >
+//                 we will send you one time pass word on this email
+//                 {loginDetail1 && loginDetail1.email} address
+//               </Text>
+//               {/* <TextInput
+//             style={{width:"200"}}
+//               placeholder="Mobile Number"
+//               value={text}
+//               keyboardType="number-pad"
+//               onChangeText={(newText) => setText(newText)}
+//             /> */}
+//               <TextInput
+//                 style={{
+//                   width: 200,
+//                   height: 40, // Fixed height
+//                   borderWidth: 1,
+//                   borderColor: "#ccc",
+//                   borderRadius: 8,
+//                   paddingHorizontal: 15,
+//                   paddingVertical: 8, // Prevents text shrinking
+//                   fontSize: 16,
+//                   backgroundColor: "#fff",
+//                   elevation: 2, // Adds subtle shadow
+//                   textAlignVertical: "center", // Keeps text vertically centered
+//                 }}
+//                 placeholder="Enter Mobile Number"
+//                 placeholderTextColor="#888"
+//                 maxLength={10} // Prevents more than 10 digits
+
+//                 value={text}
+//                 keyboardType="number-pad"
+//                 onChangeText={(newText) => setText(newText)}
+
+//               />
+
+
+//               <Button
+//                 mode="contained"
+//                 style={{ width: "50%" }}
+//                 onPress={genrateOTP}
+//               >
+//                 {" "}
+//                 Genrate OTP
+//               </Button>
+//             </View>
+//           </Card.Content>
+//         </Card>
+//       </View>
+//     </ScrollView>
+//   );
+// }
+
+
+
+
+import { OtpInput } from "react-native-otp-entry"; // Updated dependency
+import { useNavigation } from "@react-navigation/native";
+
+function CustomerVerification({ loginDetail1 }) {
   const [text, setText] = useState("");
-  const genrateOTP = async () => {
-    const obj = { email: text };
-    console.log(obj);
-    if (text === loginDetail1.email) {
-      const response = await createApi("api/sendotp", obj, {
-        "Content-Type": "application/json",
-      });
-      setOtpValue(response.result);
-      console.log(response.result);
-      setIsOtp(true);
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [otp, setOtp] = useState(""); // OTP input state
+  const navigation = useNavigation();
+  const correctOtp = "123456"; // Default OTP
+
+  const handleGenerateOtp = () => {
+    if (text.length !== 10) {
+      Alert.alert("Invalid Input", "Please enter a valid 10-digit mobile number.");
+      return;
+    }
+    setIsOtpSent(true);
+  };
+
+  const handleValidateOtp = () => {
+    if (otp === correctOtp) {
+      Alert.alert("Success", "Login successfully!", [
+        {
+          text: "OK",
+          onPress: () => {
+            navigation.navigate("CreateNewPasscode"); // Navigate to CreateNewPasscode screen
+            setOtp(null)
+          },
+        },
+      ]);
+    } else {
+      Alert.alert("Invalid OTP", "Please enter a valid 6-digit OTP.");
     }
   };
+
+  const handleMobileInputChange = (newText) => {
+    // Allow only numbers, remove any non-digit characters
+    const filteredText = newText.replace(/[^0-9]/g, "");
+    setText(filteredText);
+  };
+
   return (
-    <ScrollView contentContainerStyle={{ backgroundColor:"gray", elevation:2}}>
-    <View style={stylesVerify.cardContainer}>
-      <Card style={stylesVerify.card}>
-        <Card.Content style={stylesVerify.cardContent}>
-          <View style={stylesVerify.forgetPassImageContainer}>
-            <Image
-              source={require("../../../assets/forgetpassword.jpeg")}
-              style={stylesVerify.myShopeImage}
-            ></Image>
-          </View>
-          <View
-            style={{
-              // backgroundColor:"orange",
-              alignItems: "center",
-              gap: 30,
-            }}
-          >
-            <Text variant="headlineMedium" style={{ color: "black" }}>
-              Customer Verification
-            </Text>
-            <Text
-              variant="labelSmall"
-              style={{ color: "grey", textAlign: "center" }}
-            >
-              we will send you one time pass word on this email
-              {loginDetail1 && loginDetail1.email} address
-            </Text>
-            <TextInput
-            style={{width:"100%"}}
-              placeholder="Mobile Number"
-              value={text}
-              keyboardType="number-pad"
-              onChangeText={(newText) => setText(newText)}
-            />
-            <Button
-              mode="contained"
-              style={{ width: "50%" }}
-              onPress={genrateOTP}
-            >
-              {" "}
-              Genrate OTP
-            </Button>
-          </View>
-        </Card.Content>
-      </Card>
+
+    <View style={{}}>
+      <View style={stylesVerify.cardContainer}>
+        <Card style={stylesVerify.card}>
+          <Card.Content style={stylesVerify.cardContent}>
+            <View style={stylesVerify.forgetPassImageContainer}>
+              <Image
+                source={require("../../../assets/newVerify.png")}
+                style={stylesVerify.myShopeImage}
+              />
+            </View>
+            <View style={{ alignItems: "center", gap: 30 }}>
+              <Text variant="headlineMedium" style={{ color: "rgba(0,0,0,0.8)", fontFamily: fontFamily.regular }}>
+                Customer Verification
+              </Text>
+              <Text variant="labelSmall" style={{ color: "grey", textAlign: "center", fontFamily: fontFamily.medium }}>
+                We will send you a one-time password on this email {loginDetail1 && loginDetail1.email} address.
+              </Text>
+
+              {!isOtpSent ? (
+
+                <TextInput
+                  style={stylesVerify.input}
+                  placeholder="Enter Mobile Number"
+                  placeholderTextColor="#777"
+                  maxLength={10}
+                  value={text}
+                  keyboardType="number-pad"
+                  onChangeText={handleMobileInputChange}
+                  underlineColorAndroid="transparent"
+                />
+
+              ) : (
+                <OtpInput
+                  numberOfDigits={6} // Changed to 6 digits
+                  onTextChange={(otpValue) => setOtp(otpValue)}
+                  theme={{
+                    containerStyle: { marginBottom: 20, },
+                    pinCount: 6,
+                   // focusColor: "#0c3b73", // Ensuring focus color is applied
+                   // focusedBorderColor: "#0c3b73",
+                    selectedTextColor: "darkblue",
+                    placeholderTextColor: "#0c3b73",
+                     focusedPinCodeContainerStyle:{
+                      borderColor:"#0c3b73"
+                     },
+                     pinCodeTextStyle: {
+                        color:"rgba(0,0,0,0.6)",
+                        fontFamily:"Poppins-Medium",
+                        marginBottom:-8
+                     },
+                     focusStickStyle:{
+                      backgroundColor:"#0c3b73"
+                     },
+
+                    textInputStyle: {
+                      width: 45,
+                      height: 45,
+                      fontSize: 18,
+                      borderRadius: 12,
+                      textAlign: "center",
+                      borderWidth: 1,
+                      borderColor: "#0c3b73",
+                      backgroundColor: "#0c3b73",
+                      elevation: 2,
+                      color: "#0c3b73", // Ensure text color matches border
+
+                    },
+                    focusedTextInputStyle: {
+                      borderColor: "#0c3b73", // Override the focus color
+                      borderWidth: 2, // Ensure the outline is properly visible
+                      shadowColor: "#0c3b73", // Optional: Shadow to match focus
+                      shadowOffset: { width: 1, height: 1 },
+                      shadowOpacity: 0.5,
+                      shadowRadius: 2,
+
+                    },
+                  }}
+                />
+
+
+                // <OtpInput
+                //   numberOfDigits={6}
+                //   onTextChange={(otpValue) => setOtp(otpValue)}
+                //   theme={{
+                //     textInputStyle: stylesVerify.inputStyle,
+                //     focusedTextInputStyle: stylesVerify.focusedInputStyle,
+                //   }}
+                // />
+              )}
+
+
+              <Button
+                mode="contained"
+                style={{
+                  width: "50%",
+                  borderRadius: 12,
+                  paddingVertical: 3,
+                  backgroundColor: "#14447d",
+                  fontFamily: fontFamily.thin,
+                  marginVertical: 5
+                }}
+                onPress={!isOtpSent ? handleGenerateOtp : handleValidateOtp}
+              >
+                <Text style={{ color: "#fff", fontSize: fontSize.labelMedium, fontFamily: fontFamily.medium }}>{isOtpSent ? "Validate OTP" : "Generate OTP"}</Text>
+              </Button>
+            </View>
+          </Card.Content>
+        </Card>
+      </View>
     </View>
-    </ScrollView>
+
   );
 }
+
+
+
+
+
+
 function ValidateOTP({ navigation, otpValue }) {
   const [otp, setOtp] = useState("");
   const [counter, setCounter] = useState(30);
@@ -99,6 +294,7 @@ function ValidateOTP({ navigation, otpValue }) {
 
   const handleVerifyOtp = () => {
     if (otpValue === otp) {
+
       navigation.navigate("CreateNewPasscode");
       console.log("OTP entered:", otp);
     } else {
@@ -120,16 +316,16 @@ function ValidateOTP({ navigation, otpValue }) {
               style={stylesResend.myShopeImage}
             ></Image>
           </View>
-          <View style={{ gap:5}}>
-            <Text variant="headlineMedium" 
-            style={{ textAlign:"center" }}>
+          <View style={{ gap: 5 }}>
+            <Text variant="headlineMedium"
+              style={{ textAlign: "center" }}>
               OTP Verification
             </Text>
             <Text style={stylesResend.instruction}>
               Please check your mobile inbox for OTP
             </Text>
             <TextInput
-              style={{ }}
+              style={{}}
               placeholder="Enter OTP"
               keyboardType="numeric"
               value={otp}
@@ -183,54 +379,54 @@ function Forgetpasscode({ navigation }) {
 
     loginDetailHandler();
   }, [loginDetail]);
-  console.log(loginDetail1);
+  console.log("log isss", loginDetail1);
   return (
     <>
       <StatusBar style="light" backgroundColor={"#0c3b73"} />
       <SafeAreaView style={styles.SafeAreaView}>
         {/* <KeyboardAvoidingView behavior="padding"> */}
-          <View style={[styles.overlay, { height: overlayHeight }]}></View>
-          <View style={styles.scrollViewChild}>
+        <View style={[styles.overlay, { height: overlayHeight }]}></View>
+        <View style={styles.scrollViewChild}>
+          <View
+            style={{
+              // flex:1,
+              // backgroundColor:"orange",
+              height: "25%",
+              width: "100%",
+              alignItems: "center",
+
+            }}
+          >
+            <View style={{}}>
+              <Image
+                source={require("../../../assets/aaaa_transparent.png")}
+                style={styles.img}
+              />
+            </View>
             <View
               style={{
-                // flex:1,
-                // backgroundColor:"orange",
-                height: "25%",
-                width: "100%",
+                // backgroundColor:"pink",
                 alignItems: "center",
-                // marginBottom: 12,
               }}
             >
-              <View style={{}}>
-                <Image
-                  source={require("../../../assets/aaaa_transparent.png")}
-                  style={styles.img}
-                />
-              </View>
-              <View
-                style={{
-                  // backgroundColor:"pink",
-                  alignItems: "center",
-                }}
-              >
-                <Text variant="titleLarge" style={{ color: "white" }}>
-                  WERTONE
-                </Text>
-                <Text style={{ color: "white", letterSpacing: 3 }}>
-                  Biling Software
-                </Text>
-              </View>
+              <Text variant="titleLarge" style={{ color: "white", }}>
+                WERTONE
+              </Text>
+              <Text style={{ color: "white", letterSpacing: 3, marginVertical: 2 }}>
+                Biling Software
+              </Text>
             </View>
-            {isOtp ? (
-              <ValidateOTP navigation={navigation} otpValue={otpValue} />
-            ) : (
-              <CustomerVerification
-                loginDetail1={loginDetail1}
-                setIsOtp={setIsOtp}
-                setOtpValue={setOtpValue}
-              />
-            )}
           </View>
+          {isOtp ? (
+            <ValidateOTP navigation={navigation} otpValue={otpValue} />
+          ) : (
+            <CustomerVerification
+              loginDetail1={loginDetail1}
+              setIsOtp={setIsOtp}
+              setOtpValue={setOtpValue}
+            />
+          )}
+        </View>
         {/* </KeyboardAvoidingView> */}
       </SafeAreaView>
     </>
@@ -255,7 +451,7 @@ const styles = StyleSheet.create({
   },
   overlayText: {
     color: "white",
-    fontSize: 16,
+    fontSize: fontSize.labelLarge,
   },
   cardContent: {
     // backgroundColor: "red",
@@ -362,37 +558,87 @@ const styles = StyleSheet.create({
 
 const stylesVerify = StyleSheet.create({
   cardContent: {
-    // backgroundColor: "red",
     paddingTop: 0,
     alignItems: "center",
-    gap: 20,
+    gap: 10,
     flex: 1,
+    backgroundColor: "#fff",
+
   },
   card: {
     alignItems: "center",
     borderRadius: 0,
   },
   img: {
-    height: 100,
-    width: 100,
+    height: 120,
+    width: 120,
     elevation: 2,
     alignSelf: "center",
     marginVertical: 10,
   },
   myShopeImage: {
-    width: "100%",
-    height: "100%",
+    width: 175,
+    height: 175,
   },
   forgetPassImageContainer: {
-    width: "30%",
-    height: "30%",
-    marginVertical: 5,
+    backgroundColor: "#fff"
+    //  marginVertical: 3
   },
   cardContainer: {
-    backgroundColor: "grey",
-    height: 470,
-    // marginTop:5,
+    height: 500,
+    borderRadius: 35, // Adjust for more or less curve
+    overflow: "hidden", // Ensures content inside respects borderRadius
+    backgroundColor: "#fff", // Ensure background color is set
+    elevation: 5, // For Android shadow effect
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    marginHorizontal: 11,
+
+
   },
+  input: {
+    width: 260,
+    height: 50,
+    borderWidth: 1,
+    borderColor: "#ccc", // Subtle gray border for a classic look
+    borderRadius: 10, // Soft rounded edges for a modern touch
+    paddingHorizontal: 15,
+    fontSize: fontSize.labelLarge,
+    fontFamily: "Arial", // Change to your preferred font
+    backgroundColor: "#fff",
+    color: "#333",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3, // Minimal shadow effect for Android
+  },
+  inputStyle: {
+    width: 45,
+    height: 45,
+    fontSize: 18,
+    borderRadius: 12,
+    textAlign: "center",
+    borderWidth: 1,
+    borderColor: "#0c3b73",
+    backgroundColor: "#0c3b73",
+    elevation: 2,
+    color: "#0c3b73", // Ensure text color matches border
+
+  },
+  focusedInputStyle: {
+
+    borderColor: "#0c3b73", // Override the focus color
+    borderWidth: 2, // Ensure the outline is properly visible
+    shadowColor: "#0c3b73", // Optional: Shadow to match focus
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.5,
+    shadowRadius: 2,
+
+  },
+
 });
 
 //-----------------------------------------------------
@@ -482,7 +728,7 @@ const stylesResend = StyleSheet.create({
     marginVertical: 5,
   },
   cardContainer: {
-    backgroundColor: "grey",
+    backgroundColor: "white",
     height: 420,
     // padding:0,
     // padding:0,
