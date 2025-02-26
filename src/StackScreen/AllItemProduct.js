@@ -1,4 +1,10 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Searchbarwithmic from "../../src/Component/Searchbarwithmic";
 import ProductCardDetails from "../Component/Cards/ProductCard";
 import { useContext, useEffect, useMemo, useState } from "react";
@@ -12,6 +18,7 @@ import { readApi } from "../Util/UtilApi";
 import { ShopContext } from "../Store/ShopContext";
 import UserDataContext from "../Store/UserDataContext";
 import { useSnackbar } from "../Store/SnackbarContext";
+import { clearCart } from "../Redux/slices/CartSlice";
 
 const AllItemProduct = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -22,14 +29,12 @@ const AllItemProduct = ({ navigation }) => {
   // const products = useSelector((state) => state.product.products);
   const [products, setProducts] = useState(null);
   const carts = useSelector((state) => state.cart.Carts);
-  const {selectedShop} = useContext(ShopContext);
-  const {userData} = useContext(UserDataContext);
-  const {showSnackbar} = useSnackbar();
+  const { selectedShop } = useContext(ShopContext);
+  const { userData } = useContext(UserDataContext);
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
-
-    const fetchProductData = async() => {
-
+    const fetchProductData = async () => {
       try {
         
         const response = await readApi(`products/getProductByVendorfk/${selectedShop?.id}?page=1&limit=10`, {
@@ -43,10 +48,10 @@ const AllItemProduct = ({ navigation }) => {
         console.log("error of getting ", error);
         showSnackbar("Something went Wrong ", "error");
       }
-    }
+    };
 
     fetchProductData();
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (carts.length > 0) {
@@ -68,15 +73,29 @@ const AllItemProduct = ({ navigation }) => {
 
   return (
     <View>
-      <Searchbarwithmic
+      
+
+      <FlatList
+        data={products}
+        ListHeaderComponent={() => (
+          <View>
+            <Searchbarwithmic
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         setsearchmodal={setsearchmodal}
         setTranscript={setTranscript}
         placeholderText="Search User by name ..."
       />
-      <FlatList
-        data={products}
+      {carts.length > 0 && (
+        <TouchableOpacity
+          style={{ alignSelf: "flex-end", marginRight:20, marginBottom:10 }}
+          onPress={() => dispatch(clearCart())}
+        >
+          <Text style={{ color: "#007BFF" }}>Clear Cart</Text>
+        </TouchableOpacity>
+      )}
+          </View>
+        )}
         renderItem={({ item, index }) => (
           <ProductCardDetails
             item={item}

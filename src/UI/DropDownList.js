@@ -26,9 +26,14 @@ function DropDownList({ options }) {
 
   console.log("Dataof option ", options);
 
-  useEffect(() => {
-    console.log("selectedShop is changed 1 - ", selectedShop)
-  }, [selectedShop])
+//   useEffect(() => {
+//     // console.log("selectedShop is changed 1 - ", selectedShop)
+//     options?.map((item) => {
+//       if(item?.id == selectedShop?.id){
+// console.log("same shop is , ", item)
+//       }
+//     })
+//   }, [selectedShop])
 
   
 
@@ -46,21 +51,6 @@ function DropDownList({ options }) {
           updateSelectedShop(itemValue)
         } }
       >
-        {/* Default placeholder */}
-        {/* <Picker.Item
-        label="Please select your Shop"
-        value=""
-        color="#888888"
-        enabled={false}
-      />
-      {options.map((option, index) => (
-        <Picker.Item
-          key={index}
-          value={option?.shopname}
-          label={option?.shopname}
-          color="#555555"
-        />
-      ))} */}
         <Picker.Item
           label="Please select your Shop"
           value=""

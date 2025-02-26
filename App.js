@@ -24,6 +24,7 @@ import { FontProvider } from "./src/Store/FontProvider.js";
 // import { CopilotProvider } from "react-native-copilot";
 import { TourGuideProvider } from "rn-tourguide";
 import { ShopProvider } from "./src/Store/ShopContext.js";
+import { StorageLocationProvider } from "./src/Store/StorageLocationContext.js";
 
 const customTheme = {
   ...DefaultTheme,
@@ -54,6 +55,7 @@ export default function App() {
   });
   return (
     <SafeAreaProvider>
+      <StorageLocationProvider>
       <UserDataProvider>
         <ShopProvider>
         {/* <ShopDetailProvider> */}
@@ -85,6 +87,7 @@ export default function App() {
         {/* </ShopDetailProvider> */}
         </ShopProvider>
       </UserDataProvider>
+      </StorageLocationProvider>
     </SafeAreaProvider>
   );
 }
