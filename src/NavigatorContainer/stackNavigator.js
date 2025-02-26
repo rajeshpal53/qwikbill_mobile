@@ -96,7 +96,7 @@ export default function StackNavigator() {
       <Stack.Navigator
         initialRouteName={userData ? "Passcode" : "login"}
         screenOptions={{
-          headerTitle: "Create Invoice",
+          // headerTitle: "Create Invoice",
         }}
       >
         <Stack.Screen
@@ -450,8 +450,8 @@ export default function StackNavigator() {
         <Stack.Screen
           name="PDFScreen"
           component={PdfScreen}
-          screenOptions={{
-            headerTitle: "Invoice Preview",
+          options={{
+            headerTitle: "Invoice Preview"
           }}
         />
 
