@@ -4,7 +4,7 @@ import {statusName} from "../Util/UtilApi";
 
 const ViewInvoiceCard = ({ invoice,navigation }) => {
     return (
-        <Pressable onPress={()=>{navigation.navigate("InvoicePreviewScreen",{params:invoice})}}>
+        <Pressable onPress={()=>{navigation.navigate("PDFScreen",{viewInvoiceData:invoice})}}>
       <Card style={styles.card}>
         <View style={{flexDirection:"row", justifyContent:"space-between",width:"100%", }}>
         <Text style={styles.invoice}>Invoice #{invoice.id}</Text>
