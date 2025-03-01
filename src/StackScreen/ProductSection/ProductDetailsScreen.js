@@ -52,7 +52,7 @@ const ProductDetailsScreen = ({ navigation }) => {
   const { selectedShop } = useContext(ShopContext);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
-  const PAGE_SIZE = 10;
+  const PAGE_SIZE = 5;
 
   //Filter Data state
   const [filtermodal, setFilterModal] = useState(false);
@@ -73,7 +73,7 @@ const ProductDetailsScreen = ({ navigation }) => {
   console.log("PAGE NUMBER ------", page);
 
   const getproductdata = async (pageNum) => {
-    const api = `qapi/products/getProductByVendorfk/${selectedShop?.id}?page=${pageNum}&limit=${PAGE_SIZE}`;
+    const api = `products/getProductByVendorfk/${selectedShop?.id}?page=${pageNum}&limit=${PAGE_SIZE}`;
 
     try {
       setloader(true);
