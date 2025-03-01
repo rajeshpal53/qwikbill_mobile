@@ -24,6 +24,7 @@ import { clearCart } from "../Redux/slices/CartSlice";
 // import RNHTMLtoPDF from "react-native-html-to-pdf";
 import { useDownloadInvoice } from "../Util/DownloadInvoiceHandler";
 import { useTranslation } from "react-i18next";
+import { AntDesign, Feather } from "@expo/vector-icons";
 
 const PdfScreen = ({ navigation }) => {
   const [pdfPath, setPdfPath] = useState("");
@@ -241,7 +242,7 @@ const PdfScreen = ({ navigation }) => {
             style={{
               backgroundColor: "#9C27B0",
               alignItems: "center",
-              paddingVertical: 6,
+              paddingVertical: 8,
               borderRadius:5
             }}
           >
@@ -261,10 +262,11 @@ const PdfScreen = ({ navigation }) => {
             disabled={createdInvoice ? false : true}
             style={[
               styles.touchableButtonsStyle,
-              { backgroundColor: "#2196F3", opacity: createdInvoice ? 1 : 0.5 },
+              { backgroundColor: "#2196F3", opacity: createdInvoice ? 1 : 0.5, flexDirection:"row", justifyContent:"center" },
             ]}
           >
-            <Text style={{ color: "#fff" }}>{t("Share")}</Text>
+             <Feather name="share" size={22} color="#fff" />
+            <Text style={{ color: "#fff", paddingLeft:4 }}>{t("Share")}</Text>
             {shareLoading && (
               <View style={styles.loaderOverlay}>
                 <ActivityIndicator color="#fff" size="small" />
@@ -277,10 +279,12 @@ const PdfScreen = ({ navigation }) => {
             disabled={createdInvoice ? false : true}
             style={[
               styles.touchableButtonsStyle,
-              { backgroundColor: "#4CAF50", opacity: createdInvoice ? 1 : 0.5 },
+              { backgroundColor: "#4CAF50", opacity: createdInvoice ? 1 : 0.5, flexDirection:"row", justifyContent:"center" },
             ]}
           >
-            <Text style={{ color: "#fff" }}>{t("Download")}</Text>
+          <AntDesign name="download" size={22} color="#fff" />
+
+            <Text style={{ color: "#fff", paddingLeft:4}}>{t("Download")}</Text>
             {downloadLoading && (
               <View style={styles.loaderOverlay}>
                 <ActivityIndicator color="#fff" size="small" />
@@ -312,7 +316,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // backgroundColor: "orange",
     alignItems: "center",
-    paddingVertical: 6,
+    paddingVertical: 8,
     borderRadius:5
   },
   loaderOverlay: {
