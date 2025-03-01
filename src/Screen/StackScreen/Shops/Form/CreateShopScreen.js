@@ -48,6 +48,7 @@ import UserDataContext from "../../../../Store/UserDataContext";
 import ProviderMoreDetails from "./ProviderMoreDetails";
 import { ShopContext } from "../../../../Store/ShopContext";
 
+
 // Form validation schema using Yup
 
 // const validationSchema = Yup.object().shape({
@@ -179,6 +180,13 @@ const CreateShopScreen = ({ navigation }) => {
   const { t } = useTranslation();
 
   const { userData, saveUserData } = useContext(UserDataContext);
+
+  const addressDetails = useRoute()?.params?.addressDetails || null;
+  const isUpdateAddress = useRoute()?.params?.isUpdateAddress || null;
+
+  console.log("USER DATA IS15369 ", routeData)
+
+
   const [genderList, setGenderList] = useState([
     { label: "Select Gender", value: null },
     { label: "Male", value: "male" },
@@ -218,27 +226,29 @@ const CreateShopScreen = ({ navigation }) => {
   console.log("userData is , ", userData);
 
   const [initialData, setInitialData] = useState({
-    name: "",
-    mobile: "",
-    email: "",
-    gender: "",
+    name: userData?.user?.name || "",
+    mobile:userData?.user?.mobile || "",
+    email: userData?.user?.email || "",
+    gender:  userData?.user?.gender || "",
     dob: new Date() || null,
-    shopName: "",
-    whatsappNumber: "",
-    aadhaarNumber: "",
-    location: "",
+    shopName:addressDetails?.shopname || "",
+    whatsappNumber: addressDetails?.whatsappnumber || "",
+    aadhaarNumber:userData?.user?.aadharCard || "",
+    location: userData?.user?.aadharCard || "",
     kilometerRadius: "",
-    latitude: "",
-    longitude: "",
-    isApproved: false,
+    latitude: addressDetails?.latitude || "",
+    longitude:addressDetails?.longitude || "",
+    isApproved: addressDetails?.shopname || false,
+  
     // isOnline: false,
     // isVerified: false,
     // homeDelivery: false,
     // showAddress: "",
-    shopImage: null,
-    aadharFrontImage: null,
-    aadharBackImage: null,
-    profileImage: null,
+    shopImage:addressDetails?.shopImage || null,
+    aadharFrontImage: userData?.user?.aadharCardFronturl || null,
+    aadharBackImage: userData?.user?.aadharCardBackurl || null,
+    profileImage: userData?.user?.profilePicurl || null,
+
   });
 
   useEffect(() => {
@@ -593,18 +603,16 @@ const CreateShopScreen = ({ navigation }) => {
         console.log("hi prathesm");
         console.log("submitted Values are ", values);
 
-        // return ;
-        // usersfk in s-diaryy
         let createdUserId = null;
 
         const updateUserPayloadData = new FormData();
 
-      
+
         updateUserPayloadData.append("name", values?.name);
         updateUserPayloadData.append("mobile", values?.mobile);
         updateUserPayloadData.append("aadharCard", values?.aadhaarNumber);
 
-       
+
         const formattedDate = formatDate(values?.dob);
         updateUserPayloadData.append("dob", formattedDate);
 
@@ -639,7 +647,7 @@ const CreateShopScreen = ({ navigation }) => {
         console.log("userApi , ", `${API_BASE_URL}users/upsertOnlyUserProfileImg`);
         console.log("userData token , ", `${userData?.token}`);
 
-      
+
         try {
           const response = await axios.post(
             `${API_BASE_URL}users/upsertOnlyUserProfileImg`,
@@ -676,7 +684,7 @@ const CreateShopScreen = ({ navigation }) => {
         const data = new FormData();
         // data.append("aadharCard", values?.aadhaarNumber);
 
-    
+
         data.append("whatsappnumber", values?.whatsappNumber || "");
         data.append("shopname", values?.shopName);
         // data.append("homeServiceProvide", values?.homeDelivery);

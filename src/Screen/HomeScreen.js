@@ -63,32 +63,42 @@ export default function HomeScreen({ navigation }) {
   // const overlayHeight = (0.20*windowHeight);
   // console.log(responsiveHeight(80), "    --- responsiveHeight");
   // console.log(verticalScale(700), "    --- verticalscale");
+
   const { userData } = useContext(UserDataContext);
   const {allShops, selectedShop} = useContext(ShopContext);
   const isFocused = useIsFocused();
   const [currentStep, setCurrentStep] = useState(0);
-
+  const [isTourGuideActive, setIsTourGuideActive] = useState(false);
   const { canStart, start, stop, eventEmitter } = useTourGuideController();
 
-  
+  useEffect(() => {
+    console.log("allshops in homescreen 1, ", allShops);
+  }, [allShops]);
 
   useEffect(() => {
-    console.log("allshops in homescreen 1, ", allShops)
-  }, [allShops])
-  // useEffect(() => {
-  //   const checkIfTourSeen = async () => {
-  //     try {
-  //       const hasSeenTour = await AsyncStorage.getItem("hasSeenTour");
-  //       if (!hasSeenTour && canStart) {
-  //         start();
-  //       }
-  //     } catch (error) {
-  //       console.log("Error checking tour guide status", error);
-  //     }
-  //   };
+    const checkIfTourSeen = async () => {
+      try {
+        const hasSeenTour = await AsyncStorage.getItem("hasSeenTour");
+        if (!hasSeenTour && canStart) {
+          start();
+        }
+      } catch (error) {
+        console.log("Error checking tour guide status", error);
+      }
+    };
 
-  //   checkIfTourSeen();
-  // }, [canStart]);
+    checkIfTourSeen();
+  }, [canStart]);
+
+  useEffect(() => {
+    // Start tour guide when entering the Home screen
+    setIsTourGuideActive(true);
+
+    // Reset tour guide when navigating away from this screen
+    return () => {
+      setIsTourGuideActive(false);
+    };
+  }, []);
 
   // const handleSkipTour = async () => {
   //   stop(); // This will stop the tour
@@ -96,39 +106,12 @@ export default function HomeScreen({ navigation }) {
   //   console.log("Tour skipped");
   // };
 
-  const handleNextStep = () => {
-    setCurrentStep((prevStep) => {
-      const newStep = prevStep + 1;
-      if (newStep === 13) {
-        AsyncStorage.setItem("hasSeenTour", "true");
-        console.log("Tour completed");
-      }
-      return newStep;
-    });
-  };
-
   useEffect(() => {
     if (currentStep === 13) {
       console.log("Tour completed");
       AsyncStorage.setItem("hasSeenTour", "true");
     }
   }, [currentStep]);
-
-  const handleOnStart = () => console.log("start");
-  const handleOnStop = () => console.log("stop");
-  const handleOnStepChange = () => console.log(`stepChange`);
-
-  // useEffect(() => {
-  //   eventEmitter.on("start", handleOnStart);
-  //   eventEmitter.on("stop", handleOnStop);
-  //   eventEmitter.on("stepChange", handleOnStepChange);
-
-  //   return () => {
-  //     eventEmitter.off("start", handleOnStart);
-  //     eventEmitter.off("stop", handleOnStop);
-  //     eventEmitter.off("stepChange", handleOnStepChange);
-  //   };
-  // }, []);
 
   // useEffect(() => {
   //   const fetchVendorData = async () => {
@@ -189,7 +172,7 @@ export default function HomeScreen({ navigation }) {
     console.log("hi");
 
     // navigation.navigate("StackNavigator", { screen: Screen });
-    navigation.navigate(Screen);
+    navigation.navigate(Screen, { startTour: true });
   };
 
   if (isLoading) {
@@ -226,13 +209,13 @@ export default function HomeScreen({ navigation }) {
               shape="rectangle"
               // tooltipBottomOffset={20} // Adjusts vertical position
               keepTooltipPosition={true} // Keeps the tooltip in place
+              pointerEvents="box-none"
               style={{
                 position: "absolute",
                 width: "100%",
                 top: 36,
                 height: 32,
               }}
-              onPress={handleNextStep}
             />
             <Text style={styles.headerText}>
               Welcome{" "}
@@ -248,13 +231,13 @@ export default function HomeScreen({ navigation }) {
               shape="rectangle"
               // tooltipBottomOffset={20} // Adjusts vertical position
               keepTooltipPosition={true} // Keeps the tooltip in place
+              pointerEvents="box-none"
               style={{
                 position: "absolute",
                 width: "100%",
                 top: 70,
                 height: 18,
               }}
-              onPress={handleNextStep}
             />
             <Text style={styles.subHeaderText}>
               Last Login: {lastLoginTime}
@@ -269,6 +252,7 @@ export default function HomeScreen({ navigation }) {
                       zone={3}
                       text={"See all the vender in dropdown"}
                       shape="rectangle"
+                      pointerEvents="box-none"
                       // tooltipBottomOffset={20} // Adjusts vertical position
                       // keepTooltipPosition={true} // Keeps the tooltip in place
                       style={{
@@ -278,7 +262,6 @@ export default function HomeScreen({ navigation }) {
                         height: 32,
                         marginLeft: 30,
                       }}
-                      onPress={handleNextStep}
                     />
                     
                     <DropDownList options={allShops} />
@@ -291,6 +274,7 @@ export default function HomeScreen({ navigation }) {
                       shape="rectangle"
                       // tooltipBottomOffset={20} // Adjusts vertical position
                       // keepTooltipPosition={true} // Keeps the tooltip in place
+                      pointerEvents="box-none"
                       style={{
                         position: "absolute",
                         width: "45%",
@@ -298,7 +282,6 @@ export default function HomeScreen({ navigation }) {
                         height: 32,
                         marginLeft: 20,
                       }}
-                      onPress={handleNextStep}
                     />
                     <Pressable
                       style={styles.allThreeViews}
@@ -319,6 +302,7 @@ export default function HomeScreen({ navigation }) {
                       shape="rectangle"
                       // tooltipBottomOffset={20} // Adjusts vertical position
                       // keepTooltipPosition={true} // Keeps the tooltip in place
+                      pointerEvents="box-none"
                       style={{
                         position: "absolute",
                         width: "45%",
@@ -326,7 +310,6 @@ export default function HomeScreen({ navigation }) {
                         height: 32,
                         marginLeft: 162,
                       }}
-                      onPress={handleNextStep}
                     />
                     <Pressable
                       style={styles.allThreeViews}
@@ -352,29 +335,25 @@ export default function HomeScreen({ navigation }) {
                 data={services}
                 numColumns={3}
                 renderItem={({ item, index }) => (
-                  <>
-                    <TourGuideZone
-                      key={index}
-                      zone={6 + index}
-                      text={`Go to ${item.name}`}
-                      onPress={handleNextStep}
-                      shape={"circle"}
-                      // tooltipBottomOffset={20} // Adjusts vertical position
-                      // keepTooltipPosition={true} // Keeps the tooltip in place
-                      style={[styles.tourGuideZone, styles.item]}
+                  <TourGuideZone
+                    key={index}
+                    zone={6 + index} // Unique zone ID for each item
+                    text={`Go to ${item.name}`} // Tooltip text
+                    // Tooltip action (can be empty if needed)
+                    shape={"circle"} // Adjust shape as necessary
+                    style={[styles.tourGuideZone, styles.item]} // Apply styles to TourGuideZone
+                    pointerEvents="box-none"
+                  >
+                    <TouchableOpacity
+                      style={styles.item}
+                      onPress={() => goToHandler(item.navigateTo)}
                     >
-                      <TouchableOpacity
-                        style={styles.item}
-                        // key={index}
-                        onPress={() => goToHandler(item.navigateTo)}
-                      >
-                        <View style={{ alignItems: "center" }}>
-                          {item.icon}
-                          <Text style={styles.itemText}>{item.name}</Text>
-                        </View>
-                      </TouchableOpacity>
-                    </TourGuideZone>
-                  </>
+                      <View style={{ alignItems: "center" }}>
+                        <Text>{item.icon}</Text>
+                        <Text style={styles.itemText}>{item.name}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </TourGuideZone>
                 )}
                 keyExtractor={(item, index) => index}
                 ListEmptyComponent={<Text>No Items Found</Text>}
@@ -509,12 +488,13 @@ const styles = StyleSheet.create({
   item: {
     flex: 1,
     margin: 10,
-    padding: 2,
-    paddingVertical: 5,
+    // padding: 2,
+    // paddingVertical: 5,
     // backgroundColor: "orange",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 10,
+
+    // borderRadius: 10,
     // shadowColor: "#000",
     // shadowOffset: { width: 0, height: 2 },
     // shadowOpacity: 0.1,
@@ -549,8 +529,8 @@ const styles = StyleSheet.create({
   },
   tourGuideZone: {
     // position: "absolute",
-    // top: 40,
-    // left: 16,
+    top: 30,
+    // left: 38,
     // // width: 80,
     // height: 80,
     // borderRadius: 25,
