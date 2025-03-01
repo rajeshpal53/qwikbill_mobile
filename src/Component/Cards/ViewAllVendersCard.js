@@ -4,23 +4,18 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-
 } from "react-native";
-import { Card, Avatar,  Menu,  Button,} from "react-native-paper";
+import { Card, Avatar, Menu, Button } from "react-native-paper";
 import { fontSize } from "../../Util/UtilApi";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useState } from "react";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
 
-
 const ViewAllVendersCard = ({ item }) => {
   const [selectedModal, setSelectedModal] = useState(null);
-  const navigation = useNavigation()
-
-  console.log("SELECTED MODAL +++++++",selectedModal)
-
-
+  const navigation = useNavigation();
+  
 
   const handleModal = (id) => {
     setSelectedModal(selectedModal === id ? null : id);
@@ -33,7 +28,7 @@ const ViewAllVendersCard = ({ item }) => {
   };
 
   const handleEdit = (item) => {
-    console.log("DATA OF ITEM IS ", item)
+    console.log("DATA OF ITEM IS ", item);
     setSelectedModal(null);
     navigation.navigate("CreateShopScreen", {
       addressDetails: item,
@@ -59,10 +54,7 @@ const ViewAllVendersCard = ({ item }) => {
               <View style={styles.InnershopnameView}>
                 <Text style={styles.shopnameText}>{item?.shopname}</Text>
               </View>
-              <View style={{width:"20%"}}>
-                {/* <Pressable onPress={() => handleModal(item?.id)}>
-                  <MaterialIcons name="more-vert" size={28} color="black" />
-                </Pressable> */}
+              {/* <View style={{ width: "20%" }}>
                 <Menu
                   visible={selectedModal === item?.id}
                   onDismiss={() => setSelectedModal(null)}
@@ -80,7 +72,7 @@ const ViewAllVendersCard = ({ item }) => {
                   contentStyle={{
                     padding: 1,
                     marginRight: 5,
-                    marginTop:30,
+                    marginTop: 30,
                     backgroundColor: "#F8F8F8",
                   }} // Content style for Menu items
                   elevation={1} // Adds shadow to the Menu component
@@ -91,7 +83,7 @@ const ViewAllVendersCard = ({ item }) => {
                   <Menu.Item onPress={() => handleEdit(item)} title="Edit" />
                   <Menu.Item onPress={() => handleDelete()} title="Delete" />
                 </Menu>
-              </View>
+              </View> */}
             </View>
           </View>
 
@@ -151,7 +143,9 @@ const ViewAllVendersCard = ({ item }) => {
           </View>
           <View style={styles.StatusandRatingView}>
             <TouchableOpacity
-              onPress={() => console.log("Button pressed")}
+              onPress={() =>
+                navigation.navigate("ViewShopDetailsScreen", { item: item })
+              }
               style={{ flexDirection: "row", alignItems: "center" }}
             >
               <View>
@@ -220,10 +214,9 @@ const styles = StyleSheet.create({
     flex: 1,
     // borderWidth:2,
     paddingHorizontal: 5,
-    flexDirection:"row"
-
+    flexDirection: "row",
   },
-  InnershopnameView:{
+  InnershopnameView: {
     flex: 1,
   },
   InnerDetailsView: {

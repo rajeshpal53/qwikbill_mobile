@@ -67,7 +67,8 @@ import PdfScreen from "../Component/PdfViewer.js";
 import EditProfileScreen from "../Screen/StackScreen/EditProfileScreen.js";
 import CategoryDropDown from "../UI/DropDown/CategoryDropdown.js";
 import AddRole from "../Screen/StackScreen/Addrole.js";
-import { withCopilot } from 'react-native-copilot';
+import { withCopilot } from "react-native-copilot";
+import ViewShopDetailsScreen from "../Screen/StackScreen/Shops/ViewShopDetailsScreen.js";
 
 export default function StackNavigator() {
   const Stack = createStackNavigator();
@@ -78,7 +79,6 @@ export default function StackNavigator() {
   // const { shopDetails } = useContext(ShopDetailContext);
 
   // const ViewCustomerWithTour  = withCopilot(AddCustomerScreen)
-
 
   if (isLoading) {
     return (
@@ -427,6 +427,14 @@ export default function StackNavigator() {
           component={AddRole}
           screenOptions={{
             headerTitle: "Add Role",
+          }}
+        />
+
+        <Stack.Screen
+          name="ViewShopDetailsScreen"
+          component={ViewShopDetailsScreen}
+          options={{
+            headerTitle: "View Shop Details",
           }}
         />
       </Stack.Navigator>
