@@ -48,7 +48,6 @@ const ProductDetailsScreen = ({ navigation }) => {
   const [loader, setloader] = useState(false);
   const { userData } = useContext(UserDataContext);
   const [searchedData, setSearchedData] = useState([]);
-
   const { selectedShop } = useContext(ShopContext);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
@@ -66,7 +65,7 @@ const ProductDetailsScreen = ({ navigation }) => {
   // ];
   useEffect(() => {
     getproductdata(page);
-  }, [page, selectedShop]);
+  }, [page, selectedShop,isfocused]);
 
   console.log("SHOP ID IS ", selectedShop?.id);
   console.log("DATA OF PRODUCT ---------", Productdata);
@@ -86,10 +85,14 @@ const ProductDetailsScreen = ({ navigation }) => {
         console.log("Inside a else condition ")
         setHasMore(false);
       }
+      if(page==1){
+        SetProductData(response?.products);
+      }
 
     } catch (error) {
       console.log("Unable to fetch Data", error);
       setHasMore(false);
+      SetProductData([]);
       if (page == 1) {
         console.log("Inside a catch if ")
         SetProductData([]);
@@ -153,6 +156,7 @@ const ProductDetailsScreen = ({ navigation }) => {
 
   //  // Load more data when reaching the end
   const loadMoreData = () => {
+
     if (searchedData?.length <= 0 && !loader && hasMore) {
       setPage((prevPage) => prevPage + 1);
     }
@@ -308,7 +312,9 @@ const ProductDetailsScreen = ({ navigation }) => {
       {/* Bulk Upload Modal */}
       {bulkUploadModalVisible && (
         <FileUploadModal
+        visible={bulkUploadModalVisible}
           setBulkUploadModalVisible={setBulkUploadModalVisible}
+          
         />
       )}
 
@@ -360,21 +366,25 @@ const styles = StyleSheet.create({
   },
 
   suggestionButton: {
-    borderWidth: 2,
+    borderWidth: 1,
+    borderColor:"white",
     paddingVertical: 5,
     marginHorizontal: 10,
     paddingHorizontal: 15,
     borderRadius: 8,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "gray",
+    color:"#fff",
+    elevation:0.5
   },
   suggestbtnText: {
     fontSize: fontSize.labelMedium,
     fontFamily: "Poppins-Medium",
+       color:"#fff"
     // backgroundColor:"#F5F5F5"
   },
 
   selectedSuggestionButton: {
-    backgroundColor: "#bee2eb",
+    backgroundColor: "purple",
   },
 });
 

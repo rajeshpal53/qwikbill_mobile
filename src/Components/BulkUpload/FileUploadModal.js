@@ -2,15 +2,16 @@ import React, { useContext, useState } from "react";
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import CategoryDropDown from "../../UI/DropDown/CategoryDropdown";
-import { createApi, fontSize } from "../../Util/UtilApi";
+import { API_BASE_URL, createApi, fontSize } from "../../Util/UtilApi";
 import Icon from "react-native-vector-icons/Ionicons";
 import { ShopContext } from "../../Store/ShopContext";
-
+import axios from "axios";
+import { useSnackbar } from "../../Store/SnackbarContext";
 const FileUploadModal = ({ visible, setBulkUploadModalVisible }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [SelectedCat, setSelectedCat] = useState("");
   const { selectedShop } = useContext(ShopContext);
-
+  const {showSnackbar}=useSnackbar();
   console.log("SELECTED FILE IS_____________", selectedFile);
   console.log("SelectedCat1578", SelectedCat);
   console.log("DATA OF SHOP IS----------", selectedShop?.id);
@@ -23,6 +24,7 @@ const FileUploadModal = ({ visible, setBulkUploadModalVisible }) => {
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const file = result.assets[0];
 
+          console.log(file,"file of Response")
         if (file.name.endsWith(".xlsx")) {
           setSelectedFile(file);
         } else {
@@ -52,8 +54,9 @@ const FileUploadModal = ({ visible, setBulkUploadModalVisible }) => {
     });
 
     formData.append("productcategoryfk", SelectedCat);
+    formData.append("vendorfk", selectedShop?.id);
 
-    console.log("DTSTSTSTTSTSSSSSS", formData)
+    console.log("FormData ", formData)
 
     formData.forEach((value, key) => {
       // If the value is an object (like a file), log its details
@@ -67,17 +70,22 @@ const FileUploadModal = ({ visible, setBulkUploadModalVisible }) => {
     // for (let pair of formData.entries()) {
     //   console.log(`Datatatata of pair ${pair[0]}, ${pair[1]}`);
     // }
-
     try {
       const url = `products/bulkCreateProducts`;
-      const response = await createApi(url, formData);
-      if (response.error) {
-        alert(response.error);
-      } else {
-        alert("File uploaded successfully!");
+      // const response = await createApi(url, formData);
+      const response= await axios.post(`${API_BASE_URL}${url}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log("RESPONSE OF UPLOAD FILE IS_________", response);
+      if(response){
+        showSnackbar("File uploaded successfully","success")
+        setBulkUploadModalVisible(false);
       }
     } catch (error) {
       alert("Error uploading the file. Please try again.");
+      console.log(error,"erorr of upload file")
     }
   };
 
