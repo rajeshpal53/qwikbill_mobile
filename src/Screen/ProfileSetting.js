@@ -372,7 +372,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
   };
   const logoutHandler = async () => {
     try {
-      const response = createApi(
+      const response =  await createApi(
         "users/logout",
         { mobile: userData?.user?.mobile },
         {
