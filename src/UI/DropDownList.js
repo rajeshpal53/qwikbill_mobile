@@ -24,7 +24,12 @@ function DropDownList({ options }) {
 
   const pickerRef = useRef();
 
-  console.log("Dataof option ", options);
+  // useEffect(() => {
+  //   if (options && options.length > 0 && !selectedShop) {
+  //     updateSelectedShop(options[0]?.shopname); // Set first shop as default
+  //   }
+  // }, [options]);
+
 
 //   useEffect(() => {
 //     // console.log("selectedShop is changed 1 - ", selectedShop)
@@ -35,7 +40,7 @@ function DropDownList({ options }) {
 //     })
 //   }, [selectedShop])
 
-  
+
 
   return (
     <View style={styles.pickerContainer}>
@@ -51,6 +56,7 @@ function DropDownList({ options }) {
           updateSelectedShop(itemValue)
         } }
       >
+
         <Picker.Item
           label="Please select your Shop"
           value=""
@@ -60,7 +66,8 @@ function DropDownList({ options }) {
         {options?.map((item, index) => (
           <Picker.Item
             key={index}
-            value={item}
+            // value={item?.shopname}
+             value={item}
             label={item?.shopname}
             color="#555555"
           />

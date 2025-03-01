@@ -7,7 +7,7 @@ export const ShopContext = createContext();
 
 export const ShopProvider = ({ children }) => {
   const [allShops, setAllShops] = useState([]);
-  const [selectedShop, setSelectedShop] = useState(null);
+  const [selectedShop,  setSelectedShop] = useState(null);
   const {userData} = useContext(UserDataContext);
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export const ShopProvider = ({ children }) => {
         loadAllShops();
     }
 
-    
+
   }, [userData]);
 
   const fetchShopsFromServer = async() => {
