@@ -62,7 +62,7 @@ export const services = [
               size={30} color="#26a0df"
            />,
         key:"8",
-        navigateTo:""   
+        navigateTo:"TransactionScreen"   
     },
     {
       name: "",
