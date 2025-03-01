@@ -32,7 +32,7 @@ const AddProduct = ({ navigation }) => {
   const HandleHsnCode = async (hsncode, setFieldValue) => {
     console.log("Value of HSN code is -----------",hsncode)
     try {
-      const api = `qapi/hsn-codes`;
+      const api = `hsn-codes`;
       const response = await readApi(api);
       if (response) {
         const matchedHsnCode = response.find((item) => item?.code === hsncode);
@@ -73,14 +73,15 @@ const AddProduct = ({ navigation }) => {
             costPrice: values?.PurchasePrice,
             sellPrice: values?.SellingPrice,
             taxRate: values?.TaxRate,
-            hsncodefk: HSNCode?.id,
+            // hsncodefk: HSNCode?.id,
             isStock: values?.IsStockData,
             vendorfk: selectedShop.id,
+            hsncode: parseInt(values.HSNCode),
 
           };
           console.log("Data is 15863", ProductData);
           try {
-            await createApi(`qapi/products/`, ProductData);
+            await createApi(`products/`, ProductData);
             resetForm();
             navigation.goBack();
           } catch (error) {

@@ -27,13 +27,13 @@ export const services = [
       navigateTo:"AddProduct",
       testID:"Add-Product"
     },
-    {
-      name: "Add Customer",
-      icon: <AntDesign name="adduser" size={30} color="#26a0df" />,
-      key: "3",
-      navigateTo:"AddCustomer",
-      testID:"Add-Customer"
-    },
+    // {
+    //   name: "Add Customer",
+    //   icon: <AntDesign name="adduser" size={30} color="#26a0df" />,
+    //   key: "3",
+    //   navigateTo:"AddCustomer",
+    //   testID:"Add-Customer"
+    // },
     {
       name: "Add Shop",
       icon:<MaterialIcons name="add-business" size={30} color="#26a0df" />,
@@ -41,20 +41,13 @@ export const services = [
       navigateTo:"CreateShopScreen",
       testID:"Create-ShopScreen"
     },
-    {
-      name: "Add HSN Code",
-      icon: <FontAwesome5 name="user" size={30} color="#26a0df" />,
-      key: "5",
-      navigateTo:"hsncode",
-      testID:"hsn-code"
-    },
-    {
-      name: "View Vendors",
-      icon: <FontAwesome name="group" size={30} color="#26a0df" />,
-      key: "6",
-      navigateTo:"ViewVendor",
-      testID:"View-Vendor"
-    },
+    // {
+    //   name: "View Vendors",
+    //   icon: <FontAwesome name="group" size={30} color="#26a0df" />,
+    //   key: "6",
+    //   navigateTo:"ViewVendor",
+    //   testID:"View-Vendor"
+    // },
     {
       name: "View Your Shops",
       icon: <FontAwesome5 name="store" size={30} color="#26a0df" />,
@@ -62,13 +55,14 @@ export const services = [
       navigateTo:"ViewShops",
       testID:"View-Shops"
     },
-
     {
-      name: "Favourites",
-      icon: <Ionicons name="heart-outline" size={30} color="#26a0df" />,
-      key: "8",
-      navigateTo:"CreateInvoice",
-      testID:"Create-Invoice"
+        name :"Transactions",
+        icon:<MaterialCommunityIcons
+             name="newspaper-variant"
+              size={30} color="#26a0df"
+           />,
+        key:"8",
+        navigateTo:"TransactionScreen"   
     },
     {
       name: "",
@@ -80,6 +74,8 @@ export const services = [
     //   name: "More",
     //   icon: <Feather name="more-horizontal" size={30} color="#26a0df" />,
     //   key: "6",
+
+
     //   navigateTo:"ViewShops"
     // },
 

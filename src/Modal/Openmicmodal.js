@@ -10,7 +10,6 @@ const OpenmiqModal = ({ modalVisible, setModalVisible, transcript }) => {
     ExpoSpeechRecognitionModule.stop(); // Stop speech recognition
     setModalVisible(false); // Close the modal
   };
-
   return (
     <Modal
       visible={modalVisible}

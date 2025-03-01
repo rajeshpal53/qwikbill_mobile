@@ -65,7 +65,7 @@ export default function HomeScreen({ navigation }) {
   // console.log(verticalScale(700), "    --- verticalscale");
 
   const { userData } = useContext(UserDataContext);
-  const { allShops } = useContext(ShopContext);
+  const {allShops, selectedShop} = useContext(ShopContext);
   const isFocused = useIsFocused();
   const [currentStep, setCurrentStep] = useState(0);
   const [isTourGuideActive, setIsTourGuideActive] = useState(false);
@@ -118,9 +118,9 @@ export default function HomeScreen({ navigation }) {
   //     try {
   //       setIsLoading(true);
   //       const token = userData?.token;
-  //       // const api = `qapi/vendors/${userData?.user?.id}`
+  //       // const api = `vendors/${userData?.user?.id}`
   //       const response = await readApi(
-  //         `qapi/vendors/getVendorsByUserId/${userData?.user?.id}`,
+  //         `vendors/getVendorsByUserId/${userData?.user?.id}`,
   //         {
   //           headers: {
   //             Authorization: `Bearer ${token}`,
@@ -168,7 +168,9 @@ export default function HomeScreen({ navigation }) {
     if (Screen === "CreateShopScreen") {
       navigation.navigate(Screen, { isHome: false });
     }
+
     console.log("hi");
+
     // navigation.navigate("StackNavigator", { screen: Screen });
     navigation.navigate(Screen, { startTour: true });
   };
@@ -261,6 +263,7 @@ export default function HomeScreen({ navigation }) {
                         marginLeft: 30,
                       }}
                     />
+                    
                     <DropDownList options={allShops} />
                   </View>
 
@@ -310,7 +313,7 @@ export default function HomeScreen({ navigation }) {
                     />
                     <Pressable
                       style={styles.allThreeViews}
-                      onPress={() => goToHandler("Invoices")}
+                      onPress={() => goToHandler("ViewInvoices1")}
                     >
                       <Text style={styles.whiteColor}>View Invoices</Text>
                     </Pressable>

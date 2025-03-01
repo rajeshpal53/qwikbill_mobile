@@ -155,7 +155,7 @@ export default function CreateInvoice({ navigation, route }) {
         filteredBy: "recent",
       };
       navigation.navigate("StackNavigator", {
-        screen: "ViewInvoices",
+        screen: "ViewInvoices1",
         params: {
           data: data,
         },
