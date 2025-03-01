@@ -29,14 +29,24 @@ import CreateInvoiveForm from "../Component/Form/CreateInvoiveForm";
 import { fontFamily, fontSize } from "../Util/UtilApi";
 import { ShopContext } from "../Store/ShopContext";
 import CustomToggleButton from "../Component/CustomToggleButton";
+import {
+  TourGuideProvider,
+  TourGuideZone,
+  TourGuideZoneByPosition,
+  useTourGuideController,
+} from "rn-tourguide";
 
-export default function CreateInvoice({ navigation }) {
+export default function CreateInvoice({ navigation, route }) {
+  const startTour = route.params;
   const windowWidth = useWindowDimensions().width;
   const windowHeight = useWindowDimensions().height;
   const { selectedShop, setSelectedShop } = useContext(AuthContext);
   const [invoiceType, setInvoiceType] = useState("provInvoice");
   const pickerRef = useRef();
   const { allShops } = useContext(ShopContext);
+  const [isTourGuideActive, setIsTourGuideActive] = useState(false);
+  const { canStart, start, stop, eventEmitter } = useTourGuideController();
+
   // const { shopDetails } = useContext(ShopDetailContext);
   // const invoiceNumber = 1000 + shopDetails.count + 1;
   // const [buttonsModes, setButtonsModes] = useState({
@@ -74,6 +84,30 @@ export default function CreateInvoice({ navigation }) {
   };
 
   useEffect(() => {
+    if (startTour) {
+      setIsTourGuideActive(true);
+    }
+    return () => {
+      setIsTourGuideActive(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    const checkIfTourSeen = async () => {
+      try {
+        if (isTourGuideActive && canStart) {
+          start();
+        }
+      } catch (error) {
+        console.log("Error checking tour guide status", error);
+      }
+    };
+
+    checkIfTourSeen();
+  }, [canStart]);
+
+
+  useEffect(() => {
     function setInvoiceHandler() {
       if (buttonsModes.firstButtonMode) {
         setInvoiceType("recent");
@@ -89,7 +123,8 @@ export default function CreateInvoice({ navigation }) {
 
   useEffect(() => {
     console.log("selected Value is , ", selectedValue);
-  }, [selectedValue])
+  }, [selectedValue]);
+
   const handleButtonPress = (button) => {
     setButtonsModes((prevstate) => {
       if (button === "first" && !prevstate.firstButtonMode) {
@@ -135,6 +170,22 @@ export default function CreateInvoice({ navigation }) {
           <View style={styles.logoPickerContainer}>
             <Entypo name="shop" size={30} color="#0c3b73" />
             <View style={styles.pickerContainer}>
+              {isTourGuideActive && (
+                <TourGuideZone
+                  zone={1}
+                  text={"See all the Vender"}
+                  shape="rectangle"
+                  keepTooltipPosition={true} // Keeps the tooltip in place
+                  pointerEvents="box-none"
+                  style={{
+                    position: "absolute",
+                    width: "100%",
+                    top: 36,
+                    height: 32,
+                  }}
+                />
+              )}
+
               <DropDownList options={allShops} />
             </View>
           </View>
@@ -147,20 +198,20 @@ export default function CreateInvoice({ navigation }) {
             handleButtonPress={handleButtonPress}
           /> */}
           <CustomToggleButton
-                options={toggleOptions}
-                value={selectedValue}
-                onChange={setSelectedValue}
-              />
+            options={toggleOptions}
+            value={selectedValue}
+            onChange={setSelectedValue}
+          />
 
           <View style={styles.MainContainer}>
             <View style={styles.TextView}>
-              {selectedValue == "provisional" && 
-              <Text style={styles.headerText}>
-                Provisional Invoice No: - 1002
-              </Text>
-}
-              
-              <CreateInvoiveForm selectedButton = {selectedValue} />
+              {selectedValue == "provisional" && (
+                <Text style={styles.headerText}>
+                  Provisional Invoice No: - 1002
+                </Text>
+              )}
+
+              <CreateInvoiveForm selectedButton={selectedValue} />
             </View>
           </View>
         </View>

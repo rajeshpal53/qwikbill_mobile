@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import CategoryDropDown from "../../UI/DropDown/CategoryDropdown";
 import { createApi, fontSize } from "../../Util/UtilApi";
 import Icon from "react-native-vector-icons/Ionicons";
+import { ShopContext } from "../../Store/ShopContext";
 
 const FileUploadModal = ({ visible, setBulkUploadModalVisible }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [SelectedCat, setSelectedCat] = useState("");
+  const { selectedShop } = useContext(ShopContext);
 
+  console.log("SELECTED FILE IS_____________", selectedFile);
   console.log("SelectedCat1578", SelectedCat);
-
+  console.log("DATA OF SHOP IS----------", selectedShop?.id);
   const pickFile = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
@@ -38,14 +41,32 @@ const FileUploadModal = ({ visible, setBulkUploadModalVisible }) => {
     }
 
     const formData = new FormData();
-    formData.append("excelFile", {
+    console.log("DATA OF FORMATE DATA  ", formData);
+
+    formData.append("excelFile",{
       uri: selectedFile.uri,
       name: selectedFile.name,
       type:
         selectedFile.mimeType ||
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-    formData.append("productcategoryfk", 6);
+
+    formData.append("productcategoryfk", SelectedCat);
+
+    console.log("DTSTSTSTTSTSSSSSS", formData)
+
+    formData.forEach((value, key) => {
+      // If the value is an object (like a file), log its details
+      if (value && value.uri) {
+        console.log(`Key: ${key}, File URI: ${value.uri}, Name: ${value.name}, Type: ${value.type}`);
+      } else {
+        console.log(`Key: ${key}, Value: ${value}`);
+      }
+    });
+
+    // for (let pair of formData.entries()) {
+    //   console.log(`Datatatata of pair ${pair[0]}, ${pair[1]}`);
+    // }
 
     try {
       const url = `qapi/products/bulkCreateProducts`;
@@ -219,7 +240,7 @@ const styles = StyleSheet.create({
   closeButtonText: {
     color: "#fff",
     fontWeight: "bold",
-    fontSize: fontSize.labelMedium
+    fontSize: fontSize.labelMedium,
   },
   warningtext: {
     color: "red",
@@ -229,13 +250,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#F59E0B",
     paddingVertical: 13,
     borderRadius: 10,
-    flex: 0.50,
+    flex: 0.5,
     alignItems: "center",
   },
   downloadButtonText: {
     color: "#fff",
     fontWeight: "bold",
-    fontSize: fontSize.labelMedium
+    fontSize: fontSize.labelMedium,
   },
 });
 

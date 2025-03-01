@@ -90,10 +90,9 @@ const ProductDetailsScreen = ({ navigation }) => {
     } catch (error) {
       console.log("Unable to fetch Data", error);
       setHasMore(false);
-      if (page >= 1) {
+      if (page == 1) {
         console.log("Inside a catch if ")
         SetProductData([]);
-        setPage(1)
       }
     } finally {
       setloader(false);
