@@ -69,7 +69,9 @@ import CategoryDropDown from "../UI/DropDown/CategoryDropdown.js";
 import AddRole from "../Screen/StackScreen/Addrole.js";
 import { withCopilot } from "react-native-copilot";
 import ViewShopDetailsScreen from "../Screen/StackScreen/Shops/ViewShopDetailsScreen.js";
-
+import ViewInvoiceScreen1 from "../Screen/Invoices/ViewInvoiceScreen1.js"
+import InvoicePreviewScreen from "../Screen/Invoices/InvoicePreviewScreen.js"
+import TransactionScreen from "../Screen/Transactions/TransactionScreen.js";
 export default function StackNavigator() {
   const Stack = createStackNavigator();
   const [isConnected, setIsConnected] = useState(false);
@@ -95,7 +97,7 @@ export default function StackNavigator() {
       <Stack.Navigator
         initialRouteName={userData ? "Passcode" : "login"}
         screenOptions={{
-          headerTitle: "Create Invoice",
+          // headerTitle: "Create Invoice",
         }}
       >
         <Stack.Screen
@@ -289,6 +291,51 @@ export default function StackNavigator() {
           })}
         />
         <Stack.Screen
+          name="ViewInvoices1"
+          component={ViewInvoiceScreen1}
+          options={({ route }) => ({
+            headerTitle: "View Invoices",
+            headerRight: () => (
+              <RotateBtn
+                isLandscape={isLandscape}
+                setIsLandscape={setIsLandscape}
+              />
+            ),
+            headerLeft: () => (
+              <CustomBackButton
+                isLandscape={isLandscape}
+                setIsLandscape={setIsLandscape}
+              />
+            ),
+          })}
+        />
+        <Stack.Screen
+          name="TransactionScreen"
+          component={TransactionScreen}
+          options={({ route }) => ({
+            headerTitle: "Transactions",
+            headerLeft: () => (
+              <CustomBackButton
+                isLandscape={isLandscape}
+                setIsLandscape={setIsLandscape}
+              />
+            ),
+          })}
+        />
+         <Stack.Screen
+          name="InvoicePreviewScreen"
+          component={InvoicePreviewScreen}
+          options={({ route }) => ({
+            headerTitle: "preview Invoices",
+            headerLeft: () => (
+              <CustomBackButton
+                isLandscape={isLandscape}
+                setIsLandscape={setIsLandscape}
+              />
+            ),
+          })}
+        />
+        <Stack.Screen
           name="ViewShops"
           component={ViewShopsScreen}
           options={{
@@ -342,7 +389,7 @@ export default function StackNavigator() {
             ),
             headerTitleAlign: "center",
             headerStyle: {
-              backgroundColor: "transparent",
+              // backgroundColor: "transparent",
               // backgroundColor: "#fff"
             },
             headerLeft: () => <CustomBackButton />,
@@ -417,8 +464,8 @@ export default function StackNavigator() {
         <Stack.Screen
           name="PDFScreen"
           component={PdfScreen}
-          screenOptions={{
-            headerTitle: "Invoice Preview",
+          options={{
+            headerTitle: "Invoice Preview"
           }}
         />
 

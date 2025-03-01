@@ -77,7 +77,7 @@ const LoginScreen = ({ navigation }) => {
         mobile : values?.mobile,
         password : values?.password,
       }
-      const response = await createApi('qapi/users/loginUser', payload);
+      const response = await createApi('users/loginUser', payload);
      await storeData("loginDetail", response);
       setLoginDetail(response);
       console.log("response of Login is , ", response);

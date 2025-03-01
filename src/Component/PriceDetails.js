@@ -16,12 +16,23 @@ const PriceDetails = ({ setPaymentStatus }) => {
   const [discountValue, setDiscountValue] = useState("");
   const [PartiallyAmount, setPartiallyAmount] = useState("");
   const carts = useSelector((state) => state.cart.Carts);
-  const [selectedStatus, setSelectedStatus] = useState("Select payment");
+  const [selectedStatus, setSelectedStatus] = useState("Paid");
   const paymentStatuses = ["Unpaid", "Paid", "Partially Paid"];
 
+  console.log("totalPrice of redux - ", totalPrice)
   useEffect(() => {
     setPaymentStatus(selectedStatus);
   }, [selectedStatus]);
+
+  useEffect(() => {
+
+    if(selectedStatus !== "Partially Paid"){
+      dispatch(applyPartiallyAmount(0));
+      setPartiallyAmount(0);
+    }
+  }, [selectedStatus])
+
+
 
   const handleDiscountChange = (value) => {
     const parsedDiscount =
@@ -96,6 +107,7 @@ const PriceDetails = ({ setPaymentStatus }) => {
       {/* Total Amount  */}
       <View style={styles.priceView}>
         <Text style={styles.Totallabel}>Total Amount</Text>
+        {}
         <Text style={[styles.value,{ fontSize: fontSize.labelLarge }]}>{`₹ ${afterdiscount.toFixed(2)}`}</Text>
       </View>
     </View>

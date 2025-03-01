@@ -69,7 +69,7 @@ const FileUploadModal = ({ visible, setBulkUploadModalVisible }) => {
     // }
 
     try {
-      const url = `qapi/products/bulkCreateProducts`;
+      const url = `products/bulkCreateProducts`;
       const response = await createApi(url, formData);
       if (response.error) {
         alert(response.error);

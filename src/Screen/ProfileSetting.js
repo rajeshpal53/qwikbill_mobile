@@ -25,7 +25,7 @@
 //   const logoutHandler = async() => {
 //     // navigation.navigate("login")
 //         try{
-//       const response= await createApi("qapi/users/logout",{mobile:userData.user.mobile},{
+//       const response= await createApi("users/logout",{mobile:userData.user.mobile},{
 //         "Content-Type": "application/json",
 //         Authorization: `Bearer ${userData.token}`,
 //       } )
@@ -373,7 +373,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
   const logoutHandler = async () => {
     try {
       const response = createApi(
-        "qapi/users/logout",
+        "users/logout",
         { mobile: userData?.user?.mobile },
         {
           "Content-Type": "application/json",
