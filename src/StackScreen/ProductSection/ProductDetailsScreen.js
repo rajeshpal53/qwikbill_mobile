@@ -31,6 +31,7 @@ import UserDataContext from "../../Store/UserDataContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import OpenmiqModal from "../../Modal/Openmicmodal";
 import CustomeFilterDropDown from "../../Component/CustomFilterDropDown";
+import { useFocusEffect } from "@react-navigation/native";
 
 const ProductDetailsScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -51,81 +52,62 @@ const ProductDetailsScreen = ({ navigation }) => {
   const { selectedShop } = useContext(ShopContext);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
-  const PAGE_SIZE = 5;
-
-  //Filter Data state
-  const [filtermodal, setFilterModal] = useState(false);
+  const PAGE_SIZE = 10;
   const [filterOptionSelect, SetfilterOptionSelect] = useState("");
-  const [filterData, setFilterData] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
 
-  // const FilterOption = [
-  //   "Sort By Name",
-  //   "Low to High Price",
-  //   "High to Low Price",
-  // ];
+  useFocusEffect(
+    useCallback(() => {
+      setPage(1);
+      setHasMore(true);
+      SetfilterOptionSelect("")
+      // getproductdata()
+    }, [])
+  );
+
   useEffect(() => {
-    getproductdata(page);
-  }, [page, selectedShop,isfocused]);
+    setPage(1);
+    let sortedData = [];
+    if (filterOptionSelect === "Sort By Name") {
+      sortedData = [...Productdata].sort((a, b) => {
+        return a?.name?.toLowerCase() > b?.name?.toLowerCase() ? 1 : -1;
+      });
+    } else if (filterOptionSelect === "Low to High Price") {
+      sortedData = [...Productdata].sort((a, b) => a?.costPrice - b?.costPrice);
+    } else if (filterOptionSelect === "High to Low Price") {
+      sortedData = [...Productdata].sort((a, b) => b?.costPrice - a?.costPrice);
+    } else {
+      console.log("By default working");
+      sortedData = [...Productdata];
+    }
+    SetProductData(sortedData);
+  }, [filterOptionSelect]);
 
-  console.log("SHOP ID IS ", selectedShop?.id);
-  console.log("DATA OF PRODUCT ---------", Productdata);
-  console.log("PAGE NUMBER ------", page);
-
-  const getproductdata = async (pageNum) => {
-    const api = `products/getProductByVendorfk/${selectedShop?.id}?page=${pageNum}&limit=${PAGE_SIZE}`;
-
+  const getproductdata = async () => {
+    const api = `products/getProductByVendorfk/${selectedShop?.id}?page=${page}&limit=${PAGE_SIZE}`;
     try {
       setloader(true);
-      const response = await readApi(api, {
-        Authorization: `Bearer ${userData?.token}`,
-      });
+      const response = await readApi(api);
+      if (page == 1) {
+        SetProductData(response?.products);
+        setTotalPages(response?.totalPages || 1);
+      }
       if (response?.products?.length > 0) {
         SetProductData((prevData) => [...prevData, ...response?.products]);
       } else {
-        console.log("Inside a else condition ")
         setHasMore(false);
       }
-      if(page==1){
-        SetProductData(response?.products);
-      }
-
     } catch (error) {
-      console.log("Unable to fetch Data", error);
-      setHasMore(false);
-      SetProductData([]);
-      if (page == 1) {
-        console.log("Inside a catch if ")
+      if (page === 1) {
         SetProductData([]);
       }
     } finally {
       setloader(false);
     }
   };
-
   useEffect(() => {
-    setloader(true);
-    const sortData = () => {
-      let sortedData = [];
-
-      if (filterOptionSelect === "Sort By Name") {
-        sortedData = [...Productdata].sort((a, b) => {
-          return a?.name?.toLowerCase() > b?.name?.toLowerCase() ? 1 : -1;
-        });
-      } else if (filterOptionSelect === "Low to High Price") {
-        sortedData = [...Productdata].sort(
-          (a, b) => a?.costPrice - b?.costPrice
-        );
-      } else if (filterOptionSelect === "High to Low Price") {
-        sortedData = [...Productdata].sort(
-          (a, b) => b?.costPrice - a?.costPrice
-        );
-      }
-      setFilterData(sortedData);
-      setloader(false);
-    };
-
-    sortData();
-  }, [filterOptionSelect]);
+    getproductdata();
+  }, [page, isfocused, bulkUploadModalVisible]);
 
   // const fetchSearchedData = async () => {
   //   try {
@@ -156,8 +138,7 @@ const ProductDetailsScreen = ({ navigation }) => {
 
   //  // Load more data when reaching the end
   const loadMoreData = () => {
-
-    if (searchedData?.length <= 0 && !loader && hasMore) {
+    if (!loader && hasMore && page < totalPages) {
       setPage((prevPage) => prevPage + 1);
     }
   };
@@ -250,7 +231,7 @@ const ProductDetailsScreen = ({ navigation }) => {
       </View>
 
       <FlatList
-        data={filterData?.length > 0 ? filterData : Productdata}
+        data={Productdata}
         renderItem={({ item, index }) => (
           <ProductDetailsCard
             item={item}
@@ -273,7 +254,7 @@ const ProductDetailsScreen = ({ navigation }) => {
           </View>
         )}
         onEndReached={loadMoreData}
-        onEndReachedThreshold={0.5}
+        onEndReachedThreshold={0.8}
         ListFooterComponent={Loader}
       />
 
@@ -312,9 +293,8 @@ const ProductDetailsScreen = ({ navigation }) => {
       {/* Bulk Upload Modal */}
       {bulkUploadModalVisible && (
         <FileUploadModal
-        visible={bulkUploadModalVisible}
+          visible={bulkUploadModalVisible}
           setBulkUploadModalVisible={setBulkUploadModalVisible}
-          
         />
       )}
 
@@ -367,19 +347,19 @@ const styles = StyleSheet.create({
 
   suggestionButton: {
     borderWidth: 1,
-    borderColor:"white",
+    borderColor: "white",
     paddingVertical: 5,
     marginHorizontal: 10,
     paddingHorizontal: 15,
     borderRadius: 8,
     backgroundColor: "gray",
-    color:"#fff",
-    elevation:0.5
+    color: "#fff",
+    elevation: 0.5,
   },
   suggestbtnText: {
     fontSize: fontSize.labelMedium,
     fontFamily: "Poppins-Medium",
-       color:"#fff"
+    color: "#fff",
     // backgroundColor:"#F5F5F5"
   },
 
