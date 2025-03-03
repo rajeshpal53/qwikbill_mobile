@@ -7,14 +7,17 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { ShopContext } from "../../Store/ShopContext";
 import axios from "axios";
 import { useSnackbar } from "../../Store/SnackbarContext";
-const FileUploadModal = ({ visible, setBulkUploadModalVisible }) => {
+const FileUploadModal = ({ visible, setBulkUploadModalVisible, navigation }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [SelectedCat, setSelectedCat] = useState("");
   const { selectedShop } = useContext(ShopContext);
   const {showSnackbar}=useSnackbar();
+
+
   console.log("SELECTED FILE IS_____________", selectedFile);
   console.log("SelectedCat1578", SelectedCat);
   console.log("DATA OF SHOP IS----------", selectedShop?.id);
+
   const pickFile = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
@@ -58,14 +61,14 @@ const FileUploadModal = ({ visible, setBulkUploadModalVisible }) => {
 
     console.log("FormData ", formData)
 
-    formData.forEach((value, key) => {
-      // If the value is an object (like a file), log its details
-      if (value && value.uri) {
-        console.log(`Key: ${key}, File URI: ${value.uri}, Name: ${value.name}, Type: ${value.type}`);
-      } else {
-        console.log(`Key: ${key}, Value: ${value}`);
-      }
-    });
+    // formData.forEach((value, key) => {
+    //   // If the value is an object (like a file), log its details
+    //   if (value && value.uri) {
+    //     console.log(`Key: ${key}, File URI: ${value.uri}, Name: ${value.name}, Type: ${value.type}`);
+    //   } else {
+    //     console.log(`Key: ${key}, Value: ${value}`);
+    //   }
+    // });
 
     // for (let pair of formData.entries()) {
     //   console.log(`Datatatata of pair ${pair[0]}, ${pair[1]}`);
@@ -80,7 +83,11 @@ const FileUploadModal = ({ visible, setBulkUploadModalVisible }) => {
       });
       console.log("RESPONSE OF UPLOAD FILE IS_________", response);
       if(response){
+        console.log("BULK DATA IS ", response)
+
+
         showSnackbar("File uploaded successfully","success")
+
         setBulkUploadModalVisible(false);
       }
     } catch (error) {
