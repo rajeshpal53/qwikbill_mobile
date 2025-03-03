@@ -86,11 +86,14 @@ export default function PasscodeScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
+    console.log("login details are ",loginDetail)
     async function loginDetailHandler() {
       try {
         const newValue = (await getData("loginDetail")) || "";
 
         setLoginDetail1(newValue);
+        console.log("login detail 1 isss",loginDetail1)
+
       } catch {
         console.log("failed get data ");
       } finally {
@@ -265,7 +268,7 @@ export default function PasscodeScreen({ navigation }) {
                     <Text
                       variant="titleMedium"
                       style={{ color: "#392de0" }}
-                    >{`${loginDetail1.name} ${loginDetail1.surname}`}</Text>
+                    >{`${loginDetail1?.user?.name} ${loginDetail1?.user?.surname || ""}`}</Text>
                   </View>
 
                   <View style={{ gap: 5 }}>
