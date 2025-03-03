@@ -23,7 +23,8 @@
   "transactionStatus": "complete",
   "updatedAt": "2025-02-26T05:16:46.000Z",
   "user": {
-    "aadharCard": "478596532458",
+    "aadharCard"
+    : "478596532458",
     "aadharCardBackurl": "assets/aadharcards/Faizan_-478596532458/aadharback-Faizan_-478596532458.jpeg",
     "aadharCardFronturl": "assets/aadharcards/Faizan_-478596532458/aadharfront-Faizan_-478596532458.jpeg",
     "address": "Indore",
