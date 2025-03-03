@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   searchbar: {
     height: 45, // Increase height to make sure the placeholder can be vertically centered
     borderRadius: 10,
-    backgroundColor: "#EDEDED",
+    backgroundColor: "#ddd",
     justifyContent: "center", // Vertically center the content
     paddingVertical: 0, // Remove extra padding for centering
     marginVertical: 2,
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     textAlignVertical: "top", // Center input text vertically
-    paddingVertical: 7, // Remove additional vertical padding
+    paddingVertical: 10, // Remove additional vertical padding
     // borderWidth:2,
     // height:20
     fontWeight: "medium",

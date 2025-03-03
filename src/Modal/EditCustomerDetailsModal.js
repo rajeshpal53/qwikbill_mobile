@@ -27,16 +27,29 @@ const EditCustomerDetailsModal = ({
       .required("Enter the Address"),
   });
 
-  const updateCustomerDetails = (id, updatedValues) => {
-    console.log("Fucntion value", updatedValues);
-    const updatedCustomerDetails = updatedValues.map((customer) =>
-      customer.id === id ? { ...customer, ...updatedValues } : customer
-    );
+  // const updateCustomerDetails = (id, updatedValues) => {
+  //   console.log("Fucntion value", updatedValues);
+  //   const updatedCustomerDetails = updatedValues.map((customer) =>
+  //     customer.id === id ? { ...customer, ...updatedValues } : customer
+  //   );
 
-    // After updating, you can either update the state or return the updated array
-    console.log(updatedCustomerDetails); // Logging for testing
-    return updatedCustomerDetails; // Return the updated array (useful for React state)
+  //   // After updating, you can either update the state or return the updated array
+  //   console.log(updatedCustomerDetails); // Logging for testing
+  //   return updatedCustomerDetails; // Return the updated array (useful for React state)
+  // };
+
+     
+  const updateCustomerDetails = (id, updatedValues) => {
+    console.log("Function value", updatedValues);
+  
+    // Assuming you are updating a single object, return the updated object
+    const updatedCustomer = { id, ...updatedValues };
+  
+    console.log("Updated Customer Details:", updatedCustomer);
+    return updatedCustomer;
   };
+  
+
   const hideModal = () => {
     seteditmodal((prev) => !prev);
   };
@@ -53,10 +66,10 @@ const EditCustomerDetailsModal = ({
         </View>
         <Formik
           initialValues={{
-            name: SelectedEditItem?.Name || "",
+            name: SelectedEditItem?.name || "",
             email: SelectedEditItem?.email || "",
-            number: SelectedEditItem?.Number || "",
-            address: SelectedEditItem?.Address || "",
+            number: SelectedEditItem?.mobile || "",
+            address: SelectedEditItem?.address || "",
           }}
           validationSchema={validationSchema}
           onSubmit={(values) => {
