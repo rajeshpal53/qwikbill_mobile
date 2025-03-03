@@ -72,6 +72,7 @@ import ViewShopDetailsScreen from "../Screen/StackScreen/Shops/ViewShopDetailsSc
 import ViewInvoiceScreen1 from "../Screen/Invoices/ViewInvoiceScreen1.js"
 import InvoicePreviewScreen from "../Screen/Invoices/InvoicePreviewScreen.js"
 import TransactionScreen from "../Screen/Transactions/TransactionScreen.js";
+import TransactionDetailScreen from "../Screen/Transactions/TransactionDetailScreen.js";
 export default function StackNavigator() {
   const Stack = createStackNavigator();
   const [isConnected, setIsConnected] = useState(false);
@@ -314,6 +315,21 @@ export default function StackNavigator() {
           component={TransactionScreen}
           options={({ route }) => ({
             headerTitle: "Transactions",
+            headerLeft: () => (
+              <CustomBackButton
+                isLandscape={isLandscape}
+                setIsLandscape={setIsLandscape}
+              />
+            ),
+          })}
+        />
+        <Stack.Screen
+          name="TransactionDetailScreen"
+          component={TransactionDetailScreen
+
+          }
+          options={({ route }) => ({
+            headerTitle: "Transaction Detail",
             headerLeft: () => (
               <CustomBackButton
                 isLandscape={isLandscape}
