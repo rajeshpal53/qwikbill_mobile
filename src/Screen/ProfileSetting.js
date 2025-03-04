@@ -273,6 +273,8 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
                 value: "Assign New Role",
               },
               { icon: "logout", label: "Logout", value: "Logout" },
+              { icon: "logout", label: "Logout1", value: "Logout1" },
+
             ]
           : []),
       ]);
@@ -368,6 +370,8 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
       navigation.navigate("AdminSection");
     } else if (value === "Assign New Role") {
       navigation.navigate("AddroleScreen");
+    }else if (value == "Logout1") {
+      navigation.navigate("login")
     }
   };
   const logoutHandler = async () => {
@@ -382,7 +386,6 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
       );
       console.log("response", response);
       showSnackbar("Logged out successfully", "success");
-      await auth().signOut();
       await clearUserData();
       // setCreateuser(null);
       setVisible(false);
@@ -393,6 +396,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
           routes: [{ name: "login" }],
         })
       );
+      await auth().signOut();
     } catch (error) {
       showSnackbar("Error logging out", "error");
       console.log("error logging out - ", error);

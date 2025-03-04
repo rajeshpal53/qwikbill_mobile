@@ -225,7 +225,6 @@ export const useDownloadInvoice = () => {
 
   const shareInvoicePressHandler = async (api, orderId) => {
     console.log("shareInvoicePressHandler");
-
     try {
       const result = await FileSystem.downloadAsync(
         api,
