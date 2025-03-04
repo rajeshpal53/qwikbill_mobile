@@ -60,7 +60,7 @@ const ProductDetailsScreen = ({ navigation }) => {
     useCallback(() => {
       setPage(1);
       setHasMore(true);
-      SetfilterOptionSelect("")
+      SetfilterOptionSelect("");
       // getproductdata()
     }, [])
   );
@@ -182,20 +182,21 @@ const ProductDetailsScreen = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      <View
-        style={{ flexDirection: "row", alignItems: "center", marginTop: 5 }}
-      >
-        <View style={{ flex: 1 }}>
-          <Searchbarwithmic
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            setsearchmodal={setsearchmodal}
-            setTranscript={setTranscript}
-            placeholderText="Search User by name ..."
-            //    refuser={searchBarRef}
-          />
-        </View>
-        {/* <View View style={{ marginRight: 5 }}>
+      <ScrollView>
+        <View
+          style={{ flexDirection: "row", alignItems: "center", marginTop: 5 }}
+        >
+          <View style={{ flex: 1 }}>
+            <Searchbarwithmic
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              setsearchmodal={setsearchmodal}
+              setTranscript={setTranscript}
+              placeholderText="Search User by name ..."
+              //    refuser={searchBarRef}
+            />
+          </View>
+          {/* <View View style={{ marginRight: 5 }}>
           <TouchableOpacity onPress={handleFiltermodal}>
             <MaterialCommunityIcons
               name="menu"
@@ -205,58 +206,59 @@ const ProductDetailsScreen = ({ navigation }) => {
             />
           </TouchableOpacity>
         </View> */}
-      </View>
+        </View>
 
-      <View style={styles.allbuttonView}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {[
-            "Sort By Name",
-            "Low to High Price",
-            "High to Low Price",
-            "Clear All",
-          ].map((suggestbtn, key) => (
-            <TouchableOpacity
-              key={key}
-              style={[
-                styles.suggestionButton,
-                filterOptionSelect === suggestbtn &&
-                  styles.selectedSuggestionButton,
-              ]}
-              onPress={() => SetfilterOptionSelect(suggestbtn)}
-            >
-              <Text style={styles.suggestbtnText}>{suggestbtn}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
+        <View style={styles.allbuttonView}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {[
+              "Sort By Name",
+              "Low to High Price",
+              "High to Low Price",
+              "Clear All",
+            ].map((suggestbtn, key) => (
+              <TouchableOpacity
+                key={key}
+                style={[
+                  styles.suggestionButton,
+                  filterOptionSelect === suggestbtn &&
+                    styles.selectedSuggestionButton,
+                ]}
+                onPress={() => SetfilterOptionSelect(suggestbtn)}
+              >
+                <Text style={styles.suggestbtnText}>{suggestbtn}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
 
-      <FlatList
-        data={Productdata}
-        renderItem={({ item, index }) => (
-          <ProductDetailsCard
-            item={item}
-            index={index}
-            navigation={navigation}
-            onEdit={() => openEditModal(item)}
-            setloader
-          />
-        )}
-        // keyExtractor={(item, index) =>
-        //   item.id ? item.id.toString() : index.toString()
-        // }
-        keyExtractor={(item, index) => index} // Use unique ID
-        contentContainerStyle={styles.flatListContainer}
-        ListEmptyComponent={() => (
-          <View style={{ alignItems: "center", marginTop: 20 }}>
-            <Text style={{ fontSize: 16, color: "gray" }}>
-              No products found.
-            </Text>
-          </View>
-        )}
-        onEndReached={loadMoreData}
-        onEndReachedThreshold={0.8}
-        ListFooterComponent={Loader}
-      />
+        <FlatList
+          data={Productdata}
+          renderItem={({ item, index }) => (
+            <ProductDetailsCard
+              item={item}
+              index={index}
+              navigation={navigation}
+              onEdit={() => openEditModal(item)}
+              setloader
+            />
+          )}
+          // keyExtractor={(item, index) =>
+          //   item.id ? item.id.toString() : index.toString()
+          // }
+          keyExtractor={(item, index) => index} // Use unique ID
+          contentContainerStyle={styles.flatListContainer}
+          ListEmptyComponent={() => (
+            <View style={{ alignItems: "center", marginTop: 20 }}>
+              <Text style={{ fontSize: 16, color: "gray" }}>
+                No products found.
+              </Text>
+            </View>
+          )}
+          onEndReached={loadMoreData}
+          onEndReachedThreshold={0.8}
+          ListFooterComponent={Loader}
+        />
+      </ScrollView>
 
       <FAB.Group
         open={open}
