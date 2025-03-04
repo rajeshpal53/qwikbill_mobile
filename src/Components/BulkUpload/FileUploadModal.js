@@ -7,16 +7,14 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { ShopContext } from "../../Store/ShopContext";
 import axios from "axios";
 import { useSnackbar } from "../../Store/SnackbarContext";
+import { useDownloadInvoice } from "../../Util/DownloadInvoiceHandler";
 const FileUploadModal = ({ visible, setBulkUploadModalVisible, navigation }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [SelectedCat, setSelectedCat] = useState("");
   const { selectedShop } = useContext(ShopContext);
   const {showSnackbar}=useSnackbar();
 
-
-  console.log("SELECTED FILE IS_____________", selectedFile);
-  console.log("SelectedCat1578", SelectedCat);
-  console.log("DATA OF SHOP IS----------", selectedShop?.id);
+  const{downloadInvoicePressHandler, shareInvoicePressHandler} = useDownloadInvoice()
 
   const pickFile = async () => {
     try {
@@ -100,8 +98,14 @@ const FileUploadModal = ({ visible, setBulkUploadModalVisible, navigation }) => 
     setBulkUploadModalVisible(false);
   };
 
-  const DownloadHandler = () => {
-    setBulkUploadModalVisible(false);
+  const DownloadHandler = async () => {
+    try{
+      setBulkUploadModalVisible(false);
+      await downloadInvoicePressHandler(`${API_BASE_URL}`, "Sample Data")
+    }catch(error){
+      console.log("Error is ", error )
+
+    }
   };
 
   return (
