@@ -15,48 +15,57 @@ const AllInvoiceScreen = () => {
   const [transcript, setTranscript] = useState(""); // State for transcript
   const [InvoiceData, setInvoiceData] = useState([]);
   const [loader, setloader] = useState(false);
+  const [Hasmore, SetHasmore] = useState(true);
+  const [page, setPage] = useState(1);
+  const PAZE_SIZE = 10;
+  const [totalpage, SetTotalpage] = useState(1);
 
   useEffect(() => {
     GetallInvoiceData();
-  }, []);
+  }, [page]);
 
   const GetallInvoiceData = async () => {
-    let api = `invoice/invoices`;
+    let api = `invoice/invoices?page=${page}&limit=${PAZE_SIZE}`;
     try {
       setloader(true);
       const response = await readApi(api);
-      console.log("INVOICE DATA IS ", response);
-      if (response) {
-        setInvoiceData(response);
+      if (page === 1) {
+        setInvoiceData(response?.invoices);
+        SetTotalpage(response?.totalPages || 1);
+      }
+      if (response?.invoices?.length > 0) {
+        setInvoiceData((pre) => [...pre, ...response?.invoices]);
+      } else {
+        SetHasmore(false);
       }
     } catch (error) {
       console.log("Unable to fetch", error);
+      if (page === 1) {
+        setInvoiceData([]);
+      }
       setloader(false);
     } finally {
       setloader(false);
     }
   };
 
-  if (loader) {
+  const loadMoreData = () => {
+    if (!loader && Hasmore && page < totalpage) {
+      setPage((pre) => pre + 1);
+    }
+  };
+
+  const Loader = () => {
+    if (!loader) return null;
     return (
       <View style={{ flex: 1, justifyContent: "center" }}>
-        <ActivityIndicator size={"large"}></ActivityIndicator>
+        <ActivityIndicator size={"large"} />
       </View>
     );
-  }
+  };
 
   return (
     <View style={styles.container}>
-      {/* <Searchbarwithmic
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        setsearchmodal={setsearchmodal}
-        setTranscript={setTranscript}
-        placeholderText="Search User by name ..."
-        refuser={searchBarRef}
-        // searchData={fetchSearchedData}
-      /> */}
-
       <FlatList
         ListHeaderComponent={
           <View style={styles.container}>
@@ -76,19 +85,21 @@ const AllInvoiceScreen = () => {
         keyExtractor={(item, index) => `${item.id}-${index}`}
         // onScrollBeginDrag={handleSearchBar}
         showsVerticalScrollIndicator={false}
-        //   onEndReached={loadMoreData}
-        //   onEndReachedThreshold={0.5}
-        //   ListFooterComponent={Loader}
-        ListEmptyComponent={
-          <View
-            style={{
-              alignItems: "center",
-              justifyContent: "center",
-              marginTop: "40%",
-            }}
-          >
-            <NoDataFound textString={"No Users Found"} />
-          </View>
+        onEndReached={loadMoreData}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={Loader}
+        ListEmptyComponent={() =>
+          !loader && InvoiceData.length ? (
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: "40%",
+              }}
+            >
+              <NoDataFound textString={"No Users Found"} />
+            </View>
+          ) : null
         }
       />
       {searchmodal && (

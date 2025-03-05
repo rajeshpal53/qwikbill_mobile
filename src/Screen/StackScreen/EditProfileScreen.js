@@ -160,7 +160,7 @@ export default function EditProfileScreen({ navigation }) {
           (Data?.aadharCardFronturl &&
             formatUrl(Data?.aadharCardBackurl, "aadharCardBackurl")) ||
           null,
-        
+
       });
     };
 
@@ -175,7 +175,7 @@ export default function EditProfileScreen({ navigation }) {
   }, []);
 
   console.log("userData is m ", userData);
- 
+
 
   useEffect(() => {
     console.log("postData is , ", postData);
@@ -185,7 +185,7 @@ export default function EditProfileScreen({ navigation }) {
   const handlePress = () => setDropdownVisible(!dropdownVisible);
 
   const editHandler = async () => {
-
+    let token = userData?.token
     try {
       setModalVisible(false);
       setIsLoading(true);
@@ -196,10 +196,10 @@ export default function EditProfileScreen({ navigation }) {
         postData,
         {
           headers:{
-            Authorization: `Bearer ${userData.token}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
-          
+
         }
       );
 
@@ -210,18 +210,18 @@ export default function EditProfileScreen({ navigation }) {
           token: userData.token,
           user: response?.data,
         };
-  
-  
+
+
         saveUserData(saveUser);
       }
-     
+
       showSnackbar(t("Your profile has been updated Successfully"), "success");
 
       if(routeData && onGoBack){
         console.log("route set dara, ", response?.data)
         onGoBack(response?.data);
       }
-      
+
       navigation.goBack();
       // setModalVisible(false);
     } catch (err) {
@@ -288,7 +288,7 @@ export default function EditProfileScreen({ navigation }) {
   console.log("formatted date is for display is , ", `${day} ${month} ${year}`)
   return `${day} ${month} ${year}`; // Concatenate in "DD Month YYYY" format
   };
-  
+
 
   const setLocationFields = async (data, setFieldValue) => {
     if (data?.latitude && data.longitude) {
@@ -336,7 +336,7 @@ export default function EditProfileScreen({ navigation }) {
         //       formatUrl(userData?.user?.profilePicurl, "profilePicurl")) ||
         //     null,
 
-        
+
         // }}
         validationSchema={validationSchema}
         onSubmit={(values) => {
@@ -364,9 +364,9 @@ export default function EditProfileScreen({ navigation }) {
 
           profileFormData.append("gender", values?.gender);
 
-    
+
             profileFormData.append("email", values?.email || "");
-    
+
 
           profileFormData.append("address", values?.address);
 
@@ -429,7 +429,7 @@ export default function EditProfileScreen({ navigation }) {
                           </Text>
                         ) : null}
                     </View>
-                    
+
                     <View>
                       <TextInput
                         label="Name"
@@ -628,7 +628,7 @@ export default function EditProfileScreen({ navigation }) {
                     </Button>
                   </View>
 
-                  
+
                 </View>
               </ScrollView>
             </View>

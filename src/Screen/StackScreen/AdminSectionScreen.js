@@ -74,7 +74,6 @@ const AdminSectionScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    console.log("userData p is , ", userData);
     if (userData) {
       if (userData?.user?.profilePicurl) {
         setImageUrl(`${NORM_URL}/${userData?.user?.profilePicurl}`);
