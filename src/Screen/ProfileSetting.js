@@ -184,7 +184,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSnackbar } from "../Store/SnackbarContext";
 import ChangeLanguageModal from "../Modal/ChangeLanguageModal";
 
-
 const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
   const [isFullImageModalVisible, setIsFullImageModalVisible] = useState(false);
   const [selectedImageUri, setSelectedImageUri] = useState(null);
@@ -198,6 +197,8 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
   const { userData, clearUserData } = useContext(UserDataContext);
   // const { setCreateuser } = useContext(WalletContext);
 
+
+  console.log("DATA OF USER IS SSSSSSSSSSSS",userData )
   const { t, i18n } = useTranslation();
   const isFocused = useIsFocused();
   const AdminOption = [
@@ -210,20 +211,21 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
       value: "AdminSection",
     },
   ];
+
   // const [sameMenuItems, setSameMeuItems] = useState()
   const [menuItems, setMenuItems] = useState();
   useEffect(() => {
     if (myOrdersTabShow) {
       setMenuItems([
-        ...(userData
-          ? [
-              {
-                icon: "language",
-                label: "Address",
-                value: "Address",
-              },
-            ]
-          : []),
+        // ...(userData
+        //   ? [
+        //       {
+        //         icon: "language",
+        //         label: "Address",
+        //         value: "Address",
+        //       },
+        //     ]
+        //   : []),
         {
           icon: "language",
           label: "Change Language",
@@ -234,7 +236,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
           label: "Edit  a Vendor ",
           value: "Edit a Vendor",
         },
-        ...(userData?.user?.roles === "admin" ? AdminOption : []),
+        ...(userData?.user?.rolesfk === null ? AdminOption : []),
 
         { icon: "policy", label: "Policies", value: "Policies" },
         ...(userData
@@ -243,15 +245,15 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
       ]);
     } else {
       setMenuItems([
-        ...(userData
-          ? [
-              {
-                icon: "language",
-                label: "Address",
-                value: "Address",
-              },
-            ]
-          : []),
+        // ...(userData
+        //   ? [
+        //       {
+        //         icon: "language",
+        //         label: "Address",
+        //         value: "Address",
+        //       },
+        //     ]
+        //   : []),
         {
           icon: "language",
           label: "Change Language",
@@ -262,7 +264,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
           label: "Become a Vendor",
           value: "Become a Vendor",
         },
-        ...(userData?.user?.roles === "admin" ? AdminOption : []),
+        ...(userData?.user?.rolesfk === null ? AdminOption : []),
 
         { icon: "policy", label: "Policies", value: "Policies" },
         ...(userData
@@ -274,7 +276,6 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
               },
               { icon: "logout", label: "Logout", value: "Logout" },
               { icon: "logout", label: "Logout1", value: "Logout1" },
-
             ]
           : []),
       ]);
@@ -342,10 +343,12 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
 
   const handlePress = (value) => {
     console.log("Data of value ", value);
-    if (value == "Address") {
-      navigation.navigate("Address");
-      // navigation.navigate("TestingScreen");
-    } else if (value == "Policies") {
+    // if (value == "Address") {
+    //   navigation.navigate("Address");
+    //   // navigation.navigate("TestingScreen");
+    // }
+
+     if (value == "Policies") {
       navigation.navigate("Policies", {
         webUri: `${NORM_URL}/privacy-policy?view=mobile`,
         headerTitle: "Privacy and Policies",
@@ -370,13 +373,13 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
       navigation.navigate("AdminSection");
     } else if (value === "Assign New Role") {
       navigation.navigate("AddroleScreen");
-    }else if (value == "Logout1") {
-      navigation.navigate("login")
+    } else if (value == "Logout1") {
+      navigation.navigate("login");
     }
   };
   const logoutHandler = async () => {
     try {
-      const response =  await createApi(
+      const response = await createApi(
         "users/logout",
         { mobile: userData?.user?.mobile },
         {

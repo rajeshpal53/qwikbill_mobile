@@ -33,7 +33,7 @@ const apiRequest = async (method, url, data = null, headers) => {
           method,
           withCredentials:true
         })
-        return response 
+        return response
   }
   //CREATE
   export const createApi = async (endpoint, data, headers) => {
@@ -67,6 +67,20 @@ export const updateApi = async (endpoint, data, headers) => {
     labelXXSmall:8,
   };
 
+  
+  export const images = [
+    `${NORM_URL}assets/serviceproviders/firstProvider.jpg`,
+    `${NORM_URL}assets/serviceproviders/secondProvider.jpg `,
+    `${NORM_URL}assets/serviceproviders/thirdProvider.jpg`,
+    `${NORM_URL}assets/serviceproviders/fourthProvider.jpg`,
+    `${NORM_URL}assets/serviceproviders/fifthProvider.jpg`,
+    `${NORM_URL}assets/serviceproviders/sixthProvider.jpg`,
+  ];
+  export const getRandomImage = () => {
+    const randomIndex = Math.floor(Math.random() * images.length);
+    return images[randomIndex];
+  };
+
 
   export const fontFamily = {
     regular: "Poppins-Regular",
@@ -79,7 +93,7 @@ export const updateApi = async (endpoint, data, headers) => {
     unpaid:1,
     paid:2,
     partially_paid:3,
-   
+
   }
   export const statusName= {
     1:"unpaid",

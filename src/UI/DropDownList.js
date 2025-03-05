@@ -15,7 +15,7 @@ import { ShopContext } from "../Store/ShopContext";
 
 function DropDownList({ options }) {
   // const { addShopDetails, shopDetails } = useContext(ShopDetailContext);
-  const {selectedShop, updateSelectedShop} = useContext(ShopContext);
+  const { selectedShop, updateSelectedShop } = useContext(ShopContext);
   const [isLoading, setIsLoading] = useState(false);
   // const [options, setOptions] = useState([]);
 
@@ -30,17 +30,14 @@ function DropDownList({ options }) {
   //   }
   // }, [options]);
 
-
-//   useEffect(() => {
-//     // console.log("selectedShop is changed 1 - ", selectedShop)
-//     options?.map((item) => {
-//       if(item?.id == selectedShop?.id){
-// console.log("same shop is , ", item)
-//       }
-//     })
-//   }, [selectedShop])
-
-
+  //   useEffect(() => {
+  //     // console.log("selectedShop is changed 1 - ", selectedShop)
+  //     options?.map((item) => {
+  //       if(item?.id == selectedShop?.id){
+  // console.log("same shop is , ", item)
+  //       }
+  //     })
+  //   }, [selectedShop])
 
   return (
     <View style={styles.pickerContainer}>
@@ -51,23 +48,25 @@ function DropDownList({ options }) {
         style={{ width: "95%" }}
         ref={pickerRef}
         selectedValue={selectedShop}
-        onValueChange={(itemValue) =>{
-          console.log("itemVaue is , ", itemValue)
-          updateSelectedShop(itemValue)
-        } }
+        onValueChange={(itemValue) => {
+          console.log("itemVaue is , ", itemValue);
+          updateSelectedShop(itemValue);
+        }}
       >
+        {!selectedShop && (
+          <Picker.Item
+            label="Please select your Shop"
+            value=""
+            color="#888888"
+            enabled={false}
+          />
+        )}
 
-        <Picker.Item
-          label="Please select your Shop"
-          value=""
-          color="#888888"
-          enabled={false}
-        />
         {options?.map((item, index) => (
           <Picker.Item
             key={index}
             // value={item?.shopname}
-             value={item}
+            value={item}
             label={item?.shopname}
             color="#555555"
           />
