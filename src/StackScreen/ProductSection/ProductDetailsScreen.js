@@ -245,7 +245,10 @@ const ProductDetailsScreen = ({ navigation }) => {
           // keyExtractor={(item, index) =>
           //   item.id ? item.id.toString() : index.toString()
           // }
-          keyExtractor={(item, index) => index} // Use unique ID
+          keyExtractor={(item, index) => index}
+          onEndReached={loadMoreData}
+          onEndReachedThreshold={0.8}
+          ListFooterComponent={Loader}
           contentContainerStyle={styles.flatListContainer}
           ListEmptyComponent={() => (
             <View style={{ alignItems: "center", marginTop: 20 }}>
@@ -254,9 +257,6 @@ const ProductDetailsScreen = ({ navigation }) => {
               </Text>
             </View>
           )}
-          onEndReached={loadMoreData}
-          onEndReachedThreshold={0.8}
-          ListFooterComponent={Loader}
         />
       </ScrollView>
 
