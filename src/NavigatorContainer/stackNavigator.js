@@ -69,11 +69,19 @@ import CategoryDropDown from "../UI/DropDown/CategoryDropdown.js";
 import AddRole from "../Screen/StackScreen/Addrole.js";
 import { withCopilot } from "react-native-copilot";
 import ViewShopDetailsScreen from "../Screen/StackScreen/Shops/ViewShopDetailsScreen.js";
-import ViewInvoiceScreen1 from "../Screen/Invoices/ViewInvoiceScreen1.js"
-import InvoicePreviewScreen from "../Screen/Invoices/InvoicePreviewScreen.js"
+import ViewInvoiceScreen1 from "../Screen/Invoices/ViewInvoiceScreen1.js";
+import InvoicePreviewScreen from "../Screen/Invoices/InvoicePreviewScreen.js";
 import TransactionScreen from "../Screen/Transactions/TransactionScreen.js";
 import TransactionDetailScreen from "../Screen/Transactions/TransactionDetailScreen.js";
-export default function StackNavigator() {
+import AdminSectionScreen from "../Screen/StackScreen/AdminSectionScreen.js";
+import { fontSize } from "../Util/UtilApi.js";
+import AllUsersScreen from "../Screen/StackScreen/AllUsersScreen.js";
+import AllInvoiceScreen from "../Screen/StackScreen/AllInvoiceScreen.js";
+import AllVendorScreen from "../Screen/StackScreen/AllVendorScreen.js";
+
+
+
+export default function StackNavigator(){
   const Stack = createStackNavigator();
   const [isConnected, setIsConnected] = useState(false);
   const [isLandscape, setIsLandscape] = useState(false);
@@ -97,9 +105,11 @@ export default function StackNavigator() {
     <>
       <Stack.Navigator
         initialRouteName={userData ? "Passcode" : "login"}
-        screenOptions={{
-          // headerTitle: "Create Invoice",
-        }}
+        screenOptions={
+          {
+            // headerTitle: "Create Invoice",
+          }
+        }
       >
         <Stack.Screen
           name="AddCustomer"
@@ -325,9 +335,7 @@ export default function StackNavigator() {
         />
         <Stack.Screen
           name="TransactionDetailScreen"
-          component={TransactionDetailScreen
-
-          }
+          component={TransactionDetailScreen}
           options={({ route }) => ({
             headerTitle: "Transaction Detail",
             headerLeft: () => (
@@ -338,7 +346,7 @@ export default function StackNavigator() {
             ),
           })}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="InvoicePreviewScreen"
           component={InvoicePreviewScreen}
           options={({ route }) => ({
@@ -413,6 +421,60 @@ export default function StackNavigator() {
         />
 
         <Stack.Screen
+          name="AdminSection"
+          component={AdminSectionScreen}
+          options={{
+            // headerShown: false,
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"Admin Section"}</Text>
+            ),
+            headerTitleAlign: "center",
+            headerTintColor: "#000",
+            headerShadowVisible: false,
+            headerLeft: () => <CustomBackButton />,
+          }}
+        />
+
+        <Stack.Screen
+          name="AllUsers"
+          component={AllUsersScreen}
+          options={{
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"All Users"}</Text>
+            ),
+
+            headerTitleAlign: "center",
+            headerLeft: () => <CustomBackButton />,
+          }}
+        ></Stack.Screen>
+
+        <Stack.Screen
+          name="AllInvoice"
+          component={AllInvoiceScreen}
+          options={{
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"All Invoice"}</Text>
+            ),
+
+            headerTitleAlign: "center",
+            headerLeft: () => <CustomBackButton />,
+          }}
+        />
+
+        <Stack.Screen
+          name="AllVendor"
+          component={AllVendorScreen}
+          options={{
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"All Vender"}</Text>
+            ),
+
+            headerTitleAlign: "center",
+            headerLeft: () => <CustomBackButton />,
+          }}
+        />
+
+        <Stack.Screen
           name="wertone"
           component={BottomNavigator}
           options={{ headerShown: false }}
@@ -481,7 +543,7 @@ export default function StackNavigator() {
           name="PDFScreen"
           component={PdfScreen}
           options={{
-            headerTitle: "Invoice Preview"
+            headerTitle: "Invoice Preview",
           }}
         />
 
@@ -512,7 +574,7 @@ export default function StackNavigator() {
 const styles = StyleSheet.create({
   headerTitle: {
     fontFamily: "Poppins-Regular",
-    // fontSize: fontSize.headingSmall,
+    fontSize: fontSize.headingSmall,
     fontWeight: "bold",
   },
 });
