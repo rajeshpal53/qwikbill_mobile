@@ -7,6 +7,10 @@ import NoDataFound from "../../Components/NoDataFound";
 import { readApi } from "../../Util/UtilApi";
 import AllVenderDataCard from "../../Component/Cards/AllVenderDataCard";
 import { ActivityIndicator } from "react-native-paper";
+import ConfirmModal from "../../Modal/ConfirmModal";
+import { useNavigation } from "@react-navigation/native";
+
+
 
 const AllVenderScreen = () => {
   //   const { userData } = useContext(UserDataContext);
@@ -20,6 +24,13 @@ const AllVenderScreen = () => {
   const [page, setpage] = useState(1);
   const PAGE_SIZE = 10;
   const [totalpage, SetTotalpage] = useState(1);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [deleteItemId, setDeleteItemId] = useState(null);
+  const navigation = useNavigation()
+
+
+
+
 
   useEffect(() => {
     getAllVenderData();
@@ -33,8 +44,7 @@ const AllVenderScreen = () => {
       if (page === 1) {
         setVenderData(response?.vendors);
         SetTotalpage(response?.totalPages || 1);
-      }
-      if (response?.vendors?.length > 0) {
+      } else if (response?.vendors?.length > 0) {
         setVenderData((pre) => [...pre, ...response?.vendors]);
       } else {
         setHasmore(false);
@@ -49,6 +59,39 @@ const AllVenderScreen = () => {
       setloader(false);
     }
   };
+
+  //Delete API
+  const handleDeleteService = (item) => {
+    console.log("item is edit 123, ", item);
+
+    // setDeleteItemId(item?.id);
+    // setDeleteModal(true);
+  };
+
+
+
+  const onDelete = (item) => {
+    console.log("item is edit 123, ", item);
+    setDeleteItemId(item?.id);
+    setDeleteModal(true);
+  };
+
+
+  const handleEditDetails = (item) => {
+    console.log("item is edit 123, ", item);
+    navigation.navigate("CreateShopScreen", {
+      editItem: item,
+      isAdmin: true,
+    });
+  };
+
+  const handleProductItems = (item) => {
+    console.log("edit items clicked");
+    navigation.navigate("ProductScreen");
+  };
+
+
+
 
   const loadMoreData = () => {
     if (!loader && Hasmore && page < totalpage) {
@@ -81,26 +124,32 @@ const AllVenderScreen = () => {
           </View>
         }
         data={VenderData}
-        renderItem={({ item, index }) => <AllVenderDataCard item={item} />}
+        renderItem={({ item, index }) => (
+          <AllVenderDataCard
+            item={item}
+            onDelete={onDelete}
+            onEditDetails={handleEditDetails}
+            onEditItems={handleProductItems}
+          />
+        )}
         keyExtractor={(item, index) => `${item.id}-${index}`}
         // onScrollBeginDrag={handleSearchBar}
         showsVerticalScrollIndicator={false}
         onEndReached={loadMoreData}
         onEndReachedThreshold={0.8}
         ListFooterComponent={Loader}
-        ListEmptyComponent={
-          () =>
-            !loader && VenderData?.length === 0 ? (
-              <View
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginTop: "40%",
-                }}
-              >
-                <NoDataFound textString={"No Users Found"} />
-              </View>
-            ) : null
+        ListEmptyComponent={() =>
+          !loader && VenderData?.length === 0 ? (
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: "40%",
+              }}
+            >
+              <NoDataFound textString={"No Users Found"} />
+            </View>
+          ) : null
         }
       />
 
@@ -109,6 +158,18 @@ const AllVenderScreen = () => {
           modalVisible={searchmodal}
           setModalVisible={setsearchmodal}
           transcript={transcript}
+        />
+      )}
+
+
+      {deleteModal && (
+        <ConfirmModal
+          visible={deleteModal}
+          message="Confirm Delete This Service"
+          heading={"Confirmation Message"}
+          setVisible={setDeleteModal}
+          handlePress={handleDeleteService}
+          buttonTitle="Delete Now"
         />
       )}
     </View>

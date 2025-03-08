@@ -27,10 +27,14 @@ const apiRequest = async (method, url, data = null, headers) => {
     }
   };
 
-  const deleteApiRequest= async( method ,url )=>{
+  const deleteApiRequest= async( method ,url, headers={})=>{
         const response= await axios({
           url:`${API_BASE_URL}${url}`,
           method,
+          headers:{
+            "Content-Type":"application/json",
+            ...headers,
+          },
           withCredentials:true
         })
         return response
@@ -67,7 +71,7 @@ export const updateApi = async (endpoint, data, headers) => {
     labelXXSmall:8,
   };
 
-  
+
   export const images = [
     `${NORM_URL}assets/serviceproviders/firstProvider.jpg`,
     `${NORM_URL}assets/serviceproviders/secondProvider.jpg `,
@@ -105,6 +109,8 @@ export const updateApi = async (endpoint, data, headers) => {
 export const ButtonColor  = {
   SubmitBtn :"#007bff",
 }
+
+
 const getTodaysDate = () => {
   const today = new Date();
   const day = String(today.getDate()).padStart(2, "0");

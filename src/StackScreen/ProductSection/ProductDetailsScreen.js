@@ -91,8 +91,7 @@ const ProductDetailsScreen = ({ navigation }) => {
       if (page == 1) {
         SetProductData(response?.products);
         setTotalPages(response?.totalPages || 1);
-      }
-      if (response?.products?.length > 0) {
+      } else if (response?.products?.length > 0) {
         SetProductData((prevData) => [...prevData, ...response?.products]);
       } else {
         setHasMore(false);
@@ -182,7 +181,7 @@ const ProductDetailsScreen = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      <ScrollView>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View
           style={{ flexDirection: "row", alignItems: "center", marginTop: 5 }}
         >
@@ -196,16 +195,6 @@ const ProductDetailsScreen = ({ navigation }) => {
               //    refuser={searchBarRef}
             />
           </View>
-          {/* <View View style={{ marginRight: 5 }}>
-          <TouchableOpacity onPress={handleFiltermodal}>
-            <MaterialCommunityIcons
-              name="menu"
-              size={35}
-              color="rgba(0, 0, 0, 0.6)"
-              style={styles.icon} // Custom style
-            />
-          </TouchableOpacity>
-        </View> */}
         </View>
 
         <View style={styles.allbuttonView}>

@@ -72,9 +72,9 @@ function DropDownList({ options }) {
           />
         ))}
       </Picker>
-      <TouchableOpacity style={{ justifyContent: "center" }}>
+      {/* <TouchableOpacity style={{ justifyContent: "center" }}>
         <MaterialCommunityIcons name="reload" size={20} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 }

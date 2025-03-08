@@ -78,10 +78,10 @@ import { fontSize } from "../Util/UtilApi.js";
 import AllUsersScreen from "../Screen/StackScreen/AllUsersScreen.js";
 import AllInvoiceScreen from "../Screen/StackScreen/AllInvoiceScreen.js";
 import AllVendorScreen from "../Screen/StackScreen/AllVendorScreen.js";
+import AllVendorDataScreen from "../Screen/StackScreen/AllVendorDataScreen.js";
+import ProductDetailsScreen from "../StackScreen/ProductSection/ProductDetailsScreen.js";
 
-
-
-export default function StackNavigator(){
+export default function StackNavigator() {
   const Stack = createStackNavigator();
   const [isConnected, setIsConnected] = useState(false);
   const [isLandscape, setIsLandscape] = useState(false);
@@ -475,6 +475,19 @@ export default function StackNavigator(){
         />
 
         <Stack.Screen
+          name="AllVendorDataScreen"
+          component={AllVendorDataScreen}
+          options={{
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"Vendor Data"}</Text>
+            ),
+
+            headerTitleAlign: "center",
+            headerLeft: () => <CustomBackButton />,
+          }}
+        />
+
+        <Stack.Screen
           name="wertone"
           component={BottomNavigator}
           options={{ headerShown: false }}
@@ -562,6 +575,14 @@ export default function StackNavigator(){
             headerTitle: "View Shop Details",
           }}
         />
+
+        <Stack.Screen
+          name="ProductScreen"
+          component={ProductDetailsScreen}
+          options={{
+            headerTitle: "View Shop Details",
+          }}
+        />
       </Stack.Navigator>
 
       <CheckInternet
@@ -578,4 +599,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-// >>>>>>> prathamesh
+

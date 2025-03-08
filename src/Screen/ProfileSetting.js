@@ -389,8 +389,12 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
       );
       console.log("response", response);
       showSnackbar("Logged out successfully", "success");
+      await auth().signOut();
       await clearUserData();
       // setCreateuser(null);
+      await AsyncStorage.removeItem("allShops");
+      await AsyncStorage.removeItem("selectedShop");
+
       setVisible(false);
 
       navigation.dispatch(
@@ -399,7 +403,6 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
           routes: [{ name: "login" }],
         })
       );
-      await auth().signOut();
     } catch (error) {
       showSnackbar("Error logging out", "error");
       console.log("error logging out - ", error);

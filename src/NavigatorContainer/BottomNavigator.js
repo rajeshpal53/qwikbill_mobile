@@ -151,7 +151,7 @@ export default function BottomNavigator() {
             headerTitleAlign: "left",
           }}
         /> */}
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Customer"
         component={CustomerDetail}
         options={{
@@ -170,7 +170,7 @@ export default function BottomNavigator() {
           },
           headerLeft: () => <CustomBackButton />,
         }}
-      />
+      /> */}
 
       {/* <Tab.Screen
           name="Customer"

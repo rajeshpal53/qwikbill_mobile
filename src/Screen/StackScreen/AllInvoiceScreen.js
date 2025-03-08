@@ -32,8 +32,7 @@ const AllInvoiceScreen = () => {
       if (page === 1) {
         setInvoiceData(response?.invoices);
         SetTotalpage(response?.totalPages || 1);
-      }
-      if (response?.invoices?.length > 0) {
+      } else if (response?.invoices?.length > 0) {
         setInvoiceData((pre) => [...pre, ...response?.invoices]);
       } else {
         SetHasmore(false);

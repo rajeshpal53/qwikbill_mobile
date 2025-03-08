@@ -206,7 +206,10 @@ const EnterNumberScreen = ({ navigation }) => {
 
       console.log("response status 1 , ", response?.message);
       console.log("response 1 , ", response);
-      if (response?.message == "ID token and mobile number validated successfully.") {
+      if (
+        response?.message ==
+        "ID token and mobile number validated successfully."
+      ) {
         return true;
       }
     } catch (error) {
@@ -229,6 +232,7 @@ const EnterNumberScreen = ({ navigation }) => {
       if (payload?.mobile) {
         const response = await createApi(`users/signUp`, payload); // Convert JavaScript object to JSON;
         console.log("data found 'users/signUp', ", response);
+        saveUserData(response)
         return true;
       }
     } catch (error) {
@@ -345,21 +349,21 @@ const EnterNumberScreen = ({ navigation }) => {
           // const response = await postData();
 
           // if (response) {
-            
-            //   // Alert.alert("Success", "Phone number verified successfully!");
-            //   showSnackbar("Phone number verified successfully!", "success");
-            //   navigation.reset({
-            //     index: 0,
-            //     routes: [
-            //       {
-            //         name: "Bottom",
-            //         params: {
-            //           screen: "Home",
-            //         },
-            //       },
-            //     ],
-            //   });
-            //   setIsVerified(true);
+
+          //   // Alert.alert("Success", "Phone number verified successfully!");
+          //   showSnackbar("Phone number verified successfully!", "success");
+          //   navigation.reset({
+          //     index: 0,
+          //     routes: [
+          //       {
+          //         name: "Bottom",
+          //         params: {
+          //           screen: "Home",
+          //         },
+          //       },
+          //     ],
+          //   });
+          //   setIsVerified(true);
           // }
         }
       }
@@ -574,7 +578,7 @@ const EnterNumberScreen = ({ navigation }) => {
                     carouselItems={carouselItems}
                     fromScreen={"EnterNumber"}
                   />
-                  <Pressable
+                  {/* <Pressable
                     style={styles.fab}
                     label="Skip"
                     onPress={() => {
@@ -586,7 +590,7 @@ const EnterNumberScreen = ({ navigation }) => {
                         Skip
                       </Text>
                     </View>
-                  </Pressable>
+                  </Pressable> */}
 
                   {/*
 
@@ -626,6 +630,8 @@ const EnterNumberScreen = ({ navigation }) => {
                             values,
                             errors,
                             touched,
+                            isValid,
+                            dirty,
                           }) => (
                             <View
                               style={{
@@ -715,13 +721,28 @@ const EnterNumberScreen = ({ navigation }) => {
                                     right: 12,
                                   }}
                                 >
-                                  <Button
-                                    style={styles.button}
-                                    mode="contained"
-                                    disabled={isTimerRunning && timer > 0}
-                                  >
-                                    {t("Login With OTP")}
-                                  </Button>
+                                <Button
+                                  // style={styles.button}
+                                  style={[
+                                    styles.button,
+                                    { borderRadius: 10 },
+                                    !isValid ||
+                                    !dirty ||
+                                    !values.phone
+                                      ? { backgroundColor: "#d3d3d3" }
+                                      : { backgroundColor: "#1E90FF" },
+                                  ]}
+                                  mode="contained"
+                                  // disabled={isTimerRunning && timer > 0}
+                                  disabled={
+                                    !isValid ||
+                                    !dirty ||
+                                    !values.phone
+
+                                  }
+                                >
+                                  {t("Login With OTP")}
+                                </Button>
                                 </TouchableOpacity>
                               </View>
                             </View>
