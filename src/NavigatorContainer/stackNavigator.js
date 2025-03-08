@@ -73,6 +73,7 @@ import ViewInvoiceScreen1 from "../Screen/Invoices/ViewInvoiceScreen1.js"
 import InvoicePreviewScreen from "../Screen/Invoices/InvoicePreviewScreen.js"
 import TransactionScreen from "../Screen/Transactions/TransactionScreen.js";
 import TransactionDetailScreen from "../Screen/Transactions/TransactionDetailScreen.js";
+import AllQueryAndSupport from "../Screen/StackScreen/QueriesScreens/AllQueryAndSupport.js";
 export default function StackNavigator() {
   const Stack = createStackNavigator();
   const [isConnected, setIsConnected] = useState(false);
@@ -338,7 +339,7 @@ export default function StackNavigator() {
             ),
           })}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="InvoicePreviewScreen"
           component={InvoicePreviewScreen}
           options={({ route }) => ({
@@ -500,6 +501,17 @@ export default function StackNavigator() {
             headerTitle: "View Shop Details",
           }}
         />
+
+        <Stack.Screen
+          name="AllQueryAndSupport"
+          component={AllQueryAndSupport}
+          options={{
+            headerTitle: "View Shop Details",
+          }}
+        />
+
+
+
       </Stack.Navigator>
 
       <CheckInternet

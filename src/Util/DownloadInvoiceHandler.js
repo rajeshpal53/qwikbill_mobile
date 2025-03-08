@@ -43,7 +43,7 @@ export const useDownloadInvoice = () => {
           openFolder();
         } else if (response.actionIdentifier === "OPEN_FILE") {
           openFile();
-        }   
+        }
         // else {
         //   openFile();
         // }
@@ -123,7 +123,7 @@ export const useDownloadInvoice = () => {
     }
   }
 
-  const downloadInvoicePressHandler = async (api, orderId, name) => {
+  const downloadInvoicePressHandler = async (api, name) => {
     await checkNotificationPermission();
 
     console.log("downloadInvoicePress");
@@ -139,14 +139,14 @@ export const useDownloadInvoice = () => {
 
       const result = await FileSystem.downloadAsync(
         downloadUrl,
-        FileSystem.documentDirectory + `${name}ORD00${orderId}.pdf`
+        FileSystem.documentDirectory + `${name}.pdf`
       );
 
       console.log(result, "- result");
 
       await saveFile(
         result?.uri,
-        `${name}ORD00${orderId}.pdf`,
+        `${name}.pdf`,
         result.headers["Content-Type"]
       );
     } catch (error) {
@@ -225,7 +225,6 @@ export const useDownloadInvoice = () => {
 
   const shareInvoicePressHandler = async (api, orderId) => {
     console.log("shareInvoicePressHandler");
-
     try {
       const result = await FileSystem.downloadAsync(
         api,
