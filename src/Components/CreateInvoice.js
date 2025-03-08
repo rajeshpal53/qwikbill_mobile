@@ -56,7 +56,7 @@ export default function CreateInvoice({ navigation, route }) {
   // });
   //--------------------------------------------------
 
-  const [selectedValue, setSelectedValue] = useState("recent");
+  const [selectedValue, setSelectedValue] = useState("provisional");
 
   // const toggleOptions = [
   //   { label: 'Left', value: 'left' },
@@ -64,7 +64,7 @@ export default function CreateInvoice({ navigation, route }) {
   //   { label: 'Right', value: 'right' },
   // ];
   const toggleOptions = [
-    { value: "recent", label: "Recent" },
+    // { value: "recent", label: "Recent" },
     { value: "provisional", label: "Prov Invoice" },
     { value: "gst", label: "GST Invoice" },
   ];
@@ -78,7 +78,7 @@ export default function CreateInvoice({ navigation, route }) {
   });
 
   const toggleButtonsTexts = {
-    first: "Recent",
+    // first: "Recent",
     second: "Prov Invoice",
     third: "GST Invoice",
   };

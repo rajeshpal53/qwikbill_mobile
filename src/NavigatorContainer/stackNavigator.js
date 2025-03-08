@@ -116,14 +116,23 @@ export default function StackNavigator() {
           name="AddCustomer"
           component={AddCustomerScreen}
           options={{
-            headerTitle: "Add Customer",
+            // headerTitle: "Add Customer",
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"Add Customer"}</Text>
+            ),
+            headerTitleAlign: "center",
           }}
         />
         <Stack.Screen
           name="AddProduct"
           component={AddProductScreen}
           options={{
-            headerTitle: "Add Product",
+            // headerTitle: "Add Product",
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"Add Product"}</Text>
+            ),
+            headerTitleAlign: "center",
+
           }}
         />
         <Stack.Screen
@@ -134,8 +143,8 @@ export default function StackNavigator() {
             // headerStyle: {
             //   backgroundColor: "#0c3b73", // Your desired background color
             // },
-            headerTitle: searchMode ? "" : "View Vendor",
-            headerTitleAlign: searchMode ? "left" : "center",
+            // headerTitle: searchMode ? "" : "View Vendor",
+            // headerTitleAlign: searchMode ? "left" : "center",
           }}
         />
 
@@ -150,8 +159,8 @@ export default function StackNavigator() {
             headerStyle: {
               backgroundColor: "#0c3b73", // Your desired background color
             },
-            headerTitle: searchMode ? "" : "HSN Codes",
-            headerTitleAlign: searchMode ? "left" : "center",
+            // headerTitle: searchMode ? "" : "HSN Codes",
+            // headerTitleAlign: searchMode ? "left" : "center",
           }}
         />
         <Stack.Screen
@@ -229,7 +238,12 @@ export default function StackNavigator() {
           name="CreateInvoice"
           component={CreateInvoice}
           options={{
-            headerTitle: "Add Invoice",
+            // headerTitle: "Add Invoice",
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"Add Invoice"}</Text>
+            ),
+            headerTitleAlign: "center",
+
           }}
         />
         <Stack.Screen
@@ -365,8 +379,8 @@ export default function StackNavigator() {
           component={ViewShopsScreen}
           options={{
             headerRight: () => <HomeHeaderRight />,
-            headerTitle: !searchMode ? "My Shops" : "", // Provide a default title
-            headerTitleAlign: searchMode ? "left" : "center",
+            // headerTitle: !searchMode ? "My Shops" : "", // Provide a default title
+            // headerTitleAlign: searchMode ? "left" : "center",
           }}
         />
 
@@ -551,7 +565,7 @@ export default function StackNavigator() {
               backgroundColor: "transparent",
               // backgroundColor: "#fff"
             },
-            
+
             headerLeft: () => <CustomBackButton />,
           }}
         />

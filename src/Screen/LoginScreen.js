@@ -36,7 +36,7 @@ const fontScale = PixelRatio.getFontScale();
 const getFontSize = (size) => size / fontScale;
 
 const LoginScreen = ({ navigation }) => {
-  const { login, isAuthenticated, storeData, setLoginDetail } =
+  const { login, isAuthenticated, storeData, setLoginDetail, handleLogin } =
     useContext(AuthContext);
   const { userData, saveUserData } = useContext(UserDataContext);
   const [isLoading, setIsLoading] = useState(false);
@@ -68,48 +68,48 @@ const LoginScreen = ({ navigation }) => {
       .required("Password is required"),
   });
 
-  const handleLogin = async (values, { resetForm }) => {
-    try {
-      console.log("login screen");
-      setIsLoading(true);
+  // const handleLogin = async (values, { resetForm }) => {
+  //   try {
+  //     console.log("login screen");
+  //     setIsLoading(true);
 
-      const payload = {
-        mobile: values?.mobile,
-        password: values?.password,
-      };
-      const response = await createApi("users/loginUser", payload);
-      await storeData("loginDetail", response);
-      setLoginDetail(response);
-      console.log("response of Login is , ", response);
-      await saveUserData(response);
-      // console.log(response.data, "newResponse");
-      // const data = await response.data;
-      // await storeData("loginDetail", data.result);
-      // setLoginDetail(data.result);
-      // const token = "dummyToken";
-      // login(token);
-      // if (isLoading) {
-      //   {
-      //     <View
-      //       style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-      //     >
-      //       <ActivityIndicator size="large" />
-      //     </View>;
-      //   }
-      // }
-      if (isPasskey) {
-        navigation.navigate("Passcode");
-      } else {
-        navigation.navigate("CreateNewPasscode");
-      }
-      resetForm();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      resetForm();
-      setIsLoading(false);
-    }
-  };
+  //     const payload = {
+  //       mobile: values?.mobile,
+  //       password: values?.password,
+  //     };
+  //     const response = await createApi("users/loginUser", payload);
+  //     await storeData("loginDetail", response);
+  //     setLoginDetail(response);
+  //     console.log("response of Login is , ", response);
+  //     await saveUserData(response);
+  //     // console.log(response.data, "newResponse");
+  //     // const data = await response.data;
+  //     // await storeData("loginDetail", data.result);
+  //     // setLoginDetail(data.result);
+  //     // const token = "dummyToken";
+  //     // login(token);
+  //     // if (isLoading) {
+  //     //   {
+  //     //     <View
+  //     //       style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+  //     //     >
+  //     //       <ActivityIndicator size="large" />
+  //     //     </View>;
+  //     //   }
+  //     // }
+  //     if (isPasskey) {
+  //       navigation.navigate("Passcode");
+  //     } else {
+  //       navigation.navigate("CreateNewPasscode");
+  //     }
+  //     resetForm();
+  //   } catch (err) {
+  //     console.error(err);
+  //   } finally {
+  //     resetForm();
+  //     setIsLoading(false);
+  //   }
+  // };
 
   // if (isLoading) {
   //   {
@@ -181,7 +181,18 @@ const LoginScreen = ({ navigation }) => {
       <Formik
         initialValues={{ mobile: "", password: "" }}
         validationSchema={validationSchema}
-        onSubmit={handleLogin}
+        onSubmit={async(value, {resetForm})=>{
+          try{
+            await handleLogin(value)
+            resetForm()
+          }catch(error){
+            console.log("Unable to login ", error)
+          }finally{
+            resetForm()
+          }
+        }
+      }
+
       >
         {({
           handleChange,
