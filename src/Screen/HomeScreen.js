@@ -263,7 +263,7 @@ export default function HomeScreen({ navigation }) {
                         marginLeft: 30,
                       }}
                     />
-                    
+
                     <DropDownList options={allShops} />
                   </View>
 

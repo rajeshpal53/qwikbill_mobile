@@ -19,6 +19,8 @@ function DropDownList({ options }) {
   const [isLoading, setIsLoading] = useState(false);
   // const [options, setOptions] = useState([]);
 
+  console.log("selectedShop--------------",selectedShop)
+
   // const [selectedShop, setSelectedShop] = useState("");
   // console.log(shopDetails, "newShopDetails");
 

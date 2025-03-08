@@ -7,6 +7,7 @@ import {
   log,
   fontSize,
   createApi,
+  readApi,
 } from "../../Util/UtilApi";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -48,13 +49,6 @@ import SetpasswordModal from "../../Modal/SetpasswordModal";
 import UserDataContext from "../../Store/UserDataContext";
 // import { useTranslation } from "react-i18next";
 
-const Validation = Yup.object().shape({
-  phone: Yup.string()
-    .required("Phone number is required")
-    .matches(/^[0-9]+$/, "Phone number must be numeric")
-    .min(10, "Phone number must be at least 10 digits")
-    .max(12, "Phone number can be at most 15 digits"),
-});
 
 const EnterNumberScreen = ({ navigation }) => {
   const [phoneNumber, setPhoneNumber] = useState(null);
@@ -74,6 +68,52 @@ const EnterNumberScreen = ({ navigation }) => {
   const { width, height } = useWindowDimensions();
   const [otpError, setOtpError] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+
+  // const [phoneNumber, setPhoneNumber] = useState('');
+
+
+  const Validation = Yup.object().shape({
+    phone: Yup.string()
+      .required("Phone number is required")
+      .matches(/^[0-9]+$/, "Phone number must be numeric")
+      .min(10, "Phone number must be at least 10 digits")
+      .max(12, "Phone number can be at most 15 digits")
+      .test(
+        "check-number-availability",
+        "Number is already registered. Try a different number.",
+        async (value) => {
+          if (value && value.length === 10) {
+            // Check if the number is already registered
+            const isAvailable = await checkPhoneNumberAvailability(value);
+            console.log("VALUE IN PRESENT IS SSS123", isAvailable)
+            return isAvailable;
+          }
+          return true;
+        }
+      ),
+  });
+
+  const checkPhoneNumberAvailability = async (phoneNumber) => {
+    console.log("Enter number is ", phoneNumber)
+    try {
+      const response = await readApi(
+        `users/getUserByMobile/${phoneNumber}`
+      );
+      console.log("USER DATA ______", response)
+
+      if (response.status === 200) {
+        console.log("If condition working ")
+        return false;
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        console.log("If condition working ")
+        return true;
+      }
+    }
+    return true;
+  };
+
   const carouselItems = [
     {
       id: "1",
@@ -232,7 +272,7 @@ const EnterNumberScreen = ({ navigation }) => {
       if (payload?.mobile) {
         const response = await createApi(`users/signUp`, payload); // Convert JavaScript object to JSON;
         console.log("data found 'users/signUp', ", response);
-        saveUserData(response)
+        saveUserData(response);
         return true;
       }
     } catch (error) {
@@ -613,14 +653,24 @@ const EnterNumberScreen = ({ navigation }) => {
                           initialValues={{ phone: "" }}
                           validationSchema={Validation}
                           onSubmit={async (values, { resetForm }) => {
-                            console.log("Form submitted with:", values.phone);
-                            // const confirm = await signInWithPhoneNumber(values.phone);
-                            // navigation.navigate("EnterOtp", { values, confirm });
-                            console.log("phoneNumber", "+91" + values.phone);
-                            setPhoneNumber(values.phone);
-                            sendOtp("+91" + values.phone);
-                            // setIsVerified((prev) => !prev);
-                            setConfirm(true);
+                            setIsLoading(true);
+                            try {
+                              console.log("Form submitted with:", values.phone);
+                              // const confirm = await signInWithPhoneNumber(values.phone);
+                              // navigation.navigate("EnterOtp", { values, confirm });
+                              console.log("phoneNumber", "+91" + values.phone);
+                              setPhoneNumber(values.phone);
+                              sendOtp("+91" + values.phone);
+                              // setIsVerified((prev) => !prev);
+                              setConfirm(true);
+                            } catch (error) {
+                              console.error(
+                                "Error submitting phone number:",
+                                error
+                              );
+                            } finally {
+                              setIsLoading(false);
+                            }
                           }}
                         >
                           {({
@@ -681,6 +731,7 @@ const EnterNumberScreen = ({ navigation }) => {
                                   style={styles.input}
                                   underlineColor="transparent"
                                   activeUnderlineColor="transparent" // Remove active underline color
+                                  // onChangeText={handlePhoneChange}
                                   onChangeText={handleChange("phone")}
                                   onBlur={handleBlur("phone")}
                                   value={values.phone}
@@ -721,28 +772,23 @@ const EnterNumberScreen = ({ navigation }) => {
                                     right: 12,
                                   }}
                                 >
-                                <Button
-                                  // style={styles.button}
-                                  style={[
-                                    styles.button,
-                                    { borderRadius: 10 },
-                                    !isValid ||
-                                    !dirty ||
-                                    !values.phone
-                                      ? { backgroundColor: "#d3d3d3" }
-                                      : { backgroundColor: "#1E90FF" },
-                                  ]}
-                                  mode="contained"
-                                  // disabled={isTimerRunning && timer > 0}
-                                  disabled={
-                                    !isValid ||
-                                    !dirty ||
-                                    !values.phone
-
-                                  }
-                                >
-                                  {t("Login With OTP")}
-                                </Button>
+                                  <Button
+                                    // style={styles.button}
+                                    style={[
+                                      styles.button,
+                                      { borderRadius: 10 },
+                                      !isValid || !dirty || !values.phone
+                                        ? { backgroundColor: "#d3d3d3" }
+                                        : { backgroundColor: "#1E90FF" },
+                                    ]}
+                                    mode="contained"
+                                    // disabled={isTimerRunning && timer > 0}
+                                    disabled={
+                                      !isValid || !dirty || !values.phone
+                                    }
+                                  >
+                                    {t("Login With OTP")}
+                                  </Button>
                                 </TouchableOpacity>
                               </View>
                             </View>

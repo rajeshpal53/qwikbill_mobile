@@ -95,9 +95,9 @@ const CustomerDetailsCard = ({ item, onEdit }) => {
 
 
   const profilePicUrl = item.profilePicurl ? `${API_BASE_URL}${item.profilePicurl}` : null;
-     
+
   console.log("profile pic url isss ,",profilePicUrl)
-  
+
   const displayName = item.name ? item.name.trim() : "Unknown";
   const firstLetter = displayName.charAt(0).toUpperCase(); // Ensure it's uppercase
 
@@ -108,7 +108,7 @@ const CustomerDetailsCard = ({ item, onEdit }) => {
       onPress={() => navigation.navigate("CustomerDetails", { item: item })}
     >
       <Card.Title
-        title={displayName} 
+        title={displayName}
         subtitle={item.mobile || "No Mobile"}
         titleStyle={styles.title}
         subtitleStyle={styles.subtitle}
@@ -118,7 +118,7 @@ const CustomerDetailsCard = ({ item, onEdit }) => {
           ) : (
             <Avatar.Text
               size={55}
-              label={firstLetter} 
+              label={firstLetter}
               style={styles.avatarPlaceholder}
             />
           )
@@ -136,8 +136,8 @@ const CustomerDetailsCard = ({ item, onEdit }) => {
 const styles = StyleSheet.create({
   card: {
     marginVertical: 5,
-    marginHorizontal: 12,
-    paddingVertical: 15,
+    marginHorizontal: 10,
+    // paddingVertical: 8,
     borderRadius: 8,
     elevation: 3,
     backgroundColor: "#fff"
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     marginBottom:15
   },
   title: {
-    fontSize: fontSize.headingSmall,
+    fontSize: fontSize.labelLarge,
     marginLeft:10,
     fontFamily:fontFamily.regular
   },

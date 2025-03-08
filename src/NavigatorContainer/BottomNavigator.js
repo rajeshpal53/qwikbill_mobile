@@ -15,7 +15,7 @@ import HomeHeaderRight from "../Components/HeaderComponents/HomeHeaderRight.js";
 import { fontSize } from "../Util/UtilApi.js";
 export default function BottomNavigator() {
   const [searchQuery, setSearchQuery] = useState("");
-  const { searchMode } = useContext(AuthContext);
+  // const { searchMode } = useContext(AuthContext);
   const Tab = createBottomTabNavigator();
   // const handleSearch = (query) => {
   //   setSearchQuery(query);
@@ -71,14 +71,16 @@ export default function BottomNavigator() {
           ),
           headerShown: true,
           // title:"myHome",
-          headerTitle: !searchMode
-            ? () => <WertoneLogoTitle title="Invoicely" />
-            : "",
-          headerTitleStyle: {
-            backgroundColor: "white",
-          },
+          headerTitle: () => <WertoneLogoTitle title="Invoicely" />,
+          headerTitleAlign: "center",
+          // headerTitle: !searchMode
+          //   ? () => <WertoneLogoTitle title="Invoicely" />
+          //   : "",
+          // headerTitleStyle: {
+          //   backgroundColor: "white",
+          // },
           // headerTitle:"",
-          headerTitleAlign: !searchMode ? "center" : "left",
+          // headerTitleAlign: !searchMode ? "center" : "left",
           tabBarLabel: "Home",
           headerRight: () => null,
           // tabBarVisible:false,
@@ -94,18 +96,21 @@ export default function BottomNavigator() {
           tabBarIcon: ({ color, size }) => (
             <Icon name="file-tray-full-outline" color={color} size={size} />
           ),
-          headerTitle: !searchMode
-            ? () => (
-                <Text
-                  style={{ color: "white", fontSize: 20, fontWeight: "bold" }}
-                >
-                  Invoices
-                </Text>
-              )
-            : "",
+          headerTitle: () => (
+            <Text style={styles.headerTitle}>{"Invoices"}</Text>
+          ),
+          headerTitleAlign: "center",
 
-          headerTitleAlign: "left",
-          headerRight: () => "",
+          // headerTitle: !searchMode
+          //   ? () => (
+          //       <Text
+          //         style={{ color: "white", fontSize: 20, fontWeight: "bold" }}
+          //       >
+          //         Invoices
+          //       </Text>
+          //     )
+          //   : "",
+          headerLeft: () => <CustomBackButton />,
         }}
       />
 
@@ -121,11 +126,12 @@ export default function BottomNavigator() {
           headerTitle: () => (
             <Text style={styles.headerTitle}>{"Products Details"}</Text>
           ),
+
           headerTitleAlign: "center",
-          headerStyle: {
-            backgroundColor: "transparent",
-            // backgroundColor: "#fff"
-          },
+          // headerStyle: {
+          //   backgroundColor: "transparent",
+          //   // backgroundColor: "#fff"
+          // },
           headerLeft: () => <CustomBackButton />,
         }}
       />
@@ -204,18 +210,25 @@ export default function BottomNavigator() {
           tabBarIcon: ({ color, size }) => (
             <Icon name="person-outline" color={color} size={size} />
           ),
-          headerTitle: !searchMode
-            ? () => (
-                <Text
-                  style={{ color: "white", fontSize: 20, fontWeight: "bold" }}
-                >
-                  Profile Setting
-                </Text>
-              )
-            : "",
 
-          headerTitleAlign: !searchMode ? "center" : "left",
-          headerRight: () => "",
+          headerTitle: () => (
+            <Text style={styles.headerTitle}>{" Profile Setting"}</Text>
+          ),
+
+
+          // headerTitle: !searchMode
+          //   ? () => (
+          //       <Text
+          //         style={{ color: "white", fontSize: 20, fontWeight: "bold" }}
+          //       >
+          //         Profile Setting
+          //       </Text>
+          //     )
+          //   : "",
+          headerTitleAlign: "center",
+
+          // headerTitleAlign: !searchMode ? "center" : "left",
+          // headerRight: () => "",
         }}
       />
       {/* <Tab.Screen
@@ -232,9 +245,8 @@ export default function BottomNavigator() {
 }
 const styles = StyleSheet.create({
   headerTitle: {
-    color: "white",
-    fontSize: fontSize.label,
-    fontFamily: "Poppins-Medium",
+    fontFamily: "Poppins-Regular",
+    fontSize: fontSize.headingSmall,
     fontWeight: "bold",
   },
 });

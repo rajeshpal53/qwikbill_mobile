@@ -58,8 +58,8 @@
 //   const [SelectedEditItem, setSelectedEditItem] = useState(null);
 //   const [editmodal, seteditmodal] = useState(false);
 //   const [customerData , setCustomerData]= useState([])
-//   const [loading, setLoading] = useState(true); 
-//   const [error, setError] = useState(null); 
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
 
 
 //   const filteredData = customerdetails.filter((item) =>
@@ -206,7 +206,7 @@ const CustomerDetail = ({ navigation }) => {
   const openEditModal = (item) => {
     setSelectedEditItem(item);
    //  console.log("item for edit modal ", item)
-    
+
   };
 
 
@@ -309,11 +309,11 @@ const CustomerDetail = ({ navigation }) => {
           />
         )}
 
-      <FAB
+      {/* <FAB
         icon={() => <Icon name="add" size={25} color="#fff" />}
         style={styles.fab}
         onPress={() => console.log("FAB pressed")}
-      />
+      /> */}
 
       {editmodal && (
         <EditCustomerDetailsModal

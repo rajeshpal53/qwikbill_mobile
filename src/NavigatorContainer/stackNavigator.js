@@ -80,6 +80,7 @@ import AllInvoiceScreen from "../Screen/StackScreen/AllInvoiceScreen.js";
 import AllVendorScreen from "../Screen/StackScreen/AllVendorScreen.js";
 import AllVendorDataScreen from "../Screen/StackScreen/AllVendorDataScreen.js";
 import ProductDetailsScreen from "../StackScreen/ProductSection/ProductDetailsScreen.js";
+import CustomerDetail from "../StackScreen/CustomerSection/CustomerDetails.js";
 
 export default function StackNavigator() {
   const Stack = createStackNavigator();
@@ -529,6 +530,8 @@ export default function StackNavigator() {
           screenOptions={{
             headerTitle: "Create Invoice",
           }}
+
+
         />
 
         <Stack.Screen
@@ -548,6 +551,7 @@ export default function StackNavigator() {
               backgroundColor: "transparent",
               // backgroundColor: "#fff"
             },
+            
             headerLeft: () => <CustomBackButton />,
           }}
         />
@@ -556,7 +560,11 @@ export default function StackNavigator() {
           name="PDFScreen"
           component={PdfScreen}
           options={{
-            headerTitle: "Invoice Preview",
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"Invoice Preview"}</Text>
+            ),
+            headerTitleAlign: "center",
+            // headerTitle: "Invoice Preview",
           }}
         />
 
@@ -565,14 +573,20 @@ export default function StackNavigator() {
           component={AddRole}
           screenOptions={{
             headerTitle: "Add Role",
+            headerTitleAlign: "center",
           }}
+
         />
 
         <Stack.Screen
           name="ViewShopDetailsScreen"
           component={ViewShopDetailsScreen}
           options={{
-            headerTitle: "View Shop Details",
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"View Shop Details"}</Text>
+            ),
+            headerTitleAlign: "center",
+            // headerTitle: "View Shop Details",
           }}
         />
 
@@ -580,7 +594,25 @@ export default function StackNavigator() {
           name="ProductScreen"
           component={ProductDetailsScreen}
           options={{
-            headerTitle: "View Shop Details",
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"View Product Details"}</Text>
+            ),
+            headerTitleAlign: "center",
+            // headerTitle: "View Shop Details",
+
+          }}
+        />
+
+        <Stack.Screen
+          name="Customer"
+          component={CustomerDetail}
+          // screenOptions={{ headerShown: false }}
+          options={{
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"All Customer"}</Text>
+            ),
+            headerTitleAlign: "center",
+            // headerTitle: "All Customer",
           }}
         />
       </Stack.Navigator>
@@ -599,4 +631,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-
