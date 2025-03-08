@@ -167,6 +167,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Image,
+  Pressable
 } from "react-native";
 import { Text, Card, Avatar, Button } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -174,7 +175,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
 import ConfirmModal from "../Modal/ConfirmModal";
 import UserDataContext from "../Store/UserDataContext";
-import { createApi, NORM_URL } from "../Util/UtilApi";
+import { API_BASE_URL, createApi, NORM_URL } from "../Util/UtilApi";
 import { useIsFocused } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
 // import { WalletContext } from "../Store/WalletContext";
@@ -183,6 +184,9 @@ import auth from "@react-native-firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSnackbar } from "../Store/SnackbarContext";
 import ChangeLanguageModal from "../Modal/ChangeLanguageModal";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { fontSize,fontFamily } from "../Util/UtilApi";
+
 
 
 const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
@@ -217,12 +221,12 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
       setMenuItems([
         ...(userData
           ? [
-              {
-                icon: "language",
-                label: "Address",
-                value: "Address",
-              },
-            ]
+            {
+              icon: "language",
+              label: "Address",
+              value: "Address",
+            },
+          ]
           : []),
         {
           icon: "language",
@@ -240,17 +244,18 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
         ...(userData
           ? [{ icon: "logout", label: "Logout", value: "Logout" }]
           : []),
+        { label: "Need more help?", value: "needMoreHelp" },
       ]);
     } else {
       setMenuItems([
         ...(userData
           ? [
-              {
-                icon: "language",
-                label: "Address",
-                value: "Address",
-              },
-            ]
+            {
+              icon: "language",
+              label: "Address",
+              value: "Address",
+            },
+          ]
           : []),
         {
           icon: "language",
@@ -267,13 +272,22 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
         { icon: "policy", label: "Policies", value: "Policies" },
         ...(userData
           ? [
-              {
-                icon: "person-add",
-                label: "Assign New Role",
-                value: "Assign New Role",
-              },
-              { icon: "logout", label: "Logout", value: "Logout" },
-            ]
+            {
+              icon: "person-add",
+              label: "Assign New Role",
+              value: "Assign New Role",
+            },
+            {
+              icon: "support-agent",
+              label: "All Queries and Support",
+              value: "AllQueryAndSupport",
+            },
+            { icon: "logout", label: "Logout", value: "Logout" },
+            { icon: "logout", label: "Logout1", value: "Logout1" },
+
+            { label: "Need more help?", value: "needMoreHelp" },
+
+          ]
           : []),
       ]);
     }
@@ -364,15 +378,27 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
       setLanguageModalVisible(true);
     } else if (value == "Logout") {
       setVisible(true);
-    } else if (value === "AdminSection") {
+    } else if (value === "AllQueryAndSupport") {
+      navigation.navigate("AllQueryAndSupport");
+    }
+    else if (value === "AdminSection") {
       navigation.navigate("AdminSection");
     } else if (value === "Assign New Role") {
       navigation.navigate("AddroleScreen");
+    } else if (value == "Logout1") {
+      navigation.navigate("login")
     }
+    // else if (value === "needMoreHelp") {
+    //   navigation.navigate("Policies", {
+    //     webUri: `${API_BASE_URL}/helpandsupport?view=mobile`,
+    //     headerTitle: "Help & Support",
+    //   });
+    // }
   };
+
   const logoutHandler = async () => {
     try {
-      const response =  await createApi(
+      const response = await createApi(
         "users/logout",
         { mobile: userData?.user?.mobile },
         {
@@ -382,7 +408,6 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
       );
       console.log("response", response);
       showSnackbar("Logged out successfully", "success");
-      await auth().signOut();
       await clearUserData();
       // setCreateuser(null);
       setVisible(false);
@@ -393,6 +418,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
           routes: [{ name: "login" }],
         })
       );
+      await auth().signOut();
     } catch (error) {
       showSnackbar("Error logging out", "error");
       console.log("error logging out - ", error);
@@ -435,8 +461,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
                   onPress={() => {
                     if (userData?.user?.profilePicurl) {
                       openImageModal(
-                        `${NORM_URL}/${
-                          userData?.user?.profilePicurl
+                        `${NORM_URL}/${userData?.user?.profilePicurl
                         }?${new Date().getTime()}`
                       );
                     }
@@ -499,27 +524,58 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
                   </Button>
                 )}
               </View>
+
               <Card.Content style={{ backgroundColor: "#fff" }}>
-                {menuItems?.map((item, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => handlePress(item.value)}
-                    style={styles.item}
-                  >
-                    <Icon
-                      name={item.icon}
-                      size={24}
-                      color="#26a0df"
-                      style={styles.icon}
-                    />
-                    <Text style={styles.label}>{t(item.label)}</Text>
-                    <Icon
-                      name="chevron-right"
-                      size={24}
-                      color="#000"
-                      style={styles.chevron}
-                    />
-                  </TouchableOpacity>
+                {menuItems?.map((item, index) =>
+                  item?.value === "needMoreHelp" ? (
+                    <Pressable onPress={() => { handlePress("needMoreHelp") }} key={index}>
+                      <View>
+                        <Text style={{ fontFamily: "Poppins-Medium" }}>
+                          {t(item?.label)}
+                        </Text>
+                        <View style={styles.helpItem}>
+                          <View style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 5
+                          }}>
+                            {/* <MaterialCommunityIcons
+                              name="message-reply"
+                              size={24}
+                              color="black"
+                            /> */}
+                            <MaterialIcons name="support-agent" size={24} color="black" />
+                            <View style={{ flex: 1 }}>
+                              <Text style={{ fontFamily: "Poppins-Medium" }}>{t("24x7 support")}</Text>
+                              <Text style={{ fontFamily: "Poppins-Regular", color: "rgba(0, 0, 0, 0.5)", fontSize: fontSize.label }}>{t("Talk to us in your language")}</Text>
+                            </View>
+
+                            <Text style={{ fontFamily: "Poppins-Medium", color: "#007BFF" }}>{t("Support")}</Text>
+
+                          </View>
+                        </View>
+                      </View>
+                    </Pressable>
+                  ) :(
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => handlePress(item.value)}
+                      style={styles.item}
+                    >
+                      <Icon
+                        name={item.icon}
+                        size={24}
+                        color="#26a0df"
+                        style={styles.icon}
+                      />
+                      <Text style={styles.label}>{t(item.label)}</Text>
+                      <Icon
+                        name="chevron-right"
+                        size={24}
+                        color="#000"
+                        style={styles.chevron}
+                      />
+                    </TouchableOpacity>
                 ))}
               </Card.Content>
             </Card>
