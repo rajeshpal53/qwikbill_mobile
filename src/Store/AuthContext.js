@@ -3,9 +3,9 @@ import React, { createContext, useState, useEffect, useMemo, useContext } from "
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from '@react-navigation/native';
 import UserDataContext from "./UserDataContext";
+import { createApi } from "../Util/UtilApi";
 // Create the context
 export const AuthContext = createContext();
-
 
 // Create a provider component
 export const AuthProvider = ({ children }) => {
@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedShop, setSelectedShop] = useState('');
   const [overlayHeight, setOverlayHeight] = useState('25%')
-  const { userData } = useContext(UserDataContext);
+  const { userData, saveUserData } = useContext(UserDataContext);
 
   // Check if user is logged in on app startup
   useEffect(() => {
@@ -74,10 +74,59 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+   const handleLogin = async (values) => {
+      try {
+        console.log("login screen");
+        setIsLoading(true);
+
+        const payload = {
+          mobile: values?.mobile,
+          password: values?.password,
+        };
+        const response = await createApi("users/loginUser", payload);
+        await storeData("loginDetail", response);
+        setLoginDetail(response);
+        console.log("response of Login is , ", response);
+        await saveUserData(response);
+        // console.log(response.data, "newResponse");
+        // const data = await response.data;
+        // await storeData("loginDetail", data.result);
+        // setLoginDetail(data.result);
+        // const token = "dummyToken";
+        // login(token);
+        // if (isLoading) {
+        //   {
+        //     <View
+        //       style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        //     >
+        //       <ActivityIndicator size="large" />
+        //     </View>;
+        //   }
+        // }
+        if (isPasskey) {
+          navigation.navigate("Passcode");
+        } else {
+          navigation.navigate("CreateNewPasscode");
+        }
+        // resetForm();
+      } catch (err) {
+        console.error(err);
+      } finally {
+        // resetForm();
+        setIsLoading(false);
+      }
+    };
+
+
+
   const logout = async () => {
     try {
       await AsyncStorage.removeItem("userToken");
       await AsyncStorage.removeItem("loginDetail");
+      await AsyncStorage.clear();
+      await AsyncStorage.removeItem("allShops");
+      await AsyncStorage.removeItem("selectedShop");
+
       setIsAuthenticated(false);
     } catch (e) {
       console.error(e);
@@ -121,7 +170,8 @@ export const AuthProvider = ({ children }) => {
            selectedShop,
            setSelectedShop,
            overlayHeight,
-           setOverlayHeight
+           setOverlayHeight,
+           handleLogin
          }}
     >
       {children}

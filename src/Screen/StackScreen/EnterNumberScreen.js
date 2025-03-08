@@ -47,8 +47,8 @@ import CountryCodeModal from "../../Component/CountryCodeModal";
 import AutoSlidingCarousel from "../../Component/AutoSlidingCarousel";
 import SetpasswordModal from "../../Modal/SetpasswordModal";
 import UserDataContext from "../../Store/UserDataContext";
+import { AuthContext } from "../../Store/AuthContext";
 // import { useTranslation } from "react-i18next";
-
 
 const EnterNumberScreen = ({ navigation }) => {
   const [phoneNumber, setPhoneNumber] = useState(null);
@@ -68,9 +68,9 @@ const EnterNumberScreen = ({ navigation }) => {
   const { width, height } = useWindowDimensions();
   const [otpError, setOtpError] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-
+  const { login, isAuthenticated, storeData, setLoginDetail, handleLogin } =
+    useContext(AuthContext);
   // const [phoneNumber, setPhoneNumber] = useState('');
-
 
   const Validation = Yup.object().shape({
     phone: Yup.string()
@@ -85,7 +85,7 @@ const EnterNumberScreen = ({ navigation }) => {
           if (value && value.length === 10) {
             // Check if the number is already registered
             const isAvailable = await checkPhoneNumberAvailability(value);
-            console.log("VALUE IN PRESENT IS SSS123", isAvailable)
+            console.log("VALUE IN PRESENT IS SSS123", isAvailable);
             return isAvailable;
           }
           return true;
@@ -94,20 +94,18 @@ const EnterNumberScreen = ({ navigation }) => {
   });
 
   const checkPhoneNumberAvailability = async (phoneNumber) => {
-    console.log("Enter number is ", phoneNumber)
+    console.log("Enter number is ", phoneNumber);
     try {
-      const response = await readApi(
-        `users/getUserByMobile/${phoneNumber}`
-      );
-      console.log("USER DATA ______", response)
+      const response = await readApi(`users/getUserByMobile/${phoneNumber}`);
+      console.log("USER DATA ______", response);
 
       if (response.status === 200) {
-        console.log("If condition working ")
+        console.log("If condition working ");
         return false;
       }
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        console.log("If condition working ")
+        console.log("If condition working ");
         return true;
       }
     }
@@ -272,7 +270,9 @@ const EnterNumberScreen = ({ navigation }) => {
       if (payload?.mobile) {
         const response = await createApi(`users/signUp`, payload); // Convert JavaScript object to JSON;
         console.log("data found 'users/signUp', ", response);
-        saveUserData(response);
+
+        await saveUserData(response);
+        await handleLogin(response)
         return true;
       }
     } catch (error) {

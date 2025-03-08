@@ -129,7 +129,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
         validationSchema={validationSchema}
         onSubmit={(values, { resetForm }) => {
           console.log("values are , ", values);
-          
+
           const extraData = {
             usersfk: User?.id,
             vendorfk: selectedShop?.id,
@@ -149,7 +149,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           carts?.map((item) => {
             console.log("single item is , ", item);
           });
-     
+
           const payload = {
             ...extraData,
             customerData: User,

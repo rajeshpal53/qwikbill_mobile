@@ -392,6 +392,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
       await auth().signOut();
       await clearUserData();
       // setCreateuser(null);
+      await AsyncStorage.clear();
       await AsyncStorage.removeItem("allShops");
       await AsyncStorage.removeItem("selectedShop");
 

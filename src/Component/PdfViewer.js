@@ -43,7 +43,6 @@ const PdfScreen = ({ navigation }) => {
   const { downloadInvoicePressHandler, shareInvoicePressHandler } =
     useDownloadInvoice();
 
-
   useEffect(() => {
     console.log("view InvoiceData is under useEffect , ", viewInvoiceData);
 
@@ -61,7 +60,7 @@ const PdfScreen = ({ navigation }) => {
     return formattedDate;
   };
 
-  const handleGenerate = async (button = "button") => {
+  const handleGenerate = async (button = "download") => {
     // setIsGenerated(true); // Trigger PDF generation when the button is pressed
     try {
       let api = "invoice/invoices";
@@ -92,11 +91,15 @@ const PdfScreen = ({ navigation }) => {
       console.log("response of create invoice is, ", response);
       showSnackbar("Invoice Created Successfully", "success");
       setCreatedInvoice(response?.customer);
+      dispatch(clearCart());
 
       invoiceCreated.current = true;
+
       if (button == "download") {
+        console.log("Inside a if condition ")
         return response?.customer;
       } else if (button == "generate") {
+        console.log("Inside a else if condition ")
         dispatch(clearCart());
         navigation.pop(2);
       }
