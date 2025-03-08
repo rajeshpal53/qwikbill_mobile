@@ -12,8 +12,7 @@ export const ShopProvider = ({ children }) => {
   const { userData } = useContext(UserDataContext);
   const [loader, setloader] = useState(false);
 
-
-  console.log("SELECTED SHOP IS ", selectedShop)
+  console.log("SELECTED SHOP IS ", selectedShop);
 
   console.log("USER DATA IS 1578", userData);
   // useEffect(() => {
@@ -57,18 +56,44 @@ export const ShopProvider = ({ children }) => {
     loadData();
   }, [userData]);
 
+  // const loadData = async () => {
+  //   try {
+  //     setloader(true);
+  //     if (userData?.token) {
+  //       await fetchShopsFromServer();
+  //       // await loadAllShops();
+  //     } else {
+  //       console.log("Tokan is not available ");
+  //       setloader(false);
+  //     }
+  //   } catch (error) {
+  //     console.log("Unable to fetch data for user:", error);
+  //   } finally {
+  //     setloader(false);
+  //   }
+  // };
+
   const loadData = async () => {
     try {
       setloader(true);
       if (userData?.token) {
         await fetchShopsFromServer();
-        // await loadAllShops();
+
+         const storedSelectedShop = await AsyncStorage.getItem("selectedShop");
+
+        if (storedSelectedShop) {
+          setSelectedShop(JSON.parse(storedSelectedShop));
+        } else if (allShops.length > 0) {
+          // If no selected shop exists in AsyncStorage, select the first shop by default
+          setSelectedShop(allShops[0]);
+          await AsyncStorage.setItem("selectedShop", JSON.stringify(allShops[0]));
+        }
       } else {
-        console.log("Tokan is not available ");
-        setloader(false);
+        console.log("Token is not available.");
       }
     } catch (error) {
-      console.log("Unable to fetch data for user:", error);
+      console.log("Error loading data:", error);
+      setloader(false)
     } finally {
       setloader(false);
     }
@@ -118,15 +143,14 @@ export const ShopProvider = ({ children }) => {
         }
       );
       console.log("response of getting all shops are", response);
-      setAllShops(response);
-      await AsyncStorage.setItem("allShops", JSON.stringify(response));
-      if (allShops.length > 0 && !selectedShop) {
-        console.log("Inside a if condition ");
-        setSelectedShop(response[0]); // Set first shop as default
-        console.log("selectedShop setting is , ", response[0]);
+      if (response) {
+        setAllShops(response);
+        await AsyncStorage.setItem("allShops", JSON.stringify(response));
+      }
+
+      if (!selectedShop && response.length > 0) {
+        setSelectedShop(response[0]);
         await AsyncStorage.setItem("selectedShop", JSON.stringify(response[0]));
-      } else {
-        console.log("Shop not available");
       }
 
       // if (response?.length > 0) {
@@ -144,6 +168,11 @@ export const ShopProvider = ({ children }) => {
       setloader(false);
     }
   };
+
+
+
+
+
 
   // Function to update selected shop
   const updateSelectedShop = async (shop) => {
