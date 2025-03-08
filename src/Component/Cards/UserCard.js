@@ -18,11 +18,9 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 const screenWidth = Dimensions.get("window").width;
 
-const UserCard = ({ item, index, handleEditProfile }) => {
+const UserCard = ({ item, index, HandleDeleteUser }) => {
   const [profileUrl, setProfileUrl] = useState("");
   const [fallbackText, setFallbackText] = useState("E");
-
-  console.log("DATAOF ITEMSSSSSS", item);
 
   // useEffect(() => {
   //   const setUrl = () => {
@@ -51,6 +49,8 @@ const UserCard = ({ item, index, handleEditProfile }) => {
   //   return singleLetterText;
   // };
 
+
+
   return (
     <Card
       style={{
@@ -75,12 +75,23 @@ const UserCard = ({ item, index, handleEditProfile }) => {
             gap: 10,
           }}
         >
+
+
           <TouchableOpacity
             style={{ position: "absolute", right: 0, zIndex: 1 }}
-            onPress={() => handleEditProfile(item, index)}
+            onPress={() => HandleDeleteUser(item)}
+          >
+            <MaterialIcons name="delete" size={18} color="#1E88E5" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{ position: "absolute", right: 32, zIndex: 1 }}
+            onPress={() => console.log("Button preesed ")}
           >
             <MaterialIcons name="edit" size={18} color="#1E88E5" />
           </TouchableOpacity>
+
+
           <View>
             {/* {profileUrl && profileUrl !== "" ? (
               <Avatar.Image
@@ -97,7 +108,7 @@ const UserCard = ({ item, index, handleEditProfile }) => {
             )} */}
             <Avatar.Text
               size={60}
-              label={item?.name ? item.name.charAt(0) : "E"} 
+              label={item?.name ? item.name.charAt(0) : "E"}
               style={styles.avatarPlaceholder}
             />
           </View>
@@ -114,6 +125,7 @@ const UserCard = ({ item, index, handleEditProfile }) => {
                   fontFamily: "Poppins-SemiBold",
                   marginRight: 22,
                   fontSize: fontSize.labelMedium,
+                  maxWidth:"80%"
                 }}
               >
                 {item?.name ? item.name : "no name"}

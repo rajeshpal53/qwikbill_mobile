@@ -38,7 +38,7 @@ const getFontSize = (size) => size / fontScale;
 const LoginScreen = ({ navigation }) => {
   const { login, isAuthenticated, storeData, setLoginDetail } =
     useContext(AuthContext);
-    const {userData, saveUserData} = useContext(UserDataContext);
+  const { userData, saveUserData } = useContext(UserDataContext);
   const [isLoading, setIsLoading] = useState(false);
   const { isPasskey } = usePasskey();
   const { width, height } = useWindowDimensions();
@@ -60,7 +60,7 @@ const LoginScreen = ({ navigation }) => {
     //   .required("Email is required"),
     mobile: Yup.string()
       .required("Phone number is required")
-      .matches(/^[0-9]+$/, "Phone number must be numeric")
+      .matches(/^\d{10}$/, "Mobile number must be exactly 10 digits")
       .min(10, "Phone number must be at least 10 digits")
       .max(12, "Phone number can be at most 15 digits"),
     password: Yup.string()
@@ -74,11 +74,11 @@ const LoginScreen = ({ navigation }) => {
       setIsLoading(true);
 
       const payload = {
-        mobile : values?.mobile,
-        password : values?.password,
-      }
-      const response = await createApi('users/loginUser', payload);
-     await storeData("loginDetail", response);
+        mobile: values?.mobile,
+        password: values?.password,
+      };
+      const response = await createApi("users/loginUser", payload);
+      await storeData("loginDetail", response);
       setLoginDetail(response);
       console.log("response of Login is , ", response);
       await saveUserData(response);
@@ -190,6 +190,8 @@ const LoginScreen = ({ navigation }) => {
           values,
           errors,
           touched,
+          isValid,
+          dirty,
         }) => (
           <ScrollView
             contentContainerStyle={{ flexGrow: 1 }}
@@ -233,7 +235,7 @@ const LoginScreen = ({ navigation }) => {
                           fontFamily: "Poppins-Bold",
                         }}
                       >
-                        Welcome to Qwickbill
+                        Welcome to QwikBill
                       </Text>
                       <Text
                         style={{
@@ -336,11 +338,20 @@ const LoginScreen = ({ navigation }) => {
                         textColor="white"
                         style={[
                           styles.button,
-                          { borderRadius: 10},
+                          { borderRadius: 10 },
+                          !isValid || !dirty || !values.mobile || !values.password
+                            ? { backgroundColor: "#d3d3d3" }
+                            : { backgroundColor: "#1E90FF" },
                         ]}
+                        disabled={
+                          !isValid || !dirty || !values.mobile || !values.password
+                        }
                       >
                         <Text
-                          style={{ fontFamily: "Poppins-Medium", color: "white" }}
+                          style={{
+                            fontFamily: "Poppins-Medium",
+                            color: "white",
+                          }}
                         >
                           Login
                         </Text>
@@ -439,7 +450,7 @@ const styles = StyleSheet.create({
   signup: {
     // alignSelf: "center",
     // marginVertical: 40,
-    fontFamily:"Poppins-Regular",
+    fontFamily: "Poppins-Regular",
     color: "grey",
     fontSize: getFontSize(14),
   },
@@ -453,8 +464,8 @@ const styles = StyleSheet.create({
   },
   signupText: {
     color: "#1E90FF",
-    fontFamily:"Poppins-Bold",
-    fontSize:getFontSize(14),
+    fontFamily: "Poppins-Bold",
+    fontSize: getFontSize(14),
   },
   img: {
     height: 140,

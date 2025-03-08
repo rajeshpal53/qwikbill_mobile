@@ -145,7 +145,7 @@ const AdminSectionScreen = ({ navigation }) => {
                     <Icon
                       name={item.icon}
                       size={24}
-                      color="#169C07"
+                      color="#26a0df"
                       style={styles.icon}
                     />
                     <Text style={styles.label}>{item.label}</Text>

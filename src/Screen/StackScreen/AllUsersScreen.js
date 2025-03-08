@@ -19,7 +19,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Icon from "react-native-vector-icons/Ionicons";
 // import Voice from "@react-native-voice/voice"; // Import Voice for speech recognition
 import UserDataContext from "../../Store/UserDataContext";
-import { fontSize, readApi } from "../../Util/UtilApi";
+import { deleteApi, fontSize, readApi } from "../../Util/UtilApi";
 
 import NoDataFound from "../../../src/Components/NoDataFound";
 import UserCard from "../../Component/Cards/UserCard";
@@ -51,12 +51,10 @@ const AllUsersScreen = () => {
     try {
       setIsLoading(true);
       const response = await readApi(api);
-      console.log("DATA OF Responce ", response);
       if (page == 1) {
         setUsersData(response?.users);
         settotalPages(response?.totalPages || 1);
-      }
-      if (response?.users?.length > 0) {
+      } else if (response?.users?.length > 0) {
         setUsersData((prev) => [...prev, ...response?.users]);
       } else {
         setHasMore(false);
@@ -66,6 +64,34 @@ const AllUsersScreen = () => {
         setUsersData([]);
       }
       console.log("Unable to fetch Data ", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
+  const HandleDeleteUser = async (item) => {
+    console.log("DATA OF ITEM ISSSSS",item.id )
+    try {
+      setIsLoading(true);
+      if (item.id) {
+        const token = userData?.token;
+        const deleteresponse = await deleteApi(`users/${item.id}`,{
+          Authorization:`Bearer ${token}`
+        });
+        if (deleteresponse) {
+          setUsersData((prev) => prev.filter((data) => data.id !== item.id));
+        } else {
+          setIsLoading(false);
+          console.log("Failed to delete the Response: ", deleteresponse);
+        }
+      } else {
+        setIsLoading(false);
+        console.log("Unable to get Id");
+      }
+    } catch (error) {
+      console.log("Unable to fetch Delete API : ", error);
+      setIsLoading(false);
     } finally {
       setIsLoading(false);
     }
@@ -108,7 +134,7 @@ const AllUsersScreen = () => {
             item={item}
             index={index}
             // navigation={navigation}
-            // handleEditProfile={handleEditProfile}
+            HandleDeleteUser={HandleDeleteUser}
           />
         )}
         // renderItem={renderItem}

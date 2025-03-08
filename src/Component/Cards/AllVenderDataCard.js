@@ -10,8 +10,9 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useWindowDimensions } from "react-native"; // Import the hook
 import { useNavigation } from "@react-navigation/native";
 import { debounce } from "lodash";
+import AllVendorDataScreen from "../../Screen/StackScreen/AllVendorDataScreen";
 
-const AllVenderDataCard = ({ item }) => {
+const AllVenderDataCard = ({ item, onDelete, onEditDetails, onEditItems }) => {
   const { height, width } = useWindowDimensions(); // Use hook to get dimensions
 
   const navigation = useNavigation();
@@ -48,15 +49,14 @@ const AllVenderDataCard = ({ item }) => {
           ...styles.card,
           marginBottom: 10,
         }}
-        // onPress={() => {
-        //   navigation.navigate("ViewAndEditServicesScreen", {
-        //     item: item,
-        //     onDelete: onDelete,
-        //     onEditDetails: onEditDetails,
-        //     onEditItems: onEditItems,
-        //     onAddOffer: onAddOffer,
-        //   });
-        // }}
+        onPress={() => {
+          navigation.navigate("AllVendorDataScreen", {
+            item: item,
+            onDelete: onDelete,
+            onEditDetails: onEditDetails,
+            onEditItems: onEditItems,
+          });
+        }}
       >
         <View
           style={{
