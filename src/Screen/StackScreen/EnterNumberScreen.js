@@ -757,7 +757,7 @@ const EnterNumberScreen = ({ navigation }) => {
                                     Resend OTP in {formatTime(timer)}
                                   </Text>
                                 )}
-                                <TouchableOpacity
+                                {/* <TouchableOpacity
                                   onPress={handleSubmit}
                                   disabled={isTimerRunning && timer > 0}
                                   style={{
@@ -771,9 +771,12 @@ const EnterNumberScreen = ({ navigation }) => {
                                     left: 12,
                                     right: 12,
                                   }}
-                                >
+                                > */}
                                   <Button
                                     // style={styles.button}
+                                    onPress={handleSubmit}
+                                    disabled={isTimerRunning && timer > 0 || !isValid || !dirty || !values.phone}
+
                                     style={[
                                       styles.button,
                                       { borderRadius: 10 },
@@ -783,13 +786,13 @@ const EnterNumberScreen = ({ navigation }) => {
                                     ]}
                                     mode="contained"
                                     // disabled={isTimerRunning && timer > 0}
-                                    disabled={
-                                      !isValid || !dirty || !values.phone
-                                    }
+                                    // disabled={
+                                    //   !isValid || !dirty || !values.phone
+                                    // }
                                   >
                                     {t("Login With OTP")}
                                   </Button>
-                                </TouchableOpacity>
+                                {/* </TouchableOpacity> */}
                               </View>
                             </View>
                           )}

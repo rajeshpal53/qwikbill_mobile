@@ -81,6 +81,7 @@ import AllVendorScreen from "../Screen/StackScreen/AllVendorScreen.js";
 import AllVendorDataScreen from "../Screen/StackScreen/AllVendorDataScreen.js";
 import ProductDetailsScreen from "../StackScreen/ProductSection/ProductDetailsScreen.js";
 import CustomerDetail from "../StackScreen/CustomerSection/CustomerDetails.js";
+import PoliciesDetailsScreen from "../StackScreen/PoliciesDetailsScreen.js";
 
 export default function StackNavigator() {
   const Stack = createStackNavigator();
@@ -132,7 +133,6 @@ export default function StackNavigator() {
               <Text style={styles.headerTitle}>{"Add Product"}</Text>
             ),
             headerTitleAlign: "center",
-
           }}
         />
         <Stack.Screen
@@ -243,7 +243,6 @@ export default function StackNavigator() {
               <Text style={styles.headerTitle}>{"Add Invoice"}</Text>
             ),
             headerTitleAlign: "center",
-
           }}
         />
         <Stack.Screen
@@ -544,8 +543,6 @@ export default function StackNavigator() {
           screenOptions={{
             headerTitle: "Create Invoice",
           }}
-
-
         />
 
         <Stack.Screen
@@ -589,7 +586,6 @@ export default function StackNavigator() {
             headerTitle: "Add Role",
             headerTitleAlign: "center",
           }}
-
         />
 
         <Stack.Screen
@@ -613,7 +609,6 @@ export default function StackNavigator() {
             ),
             headerTitleAlign: "center",
             // headerTitle: "View Shop Details",
-
           }}
         />
 
@@ -627,6 +622,17 @@ export default function StackNavigator() {
             ),
             headerTitleAlign: "center",
             // headerTitle: "All Customer",
+          }}
+        />
+
+        <Stack.Screen
+          name="Policies"
+          component={PoliciesDetailsScreen}
+          options={{
+            headerShown: false,
+            headerTintColor: "#000",
+            headerShadowVisible: false,
+            headerLeft: () => <CustomBackButton />,
           }}
         />
       </Stack.Navigator>
