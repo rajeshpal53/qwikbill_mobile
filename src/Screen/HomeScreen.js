@@ -45,6 +45,7 @@ import {
   useTourGuideController,
 } from "rn-tourguide";
 import { ShopContext } from "../Store/ShopContext";
+import { Dimensions } from "react-native";
 
 export default function HomeScreen({ navigation }) {
   const { currentLoginTime, lastLoginTime, storeTime } =
@@ -65,7 +66,7 @@ export default function HomeScreen({ navigation }) {
   // console.log(verticalScale(700), "    --- verticalscale");
 
   const { userData } = useContext(UserDataContext);
-  const {allShops, selectedShop} = useContext(ShopContext);
+  const { allShops, selectedShop } = useContext(ShopContext);
   const isFocused = useIsFocused();
   const [currentStep, setCurrentStep] = useState(0);
   const [isTourGuideActive, setIsTourGuideActive] = useState(false);
@@ -203,45 +204,47 @@ export default function HomeScreen({ navigation }) {
         />
         <View style={styles.container}>
           <View style={styles.header}>
-            <TourGuideZone
-              zone={1}
-              text={"User Name"}
-              shape="rectangle"
-              // tooltipBottomOffset={20} // Adjusts vertical position
-              keepTooltipPosition={true} // Keeps the tooltip in place
-              pointerEvents="box-none"
-              style={{
-                position: "absolute",
-                width: "100%",
-                top: 36,
-                height: 32,
-              }}
-            />
-            <Text style={styles.headerText}>
-              Welcome{" "}
-              {userData?.user?.name
-                ? `${userData?.user?.name}`
-                : `${userData?.user?.mobile}`}
-            </Text>
-
+            <>
+              <TourGuideZone
+                zone={1}
+                text={"User Name"}
+                shape="rectangle"
+                // tooltipBottomOffset={5} // Adjusts vertical position
+                // keepTooltipPosition={true} // Keeps the tooltip in place
+                pointerEvents="box-none"
+                style={{
+                  position: "absolute",
+                  width: width * 0.8, // Adjust width based on screen size
+                  top: height * 0.05, // Adjust top position based on screen height
+                  height: 32,
+                }}
+              />
+              <Text style={styles.headerText}>
+                Welcome{" "}
+                {userData?.user?.name
+                  ? `${userData?.user?.name}`
+                  : `${userData?.user?.mobile}`}
+              </Text>
+            </>
             {/* <Text style={styles.headerText1}>{`Welcome ${loginDetail.name} ${loginDetail.surname}`}</Text> */}
+
+            <Text style={styles.subHeaderText}>
+              Last Login: {lastLoginTime}
+            </Text>
             <TourGuideZone
               zone={2}
               text={"Last login"}
               shape="rectangle"
               // tooltipBottomOffset={20} // Adjusts vertical position
-              keepTooltipPosition={true} // Keeps the tooltip in place
+              // keepTooltipPosition={true} // Keeps the tooltip in place
               pointerEvents="box-none"
               style={{
                 position: "absolute",
-                width: "100%",
-                top: 70,
-                height: 18,
+                width: width * 0.7, // Adjust width
+                top: height * 0.095, // Adjust vertical position
+                height: 20,
               }}
             />
-            <Text style={styles.subHeaderText}>
-              Last Login: {lastLoginTime}
-            </Text>
           </View>
           <View style={{ flex: 0.6 }}>
             <Card style={styles.card}>
@@ -257,8 +260,8 @@ export default function HomeScreen({ navigation }) {
                       // keepTooltipPosition={true} // Keeps the tooltip in place
                       style={{
                         position: "absolute",
-                        width: "80%",
-                        top: 50,
+                        width: width * 0.6, // Adjust width based on screen width
+                        top: height * 0.07, // Adjust top position
                         height: 32,
                         marginLeft: 30,
                       }}
@@ -277,8 +280,8 @@ export default function HomeScreen({ navigation }) {
                       pointerEvents="box-none"
                       style={{
                         position: "absolute",
-                        width: "45%",
-                        top: 45,
+                        width: width * 0.3, // 40% of screen width
+                        top: height * 0.06, // Adjust position based on screen height
                         height: 32,
                         marginLeft: 20,
                       }}
@@ -305,10 +308,10 @@ export default function HomeScreen({ navigation }) {
                       pointerEvents="box-none"
                       style={{
                         position: "absolute",
-                        width: "45%",
-                        top: 45,
+                        width: width * 0.3, // Adjust width based on screen width
+                        top: height * 0.06, // Adjust vertical position
                         height: 32,
-                        marginLeft: 162,
+                        marginLeft: 165,
                       }}
                     />
                     <Pressable
@@ -335,15 +338,7 @@ export default function HomeScreen({ navigation }) {
                 data={services}
                 numColumns={3}
                 renderItem={({ item, index }) => (
-                  <TourGuideZone
-                    key={index}
-                    zone={6 + index} // Unique zone ID for each item
-                    text={`Go to ${item.name}`} // Tooltip text
-                    // Tooltip action (can be empty if needed)
-                    shape={"circle"} // Adjust shape as necessary
-                    style={[styles.tourGuideZone, styles.item]} // Apply styles to TourGuideZone
-                    pointerEvents="box-none"
-                  >
+                  <View style={styles.flatListitem}>
                     <TouchableOpacity
                       style={styles.item}
                       onPress={() => goToHandler(item.navigateTo)}
@@ -353,7 +348,25 @@ export default function HomeScreen({ navigation }) {
                         <Text style={styles.itemText}>{item.name}</Text>
                       </View>
                     </TouchableOpacity>
-                  </TourGuideZone>
+                    <TourGuideZone
+                      key={index}
+                      zone={6 + index}
+                      text={item.name ? `Go to ${item.name}`: "Finished"}
+                      shape={"circle"}
+                      style={{
+                        position: "absolute",
+                        top: height * 0.02,
+                        left: width * 0.1,
+                        // width: 80,
+                        height: height * 0.1,
+                        // borderRadius: 25,
+                        backgroundColor: "transparent",
+                        flex: 1,
+                        margin: width * 0.05,
+                      }}
+                      pointerEvents="box-none"
+                    />
+                  </View>
                 )}
                 keyExtractor={(item, index) => index}
                 ListEmptyComponent={<Text>No Items Found</Text>}
@@ -528,12 +541,22 @@ const styles = StyleSheet.create({
     backgroundColor: ButtonColor.SubmitBtn,
   },
   tourGuideZone: {
-    // position: "absolute",
+    position: "absolute",
     top: 30,
-    // left: 38,
-    // // width: 80,
-    // height: 80,
+    left: 40,
+    // width: 80,
+    height: 80,
     // borderRadius: 25,
     backgroundColor: "transparent",
+    flex: 1,
+    margin: 10,
+    // alignItems: "center",
+    // justifyContent: "center",
+  },
+  flatListitem: {
+    // borderWidth:2,
+    marginTop: 20,
+    paddingVertical: 10,
+    flex: 1,
   },
 });
