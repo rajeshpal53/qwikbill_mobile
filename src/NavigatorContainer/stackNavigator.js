@@ -82,6 +82,7 @@ import AllVendorDataScreen from "../Screen/StackScreen/AllVendorDataScreen.js";
 import ProductDetailsScreen from "../StackScreen/ProductSection/ProductDetailsScreen.js";
 import CustomerDetail from "../StackScreen/CustomerSection/CustomerDetails.js";
 import PoliciesDetailsScreen from "../StackScreen/PoliciesDetailsScreen.js";
+import AllQueryAndSupport from "../../src/Screen/StackScreen/QueriesScreens/AllQueryAndSupport.js"
 
 export default function StackNavigator() {
   const Stack = createStackNavigator();
@@ -635,6 +636,14 @@ export default function StackNavigator() {
             headerLeft: () => <CustomBackButton />,
           }}
         />
+        <Stack.Screen
+           name="AllQuerysAndSupport"
+           component={AllQueryAndSupport}
+           options={{
+             headerTitle: "View Shop Details",
+           }}
+         />
+
       </Stack.Navigator>
 
       <CheckInternet
