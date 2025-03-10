@@ -139,6 +139,7 @@ export const formatDate = (dateString) => {
 };
 export const generatePDF = (values) => {
   console.log("values of formdata is , ", values);
+  console.log("values of formdata is 587, ", values?.products);
   const productDetails = values?.products
     ?.map(
       (item) => `
@@ -150,6 +151,8 @@ export const generatePDF = (values) => {
       </tr>`
     )
     .join("");
+
+  console.log("DATA OF PRODUCTT", productDetails)
 
   const partiallyPaidSection =
     values?.statusfk == 3
@@ -268,7 +271,7 @@ export const generatePDF = (values) => {
                   values?.customerData?.name || "N/A"
                 }<br>
                 <strong>Customer Contact:</strong> ${
-                  values?.customerData?.mobile || "N/A"
+                  values?.customerData?.phone || "N/A"
                 } <br>
                 <strong>Address:</strong> ${values?.address || "N/A"}
               </td>

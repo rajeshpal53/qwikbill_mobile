@@ -72,64 +72,68 @@
 
 // export default CustomerDetailsCard;
 
-
-
-
-
-
-
-
-
-
-
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Card, Avatar } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { fontFamily, fontSize } from "../../Util/UtilApi";
 import { API_BASE_URL } from "../../Util/UtilApi";
 
-const CustomerDetailsCard = ({ item, onEdit }) => {
+const CustomerDetailsCard = ({ item, setCustomerData }) => {
   const navigation = useNavigation();
+  const profilePicUrl = item.profilePicurl
+    ? `${API_BASE_URL}${item.profilePicurl}`
+    : null;
 
+  console.log("profile pic url isss ,", profilePicUrl);
 
-  const profilePicUrl = item.profilePicurl ? `${API_BASE_URL}${item.profilePicurl}` : null;
-
-  console.log("profile pic url isss ,",profilePicUrl)
-
-  const displayName = item.name ? item.name.trim() : "Unknown";
+  const displayName = item?.user?.name ? item?.user?.name.trim() : "Unknown";
   const firstLetter = displayName.charAt(0).toUpperCase(); // Ensure it's uppercase
 
-
   return (
-    <Card
-      style={styles.card}
-      onPress={() => navigation.navigate("CustomerDetails", { item: item })}
-    >
-      <Card.Title
-        title={displayName}
-        subtitle={item.mobile || "No Mobile"}
-        titleStyle={styles.title}
-        subtitleStyle={styles.subtitle}
-        left={() =>
-          profilePicUrl ? (
-            <Avatar.Image size={50} source={{ uri: profilePicUrl }} style={styles.avatar} />
-          ) : (
-            <Avatar.Text
-              size={55}
-              label={firstLetter}
-              style={styles.avatarPlaceholder}
-            />
-          )
+    <View>
+      <Card
+        style={styles.card}
+        onPress={() =>
+          navigation.navigate("CustomerDetails", {
+            item,
+            setCustomerData:{setCustomerData}
+          })
         }
-        right={() => (
-          <TouchableOpacity onPress={() => onEdit(item)} style={styles.editIcon}>
-            <MaterialIcons name="edit" size={24} color="#1E88E5" />
-          </TouchableOpacity>
-        )}
-      />
-    </Card>
+      >
+        <Card.Title
+          title={displayName}
+          subtitle={item?.user?.mobile || "No Mobile"}
+          titleStyle={styles.title}
+          subtitleStyle={styles.subtitle}
+          left={() =>
+            profilePicUrl ? (
+              <Avatar.Image
+                size={50}
+                source={{ uri: profilePicUrl }}
+                style={styles.avatar}
+              />
+            ) : (
+              <Avatar.Text
+                size={55}
+                label={firstLetter}
+                style={styles.avatarPlaceholder}
+              />
+            )
+          }
+          right={() => (
+            // <TouchableOpacity onPress={() => onEdit(item)} style={styles.editIcon}>
+            <MaterialIcons
+              name="keyboard-arrow-right"
+              size={24}
+              color="#1E88E5"
+            />
+            // </TouchableOpacity>
+          )}
+        />
+      </Card>
+    </View>
   );
 };
 
@@ -140,7 +144,7 @@ const styles = StyleSheet.create({
     // paddingVertical: 8,
     borderRadius: 8,
     elevation: 3,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   avatar: {
     backgroundColor: "#fff",
@@ -150,18 +154,18 @@ const styles = StyleSheet.create({
   },
   editIcon: {
     marginRight: 15,
-    marginBottom:15
+    marginBottom: 15,
   },
   title: {
     fontSize: fontSize.labelLarge,
-    marginLeft:10,
-    fontFamily:fontFamily.regular
+    marginLeft: 10,
+    fontFamily: fontFamily.regular,
   },
   subtitle: {
     fontSize: fontSize.labelMedium,
     color: "rgba(0, 0, 0, 0.6)",
-    marginLeft:10,
-    fontFamily:fontFamily.regular
+    marginLeft: 10,
+    fontFamily: fontFamily.regular,
   },
 });
 

@@ -33,8 +33,9 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const { selectedShop } = useContext(ShopContext);
   const [fetchdata, setfetchdata] = useState({ name: "", address: "" });
   const [loading, setLoading] = useState(false);
+  const [presentValue, SetPresentValue] = useState(true)
 
-  console.log("selected shop is , ", selectedShop);
+  console.log("selected shop isuser , ", User);
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
@@ -55,7 +56,6 @@ const CreateInvoiceForm = ({ selectedButton }) => {
 
     if (/^\d{10}$/.test(phoneNumber)) {
       setLoading(true);
-
       try {
         const api = `users/getUserByMobile/${phoneNumber}`;
         const headers = {
@@ -65,13 +65,14 @@ const CreateInvoiceForm = ({ selectedButton }) => {
         // console.log("response of getting userbyMobile is , ", response)
         if (response) {
           setUser(response);
-          setfetchdata({ name: response.name, address: response.address });
+          setfetchdata({ name: response?.name, address: response?.address });
         } else {
           setfetchdata({ name: "", address: "" });
         }
         setUser(response);
       } catch (error) {
         setfetchdata({ name: "", address: "" });
+        SetPresentValue(true)
         console.error("Error fetching User data:", error);
       } finally {
         setLoading(false);
@@ -90,7 +91,8 @@ const CreateInvoiceForm = ({ selectedButton }) => {
         User?.name ||
         User?.address ||
         User?.gstNumber ||
-        User?.phone;
+        User?.phone ||
+        presentValue;
 
       if (hasFilledForm && !submit.current) {
         e.preventDefault();
@@ -144,6 +146,14 @@ const CreateInvoiceForm = ({ selectedButton }) => {
         onSubmit={(values, { resetForm }) => {
           console.log("values are , ", values);
 
+          const DataCustomer = {
+            name : fetchdata?.name || values?.name,
+            address : fetchdata?.address || values?.address,
+            getNumber : User?.getNumber || values?.gstNumber,
+            phone : User?.getNumber || values?.phone,
+            userId : User?.id || undefined
+          };
+
           const extraData = {
             usersfk: User?.id,
             vendorfk: selectedShop?.id,
@@ -167,7 +177,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
 
           const payload = {
             ...extraData,
-            customerData: User,
+            customerData: DataCustomer,
             serviceProviderData: selectedShop,
             products: carts,
             // Pricedetails: [
@@ -181,9 +191,10 @@ const CreateInvoiceForm = ({ selectedButton }) => {
             // ],
           };
           console.log("Form Submitted Data:", payload?.products);
-          console.log("Form Submitted Data:", payload);
+          console.log("Form Submitted Data:123", payload);
           submit.current = true;
           navigation.navigate("PDFScreen", { formData: payload });
+          resetForm()
           // resetForm();
           // dispatch(clearCart());
         }}

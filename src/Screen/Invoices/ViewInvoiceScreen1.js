@@ -25,6 +25,24 @@ function ViewInvoiceScreen1({ navigation }) {
     startDate: new Date(),
     endDate: new Date(),
   });
+  const debounceTimeout = useRef(null);
+
+  useEffect(() => {
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    // Set a 500ms debounce delay to trigger the data fetch
+    debounceTimeout.current = setTimeout(() => {
+      setPage(1);  // Reset page to 1 when the filter or search query changes
+    }, 500);
+
+    return () => {
+      clearTimeout(debounceTimeout.current);  // Cleanup timeout on component unmount
+    };
+  }, [selected, searchQuery, sortBy]);
+
+
   useEffect(() => {
     let api = `invoice/getInvoices?vendorfk=${selectedShop?.id}&page=${page}&size=10`;
     if (sortBy) {
@@ -96,21 +114,28 @@ function ViewInvoiceScreen1({ navigation }) {
     );
   };
 
+useEffect(()=>{
+  console.log("DATA OF LOADING 158",isLoading)
+},[isLoading])
+
+
   return (
     <View style={{ backgroundColor: "#fff", flex: 1 }}>
-      <View style={{ marginTop: 8 }}>
-        <Searchbarwithmic
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          setsearchmodal={setSearchmodal}
-          setTranscript={setTranscript}
-          placeholderText="Search Invoices..."
-          refuser={searchBarRef}
-          searchData={fetchSearchedData}
-        />
-        <FilterButtons setSelected={setSelected} selected={selected} />
-      </View>
       <FlatList
+        ListHeaderComponent={
+          <View style={{ marginTop: 8 }}>
+            <Searchbarwithmic
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              setsearchmodal={setSearchmodal}
+              setTranscript={setTranscript}
+              placeholderText="Search Invoices..."
+              refuser={searchBarRef}
+              searchData={fetchSearchedData}
+            />
+            <FilterButtons setSelected={setSelected} selected={selected} />
+          </View>
+        }
         contentContainerStyle={{ paddingBottom: 140 }}
         data={invoices}
         renderItem={({ item, index }) => (

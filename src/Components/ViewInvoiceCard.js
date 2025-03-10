@@ -1,6 +1,6 @@
 import { View ,StyleSheet,TouchableOpacity,Pressable} from "react-native";
 import { Text,Card} from "react-native-paper";
-import {statusName} from "../Util/UtilApi";
+import {fontSize, statusName} from "../Util/UtilApi";
 
 const ViewInvoiceCard = ({ invoice,navigation }) => {
     return (
@@ -14,20 +14,20 @@ const ViewInvoiceCard = ({ invoice,navigation }) => {
         <Text style={styles.date}>{new Date(invoice.createdAt).toDateString()}</Text>
         <Text style={styles.date}>{invoice.address}</Text>
         <View style={styles.row}>
-          <Text>Subtotal:</Text>
-          <Text>₹{invoice.subtotal}</Text>
+          <Text style={styles.allText}>Subtotal:</Text>
+          <Text style={styles.allText}>₹{invoice.subtotal}</Text>
         </View>
         <View style={styles.row}>
-          <Text>Discount:</Text>
-          <Text>₹{invoice.discount}</Text>
+          <Text style={styles.allText}>Discount:</Text>
+          <Text style={styles.allText}>₹{invoice.discount}</Text>
         </View>
         <View style={styles.row}>
-          <Text>Final Total:</Text>
+          <Text style={styles.allText}>Final Total:</Text>
           <Text style={styles.finalTotal}>₹{invoice.finaltotal}</Text>
         </View>
         <View style={styles.row}>
-          <Text>Payment Mode:</Text>
-          <Text>{invoice.paymentMode}</Text>
+          <Text style={styles.allText}>Payment Mode:</Text>
+          <Text style={styles.allText}> {invoice.paymentMode}</Text>
         </View>
       </Card>
       </Pressable>
@@ -51,16 +51,16 @@ const ViewInvoiceCard = ({ invoice,navigation }) => {
           fontWeight: "bold",
         },
         date: {
-          fontSize: 14,
+          fontSize: fontSize.label,
           color: "gray",
           marginBottom: 5,
         },
         invoice:{
-            fontSize: 18,    
+            fontSize: 18,
             color: "gray",
         },
         address: {
-          fontSize: 14,
+          fontSize: fontSize.label,
           marginBottom: 5,
         },
         row: {
@@ -70,9 +70,12 @@ const ViewInvoiceCard = ({ invoice,navigation }) => {
         },
         finalTotal: {
           fontWeight: "bold",
-          fontSize: 16,
+          fontSize: fontSize.labelMedium,
           color: "green",
         },
+        allText:{
+          fontSize: fontSize.labelMedium,
+        }
       });
-  
+
   export default ViewInvoiceCard;

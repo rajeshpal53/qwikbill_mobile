@@ -61,7 +61,6 @@
 //   const [loading, setLoading] = useState(true);
 //   const [error, setError] = useState(null);
 
-
 //   const filteredData = customerdetails.filter((item) =>
 //     item.Name.toLowerCase().includes(searchQuery.toLowerCase())
 //   );
@@ -76,12 +75,9 @@
 //     }
 //   }, [SelectedEditItem]);
 
-
 //   useEffect(() => {
 //     console.log("Updated customer data:", customerData);
 //   }, [customerData]);
-
-
 
 //   useEffect(() => {
 //     const fetchCustomerData = async () => {
@@ -113,7 +109,6 @@
 
 //     fetchCustomerData();
 //   }, []);
-
 
 //   return (
 //     <View style={{ flex: 1 }}>
@@ -169,28 +164,23 @@
 
 // export default CustomerDetail;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-import { Text, View, StyleSheet, FlatList, ActivityIndicator } from "react-native";
-import React, { useEffect, useState } from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
+import React, { useContext, useEffect, useState } from "react";
 import { FAB } from "react-native-paper";
 import Icon from "react-native-vector-icons/Ionicons";
 import axios from "axios";
 import CustomerDetailsCard from "../../Component/Cards/CustomerDetailsCard";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
 import EditCustomerDetailsModal from "../../Modal/EditCustomerDetailsModal";
-import { API_BASE_URL } from "../../Util/UtilApi";
+import { API_BASE_URL, readApi } from "../../Util/UtilApi";
+import { ShopContext } from "../../Store/ShopContext";
+import { useIsFocused } from "@react-navigation/native";
 
 const CustomerDetail = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -201,127 +191,89 @@ const CustomerDetail = ({ navigation }) => {
   const [customerData, setCustomerData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { selectedShop } = useContext(ShopContext);
+  const isFocused = useIsFocused();
 
-
-  const openEditModal = (item) => {
-    setSelectedEditItem(item);
-   //  console.log("item for edit modal ", item)
-
-  };
-
-
-  const filteredData = customerData
-    .map((item) => ({
-      ...item,
-      name: item.name ?? "Unknown", // Replace null or undefined name with "Unknown"
-    }))
-    .filter((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
+  console.log("DATA OF EDIT ", customerData);
 
   useEffect(() => {
-    if (SelectedEditItem) {
-      seteditmodal(true);
-    }
-  }, [SelectedEditItem]);
-
-
-  useEffect(() => {
-    console.log("Updated customer data:", customerData);
-  }, [customerData]);
-
-
-  useEffect(() => {
-    const fetchCustomerData = async () => {
+    let api = `customers/getCustomersByVendorId/${selectedShop?.id}`;
+    const FetchAlluser = async () => {
       try {
-        const url = `${API_BASE_URL}transaction/getAllUsersByVenderfk/22`;
-        console.log("Fetching data from API:", url);
-
-        const response = await axios.get(url, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        console.log("API Response:", response.data);
-
-        // const profileData = response.data
-
-        // console.log("profile image is ")
-        // const profileImage = profileData.users[1].profilePicurl
-
-        // console.log(`${API_BASE_URL}${profileImage}`)
-
-        if (response.data && Array.isArray(response.data.users)) {
-          setCustomerData(response.data.users);
-        } else {
-          console.error("Invalid response format:", response.data);
-          setError("Unexpected response format");
-        }
-
-      } catch (err) {
-        console.error("API Fetch Error:", err.message);
-        console.error("Error Response:", err.response?.data);
-        console.error("Request Config:", err.config);
-        setError("Failed to fetch customer data.");
+        setLoading(true);
+        const response = await readApi(api);
+        console.log("DATA OF RESPONSE IS +----", response?.customers);
+        setCustomerData(response?.customers);
+      } catch (error) {
+        console.log("Unable to fetch data is ", error);
+        setLoading(false);
       } finally {
         setLoading(false);
       }
     };
+    FetchAlluser();
+  }, [isFocused]);
 
-    fetchCustomerData();
+  // const openEditModal = (item) => {
+  //   setSelectedEditItem(item);
+  //   seteditmodal(true)
 
-  }, []);
+  // };
+
+  const Loader = () => {
+    if (!loading) return null;
+    return (
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <ActivityIndicator size={"large"}></ActivityIndicator>
+      </View>
+    );
+  };
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ marginTop: 5 }}>
-        <Searchbarwithmic
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          setsearchmodal={setsearchmodal}
-          setTranscript={setTranscript}
-          placeholderText="Search User by name..."
+      <FlatList
+        ListHeaderComponent={
+          <View style={{ marginTop: 5 }}>
+            <Searchbarwithmic
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              setsearchmodal={setsearchmodal}
+              setTranscript={setTranscript}
+              placeholderText="Search User by name..."
+            />
+          </View>
+        }
+        data={customerData}
+        renderItem={({ item }) => (
+          <CustomerDetailsCard
+            item={item}
+            navigation={navigation}
+            // onEdit={openEditModal}
+            seteditmodal={seteditmodal}
+            setCustomerData={setCustomerData}
 
-        />
-      </View>
-
-      {loading ? (
-        <ActivityIndicator size="large" color="#0c3b73" style={{ marginTop: 20 }} />
-      ) : error ? (
-        <Text style={{ color: "red", textAlign: "center", marginTop: 20 }}>{error}</Text>
-      ) : filteredData.length === 0 ? (
-        // Show "No data found" message if filteredData is empty
-        <Text style={{ textAlign: "center", marginTop: 20, fontSize: 16, color: "#666" }}>
-          No data found
-        </Text>)
-        : (
-          <FlatList
-            data={filteredData}
-            renderItem={({ item }) => (
-              <CustomerDetailsCard
-                item={item}
-                navigation={navigation}
-                onEdit={() => openEditModal(item)}
-              />
-            )}
-            keyExtractor={(item) => item.id.toString()}
           />
         )}
+        keyExtractor={(item) => item.id.toString()}
+        ListFooterComponent={Loader}
+        contentContainerStyle={styles.flatListContainer}
+        ListEmptyComponent={() => (
+          <View style={{ alignItems: "center", marginTop: 20 }}>
+            <Text style={{ fontSize: 16, color: "gray" }}>
+              No products found.
+            </Text>
+          </View>
+        )}
+      />
 
-      {/* <FAB
-        icon={() => <Icon name="add" size={25} color="#fff" />}
-        style={styles.fab}
-        onPress={() => console.log("FAB pressed")}
-      /> */}
-
-      {editmodal && (
+      {/* {editmodal && (
         <EditCustomerDetailsModal
           visible={editmodal}
           seteditmodal={seteditmodal}
           SelectedEditItem={SelectedEditItem}
+          setCustomerData= {setCustomerData}
         />
-      )}
+      )} */}
     </View>
   );
 };
@@ -338,3 +290,85 @@ const styles = StyleSheet.create({
 });
 
 export default CustomerDetail;
+
+// const filteredData = customerData
+//   .map((item) => ({
+//     ...item,
+//     name: item.name ?? "Unknown", // Replace null or undefined name with "Unknown"
+//   }))
+//   .filter((item) =>
+//     item.name.toLowerCase().includes(searchQuery.toLowerCase())
+//   );
+
+// useEffect(() => {
+//   if (SelectedEditItem) {
+//     seteditmodal(true);
+//   }
+// }, [SelectedEditItem]);
+
+// useEffect(() => {
+//   console.log("Updated customer data:", customerData);
+// }, [customerData]);
+
+// useEffect(() => {
+//   const fetchCustomerData = async () => {
+//     try {
+//       const url = `${API_BASE_URL}transaction/getAllUsersByVenderfk/22`;
+//       console.log("Fetching data from API:", url);
+
+//       const response = await axios.get(url, {
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//       });
+
+//       console.log("API Response:", response.data);
+
+//       // const profileData = response.data
+
+//       // console.log("profile image is ")
+//       // const profileImage = profileData.users[1].profilePicurl
+
+//       // console.log(`${API_BASE_URL}${profileImage}`)
+
+//       if (response.data && Array.isArray(response.data.users)) {
+//         setCustomerData(response.data.users);
+//       } else {
+//         console.error("Invalid response format:", response.data);
+//         setError("Unexpected response format");
+//       }
+
+//     } catch (err) {
+//       console.log("Unable to fetch User ", err);
+
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   fetchCustomerData();
+
+// }, []);
+
+{
+  /* {loading ? (
+        <ActivityIndicator size="large" color="#0c3b73" style={{ marginTop: 20 }} />
+      ) : error ? (
+        <Text style={{ color: "red", textAlign: "center", marginTop: 20 }}>{error}</Text>
+      ) : filteredData.length === 0 ? (
+        // Show "No data found" message if filteredData is empty
+        <Text style={{ textAlign: "center", marginTop: 20, fontSize: 16, color: "#666" }}>
+          No data found
+        </Text>)
+        : (
+
+        )} */
+}
+
+{
+  /* <FAB
+        icon={() => <Icon name="add" size={25} color="#fff" />}
+        style={styles.fab}
+        onPress={() => console.log("FAB pressed")}
+      /> */
+}
