@@ -551,18 +551,18 @@ export default function StackNavigator() {
           component={CustomerDetails}
           options={{
             headerShown: true,
-            // headerTitle: t("Payments"),
-            tabBarIcon: ({ color, size }) => (
-              <Icon name="people-outline" color={color} size={size} />
-            ),
+            // // headerTitle: t("Payments"),
+            // tabBarIcon: ({ color, size }) => (
+            //   <Icon name="people-outline" color={color} size={size} />
+            // ),
             headerTitle: () => (
               <Text style={styles.headerTitle}>{"Customer Details"}</Text>
             ),
             headerTitleAlign: "center",
-            headerStyle: {
-              backgroundColor: "transparent",
-              // backgroundColor: "#fff"
-            },
+            // headerStyle: {
+            //   backgroundColor: "transparent",
+            //   // backgroundColor: "#fff"
+            // },
 
             headerLeft: () => <CustomBackButton />,
           }}

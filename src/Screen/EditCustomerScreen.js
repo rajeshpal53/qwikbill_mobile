@@ -26,7 +26,7 @@ function EditCustomerScreen({route,navigation}) {
             type: customerData.type || "",
           });
 
-         
+
         } catch (Error) {
           throw new Error("Item not found");
         } finally {
@@ -39,7 +39,7 @@ function EditCustomerScreen({route,navigation}) {
     },[])
     if (isLoading) {
       return <ActivityIndicator size="large" />;
-    }     
+    }
           const submitHandler=async(values)=>{
             const postData={
               ...values,
@@ -50,10 +50,10 @@ function EditCustomerScreen({route,navigation}) {
               const headers={
                 "Content-Type": "application/json",
               }
-              const response= await updateApi(`api/people/update/${customerId}`,postData,headers);     
+              const response= await updateApi(`api/people/update/${customerId}`,postData,headers);
                 showSnackbar("successfully update customer","success")
                 navigation.navigate("Customer");
-            } 
+            }
              catch (error){
               console.error("Failed to update invoice", "error");
               showSnackbar("Failed to update invoice", "error")

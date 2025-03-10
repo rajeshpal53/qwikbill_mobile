@@ -37,6 +37,8 @@ const PdfScreen = ({ navigation }) => {
   const [createdInvoice, setCreatedInvoice] = useState(null);
   const { showSnackbar } = useSnackbar();
 
+  console.log("createdInvoice----------",createdInvoice)
+
   const { t } = useTranslation();
   const [downloadLoading, setDownloadLoading] = useState(false);
   const [shareLoading, setShareLoading] = useState(false);
@@ -50,6 +52,17 @@ const PdfScreen = ({ navigation }) => {
       setCreatedInvoice(viewInvoiceData);
     }
   }, [viewInvoiceData]);
+
+  // useEffect(() => {
+  //   console.log("view InvoiceData is under useEffect formData , ", formData);
+
+  //   if (formData) {
+  //     setCreatedInvoice(formData);
+  //   }
+  // }, [formData]);
+
+
+
   const getTodaysDate = () => {
     const today = new Date();
     const day = String(today.getDate()).padStart(2, "0");
@@ -227,6 +240,7 @@ const PdfScreen = ({ navigation }) => {
           originWhitelist={["*"]}
           source={{ html: generatePDF(viewInvoiceData) }}
           style={{ height: "100%" }}
+          
         />
       ) : (
         <WebView
@@ -251,13 +265,14 @@ const PdfScreen = ({ navigation }) => {
             <Text style={{ color: "#fff" }}>{t("Generate")}</Text>
           </TouchableOpacity>
         )}
-
-        {/* <Button
+{/*
+        <Button
           disabled={createdInvoice ? true : false}
           title="Generate"
           onPress={handleGenerate}
           style={{backgroundColor:"#FF9800"}}
         /> */}
+
         <View style={styles.downloadShareButtons}>
           <TouchableOpacity
             onPress={handleShare}
