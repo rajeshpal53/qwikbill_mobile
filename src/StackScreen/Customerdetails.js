@@ -1,27 +1,27 @@
 import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { fontFamily, fontSize } from "../Util/UtilApi";
 import { MaterialIcons } from "@expo/vector-icons"; // for icons
-import EditCustomerDetailsModal from "../Modal/EditCustomerDetailsModal";
+// import EditCustomerDetailsModal from "../Modal/EditCustomerDetailsModal";
 import { useState } from "react";
 // import EditCustomerDetailsModal from "../../Modal/EditCustomerDetailsModal";
 
 const CustomerDetails = ({ route, navigation }) => {
   const { item, setCustomerData } = route.params; // Destructure both item and onEdit from route.params
   console.log("Items value", item);
-  const [SelectedEditItem, setSelectedEditItem] = useState(null);
-  const [editmodal, seteditmodal] = useState(false);
+//   const [SelectedEditItem, setSelectedEditItem] = useState(null);
+//   const [editmodal, seteditmodal] = useState(false);
 
   // Function for handling Edit button press
-  const handleEdit = () => {
-    setSelectedEditItem(item);
-    seteditmodal(true);
-  };
+//   const handleEdit = () => {
+//     setSelectedEditItem(item);
+//     seteditmodal(true);
+//   };
 
-  // Function for handling Delete button press
-  const handleDelete = () => {
-    // Logic to handle deletion goes here
-    console.log("Customer deleted", item.id);
-  };
+//   // Function for handling Delete button press
+//   const handleDelete = () => {
+//     // Logic to handle deletion goes here
+//     console.log("Customer deleted", item.id);
+//   };
 
   return (
     <View style={styles.container}>
@@ -64,7 +64,7 @@ const CustomerDetails = ({ route, navigation }) => {
         </View>
 
         {/* Action Buttons */}
-        <View style={styles.buttonContainer}>
+        {/* <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
             <MaterialIcons name="edit" size={24} color="#fff" />
             <Text style={styles.buttonText}>Edit</Text>
@@ -74,16 +74,16 @@ const CustomerDetails = ({ route, navigation }) => {
             <MaterialIcons name="delete" size={24} color="#fff" />
             <Text style={styles.buttonText}>Delete</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
-      {editmodal && (
+      {/* {editmodal && (
         <EditCustomerDetailsModal
           visible={editmodal}
           seteditmodal={seteditmodal}
           SelectedEditItem={SelectedEditItem}
           setCustomerData={setCustomerData}
         />
-      )}
+      )} */}
     </View>
   );
 };
