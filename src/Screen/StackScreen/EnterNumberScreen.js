@@ -98,18 +98,29 @@ const EnterNumberScreen = ({ navigation }) => {
     try {
       const response = await readApi(`users/getUserByMobile/${phoneNumber}`);
       console.log("USER DATA ______", response);
+      console.log("USER DATA mobile number  ______", response?.mobile);
 
-      if (response.status === 200) {
-        console.log("If condition working ");
-        return false;
+      if(response?.mobile===phoneNumber){
+        return false
+      }else{
+        return true
       }
+      // if (response.status === 200) {
+      //   console.log("If condition working1 ");
+      //   return false;
+      // }else{
+      //   console.log("User not found123")
+      // }
+
     } catch (error) {
-      if (error.response && error.response.status === 404) {
-        console.log("If condition working ");
-        return true;
-      }
+      // if (error.response && error.response.status === 404) {
+      //   console.log("If condition working2 ");
+      //   return true;
+      // }
+      console.log("Unable to fetch data is ", error)
+      return true
     }
-    return true;
+    // return true;
   };
 
   const carouselItems = [
