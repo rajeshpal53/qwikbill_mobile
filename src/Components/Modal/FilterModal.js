@@ -10,10 +10,18 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
-const FilterModal = ({ isModalVisible, setModalVisible, setSortBy, sortBy,dateRange,setDateRange}) => {
+const FilterModal = ({
+  isModalVisible,
+  setModalVisible,
+  setSortBy,
+  sortBy,
+  dateRange,
+  setDateRange,
+  formatDate
+}) => {
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
-
+  const [showDateWise, setShowDateWise] = useState(false);
 
   const filterOptions = [
     { label: "1 Month", value: "1months" },
@@ -24,19 +32,19 @@ const FilterModal = ({ isModalVisible, setModalVisible, setSortBy, sortBy,dateRa
 
   const handlePress = (item) => {
     if (item.value === "datewise") {
+      setShowDateWise(true);
       setShowStartDatePicker(true);
-      setSortBy("datewise")
     } else {
       setSortBy(item.value);
-      setModalVisible(false)
+      setModalVisible(false);
     }
   };
 
-  const handleDateChange = (selectedDate, type) => {
+  const handleDateChange = (event, selectedDate, type) => {
     if (selectedDate) {
       setDateRange((prev) => ({
         ...prev,
-        [type]: selectedDate,
+        [type]: selectedDate, // Keep as a Date object
       }));
     }
     if (type === "startDate") {
@@ -47,12 +55,12 @@ const FilterModal = ({ isModalVisible, setModalVisible, setSortBy, sortBy,dateRa
     }
   };
 
+
+
   const handleSubmit = () => {
-    setSortBy({
-      startDate: dateRange.startDate.toISOString().split("T")[0],
-      endDate: dateRange.endDate.toISOString().split("T")[0],
-    });
+    setSortBy("datewise");
     setModalVisible(false);
+    setShowDateWise(false)
   };
 
   return (
@@ -99,37 +107,37 @@ const FilterModal = ({ isModalVisible, setModalVisible, setSortBy, sortBy,dateRa
               {/* Start Date Picker */}
               {showStartDatePicker && (
                 <DateTimePicker
-                  value={dateRange.startDate}
+                  value={dateRange.startDate ? new Date(dateRange.startDate) : new Date()}
                   mode="date"
                   display="default"
-                  onChange={(event, date) => handleDateChange(date, "startDate")}
+                  onChange={(event, date) => handleDateChange(event, date, "startDate")}
                 />
               )}
 
               {/* End Date Picker */}
               {showEndDatePicker && (
                 <DateTimePicker
-                  value={dateRange.endDate}
+                  value={dateRange.endDate ? new Date(dateRange.endDate) : new Date()}
                   mode="date"
                   display="default"
-                  onChange={(event, date) => handleDateChange(date, "endDate")}
+                  onChange={(event, date) => handleDateChange(event, date, "endDate")}
                 />
               )}
 
               {/* Display Selected Dates */}
-              {sortBy === "datewise" && (
+              {showDateWise && dateRange?.startDate && dateRange?.endDate && (
                 <View style={styles.dateDisplayContainer}>
                   <Text style={styles.dateText}>
-                    Start Date: {dateRange.startDate.toDateString()}
+                    Start Date: {formatDate(dateRange.startDate)}
                   </Text>
                   <Text style={styles.dateText}>
-                    End Date: {dateRange.endDate.toDateString()}
+                    End Date: {formatDate(dateRange.endDate)}
                   </Text>
                 </View>
               )}
 
               {/* Submit Button */}
-              {sortBy === "datewise" && (
+              {showDateWise && (
                 <TouchableOpacity style={styles.okayButton} onPress={handleSubmit}>
                   <Text style={styles.okayButtonText}>OK</Text>
                 </TouchableOpacity>
