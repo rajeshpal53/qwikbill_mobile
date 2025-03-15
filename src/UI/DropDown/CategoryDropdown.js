@@ -72,12 +72,13 @@ const CategoryDropDown = ({setSelectedCat}) => {
 
 const styles = StyleSheet.create({
   main: {
-    borderWidth: 1,
+    // borderWidth: 1,
     paddingVertical: 10,
     paddingHorizontal: 5,
     borderRadius: 5,
     // marginBottom:10,
-    borderColor:"#A9A9A9"
+    borderColor:"#A9A9A9",
+    borderBottomWidth:1
 },
   button: {
     flexDirection: "row",

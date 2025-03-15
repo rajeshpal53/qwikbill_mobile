@@ -82,7 +82,7 @@ import AllVendorDataScreen from "../Screen/StackScreen/AllVendorDataScreen.js";
 import ProductDetailsScreen from "../StackScreen/ProductSection/ProductDetailsScreen.js";
 import CustomerDetail from "../StackScreen/CustomerSection/CustomerDetails.js";
 import PoliciesDetailsScreen from "../StackScreen/PoliciesDetailsScreen.js";
-import AllQueryAndSupport from "../../src/Screen/StackScreen/QueriesScreens/AllQueryAndSupport.js"
+import AllQueryAndSupport from "../../src/Screen/StackScreen/QueriesScreens/AllQueryAndSupport.js";
 
 export default function StackNavigator() {
   const Stack = createStackNavigator();
@@ -150,7 +150,19 @@ export default function StackNavigator() {
         />
 
         <Stack.Screen name="viewClient" component={ViewClientScreen} />
-        <Stack.Screen name="EditProfilePage" component={EditProfileScreen} />
+
+        <Stack.Screen
+          name="EditProfilePage"
+          component={EditProfileScreen}
+          options={{
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"EditProfilePage"}</Text>
+            ),
+
+            headerTitleAlign: "center",
+            headerLeft: () => <CustomBackButton />,
+          }}
+        />
 
         <Stack.Screen
           name="hsncode"
@@ -637,13 +649,12 @@ export default function StackNavigator() {
           }}
         />
         <Stack.Screen
-           name="AllQuerysAndSupport"
-           component={AllQueryAndSupport}
-           options={{
-             headerTitle: "View Shop Details",
-           }}
-         />
-
+          name="AllQuerysAndSupport"
+          component={AllQueryAndSupport}
+          options={{
+            headerTitle: "View Shop Details",
+          }}
+        />
       </Stack.Navigator>
 
       <CheckInternet

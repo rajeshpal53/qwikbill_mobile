@@ -18,7 +18,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 const screenWidth = Dimensions.get("window").width;
 
-const UserCard = ({ item, index, HandleDeleteUser }) => {
+const UserCard = ({ item, index, HandleDeleteUser, handleEditProfile }) => {
   const [profileUrl, setProfileUrl] = useState("");
   const [fallbackText, setFallbackText] = useState("E");
 

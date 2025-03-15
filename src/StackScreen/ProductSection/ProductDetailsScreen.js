@@ -84,6 +84,7 @@ const ProductDetailsScreen = ({ navigation }) => {
   }, [filterOptionSelect]);
 
   const getproductdata = async () => {
+    console.log("Getting a id is ", selectedShop?.id)
     const api = `products/getProductByVendorfk/${selectedShop?.id}?page=${page}&limit=${PAGE_SIZE}`;
     try {
       setloader(true);

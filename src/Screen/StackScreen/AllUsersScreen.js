@@ -26,7 +26,7 @@ import UserCard from "../../Component/Cards/UserCard";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
 import OpenmiqModal from "../../Modal/Openmicmodal";
 
-const AllUsersScreen = () => {
+const AllUsersScreen = ({navigation}) => {
   const { userData } = useContext(UserDataContext);
   const searchBarRef = useRef();
   const [searchQuery, setSearchQuery] = useState("");
@@ -97,6 +97,39 @@ const AllUsersScreen = () => {
     }
   };
 
+
+  const handleDataFromEditProfile = (updatedData, index) => {
+    console.log("updated data is , ", updatedData);
+    console.log("updated index is , ", index);
+
+    if (updatedData && index >= 0) {
+      console.log("Under if the if ");
+      const dataForUpdating = [...usersData];
+
+      dataForUpdating[index] = updatedData;
+
+      console.log("data 12 , ", dataForUpdating);
+
+      try {
+        setUsersData(dataForUpdating);
+      } catch (error) {
+        console.log("error is the , updata , ", error);
+      }
+
+      console.log("data 13 , ", dataForUpdating);
+    }
+  };
+
+
+  const handleEditProfile = (item, index) => {
+    navigation.navigate("EditProfilePage", {
+      item: item,
+      onGoBack: (updatedData) => handleDataFromEditProfile(updatedData, index),
+      isAdmin: true,
+    });
+  };
+
+
   const loadMoreData = () => {
     if (hasMore && !isLoading && page < totalPages) {
       setPage((prev) => prev + 1);
@@ -135,6 +168,8 @@ const AllUsersScreen = () => {
             index={index}
             // navigation={navigation}
             HandleDeleteUser={HandleDeleteUser}
+            handleEditProfile={handleEditProfile}
+
           />
         )}
         // renderItem={renderItem}

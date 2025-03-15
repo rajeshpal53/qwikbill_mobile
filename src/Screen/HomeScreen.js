@@ -388,7 +388,7 @@ export default function HomeScreen({ navigation }) {
                   style={styles.touchableview}
                   onPress={() => navigation.navigate("CreateShopScreen")}
                 >
-                  <Text style={styles.btntext}>Please Become a vendor</Text>
+                  <Text style={styles.btntext}>Please add a shop</Text>
                 </TouchableOpacity>
                 {/* <Button mode="contained"> Please Become a vendor </Button> */}
               </View>
