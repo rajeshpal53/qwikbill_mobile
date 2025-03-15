@@ -84,6 +84,10 @@ const uploadImagesSchema = Yup.object().shape({
 const ShopValidataionSchema = Yup.object().shape({
   shopName: Yup.string().required("Shop Name is required"),
   shopAddress: Yup.string().required("Shop Address is required"),
+  gstNumber: Yup.string().matches(
+    /^[A-Z]{2}[0-9]{1}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z0-9]{1}[Z]{1}[0-9]{1}$/,
+    "Invalid GSTIN format"
+  ),
   // location: Yup.string().required("Location is required"),
   // kilometerRadius: Yup.number()
   //   .min(1, "Kilometer radius must be greater than 0")
@@ -96,6 +100,8 @@ const ProfileValidationSchema = Yup.object().shape({
   whatsappNumber: Yup.string()
     .required("WhatsApp number is required")
     .matches(/^[6-9]\d{9}$/, "Invalid WhatsApp number"),
+
+
 
   mobile: Yup.string().required("mobile number is required"),
   // .matches(/^[6-9]\d{9}$/, "Invalid Mobile Number")
@@ -163,7 +169,7 @@ const CreateShopScreen = ({ navigation }) => {
   const [aadharImage, setAadharImage] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
   const richText = useRef();
-  const routeData = route?.params?.editItem || null
+  const routeData = route?.params?.editItem || null;
   const isAdmin = route?.params?.isAdmin ?? false;
   const isFocused = useIsFocused();
   // console.log("routeLocation = ", routeLocation);
@@ -188,8 +194,8 @@ const CreateShopScreen = ({ navigation }) => {
 
   const [genderList, setGenderList] = useState([
     { label: "Select Gender", value: null },
-    { label: "Male", value: "male" },
-    { label: "Female", value: "female" },
+    { label: "Male", value: "Male" },
+    { label: "Female", value: "Female" },
     { label: "Other", value: "other" },
   ]);
   const textInputMode = "flat";
@@ -238,6 +244,8 @@ const CreateShopScreen = ({ navigation }) => {
     latitude: routeData?.latitude || "",
     longitude: routeData?.longitude || "",
     isApproved: routeData?.shopname || false,
+
+    gstNumber: routeData?.gstNumber || "",
 
     // isOnline: false,
     // isVerified: false,
@@ -382,6 +390,7 @@ const CreateShopScreen = ({ navigation }) => {
           pincode: routeData?.user?.pincode || "",
           shopName: routeData?.shopname || "",
           shopAddress: routeData?.shopAddress || "",
+          gstNumber: routeData?.gstNumber || "",
           whatsappNumber: routeData?.whatsappnumber || "",
           aadhaarNumber:
             routeData?.aadharCard || routeData?.user?.aadharCard || "",

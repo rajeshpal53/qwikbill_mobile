@@ -15,6 +15,8 @@ export const ShopProvider = ({ children }) => {
   console.log("SELECTED SHOP IS ", selectedShop);
 
   console.log("USER DATA IS 1578", userData);
+
+  console.log("DATA OF ALL SHOP ",allShops)
   // useEffect(() => {
   //   const loadAllShops = async () => {
   //     try {
@@ -82,9 +84,11 @@ export const ShopProvider = ({ children }) => {
          const storedSelectedShop = await AsyncStorage.getItem("selectedShop");
 
         if (storedSelectedShop) {
+          console.log("Render this data ",storedSelectedShop)
           setSelectedShop(JSON.parse(storedSelectedShop));
         } else if (allShops.length > 0) {
           // If no selected shop exists in AsyncStorage, select the first shop by default
+          console.log("ALLSHOP IS-------------", allShops[0])
           setSelectedShop(allShops[0]);
           await AsyncStorage.setItem("selectedShop", JSON.stringify(allShops[0]));
         }

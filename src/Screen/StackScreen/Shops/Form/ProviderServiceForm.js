@@ -20,9 +20,7 @@ const ProviderServiceForm = ({
   values,
   touched,
   errors,
-
   isAdmin,
-
   textInputMode,
   shopImageField,
 }) => {
@@ -117,6 +115,21 @@ const ProviderServiceForm = ({
         {/* </Pressable> */}
         {touched.shopAddress && errors.shopAddress && (
           <Text style={{ color: "red" }}>{errors.shopAddress}</Text>
+        )}
+
+        <TextInput
+          label={t("Gst Number")}
+          // disabled = { (!values?.latitude || values?.latitude === "") ? true : false}
+          mode={textInputMode}
+          style={{ backgroundColor: "transparent" }}
+          onChangeText={handleChange("gstNumber")}
+          onBlur={handleBlur("gstNumber")}
+          value={values.gstNumber}
+          error={touched.gstNumber && errors.gstNumber}
+        />
+        {/* </Pressable> */}
+        {touched.gstNumber && errors.gstNumber && (
+          <Text style={{ color: "red" }}>{errors.gstNumber}</Text>
         )}
       </View>
 
