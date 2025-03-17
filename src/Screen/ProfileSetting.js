@@ -417,6 +417,8 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
     } catch (error) {
       console.error("Error during logout - ", error);
       showSnackbar("Error logging out", "error");
+    }finally{
+      setVisible(false)
     }
   };
 
@@ -430,7 +432,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
-        routes: [{ name: "EnterNumber" }],
+        routes: [{ name: "login" }],
       })
     );
   };

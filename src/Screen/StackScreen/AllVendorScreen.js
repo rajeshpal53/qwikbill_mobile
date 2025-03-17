@@ -120,6 +120,7 @@ const AllVenderScreen = () => {
               setTranscript={setTranscript}
               placeholderText="Search User by name ..."
               refuser={searchBarRef}
+              searchData={()=>{}}
             />
           </View>
         }

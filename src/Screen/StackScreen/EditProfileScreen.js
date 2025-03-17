@@ -194,6 +194,7 @@ export default function EditProfileScreen({ navigation }) {
     let token = userData?.token;
     try {
       setModalVisible(false);
+      
       setIsLoading(true);
       console.log("post data beta is , ", postData);
 
@@ -231,8 +232,8 @@ export default function EditProfileScreen({ navigation }) {
 
       navigation.goBack();
       // setModalVisible(false);
-    } catch (err) {
-      console.error("Unable to update a user name ", err);
+    } catch (error) {
+      console.error(`Error with ${method.toUpperCase()} request to ${url}:`, error.response || error.message);
       showSnackbar(t(`Failed to update proflie`), "error");
     } finally {
       setIsLoading(false);
