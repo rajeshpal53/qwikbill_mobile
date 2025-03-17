@@ -232,7 +232,7 @@ export default function EditProfileScreen({ navigation }) {
       navigation.goBack();
       // setModalVisible(false);
     } catch (err) {
-      console.error("err", err);
+      console.error("Unable to update a user name ", err);
       showSnackbar(t(`Failed to update proflie`), "error");
     } finally {
       setIsLoading(false);

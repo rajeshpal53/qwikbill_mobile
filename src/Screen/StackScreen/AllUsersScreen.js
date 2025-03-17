@@ -99,16 +99,10 @@ const AllUsersScreen = ({navigation}) => {
 
 
   const handleDataFromEditProfile = (updatedData, index) => {
-    console.log("updated data is , ", updatedData);
-    console.log("updated index is , ", index);
 
     if (updatedData && index >= 0) {
-      console.log("Under if the if ");
       const dataForUpdating = [...usersData];
-
       dataForUpdating[index] = updatedData;
-
-      console.log("data 12 , ", dataForUpdating);
 
       try {
         setUsersData(dataForUpdating);

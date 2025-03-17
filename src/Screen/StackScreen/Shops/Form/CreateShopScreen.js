@@ -791,23 +791,24 @@ const CreateShopScreen = ({ navigation }) => {
           }
 
           if (routeData) {
+            console.log("DATA OF USER ", routeData)
             console.log(
-              "Something went Wrong Updating Service Provider",
+              "Something went Wrong Updating Service Provider route data",
               error
             );
 
             showSnackbar(
-              t("Something went Wrong Updating Service Provider"),
+              t("Something went Wrong Updating Service Provider route data"),
               "error"
             );
           } else {
             console.log(
-              "Something went Wrong Creating Service Provider",
+              "Something went Wrong Creating Service Provider else route ",
               error
             );
 
             showSnackbar(
-              t("Something went Wrong Creating Service Provider"),
+              t("Something went Wrong Creating Service Provider route data"),
               "error"
             );
           }
