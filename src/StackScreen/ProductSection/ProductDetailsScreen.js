@@ -55,6 +55,7 @@ const ProductDetailsScreen = ({ navigation }) => {
   const PAGE_SIZE = 10;
   const [filterOptionSelect, SetfilterOptionSelect] = useState("");
   const [totalPages, setTotalPages] = useState(1);
+  const [mainLoading, setMainLoading] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -65,30 +66,46 @@ const ProductDetailsScreen = ({ navigation }) => {
     }, [])
   );
 
-  useEffect(() => {
-    setPage(1);
-    let sortedData = [];
+  console.log("DATA OF PRODUCT IS ", Productdata);
+  const Apistore = (page) => {
+    // Start building the base API URL
+    let api = `products/getProducts?vendorefk=${selectedShop?.id}&page=${page}&limit=${PAGE_SIZE}`;
     if (filterOptionSelect === "Sort By Name") {
-      sortedData = [...Productdata].sort((a, b) => {
-        return a?.name?.toLowerCase() > b?.name?.toLowerCase() ? 1 : -1;
-      });
+      api += `&sortByName=AtoZ`;
     } else if (filterOptionSelect === "Low to High Price") {
-      sortedData = [...Productdata].sort((a, b) => a?.costPrice - b?.costPrice);
+      api += `&sortBy=lowTohigh`;
     } else if (filterOptionSelect === "High to Low Price") {
-      sortedData = [...Productdata].sort((a, b) => b?.costPrice - a?.costPrice);
+      api += `&sortBy=highToLow`;
     } else {
-      console.log("By default working");
-      sortedData = [...Productdata];
+      api = `products/getProducts?vendorefk=${selectedShop?.id}&page=${page}&limit=${PAGE_SIZE}`;
     }
-    SetProductData(sortedData);
-  }, [filterOptionSelect]);
+    return api;
+  };
 
-  const getproductdata = async () => {
-    console.log("Getting a id is ", selectedShop?.id)
-    const api = `products/getProductByVendorfk/${selectedShop?.id}?page=${page}&limit=${PAGE_SIZE}`;
+   const handleFilterChange = (filterOption) => {
+    setloader(true);
+    SetfilterOptionSelect(filterOption);
+    setPage(1);
+  };
+
+  useEffect(() => {
+    // When page or filter changes, fetch new data
+    getproductdata(page);
+  }, [page, filterOptionSelect, bulkUploadModalVisible]);
+
+
+  const getproductdata = async (page) => {
+    if (page === 1) {
+      setHasMore(true);
+      setMainLoading(true);
+    }
+    setloader(true);
     try {
-      setloader(true);
+      const api = Apistore(page);
       const response = await readApi(api);
+
+      console.log("DATA OF responce is ", response);
+
       if (page == 1) {
         SetProductData(response?.products);
         setTotalPages(response?.totalPages || 1);
@@ -101,40 +118,13 @@ const ProductDetailsScreen = ({ navigation }) => {
       if (page === 1) {
         SetProductData([]);
       }
+      console.log("Unable to fetch Data", error);
     } finally {
       setloader(false);
+      setMainLoading(false);
     }
   };
-  useEffect(() => {
-    getproductdata();
-  }, [page, isfocused, bulkUploadModalVisible]);
 
-  // const fetchSearchedData = async () => {
-  //   try {
-  //     setSearchCalled(true);
-  //     setIsLoading(true);
-  //     const trimmedQuery = searchQuery?.trim();
-
-  //     let api = `users/searchUser?searchTerm=${trimmedQuery}`;
-
-  //     const response = await readApi(api, {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${userData?.token}`,
-  //     });
-
-  //     if (response?.users?.length > 0) {
-  //       setSearchedData(response?.users);
-  //     } else {
-  //       setSearchedData([]);
-  //     }
-  //   } catch (error) {
-  //     if (error?.status === 404) {
-  //       setSearchedData([]);
-  //     }
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
 
   //  // Load more data when reaching the end
   const loadMoreData = () => {
@@ -172,15 +162,11 @@ const ProductDetailsScreen = ({ navigation }) => {
     );
   };
 
-  // if (loader) {
-  //   return (
-  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-  //       <ActivityIndicator animating={loader} color={"#FFC107"} size="large" />
-  //     </View>
-  //   );
-  // }
-
-  return (
+  return mainLoading ? (
+    <View style={{ flex: 1, justifyContent: "center" }}>
+      <ActivityIndicator size={"large"} />
+    </View>
+  ) : (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <FlatList
         ListHeaderComponent={() => (
@@ -219,7 +205,7 @@ const ProductDetailsScreen = ({ navigation }) => {
                       filterOptionSelect === suggestbtn &&
                         styles.selectedSuggestionButton,
                     ]}
-                    onPress={() => SetfilterOptionSelect(suggestbtn)}
+                    onPress={() => handleFilterChange(suggestbtn)}
                   >
                     <Text style={styles.suggestbtnText}>{suggestbtn}</Text>
                   </TouchableOpacity>
@@ -366,3 +352,57 @@ const styles = StyleSheet.create({
 });
 
 export default ProductDetailsScreen;
+
+// const fetchSearchedData = async () => {
+//   try {
+//     setSearchCalled(true);
+//     setIsLoading(true);
+//     const trimmedQuery = searchQuery?.trim();
+
+//     let api = `users/searchUser?searchTerm=${trimmedQuery}`;
+
+//     const response = await readApi(api, {
+//       "Content-Type": "application/json",
+//       Authorization: `Bearer ${userData?.token}`,
+//     });
+
+//     if (response?.users?.length > 0) {
+//       setSearchedData(response?.users);
+//     } else {
+//       setSearchedData([]);
+//     }
+//   } catch (error) {
+//     if (error?.status === 404) {
+//       setSearchedData([]);
+//     }
+//   } finally {
+//     setIsLoading(false);
+//   }
+// };
+
+// useEffect(() => {
+//   setPage(1);
+//   let sortedData = [];
+//   if (filterOptionSelect === "Sort By Name") {
+//     sortedData = [...Productdata].sort((a, b) => {
+//       return a?.name?.toLowerCase() > b?.name?.toLowerCase() ? 1 : -1;
+//     });
+//   } else if (filterOptionSelect === "Low to High Price") {
+//     sortedData = [...Productdata].sort((a, b) => a?.costPrice - b?.costPrice);
+//   } else if (filterOptionSelect === "High to Low Price") {
+//     sortedData = [...Productdata].sort((a, b) => b?.costPrice - a?.costPrice);
+//   } else {
+//     console.log("By default working");
+//     sortedData = [...Productdata];
+//   }
+//   SetProductData(sortedData);
+// }, [filterOptionSelect]);
+// const api = `products/getProductByVendorfk/${selectedShop?.id}?page=${page}&limit=${PAGE_SIZE}`;
+
+
+
+
+
+  // useEffect(() => {
+  //   getproductdata();
+  // }, [page, isfocused, bulkUploadModalVisible, filterOptionSelect]);
