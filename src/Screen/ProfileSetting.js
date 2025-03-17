@@ -274,7 +274,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
                 value: "Assign New Role",
               },
               { icon: "logout", label: "Logout", value: "Logout" },
-              { icon: "logout", label: "Logout1", value: "Logout1" },
+              // { icon: "logout", label: "Logout1", value: "Logout1" },
             ]
           : []),
       ]);
@@ -390,12 +390,12 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
       );
       console.log("response1523698", response);
 
-      if (response && response.success) {
+      if (response) {
         // Handle success, show Snackbar message, and log out
         showSnackbar("Logged out successfully", "success");
 
         // Perform all the logout actions
-        await auth().signOut();
+        // await auth().signOut();
         await clearUserData();
         await AsyncStorage.clear(); // Clear all AsyncStorage
         await AsyncStorage.removeItem("allShops");
@@ -411,7 +411,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
           })
         );
       } else {
-        console.log("Error during logout response:", response);
+        console.error("Error during logout response:", response);
         showSnackbar("Error logging out", "error");
       }
     } catch (error) {
