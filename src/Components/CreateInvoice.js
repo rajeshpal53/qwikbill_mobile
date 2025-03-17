@@ -26,7 +26,7 @@ import { ShopDetailContext } from "../Store/ShopDetailContext";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import ItemDataTable from "../Component/Cards/ItemDataTable";
 import CreateInvoiveForm from "../Component/Form/CreateInvoiveForm";
-import { fontFamily, fontSize } from "../Util/UtilApi";
+import { fontFamily, fontSize, readApi } from "../Util/UtilApi";
 import { ShopContext } from "../Store/ShopContext";
 import CustomToggleButton from "../Component/CustomToggleButton";
 import {
@@ -35,18 +35,19 @@ import {
   TourGuideZoneByPosition,
   useTourGuideController,
 } from "rn-tourguide";
+import UserDataContext from "../Store/UserDataContext";
 
 export default function CreateInvoice({ navigation, route }) {
   const startTour = route.params;
   const windowWidth = useWindowDimensions().width;
   const windowHeight = useWindowDimensions().height;
-  const { selectedShop, setSelectedShop } = useContext(AuthContext);
+  // const { selectedShop, setSelectedShop } = useContext(AuthContext);
   const [invoiceType, setInvoiceType] = useState("provInvoice");
   const pickerRef = useRef();
-  const { allShops } = useContext(ShopContext);
+  const { allShops,selectedShop} = useContext(ShopContext);
   const [isTourGuideActive, setIsTourGuideActive] = useState(false);
   const { canStart, start, stop, eventEmitter } = useTourGuideController();
-
+  const [invoiceNumber,setInvoiceNumber]=useState("");
   // const { shopDetails } = useContext(ShopDetailContext);
   // const invoiceNumber = 1000 + shopDetails.count + 1;
   // const [buttonsModes, setButtonsModes] = useState({
@@ -57,7 +58,8 @@ export default function CreateInvoice({ navigation, route }) {
   //--------------------------------------------------
 
   const [selectedValue, setSelectedValue] = useState("provisional");
-
+  const{userData}=useContext(UserDataContext)
+  const [storeCount,setStoreCount]=useState(0)
   // const toggleOptions = [
   //   { label: 'Left', value: 'left' },
   //   { label: 'Center', value: 'center' },
@@ -106,6 +108,22 @@ export default function CreateInvoice({ navigation, route }) {
     checkIfTourSeen();
   }, [canStart]);
 
+  useEffect(()=>{
+    fetchCount();
+  },[buttonsModes,invoiceType,selectedValue])
+  const fetchCount=async()=>{
+    const response= await readApi(`vendors/${selectedShop.id}`)
+    console.log(response,"fetchCount")
+    const date = new Date();
+    const formattedDate = `${String(date.getDate()).padStart(2, '0')}${String(date.getMonth() + 1).padStart(2, '0')}${date.getFullYear()}`;
+    setStoreCount(++response.invoiceCount)
+    if(selectedValue==="provisional"){
+      // newCount = ${vendor.shopname}${formattedDate}G${vendor.invoiceCount++}
+        setInvoiceNumber(`${selectedShop.shopname}${formattedDate}P${++response.invoiceCount}`)
+    } else{
+      setInvoiceNumber(`${selectedShop.shopname}${formattedDate}G${++response.invoiceCount}`)
+    }
+  }
 
   useEffect(() => {
     function setInvoiceHandler() {
@@ -205,11 +223,11 @@ export default function CreateInvoice({ navigation, route }) {
 
           <View style={styles.MainContainer}>
             <View style={styles.TextView}>
-              {selectedValue == "provisional" && (
+             
                 <Text style={styles.headerText}>
-                  Provisional Invoice No: - 1002
+                  Invoice No: - {invoiceNumber}
                 </Text>
-              )}
+           
 
               <CreateInvoiveForm selectedButton={selectedValue} />
             </View>

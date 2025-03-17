@@ -6,7 +6,7 @@ export const API_BASE_URL = "https://rajeshpal.online/qapi/";
 
 // export const API_BASE_URL = "http://192.168.1.35:2235/";
 
-export const NORM_URL="https://dailysabji.com/"
+export const NORM_URL="https://rajeshpal.online/"
 const apiRequest = async (method, url, data = null, headers) => {
     try {
         const response = await axios({

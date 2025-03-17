@@ -2,21 +2,23 @@ import React, { useEffect, useState, useContext } from "react";
 import { View, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Card } from "react-native-paper";
 import UserDataContext from "../../Store/UserDataContext";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused,CommonActions} from "@react-navigation/native";
 import FastImage from "react-native-fast-image";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { NORM_URL } from "../../Util/UtilApi";
+import { NORM_URL,createApi} from "../../Util/UtilApi";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
 import ConfirmModal from "../../Modal/ConfirmModal";
 import { fontFamily, fontSize } from "../../Util/UtilApi";
+import { useSnackbar } from "../../Store/SnackbarContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const AdminSectionScreen = ({ navigation }) => {
   const { t } = useTranslation();
   const isFocused = useIsFocused();
-  const { userData, saveUserData } = useContext(UserDataContext);
+  const { userData, saveUserData,clearUserData} = useContext(UserDataContext);
   const [imageUrl, setImageUrl] = useState("");
   const [visible, setVisible] = useState(false);
-
+  const {showSnackbar}=useSnackbar();
   const [menuItems, setMenuItems] = useState([
     {
       isDisabled: false,
@@ -67,11 +69,47 @@ const AdminSectionScreen = ({ navigation }) => {
     }
   };
 
-  const logoutHandler = () => {
-    saveUserData(null);
-    setVisible(false);
-    navigation.navigate("EnterNumber");
-  };
+  const logoutHandler = async () => {
+      try {
+        const response = await createApi(
+          "users/logout",
+          { mobile: userData?.user?.mobile },
+          {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userData.token}`,
+          }
+        );
+        console.log("response1523698", response);
+  
+        if (response) {
+          // Handle success, show Snackbar message, and log out
+          showSnackbar("Logged out successfully", "success");
+  
+          // Perform all the logout actions
+          // await auth().signOut();
+          await clearUserData();
+          await AsyncStorage.clear(); // Clear all AsyncStorage
+          await AsyncStorage.removeItem("allShops");
+          await AsyncStorage.removeItem("selectedShop");
+  
+          console.log("Successfully logged out");
+  
+          setVisible(false);
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: "login" }],
+            })
+          );
+        } else {
+          console.error("Error during logout response:", response);
+          showSnackbar("Error logging out", "error");
+        }
+      } catch (error) {
+        console.error("Error during logout - ", error);
+        showSnackbar("Error logging out", "error");
+      }
+    };
 
   useEffect(() => {
     if (userData) {
