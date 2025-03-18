@@ -5,48 +5,84 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { TextInput } from "react-native-paper";
 import * as Yup from "yup";
-import RNPickerSelect from "react-native-picker-select"; // Added picker for dropdown
-import { ButtonColor } from "../../Util/UtilApi";
+import RNPickerSelect from "react-native-picker-select";
+import { ButtonColor, fontSize, readApi } from "../../Util/UtilApi";
+import { useContext, useState } from "react";
+import UserDataContext from "../../Store/UserDataContext";
+import { ShopContext } from "../../Store/ShopContext";
+import DropDownList from "../../UI/DropDownList";
 
 const AddRole = () => {
+  const { userData } = useContext(UserDataContext);
+  const { allShops, selectedShop } = useContext(ShopContext);
+  const [User, setUser] = useState(null);
+  const [fetchdata, setfetchdata] = useState({ name: "" });
+  const [loading, setLoading] = useState(false);
+
+  console.log("DATA OF USER IS123578 58", fetchdata);
+
   const validationSchema = Yup.object({
     shopname: Yup.string().required("Shop Name is required"),
-    selectUser: Yup.string().required("Select User is required"),
     userRole: Yup.string().required("User Role is required"),
+
+    userMobile: Yup.string()
+      .required("Phone is required")
+      .matches(/^\d{10}$/, "Phone must be 10 digits"),
+    userName: Yup.string().required("User Name is required"),
+    ProductCategory: Yup.string().required("Product category is required"),
   });
 
-  const userOptions = [
-    { label: "User 1", value: "user1" },
-    { label: "User 2", value: "user2" },
-    { label: "User 3", value: "user3" },
+  const roleOptions = [
+    { label: "Owner", value: "owner" },
+    { label: "Manager", value: "manager" },
+    { label: "Employee", value: "employee" },
+    { label: "Viewer", value: "viewer" },
   ];
 
-  const roleOptions = [
-    { label: "Admin", value: "admin" },
-    { label: "Manager", value: "manager" },
-    { label: "Staff", value: "staff" },
-  ];
+  const fetchUserData = async (phoneNumber, setFieldValue) => {
+    if (/^\d{10}$/.test(phoneNumber)) {
+      setLoading(true);
+      try {
+        const api = `users/getUserByMobile/${phoneNumber}`;
+        const headers = {
+          Authorization: `Bearer ${userData?.token}`, // Add token to headers
+        };
+        const response = await readApi(api, headers);
+
+        if (response) {
+          setUser(response);
+          setfetchdata({ name: response?.name });
+          setFieldValue("userMobile", phoneNumber)
+        } else {
+          setfetchdata({ name: "" });
+        }
+      } catch (error) {
+        setfetchdata({ name: "" });
+        setFieldValue("userMobile", phoneNumber)
+        console.error("Error fetching User data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Owner Name</Text>
-        <Text style={styles.subHeaderText}>Akash Thapa</Text>
-      </View>
-
       <Formik
+        enableReinitialize={true}
         initialValues={{
           shopname: "",
-          selectUser: "",
+          userMobile: "",
+          userName: fetchdata?.name || "",
           userRole: "",
-          shopDescription: "",
+          selectShop: "",
         }}
         validationSchema={validationSchema}
         onSubmit={(values) => {
-          // Debugging the form submission
           console.log("Data of values:", values);
           alert("Form Submitted! Check console for values.");
         }}
@@ -58,44 +94,102 @@ const AddRole = () => {
           errors,
           handleSubmit,
           touched,
+          setFieldValue,
         }) => (
           <View style={styles.form}>
-            {/* Shop Name Label and Input */}
-            <Text style={styles.label}>Shop Name</Text>
-            <TextInput
-              mode="outlined"
-              style={styles.input}
-              onChangeText={handleChange("shopname")}
-              onBlur={handleBlur("shopname")}
-              value={values.shopname}
-            />
-            {touched.shopname && errors.shopname && (
-              <Text style={styles.errorText}>{errors.shopname}</Text>
-            )}
-
-            {/* Shop Description as an input field */}
-            <Text style={styles.label}>Shop Description</Text>
-            <View style={styles.TextShopDes}>
-              <Text style={styles.TextShop}>
-                This shop specializes in high-quality organic products, offering
-                a wide range of items from fresh produce to eco-friendly
-                household goods.
-              </Text>
+            {/* Header */}
+            <View style={styles.header}>
+              <Text style={styles.headerText}>Owner Name</Text>
+              <Text style={styles.subHeaderText}>{userData?.user?.name}</Text>
             </View>
+            {/* Shop Dropdown */}
+            <View>
+              <Text
+                style={{
+                  fontSize: fontSize.labelLarge,
+                  fontFamily: "Poppins-Regular",
+                  fontWeight: "bold",
+                }}
+              >
+                Select Shop
+              </Text>
 
-            {/* Select User Dropdown */}
-            <Text style={styles.label}>Select User</Text>
-            <RNPickerSelect
-              onValueChange={handleChange("selectUser")}
-              onBlur={handleBlur("selectUser")}
-              value={values.selectUser}
-              items={userOptions}
-              style={pickerStyles}
-            />
-            {touched.selectUser && errors.selectUser && (
-              <Text style={styles.errorText}>{errors.selectUser}</Text>
+              <View style={{ borderBottomWidth: 2, marginBottom: 10 }}>
+                <DropDownList
+                  options={allShops}
+                  onValueChange={(selectedShop) => setFieldValue("selectShop", selectedShop)}
+                />
+                {touched.selectShop && errors.selectShop && (
+                  <Text style={styles.errorText}>{errors.selectShop}</Text>
+                )}
+              </View>
+            </View>
+            {/* Shop Description */}
+            {selectedShop?.details != null && (
+              <>
+                <Text style={styles.label}>Shop Description</Text>
+                <View style={styles.TextShopDes}>
+                  <Text style={styles.TextShop}>{selectedShop?.details}</Text>
+                </View>
+              </>
             )}
 
+            {/* User Mobile Number */}
+            <TextInput
+              mode="flat"
+              label="Enter User Mobile Number"
+              style={styles.input}
+              onChangeText={async (phoneNumber) => {
+                setFieldValue("userMobile", phoneNumber);
+                await fetchUserData(phoneNumber, setFieldValue);
+              }}
+              // onBlur={handleBlur("userMobile")}
+              value={values.userMobile}
+              keyboardType="phone-pad"
+              right={
+                values.userMobile ? (
+                  <TextInput.Icon
+                    icon="close"
+                    size={20}
+                    style={{ marginBottom: -22 }}
+                    onPress={() => setFieldValue("userMobile", "")}
+                  />
+                ) : null
+              }
+            />
+
+            {touched.userMobile && errors.userMobile && (
+              <Text style={styles.errorText}>{errors.userMobile}</Text>
+            )}
+            {loading && (
+              <View style={styles.loaderContainer}>
+                <ActivityIndicator size="large" color="#0000ff" />
+              </View>
+            )}
+
+            {/* User Name */}
+            <TextInput
+              mode="flat"
+              label="Enter User Name"
+              style={styles.input}
+              onChangeText={handleChange("userName")}
+              onBlur={handleBlur("userName")}
+              value={values.userName}
+              right={
+                values.userName ? (
+                  <TextInput.Icon
+                    icon="close"
+                    size={20}
+                    style={{ marginBottom: -22 }}
+                    onPress={() => setFieldValue("userName", "")}
+                  />
+                ) : null
+              }
+            />
+
+            {touched.userName && errors.userName && (
+              <Text style={styles.errorText}>{errors.userName}</Text>
+            )}
             {/* User Role Dropdown */}
             <Text style={styles.label}>User Role</Text>
             <RNPickerSelect
@@ -108,7 +202,6 @@ const AddRole = () => {
             {touched.userRole && errors.userRole && (
               <Text style={styles.errorText}>{errors.userRole}</Text>
             )}
-
             {/* Submit Button */}
             <TouchableOpacity
               style={styles.button}
@@ -128,7 +221,6 @@ const AddRole = () => {
 // Picker styles for dropdown
 const pickerStyles = StyleSheet.create({
   inputAndroid: {
-    // paddingVertical: 10,
     paddingHorizontal: 15,
     borderWidth: 1,
     borderColor: "#ccc",
@@ -143,32 +235,37 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     paddingVertical: 10,
   },
-  header: {},
+  header: {
+    marginBottom: 10,
+  },
   headerText: {
-    fontSize: 20,
+    fontSize: fontSize.headingSmall,
+    fontFamily: "Poppins-Regular",
     fontWeight: "bold",
-    color: "#333",
   },
   subHeaderText: {
-    fontSize: 16,
-    color: "#777",
+    fontSize: fontSize.headingSmall,
+    fontFamily: "Poppins-Regular",
+    marginVertical: 5,
+    // marginBottom: 10,
   },
   form: {
-    marginTop: 15,
+    marginTop: 10,
   },
   label: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#333",
+    fontSize: fontSize.labelLarge,
+    fontFamily: "Poppins-Regular",
+    fontWeight: "bold",
     marginBottom: 8,
   },
   input: {
     marginBottom: 15,
     backgroundColor: "white",
     height: 45, // Adjusted height for normal input
+    borderRadius: 4,
   },
   errorText: {
     color: "red",
@@ -177,7 +274,7 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: ButtonColor.SubmitBtn,
-    padding: 15,
+    paddingVertical: 15,
     borderRadius: 5,
     alignItems: "center",
     marginTop: 20,

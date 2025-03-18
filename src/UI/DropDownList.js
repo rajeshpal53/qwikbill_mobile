@@ -13,7 +13,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { ActivityIndicator, List } from "react-native-paper";
 import { ShopContext } from "../Store/ShopContext";
 
-function DropDownList({ options }) {
+function DropDownList({ options, setSelectedshop }) {
   // const { addShopDetails, shopDetails } = useContext(ShopDetailContext);
   const { selectedShop, updateSelectedShop } = useContext(ShopContext);
   const [isLoading, setIsLoading] = useState(false);
