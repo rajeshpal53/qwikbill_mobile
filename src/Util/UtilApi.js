@@ -152,8 +152,6 @@ export const generatePDF = (values) => {
     )
     .join("");
 
-  console.log("DATA OF PRODUCTT", productDetails)
-
   const partiallyPaidSection =
     values?.statusfk == 3
       ? `
@@ -273,7 +271,7 @@ export const generatePDF = (values) => {
                 <strong>Customer Contact:</strong> ${
                   values?.customerData?.phone || "N/A"
                 } <br>
-                <strong>Address:</strong> ${values?.address || "N/A"}
+                <strong>Address:</strong> ${values?.customerData?.address || "N/A"}
               </td>
               <td colspan="3"></td>
             </tr>
