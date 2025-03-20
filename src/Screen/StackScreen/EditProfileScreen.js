@@ -41,7 +41,7 @@ const validationSchema = Yup.object().shape({
   address: Yup.string()
     .required("address is required")
     .min(4, "address atleast 4 characters long"),
-    dob: Yup.string().required("DOB is required")
+  dob: Yup.string().required("DOB is required")
     .test(
       "min-age",
       "You must be at least 5 years old",
@@ -68,18 +68,10 @@ const validationSchema = Yup.object().shape({
         return enteredDate <= minAgeDate;
       }
     ),
-  // country: Yup.string().required("Country is required"),
-  // state: Yup.string().required("State is required"),
-  // city: Yup.string().required("City is required"),
-  // area: Yup.string().required("Area is required"),
-  // pincode: Yup.string()
-  //   .required("Pincode is required")
-  //   .matches(/^[0-9]{6}$/, "Pincode must be 6 digits"),
-  // age: Yup.number()
-  //   .required("age is required")
-  //   .min(5, "age is atleast 5 years") // Minimum age limit
-  //   .max(99, "age must be at most 99"), // Maximum age limit
+
 });
+
+//hello
 
 export default function EditProfileScreen({ navigation }) {
   let months = [
@@ -104,6 +96,8 @@ export default function EditProfileScreen({ navigation }) {
   // const { location } = useLocation();
   const { t } = useTranslation();
   const [extraData, setExtraData] = useState({});
+  const [fieldsDisabled, setFieldsDisabled] = useState(false);
+
   const { showSnackbar } = useSnackbar();
   const { saveUserData, userData } = useContext(UserDataContext);
   const [profileImage, setProfileImage] = useState(null);
@@ -121,7 +115,11 @@ export default function EditProfileScreen({ navigation }) {
     profileImage: null,
     aadharFrontImage: null,
     aadharBackImage: null,
+  
+
   });
+
+  console.log("fieldsDisabled:", fieldsDisabled); // Debugging
 
   const [genderList, setGenderList] = useState([
     { gender: "Male" },
@@ -133,10 +131,13 @@ export default function EditProfileScreen({ navigation }) {
   // Access the theme provided by PaperProvider
   // const theme = useTheme();
 
+
   console.log("Route Data is the , ", routeData);
 
   useEffect(() => {
     const setInitialDataFunc = async (Data) => {
+      console.log("🔍 API Response Data:", Data); // ✅ Check full API response
+
       setInitialData({
         name: Data?.user?.name || "",
         mobile: Data?.user?.mobile || "",
@@ -148,11 +149,16 @@ export default function EditProfileScreen({ navigation }) {
         address: Data?.user?.address || "",
         latitude: Data?.user?.latitude || "",
         longitude: Data?.user?.longitude || "",
-        profileImage:
-          (Data?.user?.profilePicurl &&
-            formatUrl(Data?.user?.profilePicurl, "profilePicurl")) ||
-          null,
-          aadharFrontImage:
+        // profileImage:
+        //   (Data?.user?.profilePicurl &&
+        //     formatUrl(Data?.user?.profilePicurl, "profilePicurl")) ||
+        //   null,
+
+        profileImage: Data?.user?.profilePicurl
+        ? formatUrl(Data?.user?.profilePicurl, "profilePicurl")  // Use API image if available
+        : null,
+
+        aadharFrontImage:
           (Data?.aadharCardFronturl &&
             formatUrl(Data?.aadharCardFronturl, "aadharCardFronturl")) ||
           null,
@@ -160,9 +166,13 @@ export default function EditProfileScreen({ navigation }) {
           (Data?.aadharCardFronturl &&
             formatUrl(Data?.aadharCardBackurl, "aadharCardBackurl")) ||
           null,
-        
+
       });
+
     };
+
+
+   
 
     if (routeData) {
       const tempRouteData = {
@@ -175,7 +185,7 @@ export default function EditProfileScreen({ navigation }) {
   }, []);
 
   console.log("userData is m ", userData);
- 
+
 
   useEffect(() => {
     console.log("postData is , ", postData);
@@ -185,7 +195,7 @@ export default function EditProfileScreen({ navigation }) {
   const handlePress = () => setDropdownVisible(!dropdownVisible);
 
   const editHandler = async () => {
-
+    let token = userData?.token
     try {
       setModalVisible(false);
       setIsLoading(true);
@@ -195,33 +205,31 @@ export default function EditProfileScreen({ navigation }) {
         `${API_BASE_URL}users/upsertOnlyUserProfileImg`,
         postData,
         {
-          headers:{
-            Authorization: `Bearer ${userData.token}`,
+          headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
-          
+
         }
       );
 
       console.log("JSON Response:", response.data);
 
-      if( ( routeData && routeData?.mobile === userData?.user?.mobile ) || !routeData){
+      if ((routeData && routeData?.mobile === userData?.user?.mobile) || !routeData) {
         const saveUser = {
           token: userData.token,
           user: response?.data,
         };
-  
-  
         saveUserData(saveUser);
       }
-     
+
       showSnackbar(t("Your profile has been updated Successfully"), "success");
 
-      if(routeData && onGoBack){
+      if (routeData && onGoBack) {
         console.log("route set dara, ", response?.data)
         onGoBack(response?.data);
       }
-      
+
       navigation.goBack();
       // setModalVisible(false);
     } catch (err) {
@@ -230,8 +238,8 @@ export default function EditProfileScreen({ navigation }) {
     } finally {
       setIsLoading(false);
     }
-
   };
+
   useEffect(() => {
     setSelectedGender(userData?.user?.gender || "Select Gender");
   }, [userData]);
@@ -244,17 +252,23 @@ export default function EditProfileScreen({ navigation }) {
     );
   }
 
-  const formatUrl = (url, imageDetail) => {
-    const imageFile = {
-      uri: `${NORM_URL}${url}`,
-      name: `${imageDetail}.jpeg`,
-      type: `image/jpeg`,
-    };
+ const formatUrl = (url, imageDetail) => {
+  if (!url) return null; // Handle null cases
 
-    return imageFile;
+  // Ensure no double slashes in the final URL
+  const formattedUrl = `${API_BASE_URL.replace(/\/$/, '')}/${url.replace(/^\//, '')}`;
+
+  const imageFile = {
+    uri: formattedUrl,
+    name: `${imageDetail}.jpeg`,
+    type: `image/jpeg`,
   };
 
-  // // Convert `dd-mm-yyyy` to a `Date` object
+  console.log("✅ Corrected Image URL:", imageFile);
+  return imageFile;
+};
+
+ // // Convert `dd-mm-yyyy` to a `Date` object
   const parseServerDate = (dateString) => {
     console.log("Hi date , ", dateString);
     // Parse the date string "01 June 2024" to a Date object
@@ -300,92 +314,49 @@ export default function EditProfileScreen({ navigation }) {
     }
   };
 
+
   const showPopUpMessage = (massage, msgType) => {
 
     showSnackbar(massage, msgType)
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor:"#fff" }}>
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <Formik
 
-        initialValues = {initialData}
+        initialValues={initialData}
         enableReinitialize={true}
-        // initialValues={{
-        //   name: userData?.user?.name || "",
-        //   mobile: userData?.user?.mobile || "",
-        //   email: userData?.user?.email || "",
-        //   gender: userData?.user?.gender || "",
-        //   dob:
-        //     (userData?.user?.dob && parseServerDate(userData?.user?.dob)) ||
-        //     new Date() ||
-        //     null,
-        //   latitude: userData?.user?.latitude || "",
-        //   longitude: userData?.user?.longitude || "",
-        //   address: userData?.user?.address || "",
-        //   aadharFrontImage:
-        //     (userData?.aadharCardFronturl &&
-        //       formatUrl(userData?.aadharCardFronturl, "aadharCardFronturl")) ||
-        //     null,
-        //   aadharBackImage:
-        //     (userData?.aadharCardFronturl &&
-        //       formatUrl(userData?.aadharCardBackurl, "aadharCardBackurl")) ||
-        //     null,
-        //   profileImage:
-        //     (userData?.user?.profilePicurl &&
-        //       formatUrl(userData?.user?.profilePicurl, "profilePicurl")) ||
-        //     null,
-
-        
-        // }}
         validationSchema={validationSchema}
         onSubmit={(values) => {
           // Handle form submission
           setModalVisible(true);
-          // const pincodefk=values.pincode
-          // console.log("postData values", values);
-          // const areaCode = values?.pincode;
-
-          // delete values?.pincode;
 
           const profileFormData = new FormData();
 
           profileFormData.append("name", values?.name);
           profileFormData.append("mobile", values?.mobile);
           console.log("why profile not comming is , ", values?.profileImage)
-          if(values?.profileImage){
+          if (values?.profileImage) {
             profileFormData.append("profilePicurl", values?.profileImage);
           }
 
-          if(values?.dob){
+          if (values?.dob) {
             const formattedDate = formatDate(values.dob);
             profileFormData.append("dob", formattedDate);
           }
 
           profileFormData.append("gender", values?.gender);
 
-    
-            profileFormData.append("email", values?.email || "");
-    
+          profileFormData.append("email", values?.email || "");
 
           profileFormData.append("address", values?.address);
 
-          if(values?.latitude){
+          if (values?.latitude) {
             profileFormData.append("latitude", values.latitude);
           }
-          if(values?.longitude){
+          if (values?.longitude) {
             profileFormData.append("longitude", values.longitude);
           }
-
-
-          // setPostData({
-          //   ...values,
-          //   ...extraData,
-          //   ...location,
-          //   // roles: "admin",
-          //   pincodefk: areaCode,
-          //   id: userData?.user?.id,
-          // });
 
           setPostData(profileFormData);
         }}
@@ -398,7 +369,16 @@ export default function EditProfileScreen({ navigation }) {
           errors,
           touched,
           setFieldValue,
-        }) => (
+        }) => {
+
+          useEffect(() => {
+            console.log("profile image updated:", values?.profileImage);
+          }, [values.profileImage]);
+          
+          console.log("🖼 Profile Image in Formik Values:", values?.profileImage);
+
+          
+          return(
           <SafeAreaView style={{ flex: 1 }}>
             <View>
               <ScrollView>
@@ -413,23 +393,25 @@ export default function EditProfileScreen({ navigation }) {
                     /> */}
                     {console.log("profile image is sssddd, ", values?.profileImage)}
                     <View>
-                    <ServiceImagePicker
-                      image={values?.profileImage}
-                      label="Profile Image"
-                      isAdmin={true}
-                      setFieldValue={setFieldValue}
-                      uploadFieldName={"profileImage"}
-                      type={"rounded"}
-                    />
-                     {touched.profileImage && errors.profileImage ? (
-                          <Text
-                            style={[styles.errorText, { alignSelf: "center" }]}
-                          >
-                            {errors.profileImage}
-                          </Text>
-                        ) : null}
+                      <ServiceImagePicker
+                        image={values?.profileImage}
+                        label="Profile Image"
+                        isAdmin={true}
+                        setFieldValue={setFieldValue}
+                        uploadFieldName={"profileImage"}
+                        type={"rounded"}
+                        fieldsDisabled={fieldsDisabled}  // ✅ This prop is passed
+
+                      />
+                      {touched.profileImage && errors.profileImage ? (
+                        <Text
+                          style={[styles.errorText, { alignSelf: "center" }]}
+                        >
+                          {errors.profileImage}
+                        </Text>
+                      ) : null}
                     </View>
-                    
+
                     <View>
                       <TextInput
                         label="Name"
@@ -480,11 +462,11 @@ export default function EditProfileScreen({ navigation }) {
                       <View>
                         <List.Accordion
                           accessibilityLabel="Gender"
-                          style={{ height: 56, borderBottomWidth:1, borderBottomColor:"rgba(0, 0, 0, 0.3)" }}
+                          style={{ height: 56, borderBottomWidth: 1, borderBottomColor: "rgba(0, 0, 0, 0.3)" }}
                           title={selectedGender || "Select Gender"}
                           expanded={dropdownVisible}
                           onPress={handlePress}
-                          // left={(props) => <List.Icon {...props} icon="earth" />}
+                        // left={(props) => <List.Icon {...props} icon="earth" />}
                         >
                           <View style={styles.dropdownContainer}>
                             <ScrollView
@@ -509,32 +491,9 @@ export default function EditProfileScreen({ navigation }) {
                         ) : null}
                       </View>
 
-                      {/* <View style={{ flex: 1 }}>
-                        <TextInput
-                          label="Age"
-                          mode="flat"
-                          style={styles.input}
-                          onChangeText={handleChange("age")}
-                          onBlur={handleBlur("age")}
-                          keyboardType="numeric"
-                          value={values.age}
-                          maxLength={2}
-                          minLength={1}
-                        />
-                        {touched.age && errors.age ? (
-                          <Text style={styles.errorText}>{errors.age}</Text>
-                        ) : null}
-                      </View> */}
+                     
                     </View>
-
-                    {/* <AddressForm
-                      extraData={extraData}
-                      setExtraData={setExtraData}
-                      userData={userData.user}
-                      token={userData.token}
-                    /> */}
-
-                    <View style={{marginTop:10}}>
+                    <View style={{ marginTop: 10 }}>
                       <View style={styles.dateTitle}>
                         <Text style={styles.dateTitleText}>DOB*</Text>
 
@@ -551,8 +510,8 @@ export default function EditProfileScreen({ navigation }) {
                         </Pressable>
                       </View>
                       {touched.dob && errors.dob ? (
-                          <Text style={styles.errorText}>{errors.dob}</Text>
-                        ) : null}
+                        <Text style={styles.errorText}>{errors.dob}</Text>
+                      ) : null}
 
                       {showDateTimePicker && (
                         <DateTimePicker
@@ -562,36 +521,14 @@ export default function EditProfileScreen({ navigation }) {
                           onChange={(event, selectedDate) => {
                             setShowDateTimePicker(false);
                             if (selectedDate) {
-                              // const dateWithEndOfDay = new Date(selectedDate); // Wrap timestamp in Date
-                              // dateWithEndOfDay.setHours(23, 59, 59, 999); // Set time to 11:59 PM
-                              // setFieldValue("dob", dateWithEndOfDay); // Set the form value
-
+    
                               setFieldValue("dob", selectedDate);
                             }
                           }}
                         />
                       )}
-                      {/* {touched.dob && errors.dob ? (
-                        <Text style={{ color: "red", marginLeft: 2 }}>
-                          {errors.dob}
-                        </Text>
-                      ) : null} */}
+                      
                     </View>
-
-                    {/* <View>
-                      <TextInput
-                        label="Pincode"
-                        mode="flat"
-                        style={styles.input}
-                        onChangeText={handleChange("pincode")}
-                        onBlur={handleBlur("pincode")}
-                        keyboardType="numeric"
-                        value={values.pincode}
-                      />
-                      {touched.pincode && errors.pincode ? (
-                        <Text style={styles.errorText}>{errors.pincode}</Text>
-                      ) : null}
-                    </View> */}
 
                     <View>
                       <Pressable
@@ -627,13 +564,11 @@ export default function EditProfileScreen({ navigation }) {
                       Update
                     </Button>
                   </View>
-
-                  
                 </View>
               </ScrollView>
             </View>
           </SafeAreaView>
-        )}
+        )}}
       </Formik>
       {modalVisible && (
         <ConfirmModal
@@ -736,79 +671,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-// import { StyleSheet, Text, View } from "react-native";
-// import { Button } from "react-native-paper";
-// import { TextInput } from "react-native-paper";
-// import { useState } from "react";
-
-// const EditProfileScreen = ({ props }) => {
-//   const [text, setText] = useState();
-//   const [email, setEext] = useState(undefined);
-//   return (
-//     <View style={EditProfileStyle.main}>
-//       <View style={EditProfileStyle.container}>
-//         <View style={EditProfileStyle.textContainer}>
-//           <TextInput
-//             style={EditProfileStyle.Text}
-//             mode="outlined"
-//             label="Name"
-//             onChangeText={setText}
-//             value={text}
-//           />
-
-//           <TextInput
-//             style={EditProfileStyle.Text}
-//             mode="outlined"
-//             label="Email"
-//             onChangeText={setEext}
-//             value={email}
-//           />
-//         </View>
-//         <View style={EditProfileStyle.ButtonContainer}>
-//           <Button
-//             icon="check"
-//             mode="contained"
-//             onPress={() => console.log("Pressed")}
-//             style={EditProfileStyle.Btn}
-//           >
-//             Save
-//           </Button>
-//         </View>
-//       </View>
-//     </View>
-//   );
-// };
-
-// export default EditProfileScreen;
-
-// const EditProfileStyle = StyleSheet.create({
-//   main: {
-//     height: 280,
-//   },
-
-//   container: {
-//     flex: 1,
-//   },
-//   textContainer: {
-//     flex: 2,
-//   },
-
-//   ButtonContainer: {
-//     color: "green",
-//     flex: 1,
-//     alignItems: "center",
-//   },
-
-//   Text: {
-//     margin: 15,
-//     paddingL: 10,
-//     justifyContent: "space-evenly",
-//     backgroundColor: "white",
-//   },
-
-//   Btn: {
-//     borderRadius: 10,
-//     width: 300,
-//   },
-// });

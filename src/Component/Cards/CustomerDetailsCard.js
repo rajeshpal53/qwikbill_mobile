@@ -1,7 +1,89 @@
+// import React, { useState } from "react";
+// import { StyleSheet, Text, TouchableOpacity } from "react-native";
+// import { Card, Avatar } from "react-native-paper";
+// import { MaterialIcons } from "@expo/vector-icons";
+// import { useNavigation } from "@react-navigation/native";
+// import { fontSize } from "../../Util/UtilApi";
+
+// const CustomerDetailsCard = ({ item, onEdit }) => {
+//   const [Opendetails, setOpendetails] = useState(false);
+//   const navigation = useNavigation();
+
+//   return (
+//     <Card
+//       style={styles.card}
+//       onPress={() => navigation.navigate("CustomerDetails", { item: item })}
+//     >
+//       <Card.Title
+//         title={item.name}
+//         subtitle={item.mobile}
+//         titleStyle={styles.title}
+//         subtitleStyle={styles.subtitle}
+//         left={(props) =>
+//           item.profilePicurl ? (
+//             <Avatar.Image size={50} source={{ uri: item.profilePicurl }} style={styles.avatar} />
+//           ) : (
+//             <Avatar.Text size={50} label={item.name ? item.name.charAt(0) : "?"} style={styles.avatarPlaceholder} />
+//           )
+//         }
+//         right={(props) => (
+//           <TouchableOpacity
+//             onPress={() => onEdit("Edit button pressed", item)}
+//             style={styles.editIcon}
+//           >
+//             <Text>
+//               <MaterialIcons name={"edit"} size={24} color={"#1E88E5"} />
+//             </Text>
+//           </TouchableOpacity>
+//         )}
+//       />
+//     </Card>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   card: {
+//     marginVertical: 5,
+//     marginHorizontal: 10,
+//     paddingVertical: 15,
+//     borderRadius: 8,
+//     elevation: 3,
+//   },
+//   avatar: {
+//     backgroundColor: "#fff",
+//   },
+//   avatarPlaceholder: {
+//     backgroundColor: "#ccc",
+//   },
+//   editIcon: {
+//     marginRight: 10, // Adds spacing from the edge
+//   },
+//   title: {
+//     fontFamily: "Poppins-Medium",
+//     fontSize: fontSize.headingSmall,
+//   },
+//   subtitle: {
+//     fontFamily: "Poppins-Medium",
+//     fontSize: fontSize.labelMedium,
+//     color: "rgba(0, 0, 0, 0.6)"
+
+//   }
+// });
+
+// export default CustomerDetailsCard;
+
+
+
+
+
+
+
+
+
 
 
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity,View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { Card, Avatar } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -11,9 +93,10 @@ import { API_BASE_URL } from "../../Util/UtilApi";
 const CustomerDetailsCard = ({ item, onEdit }) => {
   const navigation = useNavigation();
 
+
   const profilePicUrl = item.profilePicurl ? `${API_BASE_URL}${item.profilePicurl}` : null;
 
-  console.log("profile pic url isss ,", profilePicUrl)
+  console.log("profile pic url isss ,",profilePicUrl)
 
   const displayName = item.name ? item.name.trim() : "Unknown";
   const firstLetter = displayName.charAt(0).toUpperCase(); // Ensure it's uppercase
@@ -34,32 +117,18 @@ const CustomerDetailsCard = ({ item, onEdit }) => {
             <Avatar.Image size={50} source={{ uri: profilePicUrl }} style={styles.avatar} />
           ) : (
             <Avatar.Text
-              size={60}
+              size={55}
               label={firstLetter}
               style={styles.avatarPlaceholder}
             />
           )
         }
-      // right={() => (
-      //   <TouchableOpacity onPress={() => onEdit(item)} style={styles.editIcon}>
-      //     <MaterialIcons name="edit" size={24} color="#1E88E5" />
-      //   </TouchableOpacity>
-      // )}
+        right={() => (
+          <TouchableOpacity onPress={() => onEdit(item)} style={styles.editIcon}>
+            <MaterialIcons name="edit" size={24} color="#1E88E5" />
+          </TouchableOpacity>
+        )}
       />
-
-      {/* Additional Details */}
-      <Card.Content>
-        <View style={{marginLeft:75}}>
-        <View style={styles.detailsRow}>
-          <Text style={[styles.detailsText ,{marginTop:2}]}>{item.gender || "N/A"}</Text>
-          <Text style={{marginHorizontal:12,}}>|</Text>
-          <Text style={[styles.detailsText ,{marginTop:2}]}>{item.dob || "N/A"}</Text>
-        </View>
-        
-        <Text style={styles.addressText}>{item.address || "No Address Available"}</Text>
-        </View>
-      </Card.Content>
-
     </Card>
   );
 };
@@ -67,13 +136,11 @@ const CustomerDetailsCard = ({ item, onEdit }) => {
 const styles = StyleSheet.create({
   card: {
     marginVertical: 5,
-    marginHorizontal: 12,
-    paddingVertical: 10,
+    marginHorizontal: 10,
+    // paddingVertical: 8,
     borderRadius: 8,
     elevation: 3,
-    backgroundColor: "#fff",
-    paddingBottom:1,
-    shadowOffset:2
+    backgroundColor: "#fff"
   },
   avatar: {
     backgroundColor: "#fff",
@@ -83,37 +150,18 @@ const styles = StyleSheet.create({
   },
   editIcon: {
     marginRight: 15,
-    marginBottom: 15
+    marginBottom:15
   },
   title: {
-    fontSize: fontSize.headingSmall,
-    marginLeft: 15,
-    fontFamily: fontFamily.regular,
-    marginTop:8
+    fontSize: fontSize.labelLarge,
+    marginLeft:10,
+    fontFamily:fontFamily.regular
   },
   subtitle: {
     fontSize: fontSize.labelMedium,
     color: "rgba(0, 0, 0, 0.6)",
-    marginLeft: 16,
-    fontFamily: fontFamily.regular,
-    marginTop:8
-  },
-  detailsRow: {
-    flexDirection: "row",
-   // justifyContent: "space-between",
-   
-  
-  },
-  detailsText: {
-    fontSize: fontSize.label,
-    fontFamily: fontFamily.medium,
-    color: "rgba(0, 0, 0, 0.6)",
-  },
-  addressText: {
-    fontSize: fontSize.label,
-    fontFamily: fontFamily.medium,
-    color: "rgba(0, 0, 0, 0.6)",
-    marginTop: 8,
+    marginLeft:10,
+    fontFamily:fontFamily.regular
   },
 });
 

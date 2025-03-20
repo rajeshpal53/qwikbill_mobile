@@ -48,7 +48,6 @@ import UserDataContext from "../../../../Store/UserDataContext";
 import ProviderMoreDetails from "./ProviderMoreDetails";
 import { ShopContext } from "../../../../Store/ShopContext";
 
-
 // Form validation schema using Yup
 
 // const validationSchema = Yup.object().shape({
@@ -153,8 +152,9 @@ const CreateShopScreen = ({ navigation }) => {
     "November",
     "December",
   ];
+  const route = useRoute();
 
-  const {fetchShopsFromServer} = useContext(ShopContext);
+  const { fetchShopsFromServer } = useContext(ShopContext);
   const [pages, setPages] = useState([1, 2, 3]);
   const [currentStep, setCurrentStep] = useState(0);
   const [editorContent, setEditorContent] = useState("");
@@ -163,8 +163,8 @@ const CreateShopScreen = ({ navigation }) => {
   const [aadharImage, setAadharImage] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
   const richText = useRef();
-  const routeData = useRoute()?.params?.editItem || null;
-  const isAdmin = useRoute()?.params?.isAdmin || null;
+  const routeData = route?.params?.editItem || null
+  const isAdmin = route?.params?.isAdmin ?? false;
   const isFocused = useIsFocused();
   // console.log("routeLocation = ", routeLocation);
   const { showSnackbar } = useSnackbar();
@@ -181,11 +181,10 @@ const CreateShopScreen = ({ navigation }) => {
 
   const { userData, saveUserData } = useContext(UserDataContext);
 
-  const addressDetails = useRoute()?.params?.addressDetails || null;
-  const isUpdateAddress = useRoute()?.params?.isUpdateAddress || null;
+  // const routeData = useRoute()?.params?.routeData || null;
+  // const isUpdateAddress = useRoute()?.params?.isUpdateAddress || null;
 
-  console.log("USER DATA IS15369 ", routeData)
-
+  console.log("USER DATA IS15369 ", routeData);
 
   const [genderList, setGenderList] = useState([
     { label: "Select Gender", value: null },
@@ -227,28 +226,27 @@ const CreateShopScreen = ({ navigation }) => {
 
   const [initialData, setInitialData] = useState({
     name: userData?.user?.name || "",
-    mobile:userData?.user?.mobile || "",
+    mobile: userData?.user?.mobile || "",
     email: userData?.user?.email || "",
-    gender:  userData?.user?.gender || "",
+    gender: userData?.user?.gender || "",
     dob: new Date() || null,
-    shopName:addressDetails?.shopname || "",
-    whatsappNumber: addressDetails?.whatsappnumber || "",
-    aadhaarNumber:userData?.user?.aadharCard || "",
+    shopName: routeData?.shopname || "",
+    whatsappNumber: routeData?.whatsappnumber || "",
+    aadhaarNumber: userData?.user?.aadharCard || "",
     location: userData?.user?.aadharCard || "",
     kilometerRadius: "",
-    latitude: addressDetails?.latitude || "",
-    longitude:addressDetails?.longitude || "",
-    isApproved: addressDetails?.shopname || false,
-  
+    latitude: routeData?.latitude || "",
+    longitude: routeData?.longitude || "",
+    isApproved: routeData?.shopname || false,
+
     // isOnline: false,
     // isVerified: false,
     // homeDelivery: false,
     // showAddress: "",
-    shopImage:addressDetails?.shopImage || null,
+    shopImage: routeData?.shopImage || null,
     aadharFrontImage: userData?.user?.aadharCardFronturl || null,
     aadharBackImage: userData?.user?.aadharCardBackurl || null,
     profileImage: userData?.user?.profilePicurl || null,
-
   });
 
   useEffect(() => {
@@ -527,13 +525,13 @@ const CreateShopScreen = ({ navigation }) => {
         let location = await Location.getCurrentPositionAsync({});
         console.log("location , ", location);
 
-        const addressDetails = await getAddressFrom(
+        const routeData = await getAddressFrom(
           location?.coords?.latitude,
           location?.coords?.longitude
         );
 
-        // console.log("addressDetails , ", addressDetails?.formatted_address);
-        const formattedAddress = addressDetails?.formatted_address;
+        // console.log("routeData , ", routeData?.formatted_address);
+        const formattedAddress = routeData?.formatted_address;
         setFieldValue("showAddress", formattedAddress);
 
         setFieldValue("latitude", String(location?.coords?.latitude));
@@ -585,9 +583,6 @@ const CreateShopScreen = ({ navigation }) => {
   //   console.log(" values are m  ini", initialData);
   // }, [initialData]);
 
-
-
-
   return (
     <Formik
       initialValues={initialData}
@@ -599,7 +594,7 @@ const CreateShopScreen = ({ navigation }) => {
           ? ShopValidataionSchema
           : uploadImagesSchema
       }
-      onSubmit={async (values,) => {
+      onSubmit={async (values) => {
         console.log("hi prathesm");
         console.log("submitted Values are ", values);
 
@@ -607,11 +602,9 @@ const CreateShopScreen = ({ navigation }) => {
 
         const updateUserPayloadData = new FormData();
 
-
         updateUserPayloadData.append("name", values?.name);
         updateUserPayloadData.append("mobile", values?.mobile);
         updateUserPayloadData.append("aadharCard", values?.aadhaarNumber);
-
 
         const formattedDate = formatDate(values?.dob);
         updateUserPayloadData.append("dob", formattedDate);
@@ -638,15 +631,17 @@ const CreateShopScreen = ({ navigation }) => {
           );
         }
 
-        updateUserPayloadData.append("password", userData?.user?.password)
+        updateUserPayloadData.append("password", userData?.user?.password);
 
         // updateUserPayloadData.append("roles", "admin");
 
         // console.log("router ddd , data is , ", routeData);
         console.log("updateUserPayloadData is the , ", updateUserPayloadData);
-        console.log("userApi , ", `${API_BASE_URL}users/upsertOnlyUserProfileImg`);
+        console.log(
+          "userApi , ",
+          `${API_BASE_URL}users/upsertOnlyUserProfileImg`
+        );
         console.log("userData token , ", `${userData?.token}`);
-
 
         try {
           const response = await axios.post(
@@ -684,12 +679,11 @@ const CreateShopScreen = ({ navigation }) => {
         const data = new FormData();
         // data.append("aadharCard", values?.aadhaarNumber);
 
-
         data.append("whatsappnumber", values?.whatsappNumber || "");
         data.append("shopname", values?.shopName);
         // data.append("homeServiceProvide", values?.homeDelivery);
         // if(editorContent){
-          data.append("details", editorContent);
+        data.append("details", editorContent);
         // }
         data.append("shopAddress", values?.shopAddress);
         data.append("latitude", values?.latitude || "213.234");
@@ -775,7 +769,7 @@ const CreateShopScreen = ({ navigation }) => {
             //   Admin: isAdmin,
             // });
 
-            if(!isAdmin){
+            if (!isAdmin) {
               await fetchShopsFromServer();
             }
             submit.current = true;

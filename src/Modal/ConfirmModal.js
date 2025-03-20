@@ -4,6 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { Button, Dialog, Portal, Paragraph } from "react-native-paper";
 import Icon from "react-native-vector-icons/Ionicons";
 // import { fontFamily,fontSize } from "../Util/UtilApi";
+
 const ConfirmModal = ({
   visible,
   setVisible,

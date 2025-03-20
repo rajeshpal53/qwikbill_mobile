@@ -27,13 +27,17 @@ const apiRequest = async (method, url, data = null, headers) => {
     }
   };
 
-  const deleteApiRequest= async( method ,url )=>{
+  const deleteApiRequest= async( method ,url, headers={})=>{
         const response= await axios({
           url:`${API_BASE_URL}${url}`,
           method,
+          headers:{
+            "Content-Type":"application/json",
+            ...headers,
+          },
           withCredentials:true
         })
-        return response 
+        return response
   }
   //CREATE
   export const createApi = async (endpoint, data, headers) => {
@@ -68,6 +72,20 @@ export const updateApi = async (endpoint, data, headers) => {
   };
 
 
+  export const images = [
+    `${NORM_URL}assets/serviceproviders/firstProvider.jpg`,
+    `${NORM_URL}assets/serviceproviders/secondProvider.jpg `,
+    `${NORM_URL}assets/serviceproviders/thirdProvider.jpg`,
+    `${NORM_URL}assets/serviceproviders/fourthProvider.jpg`,
+    `${NORM_URL}assets/serviceproviders/fifthProvider.jpg`,
+    `${NORM_URL}assets/serviceproviders/sixthProvider.jpg`,
+  ];
+  export const getRandomImage = () => {
+    const randomIndex = Math.floor(Math.random() * images.length);
+    return images[randomIndex];
+  };
+
+
   export const fontFamily = {
     regular: "Poppins-Regular",
     bold: "Poppins-Bold",
@@ -79,7 +97,7 @@ export const updateApi = async (endpoint, data, headers) => {
     unpaid:1,
     paid:2,
     partially_paid:3,
-   
+
   }
   export const statusName= {
     1:"unpaid",
@@ -91,6 +109,8 @@ export const updateApi = async (endpoint, data, headers) => {
 export const ButtonColor  = {
   SubmitBtn :"#007bff",
 }
+
+
 const getTodaysDate = () => {
   const today = new Date();
   const day = String(today.getDate()).padStart(2, "0");

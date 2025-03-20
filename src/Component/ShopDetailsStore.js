@@ -21,7 +21,7 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
   const handleEdit = (item) => {
     // setSelectedModal(null);
     navigation.navigate("CreateShopScreen", {
-      addressDetails: item,
+      editItem: item,
       isUpdateAddress: true,
     });
   };

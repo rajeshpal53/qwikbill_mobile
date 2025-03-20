@@ -43,7 +43,6 @@ const PdfScreen = ({ navigation }) => {
   const { downloadInvoicePressHandler, shareInvoicePressHandler } =
     useDownloadInvoice();
 
-  console.log("formData is 121 , ", formData);
   useEffect(() => {
     console.log("view InvoiceData is under useEffect , ", viewInvoiceData);
 
@@ -61,7 +60,7 @@ const PdfScreen = ({ navigation }) => {
     return formattedDate;
   };
 
-  const handleGenerate = async (button = "button") => {
+  const handleGenerate = async (button = "download") => {
     // setIsGenerated(true); // Trigger PDF generation when the button is pressed
     try {
       let api = "invoice/invoices";
@@ -92,11 +91,15 @@ const PdfScreen = ({ navigation }) => {
       console.log("response of create invoice is, ", response);
       showSnackbar("Invoice Created Successfully", "success");
       setCreatedInvoice(response?.customer);
+      dispatch(clearCart());
 
       invoiceCreated.current = true;
+
       if (button == "download") {
+        console.log("Inside a if condition ")
         return response?.customer;
       } else if (button == "generate") {
+        console.log("Inside a else if condition ")
         dispatch(clearCart());
         navigation.pop(2);
       }
@@ -140,7 +143,6 @@ const PdfScreen = ({ navigation }) => {
         setDownloadLoading(false);
       }
     }
-
   };
 
   const handleShare = async () => {
@@ -243,7 +245,7 @@ const PdfScreen = ({ navigation }) => {
               backgroundColor: "#9C27B0",
               alignItems: "center",
               paddingVertical: 8,
-              borderRadius:5
+              borderRadius: 5,
             }}
           >
             <Text style={{ color: "#fff" }}>{t("Generate")}</Text>
@@ -262,11 +264,16 @@ const PdfScreen = ({ navigation }) => {
             disabled={createdInvoice ? false : true}
             style={[
               styles.touchableButtonsStyle,
-              { backgroundColor: "#2196F3", opacity: createdInvoice ? 1 : 0.5, flexDirection:"row", justifyContent:"center" },
+              {
+                backgroundColor: "#2196F3",
+                opacity: createdInvoice ? 1 : 0.5,
+                flexDirection: "row",
+                justifyContent: "center",
+              },
             ]}
           >
-             <Feather name="share" size={22} color="#fff" />
-            <Text style={{ color: "#fff", paddingLeft:4 }}>{t("Share")}</Text>
+            <Feather name="share" size={22} color="#fff" />
+            <Text style={{ color: "#fff", paddingLeft: 4 }}>{t("Share")}</Text>
             {shareLoading && (
               <View style={styles.loaderOverlay}>
                 <ActivityIndicator color="#fff" size="small" />
@@ -279,12 +286,19 @@ const PdfScreen = ({ navigation }) => {
             disabled={createdInvoice ? false : true}
             style={[
               styles.touchableButtonsStyle,
-              { backgroundColor: "#4CAF50", opacity: createdInvoice ? 1 : 0.5, flexDirection:"row", justifyContent:"center" },
+              {
+                backgroundColor: "#4CAF50",
+                opacity: createdInvoice ? 1 : 0.5,
+                flexDirection: "row",
+                justifyContent: "center",
+              },
             ]}
           >
-          <AntDesign name="download" size={22} color="#fff" />
+            <AntDesign name="download" size={22} color="#fff" />
 
-            <Text style={{ color: "#fff", paddingLeft:4}}>{t("Download")}</Text>
+            <Text style={{ color: "#fff", paddingLeft: 4 }}>
+              {t("Download")}
+            </Text>
             {downloadLoading && (
               <View style={styles.loaderOverlay}>
                 <ActivityIndicator color="#fff" size="small" />
@@ -302,7 +316,7 @@ const styles = StyleSheet.create({
     // flexDirection: "row",
     // justifyContent: "space-between",
     // justifyContent: "flex-end",
-    backgroundColor:"#fff",
+    backgroundColor: "#fff",
     gap: 20,
     padding: 20,
   },
@@ -317,7 +331,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "orange",
     alignItems: "center",
     paddingVertical: 8,
-    borderRadius:5
+    borderRadius: 5,
   },
   loaderOverlay: {
     ...StyleSheet.absoluteFillObject, // Makes the overlay cover the button

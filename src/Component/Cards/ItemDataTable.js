@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 5,
     fontFamily: "Poppins-Regular",
-    fontSize: fontSize.label,
+    fontSize: fontSize.labelMedium,
   },
   smallCell: {
     textAlign: "center",

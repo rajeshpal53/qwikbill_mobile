@@ -69,17 +69,30 @@ import CategoryDropDown from "../UI/DropDown/CategoryDropdown.js";
 import AddRole from "../Screen/StackScreen/Addrole.js";
 import { withCopilot } from "react-native-copilot";
 import ViewShopDetailsScreen from "../Screen/StackScreen/Shops/ViewShopDetailsScreen.js";
-import ViewInvoiceScreen1 from "../Screen/Invoices/ViewInvoiceScreen1.js"
-import InvoicePreviewScreen from "../Screen/Invoices/InvoicePreviewScreen.js"
+import ViewInvoiceScreen1 from "../Screen/Invoices/ViewInvoiceScreen1.js";
+import InvoicePreviewScreen from "../Screen/Invoices/InvoicePreviewScreen.js";
 import TransactionScreen from "../Screen/Transactions/TransactionScreen.js";
 import TransactionDetailScreen from "../Screen/Transactions/TransactionDetailScreen.js";
-import AllQueryAndSupport from "../Screen/StackScreen/QueriesScreens/AllQueryAndSupport.js";
+import AdminSectionScreen from "../Screen/StackScreen/AdminSectionScreen.js";
+import { fontSize } from "../Util/UtilApi.js";
+import AllUsersScreen from "../Screen/StackScreen/AllUsersScreen.js";
+import AllInvoiceScreen from "../Screen/StackScreen/AllInvoiceScreen.js";
+import AllVendorScreen from "../Screen/StackScreen/AllVendorScreen.js";
+import AllVendorDataScreen from "../Screen/StackScreen/AllVendorDataScreen.js";
+import ProductDetailsScreen from "../StackScreen/ProductSection/ProductDetailsScreen.js";
+import CustomerDetail from "../StackScreen/CustomerSection/CustomerDetails.js";
+import PoliciesDetailsScreen from "../StackScreen/PoliciesDetailsScreen.js";
+import AllQueryAndSupport from "../../src/Screen/StackScreen/QueriesScreens/AllQueryAndSupport.js"
+
+
 export default function StackNavigator() {
   const Stack = createStackNavigator();
   const [isConnected, setIsConnected] = useState(false);
   const [isLandscape, setIsLandscape] = useState(false);
   const { isAuthenticated, isLoading, searchMode } = useContext(AuthContext);
   const { userData } = useContext(UserDataContext);
+  const [isForgetPasswordState, setIsForgetPasswordState] = useState(false);
+
   // const { shopDetails } = useContext(ShopDetailContext);
 
   // const ViewCustomerWithTour  = withCopilot(AddCustomerScreen)
@@ -97,23 +110,35 @@ export default function StackNavigator() {
   return (
     <>
       <Stack.Navigator
-        initialRouteName={userData ? "Passcode" : "login"}
-        screenOptions={{
-          // headerTitle: "Create Invoice",
-        }}
+        // initialRouteName={userData ? "Passcode" : "login"}
+        initialRouteName={isForgetPasswordState ? "login" : userData ? "Passcode" : "login"}
+
+        screenOptions={
+          {
+            // headerTitle: "Create Invoice",
+          }
+        }
       >
         <Stack.Screen
           name="AddCustomer"
           component={AddCustomerScreen}
           options={{
-            headerTitle: "Add Customer",
+            // headerTitle: "Add Customer",
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"Add Customer"}</Text>
+            ),
+            headerTitleAlign: "center",
           }}
         />
         <Stack.Screen
           name="AddProduct"
           component={AddProductScreen}
           options={{
-            headerTitle: "Add Product",
+            // headerTitle: "Add Product",
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"Add Product"}</Text>
+            ),
+            headerTitleAlign: "center",
           }}
         />
         <Stack.Screen
@@ -124,13 +149,39 @@ export default function StackNavigator() {
             // headerStyle: {
             //   backgroundColor: "#0c3b73", // Your desired background color
             // },
-            headerTitle: searchMode ? "" : "View Vendor",
-            headerTitleAlign: searchMode ? "left" : "center",
+            // headerTitle: searchMode ? "" : "View Vendor",
+            // headerTitleAlign: searchMode ? "left" : "center",
           }}
         />
 
         <Stack.Screen name="viewClient" component={ViewClientScreen} />
-        <Stack.Screen name="EditProfilePage" component={EditProfileScreen} />
+
+        <Stack.Screen name="EditProfilePage" component={EditProfileScreen}
+          options={{
+            // headerShown: false,
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{("Edit Profile")}</Text>
+            ),
+            headerTitleAlign: "center",
+            headerTintColor: "#000",
+            headerShadowVisible: false,
+            headerLeft: () => <CustomBackButton />,
+          }}
+        />
+
+        <Stack.Screen name="EditProfile"
+          component={EditProfileScreen}
+          options={{
+            // headerShown: false,
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{("Update Profile")}</Text>
+            ),
+            headerTitleAlign: "center",
+            headerTintColor: "#000",
+            headerShadowVisible: false,
+            headerLeft: () => <CustomBackButton />,
+          }}
+        />
 
         <Stack.Screen
           name="hsncode"
@@ -140,8 +191,8 @@ export default function StackNavigator() {
             headerStyle: {
               backgroundColor: "#0c3b73", // Your desired background color
             },
-            headerTitle: searchMode ? "" : "HSN Codes",
-            headerTitleAlign: searchMode ? "left" : "center",
+            // headerTitle: searchMode ? "" : "HSN Codes",
+            // headerTitleAlign: searchMode ? "left" : "center",
           }}
         />
         <Stack.Screen
@@ -219,7 +270,11 @@ export default function StackNavigator() {
           name="CreateInvoice"
           component={CreateInvoice}
           options={{
-            headerTitle: "Add Invoice",
+            // headerTitle: "Add Invoice",
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"Add Invoice"}</Text>
+            ),
+            headerTitleAlign: "center",
           }}
         />
         <Stack.Screen
@@ -326,9 +381,7 @@ export default function StackNavigator() {
         />
         <Stack.Screen
           name="TransactionDetailScreen"
-          component={TransactionDetailScreen
-
-          }
+          component={TransactionDetailScreen}
           options={({ route }) => ({
             headerTitle: "Transaction Detail",
             headerLeft: () => (
@@ -357,8 +410,8 @@ export default function StackNavigator() {
           component={ViewShopsScreen}
           options={{
             headerRight: () => <HomeHeaderRight />,
-            headerTitle: !searchMode ? "My Shops" : "", // Provide a default title
-            headerTitleAlign: searchMode ? "left" : "center",
+            // headerTitle: !searchMode ? "My Shops" : "", // Provide a default title
+            // headerTitleAlign: searchMode ? "left" : "center",
           }}
         />
 
@@ -414,6 +467,73 @@ export default function StackNavigator() {
         />
 
         <Stack.Screen
+          name="AdminSection"
+          component={AdminSectionScreen}
+          options={{
+            // headerShown: false,
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"Admin Section"}</Text>
+            ),
+            headerTitleAlign: "center",
+            headerTintColor: "#000",
+            headerShadowVisible: false,
+            headerLeft: () => <CustomBackButton />,
+          }}
+        />
+
+        <Stack.Screen
+          name="AllUsers"
+          component={AllUsersScreen}
+          options={{
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"All Users"}</Text>
+            ),
+
+            headerTitleAlign: "center",
+            headerLeft: () => <CustomBackButton />,
+          }}
+        ></Stack.Screen>
+
+        <Stack.Screen
+          name="AllInvoice"
+          component={AllInvoiceScreen}
+          options={{
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"All Invoice"}</Text>
+            ),
+
+            headerTitleAlign: "center",
+            headerLeft: () => <CustomBackButton />,
+          }}
+        />
+
+        <Stack.Screen
+          name="AllVendor"
+          component={AllVendorScreen}
+          options={{
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"All Vender"}</Text>
+            ),
+
+            headerTitleAlign: "center",
+            headerLeft: () => <CustomBackButton />,
+          }}
+        />
+
+        <Stack.Screen
+          name="AllVendorDataScreen"
+          component={AllVendorDataScreen}
+          options={{
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"Vendor Data"}</Text>
+            ),
+
+            headerTitleAlign: "center",
+            headerLeft: () => <CustomBackButton />,
+          }}
+        />
+
+        <Stack.Screen
           name="wertone"
           component={BottomNavigator}
           options={{ headerShown: false }}
@@ -434,13 +554,11 @@ export default function StackNavigator() {
         />
         <Stack.Screen
           name="EnterNumberScreen"
-          component={EnterNumberScreen}
-          screenOptions={{ headerShown: false }}
-          // options={{ title: 'Login '}}
-          options={{
-            headerShown: false,
-          }}
-        />
+          options={{ headerShown: false }}
+        >
+          {(props) => <EnterNumberScreen {...props} setIsForgetPasswordState={setIsForgetPasswordState} />}
+        </Stack.Screen>
+
         <Stack.Screen
           name="Signup"
           component={SignupScreen}
@@ -474,6 +592,7 @@ export default function StackNavigator() {
               backgroundColor: "transparent",
               // backgroundColor: "#fff"
             },
+
             headerLeft: () => <CustomBackButton />,
           }}
         />
@@ -482,7 +601,11 @@ export default function StackNavigator() {
           name="PDFScreen"
           component={PdfScreen}
           options={{
-            headerTitle: "Invoice Preview"
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"Invoice Preview"}</Text>
+            ),
+            headerTitleAlign: "center",
+            // headerTitle: "Invoice Preview",
           }}
         />
 
@@ -491,6 +614,7 @@ export default function StackNavigator() {
           component={AddRole}
           screenOptions={{
             headerTitle: "Add Role",
+            headerTitleAlign: "center",
           }}
         />
 
@@ -498,18 +622,56 @@ export default function StackNavigator() {
           name="ViewShopDetailsScreen"
           component={ViewShopDetailsScreen}
           options={{
-            headerTitle: "View Shop Details",
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"View Shop Details"}</Text>
+            ),
+            headerTitleAlign: "center",
+            // headerTitle: "View Shop Details",
           }}
         />
 
         <Stack.Screen
-          name="AllQueryAndSupport"
+          name="ProductScreen"
+          component={ProductDetailsScreen}
+          options={{
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"View Product Details"}</Text>
+            ),
+            headerTitleAlign: "center",
+            // headerTitle: "View Shop Details",
+          }}
+        />
+
+        <Stack.Screen
+          name="Customer"
+          component={CustomerDetail}
+          // screenOptions={{ headerShown: false }}
+          options={{
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"All Customer"}</Text>
+            ),
+            headerTitleAlign: "center",
+            // headerTitle: "All Customer",
+          }}
+        />
+
+        <Stack.Screen
+          name="Policies"
+          component={PoliciesDetailsScreen}
+          options={{
+            headerShown: false,
+            headerTintColor: "#000",
+            headerShadowVisible: false,
+            headerLeft: () => <CustomBackButton />,
+          }}
+        />
+        <Stack.Screen
+          name="AllQuerysAndSupport"
           component={AllQueryAndSupport}
           options={{
             headerTitle: "View Shop Details",
           }}
         />
-
 
 
       </Stack.Navigator>
@@ -524,8 +686,7 @@ export default function StackNavigator() {
 const styles = StyleSheet.create({
   headerTitle: {
     fontFamily: "Poppins-Regular",
-    // fontSize: fontSize.headingSmall,
+    fontSize: fontSize.headingSmall,
     fontWeight: "bold",
   },
 });
-// >>>>>>> prathamesh
