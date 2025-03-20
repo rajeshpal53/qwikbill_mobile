@@ -58,8 +58,8 @@
 //   const [SelectedEditItem, setSelectedEditItem] = useState(null);
 //   const [editmodal, seteditmodal] = useState(false);
 //   const [customerData , setCustomerData]= useState([])
-//   const [loading, setLoading] = useState(true); 
-//   const [error, setError] = useState(null); 
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
 
 
 //   const filteredData = customerdetails.filter((item) =>
@@ -205,7 +205,7 @@ const CustomerDetail = ({ navigation }) => {
 
   const openEditModal = (item) => {
     setSelectedEditItem(item);
-    //  console.log("item for edit modal ", item)
+   //  console.log("item for edit modal ", item)
 
   };
 
@@ -274,52 +274,46 @@ const CustomerDetail = ({ navigation }) => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={{ flex: 1 }}>
+      <View style={{ marginTop: 5 }}>
+        <Searchbarwithmic
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          setsearchmodal={setsearchmodal}
+          setTranscript={setTranscript}
+          placeholderText="Search User by name..."
 
-        <View style={{ marginTop: 5 }}>
-          <Searchbarwithmic
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            setsearchmodal={setsearchmodal}
-            setTranscript={setTranscript}
-            placeholderText="Search User by name..."
+        />
+      </View>
 
+      {loading ? (
+        <ActivityIndicator size="large" color="#0c3b73" style={{ marginTop: 20 }} />
+      ) : error ? (
+        <Text style={{ color: "red", textAlign: "center", marginTop: 20 }}>{error}</Text>
+      ) : filteredData.length === 0 ? (
+        // Show "No data found" message if filteredData is empty
+        <Text style={{ textAlign: "center", marginTop: 20, fontSize: 16, color: "#666" }}>
+          No data found
+        </Text>)
+        : (
+          <FlatList
+            data={filteredData}
+            renderItem={({ item }) => (
+              <CustomerDetailsCard
+                item={item}
+                navigation={navigation}
+                onEdit={() => openEditModal(item)}
+              />
+            )}
+            keyExtractor={(item) => item.id.toString()}
           />
-        </View>
+        )}
 
-        {loading ? (
-          <ActivityIndicator size="large" color="#0c3b73" style={{ marginTop: 20 }} />
-        ) : error ? (
-          <Text style={{ color: "red", textAlign: "center", marginTop: 20 }}>{error}</Text>
-        ) : filteredData.length === 0 ? (
-          // Show "No data found" message if filteredData is empty
-          <Text style={{ textAlign: "center", marginTop: 20, fontSize: 16, color: "#666" }}>
-            No data found
-          </Text>)
-          : (
-            <FlatList
-              data={filteredData}
-              renderItem={({ item }) => (
-                <CustomerDetailsCard
-                  item={item}
-                  navigation={navigation}
-                  onEdit={() => openEditModal(item)}
-                />
-              )}
-              keyExtractor={(item) => item.id.toString()}
-              contentContainerStyle={styles.listContainer} // Prevents FAB overlap
-
-
-            />
-          )}
-    
-
-
-      <FAB
+      {/* <FAB
         icon={() => <Icon name="add" size={25} color="#fff" />}
         style={styles.fab}
         onPress={() => console.log("FAB pressed")}
-      />
+      /> */}
 
       {editmodal && (
         <EditCustomerDetailsModal
@@ -333,12 +327,6 @@ const CustomerDetail = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1, // Ensures full height usage
-  },
-  listContainer: {
-    paddingBottom: 80, // Prevents overlap with FAB
-  },
   fab: {
     position: "absolute",
     right: 25,

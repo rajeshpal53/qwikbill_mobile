@@ -7,24 +7,17 @@ import {
   log,
   fontSize,
   createApi,
+  readApi,
+  updateApi
 } from "../../Util/UtilApi";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { OtpInput } from "react-native-otp-entry";
 
 import {
-  StyleSheet,
-  View,
-  Image,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Pressable,
-  TouchableWithoutFeedback,
-  Keyboard,
-  Alert,
-  useWindowDimensions,
+  StyleSheet, View, Image, TouchableOpacity, KeyboardAvoidingView,
+  Platform, ScrollView, Pressable, TouchableWithoutFeedback, Keyboard,
+  Alert, useWindowDimensions,
 } from "react-native";
 import {
   Button,
@@ -36,6 +29,7 @@ import {
   Modal,
   Portal,
   HelperText,
+  Card
 } from "react-native-paper";
 import { useIsFocused, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -46,17 +40,13 @@ import CountryCodeModal from "../../Component/CountryCodeModal";
 import AutoSlidingCarousel from "../../Component/AutoSlidingCarousel";
 import SetpasswordModal from "../../Modal/SetpasswordModal";
 import UserDataContext from "../../Store/UserDataContext";
+import { AuthContext } from "../../Store/AuthContext";
 // import { useTranslation } from "react-i18next";
 
-const Validation = Yup.object().shape({
-  phone: Yup.string()
-    .required("Phone number is required")
-    .matches(/^[0-9]+$/, "Phone number must be numeric")
-    .min(10, "Phone number must be at least 10 digits")
-    .max(12, "Phone number can be at most 15 digits"),
-});
+const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
 
-const EnterNumberScreen = ({ navigation }) => {
+  const isForgetPassword = route?.params?.isForgetPassword || false;
+
   const [phoneNumber, setPhoneNumber] = useState(null);
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [confirm, setConfirm] = useState(null);
@@ -74,6 +64,50 @@ const EnterNumberScreen = ({ navigation }) => {
   const { width, height } = useWindowDimensions();
   const [otpError, setOtpError] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+  const { login, isAuthenticated, storeData, setLoginDetail, handleLogin } =
+    useContext(AuthContext);
+  // const [phoneNumber, setPhoneNumber] = useState('');
+
+  const Validation = Yup.object().shape({
+    phone: Yup.string()
+      .required("Phone number is required")
+      .matches(/^[0-9]+$/, "Phone number must be numeric")
+      .min(10, "Phone number must be at least 10 digits")
+      .max(12, "Phone number can be at most 15 digits")
+      .test(
+        "check-number-availability",
+        "Number is already registered. Try a different number.",
+        async (value) => {
+          if (value && value.length === 10) {
+            // Check if the number is already registered
+            const isAvailable = await checkPhoneNumberAvailability(value);
+            console.log("VALUE IN PRESENT IS SSS123", isAvailable);
+            return isAvailable;
+          }
+          return true;
+        }
+      ),
+  });
+
+  const checkPhoneNumberAvailability = async (phoneNumber) => {
+    console.log("Enter number is ", phoneNumber);
+    try {
+      const response = await readApi(`users/getUserByMobile/${phoneNumber}`);
+      console.log("USER DATA ______", response);
+
+      if (response.status === 200) {
+        console.log("If condition working ");
+        return false;
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        console.log("If condition working ");
+        return true;
+      }
+    }
+    return true;
+  };
+
   const carouselItems = [
     {
       id: "1",
@@ -159,20 +193,7 @@ const EnterNumberScreen = ({ navigation }) => {
         let pNumber = user.phoneNumber.replace("+91", "");
         // const response= await postData(pNumber,fToken,idToken);
         showSnackbar("Login successfully!", "success");
-        //   if(response){
-        //     setIsVerified(true);
-        //   navigation.reset({
-        //     index: 0,
-        //     routes: [
-        //       {
-        //         name: "Bottom",
-        //         params: {
-        //           screen: "Home",
-        //         },
-        //       },
-        //     ],
-        //   });
-        // }
+
         setPasswordModalVisible(true);
       }
     });
@@ -180,18 +201,6 @@ const EnterNumberScreen = ({ navigation }) => {
     return subscriber;
     // Unsubscribe on cleanup
   }, []);
-  //   useEffect(() => {
-  //     const fetchToken = async () => {
-  //       try {
-  //         const tokenCall = await AsyncStorage.getItem("FCMToken");
-  //         setFCMToken(tokenCall);
-  //         console.log("FCMToken", JSON.parse(tokenCall));
-  //       } catch (err) {
-  //         console.error("failed to get token");
-  //       }
-  //     };
-  //     fetchToken();
-  //   }, []);
 
   const idTokenValidate = async (idToken) => {
     const payload = {
@@ -206,7 +215,10 @@ const EnterNumberScreen = ({ navigation }) => {
 
       console.log("response status 1 , ", response?.message);
       console.log("response 1 , ", response);
-      if (response?.message == "ID token and mobile number validated successfully.") {
+      if (
+        response?.message ==
+        "ID token and mobile number validated successfully."
+      ) {
         return true;
       }
     } catch (error) {
@@ -215,20 +227,36 @@ const EnterNumberScreen = ({ navigation }) => {
     }
   };
 
-  const postData = async (password) => {
+
+  const postData = async (password, isForgetPassword,navigation) => {
     setIsLoading(true);
-    console.log(FCMToken, "FCMToken");
+    console.log("FCMToken:", FCMToken);
+
     const payload = {
       mobile: phoneNumber,
-      // fcmtokens: [FCMToken||fToken],
       password,
-      // idToken: idToken,
     };
-    console.log("payload", payload);
+
+    console.log("Payload:", payload);
+
     try {
       if (payload?.mobile) {
-        const response = await createApi(`users/signUp`, payload); // Convert JavaScript object to JSON;
-        console.log("data found 'users/signUp', ", response);
+        let apiEndpoint = isForgetPassword ? `users/forgetPassword` : `users/signUp`;
+        let apiFunction = isForgetPassword ? updateApi : createApi;
+
+        const response = await apiFunction(apiEndpoint, payload);
+        console.log(`${isForgetPassword ? "Forgot Password" : "Sign-Up"} Response:`, response);
+
+        await saveUserData(response);
+        await handleLogin(response,navigation);
+        
+        await AsyncStorage.setItem("updatedPassword", password);
+
+
+        if (isForgetPassword) {
+          setIsForgetPasswordState(true);
+        }
+
         return true;
       }
     } catch (error) {
@@ -236,33 +264,11 @@ const EnterNumberScreen = ({ navigation }) => {
       return false;
     } finally {
       setIsLoading(false);
+      alert("Password reset successfully!");
     }
   };
-  // const postData = async (pNumber, fToken, idToken) => {
-  //   setIsLoading(true);
-  //   console.log(FCMToken, "FCMToken");
-  //   const payload = {
-  //     mobile: pNumber || phoneNumber,
-  //     fcmtokens: [FCMToken||fToken],
-  //     idToken: idToken,
-  //   };
-  //   console.log("payload", payload);
-  //   console.log("pNumber", pNumber);
-  //   console.log("phoneNumber", phoneNumber);
-  //   try {
-  //     if (payload.mobile) {
-  //       const response = await createApi(`users/upsert`, payload); // Convert JavaScript object to JSON;
-  //       console.log("data found , ", response);
-  //       saveUserData(response);
-  //       return true;
-  //     }
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //     return false;
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+
+
 
   const handleResendOTP = () => {
     setTimer(90); // Reset the timer
@@ -274,11 +280,6 @@ const EnterNumberScreen = ({ navigation }) => {
     const secs = seconds % 60;
     return `${minutes}:${secs < 10 ? `0${secs}` : secs}`; // Adds leading zero to seconds if < 10
   };
-  //   // Function to start the timer
-  //   const startTimer = (timer) => {
-  //     setTimer(timer); // Set timer to 2:30 (150 seconds)
-  //     setIsTimerRunning(true); // Start the timer
-  //   };
 
   // Step 1: Send OTP
   const sendOtp = async (phoneNumber) => {
@@ -311,6 +312,8 @@ const EnterNumberScreen = ({ navigation }) => {
     }
   };
 
+
+
   // Step 2: Confirm OTP (Fallback for Manual Entry)
   const confirmOtp = async () => {
     if (otp.length === 0) {
@@ -342,25 +345,7 @@ const EnterNumberScreen = ({ navigation }) => {
 
         if (isIdTokenValidate) {
           setPasswordModalVisible(true);
-          // const response = await postData();
 
-          // if (response) {
-            
-            //   // Alert.alert("Success", "Phone number verified successfully!");
-            //   showSnackbar("Phone number verified successfully!", "success");
-            //   navigation.reset({
-            //     index: 0,
-            //     routes: [
-            //       {
-            //         name: "Bottom",
-            //         params: {
-            //           screen: "Home",
-            //         },
-            //       },
-            //     ],
-            //   });
-            //   setIsVerified(true);
-          // }
         }
       }
     } catch (error) {
@@ -373,31 +358,6 @@ const EnterNumberScreen = ({ navigation }) => {
   const closeModal = () => {
     setPasswordModalVisible(false);
   };
-  //    useEffect(() => {
-  //       let interval;
-  //       if (isTimerRunning && timer > 0) {
-  //         interval = setInterval(() => {
-  //           setTimer((prevTimer) => {
-  //             if (prevTimer > 1) {
-  //               return prevTimer - 1;
-  //             } else {
-  //               clearInterval(interval);
-  //               // Clear the interval when timer reaches 0
-  //               setIsTimerRunning(false); // Stop the timer
-
-  //               // if (threeTimer) {
-  //               //   resetCount();
-  //               // }
-  //               return 0; // Ensure timer is set to 0
-  //             }
-  //           });
-  //         }, 1000);
-  //       }
-
-  //       return () => {
-  //         clearInterval(interval); // Clear interval on unmount or when dependencies change
-  //       };
-  //     }, [isTimerRunning, timer]);
 
   const Loader = () => {
     return (
@@ -499,16 +459,7 @@ const EnterNumberScreen = ({ navigation }) => {
                       {t("Enter the OTP sent to your mobile number")} +91
                       {phoneNumber}
                     </Text>
-                    {/* <TextInput
-        mode="outlined"
-        label="Enter OTP"
-        value={otp}
-        onChangeText={handleOTPChange}
-        keyboardType="numeric"
-        maxLength={6}
-        style={styles.otpInput}
-        error={otpError}
-      /> */}
+
                     <OtpInput numberOfDigits={6} onTextChange={setOtp} />
 
                     {otpError && (
@@ -549,74 +500,77 @@ const EnterNumberScreen = ({ navigation }) => {
                     >
                       {t("Login")}
                     </Button>
-                    {/* </View> */}
 
-                    {/* <View style={{
-            flexDirection: "row",
-            alignSelf:"center",
-            marginTop:30
-            }}>
-            <Text>Powered by </Text>
-            <Image
-              source={require("../../../assets/logo-wertone.png")}
-              style={styles.logo}
-            />
-            <Text style={{}}>Wertone</Text>
-          </View> */}
                   </View>
                 </ScrollView>
               </View>
             ) : (
               <>
-                <View style={styles.topSection}>
-                  <AutoSlidingCarousel
-                    height={400}
-                    carouselItems={carouselItems}
-                    fromScreen={"EnterNumber"}
-                  />
-                  <Pressable
-                    style={styles.fab}
-                    label="Skip"
-                    onPress={() => {
-                      navigation.navigate("Bottom", { screen: "Home" });
-                    }}
-                  >
-                    <View style={[styles.skipView, { borderColor: "#fcb534" }]}>
-                      <Text style={{ color: "#0a6846", fontSize: 18 }}>
-                        Skip
-                      </Text>
+                {/* {!isForgetPassword && (
+                  <View style={styles.topSection}>
+                    <AutoSlidingCarousel
+                      height={400}
+                      carouselItems={carouselItems}
+                      fromScreen={"EnterNumber"}
+                    />
+                  </View>
+                )} */}
+                
+              
+
+                  <View style={styles.container}>
+
+                    <View style={[styles.topHeader,{height:isForgetPassword ? "35%" : "40%"}]}>
+                      <Image source={require("../../../assets/aaaa_transparent.png")} style={styles.logo} />
+                      {/* <Text style={styles.appName}>WERTONE</Text>
+                      <Text style={styles.tagline}>Billing Software</Text> */}
                     </View>
-                  </Pressable>
 
-                  {/*
+                  </View>
+                
+                {/* <View style={styles.loginSection}> */}
+               <View style={[styles.loginSection, { height: isForgetPassword ? "70%" : "65%" }]}>
 
-            <Image
-              source={require("../../../assets/otp_authentication.png")}
-              style={styles.image}
-            /> */}
-                </View>
-                <View style={styles.loginSection}>
                   <ScrollView
                     contentContainerStyle={styles.container}
                     keyboardShouldPersistTaps="always"
                   >
                     <View style={{ flex: 1, justifyContent: "space-around" }}>
-                      <View style={{ gap: 25 }}>
+                      <View style={{ gap: 20 }}>
                         <Text style={styles.heading}>
-                          {t("WELCOME TO QWIKBILL")}
+                          {isForgetPassword ? "Forgot Password" : "Welcome to QwikBill"}
+                        </Text>
+                        <Text style={{
+                           fontFamily: fontFamily.medium,
+                            fontSize: fontSize.label,
+                             marginHorizontal: 5,
+                             color:"#777",
+                             marginTop:-8
+                             }}>
+                          {isForgetPassword ? "Enter your registered mobile number to recieve a password reset OTP." : null}
                         </Text>
                         <Formik
                           initialValues={{ phone: "" }}
                           validationSchema={Validation}
                           onSubmit={async (values, { resetForm }) => {
-                            console.log("Form submitted with:", values.phone);
-                            // const confirm = await signInWithPhoneNumber(values.phone);
-                            // navigation.navigate("EnterOtp", { values, confirm });
-                            console.log("phoneNumber", "+91" + values.phone);
-                            setPhoneNumber(values.phone);
-                            sendOtp("+91" + values.phone);
-                            // setIsVerified((prev) => !prev);
-                            setConfirm(true);
+                            setIsLoading(true);
+                            try {
+                              console.log("Form submitted with:", values.phone);
+                              // const confirm = await signInWithPhoneNumber(values.phone);
+                              // navigation.navigate("EnterOtp", { values, confirm });
+                              console.log("phoneNumber", "+91" + values.phone);
+                              setPhoneNumber(values.phone);
+                              sendOtp("+91" + values.phone);
+                              // setIsVerified((prev) => !prev);
+                              setConfirm(true);
+                            } catch (error) {
+                              console.error(
+                                "Error submitting phone number:",
+                                error
+                              );
+                            } finally {
+                              setIsLoading(false);
+                            }
                           }}
                         >
                           {({
@@ -626,6 +580,8 @@ const EnterNumberScreen = ({ navigation }) => {
                             values,
                             errors,
                             touched,
+                            isValid,
+                            dirty,
                           }) => (
                             <View
                               style={{
@@ -636,12 +592,15 @@ const EnterNumberScreen = ({ navigation }) => {
                               <Text
                                 style={
                                   {
-                                    //  fontFamily: fontFamily.regular
+                                    fontFamily: fontFamily.medium,
+                                    fontSize: fontSize.labelMedium,
+                                   marginHorizontal: 5
                                   }
                                 }
                               >
-                                {t("Phone Number")}
+                                {t("Mobile Number")}
                               </Text>
+
                               <View style={styles.inputContainer}>
                                 <TouchableOpacity
                                   style={styles.countryCodeButton}
@@ -658,15 +617,16 @@ const EnterNumberScreen = ({ navigation }) => {
                                     name="chevron-down"
                                     size={20}
                                     color={"#777"}
-                                    style={{ marginLeft: 10 }}
+                                    style={{ marginLeft: 8 }}
                                   />
                                 </TouchableOpacity>
                                 <Divider
                                   style={{
-                                    height: "70%", // Adjust height as needed
+                                    height: "60%", // Adjust height as needed
                                     width: 1,
-                                    backgroundColor: "rgba(0, 0, 0, 0.2)",
-                                    marginHorizontal: 8,
+                                
+                                    backgroundColor: "#ddd",
+                                    marginHorizontal: 6,
                                   }}
                                 />
                                 <TextInput
@@ -675,6 +635,7 @@ const EnterNumberScreen = ({ navigation }) => {
                                   style={styles.input}
                                   underlineColor="transparent"
                                   activeUnderlineColor="transparent" // Remove active underline color
+                                  // onChangeText={handlePhoneChange}
                                   onChangeText={handleChange("phone")}
                                   onBlur={handleBlur("phone")}
                                   value={values.phone}
@@ -684,6 +645,7 @@ const EnterNumberScreen = ({ navigation }) => {
                                   mode={"flat"}
                                   cursorColor={"#1e90ff"}
                                 />
+                                
                               </View>
                               <View style={{ alignSelf: "center" }}>
                                 {touched && errors.phone && (
@@ -700,29 +662,43 @@ const EnterNumberScreen = ({ navigation }) => {
                                     Resend OTP in {formatTime(timer)}
                                   </Text>
                                 )}
-                                <TouchableOpacity
+
+                                <Button
+                                  // style={styles.button}
                                   onPress={handleSubmit}
-                                  disabled={isTimerRunning && timer > 0}
-                                  style={{
-                                    padding: 12, // Adjusts to meet the 48x48 touch target without changing button size
-                                    // backgroundColor:"lightblue",
-                                    width: "100%",
-                                  }}
-                                  hitSlop={{
-                                    top: 12,
-                                    bottom: 12,
-                                    left: 12,
-                                    right: 12,
-                                  }}
+                                  disabled={isTimerRunning && timer > 0 || !isValid || !dirty || !values.phone}
+
+                                  style={[
+                                    styles.button,
+                                    { borderRadius: 10 },
+                                    !isValid || !dirty || !values.phone
+                                      ? { backgroundColor: "#d3d3d3" }
+                                      : { backgroundColor: "#1E90FF" },
+                                  ]}
+                                  mode="contained"
+
                                 >
-                                  <Button
-                                    style={styles.button}
-                                    mode="contained"
-                                    disabled={isTimerRunning && timer > 0}
-                                  >
-                                    {t("Login With OTP")}
-                                  </Button>
-                                </TouchableOpacity>
+                                  <Text style={{
+                                    fontFamily: fontFamily.bold,
+                                    fontSize: fontSize.labelMedium,
+                                    color: "#fff"
+                                  }}>
+
+                                    {isForgetPassword ? "Send OTP" : "Login with OTP"}
+                                  </Text>
+                                </Button>
+                                {/* </TouchableOpacity> */}
+                                {isForgetPassword ?
+                                  <Text
+                                    style={{
+                                      color: "#1E90FF",
+                                      alignSelf: "center",
+                                      fontFamily: fontFamily.medium,
+                                      fontSize: fontSize.labelMedium,
+                                      marginTop: 8
+                                    }}
+                                    onPress={() => navigation.navigate("login")}
+                                  > Back to Login</Text> : null}
                               </View>
                             </View>
                           )}
@@ -734,12 +710,30 @@ const EnterNumberScreen = ({ navigation }) => {
                       />
                       {isLoading && <Loader />}
 
-                      <View style={styles.bottomText}>
-                        <Text style={{ color: "#777" }}>
-                          By signing in, you are agree to
+                      <View style={{ alignSelf: "center", marginHorizontal: 25, marginBottom: 40, alignItems: "center" }}>
+                        <Text style={{ color: "#777", fontFamily: fontFamily.medium, textAlign: "center" }}>
+                          {!isForgetPassword ?
+                            <Text
+                              style={{
+                                color: "#777",
+                                fontFamily: fontFamily.medium,
+                                fontSize: fontSize.label,
+                                textAlign: "center"
+                              }}>
+                              By signing in , you are agree to
+                            </Text>
+                            :
+                            <Text style={{
+                              color: "#777",
+                              fontFamily: fontFamily.medium,
+                              fontSize: fontSize.label,
+                              textAlign: "center"
+                            }}>
+                              By resetting your password , you agree to our
+                            </Text>}
+
                           <Text
                             style={{
-                              textDecorationLine: "underline",
                               color: "#1e90ff",
                             }}
                             onPress={() =>
@@ -753,16 +747,7 @@ const EnterNumberScreen = ({ navigation }) => {
                             Terms and Policy.
                           </Text>
                         </Text>
-                        {/* <View style={{ flexDirection: "row" }}>
-                    <Text style={{ color: "#777", fontSize: 12 }}>
-                      Powered by
-                    </Text>
-                    <Image
-                      source={require("../../../assets/logo-wertone.png")}
-                      style={styles.logo}
-                    />
-                    <Text style={{ color: "#777", fontSize: 12 }}>Wertone</Text>
-                  </View> */}
+
                       </View>
                     </View>
                   </ScrollView>
@@ -778,6 +763,8 @@ const EnterNumberScreen = ({ navigation }) => {
         closeModal={closeModal}
         navigation={navigation}
         postData={postData}
+        isForgetPassword={isForgetPassword}
+        setIsForgetPasswordState={setIsForgetPasswordState}
       />
     </View>
   );
@@ -785,10 +772,7 @@ const EnterNumberScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    // backgroundColor: "orange",
-
     gap: 20,
-    color: "",
   },
   fab: {
     width: 70,
@@ -816,13 +800,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     flex: 1,
-    width: 350,
-
+    width: 340,
     backgroundColor: "#F4F4F4", // Light gray background for the input container
     borderRadius: 8, // Rounded corners for the entire container
     // paddingVertical: 10, // Vertical padding
     paddingHorizontal: 15, // Horizontal padding
-    marginVertical: 10, // Margin around the input container
+    marginBottom: 15, // Margin around the input container
+    marginTop: 5
   },
   countryCodeButton: {
     flexDirection: "row",
@@ -832,29 +816,38 @@ const styles = StyleSheet.create({
     // paddingHorizontal: 8, // Padding inside the button
   },
   flagContainer: {
-    flexDirection: "row",
-    marginRight: 4, // Space between the flag and country code
+    width: 22, // Set a fixed width
+    height: 18, // Set a fixed height
+    //borderRadius: 16, // Half of width/height to make it a circle
+   marginRight: 8, // Space between flag and code
   },
   flagText: {
-    fontSize: 18, // Size of the flag emoji
+    fontSize: 23,
+    marginTop:-5,
+    
   },
   countryCodeText: {
-    fontSize: 18,
+    fontSize: 16,
     // fontFamily: "Poppins-Regular",
     // Bold text for the country code
     color: "#000",
   },
   input: {
     flex: 1, // Take up the remaining space
-    fontSize: 18,
+    fontSize: fontSize.labelLarge,
+    fontFamily: fontFamily.bold,
     color: "#000",
     backgroundColor: "transparent",
+
   },
   heading: {
     fontSize: 14,
-    // fontSize: fontSize.heading,
-    // fontFamily: fontFamily.bold,
-    alignSelf: "center",
+    fontSize: fontSize.headingLarge,
+    fontFamily: fontFamily.bold,
+    //alignSelf: "center",
+    color: "rgba(0,0,0,0.7)",
+    marginTop:12,
+    marginHorizontal:5
   },
   container1: {
     flex: 1,
@@ -890,9 +883,7 @@ const styles = StyleSheet.create({
   },
   loginSection: {
     backgroundColor: "#fff",
-    // padding: 20,
-    // flex:1,
-    // paddingHorizontal:20,
+
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     alignItems: "center",
@@ -900,16 +891,23 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0, // Adjust the top value as needed
     width: "100%",
-    height: "50%",
+    //height: "70%",
     zIndex: 0,
     borderBottomLeftRadius: 3,
     borderBottomRightRadius: 3,
+    elevation: 5, // For Android shadow effect
+    shadowColor: "#000", // Shadow color
+    shadowOffset: { width: 0, height: 4 }, // Shadow direction
+    shadowOpacity: 0.2, // Shadow transparency
+    shadowRadius: 6, // Spread of the shadow
   },
   button: {
     borderRadius: 14,
     height: 48,
     width: "auto",
     justifyContent: "center",
+    marginHorizontal: 10,
+    marginVertical: 22
   },
   errorText: {
     color: "#CD232E",
@@ -993,6 +991,66 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 20,
   },
+
+  topHeader: {
+    position: "absolute",
+    top: 0,
+    width: "100%",
+    //height: "35%",  // Adjust height as needed
+    backgroundColor: "#0c3b73",
+    alignItems: "center",
+    justifyContent: "center",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  logo: {
+    height: 250,
+    width: 250,
+    marginBottom: 40,
+  },
+  appName: {
+    color: "white",
+    fontSize: 22,
+    fontWeight: "bold",
+    letterSpacing: 1,
+  },
+  tagline: {
+    color: "white",
+    letterSpacing: 2,
+    fontSize: 14,
+  },
+
+  /* 🏠 White Card Container */
+  cardContainer: {
+    marginTop: "30%",  // Moves below the header
+    alignSelf: "center",
+    width: "90%",
+    elevation: 5,
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 15,
+  },
+  card: {
+    alignItems: "center",
+    borderRadius: 20,
+    backgroundColor: "#fff",
+    padding: 15,
+  },
+  cardContent: {
+    alignItems: "center",
+    gap: 10,
+  },
+
+  /* 🖼️ Image */
+  forgetPassImageContainer: {
+    marginVertical: 15,
+  },
+  verificationImage: {
+    width: 120,
+    height: 120,
+  },
+
 });
 
 export default EnterNumberScreen;

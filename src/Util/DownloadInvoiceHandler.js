@@ -39,10 +39,15 @@ export const useDownloadInvoice = () => {
     // Event listener for notification action
     const subscription = Notifications.addNotificationResponseReceivedListener(
       (response) => {
+        openFile();
+        console.log("response of notification", response)
         if (response.actionIdentifier === "OPEN_FOLDER") {
           openFolder();
+      
+          console.log("open folder");
         } else if (response.actionIdentifier === "OPEN_FILE") {
           openFile();
+          console.log("open file");
         }
         // else {
         //   openFile();
@@ -76,16 +81,14 @@ export const useDownloadInvoice = () => {
 
   const openFile = () => {
     // console.log("Open File button clicked , ", saveFileUri);
-
     try {
-      if (Platform.OS === "android" && saveFileUri) {
+    console.log("Open File button clicked , ", saveFileUri);
         // Open the file using the content URI
         IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
           data: saveFileUri, // Use the content URI from the folder
           flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
-          type: "application/pdf", // MIME type (optional but helpful)
+          type: "application/pdf"||"application/xlsx", // MIME type (optional but helpful)
         });
-      }
     } catch (error) {
       console.error("Error , ", error);
     }
@@ -127,7 +130,7 @@ export const useDownloadInvoice = () => {
     await checkNotificationPermission();
 
     console.log("downloadInvoicePress");
-
+    let result;
     try {
       setIsLoading(true);
       // const result = await FileSystem.downloadAsync(
@@ -136,19 +139,34 @@ export const useDownloadInvoice = () => {
       // );
 
       const downloadUrl = api;
-
-      const result = await FileSystem.downloadAsync(
-        downloadUrl,
-        FileSystem.documentDirectory + `${name}.pdf`
-      );
+        if (name==="SampleFile"){
+           result = await FileSystem.downloadAsync(
+            downloadUrl,
+            FileSystem.documentDirectory + `${name}.xlsx`
+          );
+        }else{
+           result = await FileSystem.downloadAsync(
+            downloadUrl,
+            FileSystem.documentDirectory + `${name}.pdf`
+          );
+        }
+    
 
       console.log(result, "- result");
-
-      await saveFile(
-        result?.uri,
-        `${name}.pdf`,
-        result.headers["Content-Type"]
-      );
+        if(name==="SampleFile"){
+          await saveFile(
+            result?.uri,
+            `${name}.xlsx`,
+            result.headers["Content-Type"]
+          );
+        }else{
+          await saveFile(
+            result?.uri,
+            `${name}.pdf`,
+            result.headers["Content-Type"]
+          );
+        }
+     
     } catch (error) {
       console.error("Error downloading or saving invoice:", error);
       Alert.alert("Download Failed", "Unable to download the invoice.");
@@ -216,6 +234,7 @@ export const useDownloadInvoice = () => {
         });
 
         console.log("notifications complete");
+        console.log(saveFileUri,"file urrirririrriririrrir")
       } catch (error) {
         console.error("Error saving file:", error);
         Alert.alert("Save Failed", "There was an error saving the file.");

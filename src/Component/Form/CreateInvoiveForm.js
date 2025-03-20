@@ -7,6 +7,7 @@ import {
   View,
   StyleSheet,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { TextInput } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -29,8 +30,12 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const [PaymentStatus, setPaymentStatus] = useState("");
   const submit = useRef(false);
   const { userData } = useContext(UserDataContext);
-  const {selectedShop} = useContext(ShopContext);
-  console.log("selected shop is , ", selectedShop)
+  const { selectedShop } = useContext(ShopContext);
+  const [fetchdata, setfetchdata] = useState({ name: "", address: "" });
+  const [loading, setLoading] = useState(false);
+
+  console.log("selected shop is , ", selectedShop);
+
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
     address: Yup.string().required("Address is required"),
@@ -49,6 +54,8 @@ const CreateInvoiceForm = ({ selectedButton }) => {
     console.log("Phone number ", phoneNumber);
 
     if (/^\d{10}$/.test(phoneNumber)) {
+      setLoading(true);
+
       try {
         const api = `users/getUserByMobile/${phoneNumber}`;
         const headers = {
@@ -58,18 +65,24 @@ const CreateInvoiceForm = ({ selectedButton }) => {
         // console.log("response of getting userbyMobile is , ", response)
         if (response) {
           setUser(response);
+          setfetchdata({ name: response.name, address: response.address });
+        } else {
+          setfetchdata({ name: "", address: "" });
         }
-
         setUser(response);
       } catch (error) {
+        setfetchdata({ name: "", address: "" });
         console.error("Error fetching User data:", error);
+      } finally {
+        setLoading(false);
       }
     }
   };
 
   useEffect(() => {
-    console.log("changed cart is , ", carts)
-  }, [carts])
+    console.log("changed cart is , ", carts);
+  }, [carts]);
+
   useEffect(() => {
     const handleBackPress = navigation.addListener("beforeRemove", (e) => {
       const hasFilledForm =
@@ -108,28 +121,29 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   }, [navigation, carts, User]);
 
   const getStatusFk = () => {
-    if(PaymentStatus == "Unpaid"){
+    if (PaymentStatus == "Unpaid") {
       return 1;
-    }else if(PaymentStatus == "Paid"){
+    } else if (PaymentStatus == "Paid") {
       return 2;
-    }else {
+    } else {
       return 3;
     }
-  }
+  };
+
   return (
     <ScrollView>
       <Formik
         enableReinitialize={true}
         initialValues={{
-          name: User?.name || "",
-          address: User?.address || "",
+          name: fetchdata?.name || "",
+          address: fetchdata?.address || "",
           gstNumber: "",
           phone: User?.mobile || "",
         }}
         validationSchema={validationSchema}
         onSubmit={(values, { resetForm }) => {
           console.log("values are , ", values);
-          
+
           const extraData = {
             usersfk: User?.id,
             vendorfk: selectedShop?.id,
@@ -140,16 +154,17 @@ const CreateInvoiceForm = ({ selectedButton }) => {
             finaltotal: cartsValue?.afterdiscount,
             // vendorprofit: 100,
             paymentMode: "COD",
-            ...((PaymentStatus == "Unpaid" || PaymentStatus == "Partially Paid") ? {remainingamount: cartsValue?.afterdiscount} : {}),
+            ...(PaymentStatus == "Unpaid" || PaymentStatus == "Partially Paid"
+              ? { remainingamount: cartsValue?.afterdiscount }
+              : {}),
 
             // ...(selectedButton == "provisional" ? {provisionNumber: "12"} : {}),
           };
 
-
           carts?.map((item) => {
             console.log("single item is , ", item);
           });
-     
+
           const payload = {
             ...extraData,
             customerData: User,
@@ -196,7 +211,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
                   <TextInput.Icon
                     icon="close"
                     size={20}
-                    style={{ marginBottom:-22}}
+                    style={{ marginBottom: -22 }}
                     onPress={() => setFieldValue("phone", "")} // Clears the input when close icon is pressed
                   />
                 ) : null
@@ -213,12 +228,13 @@ const CreateInvoiceForm = ({ selectedButton }) => {
               onChangeText={handleChange("name")}
               onBlur={handleBlur("name")}
               value={values.name}
+              editable={!loading}
               right={
                 values.name ? (
                   <TextInput.Icon
                     icon="close"
                     size={20}
-                    style={{ marginBottom:-22}}
+                    style={{ marginBottom: -22 }}
                     onPress={() => setFieldValue("name", "")} // Clears the input when close icon is pressed
                   />
                 ) : null
@@ -236,12 +252,13 @@ const CreateInvoiceForm = ({ selectedButton }) => {
               onChangeText={handleChange("address")}
               onBlur={handleBlur("address")}
               value={values.address}
+              editable={!loading}
               right={
                 values.address ? (
                   <TextInput.Icon
                     icon="close"
                     size={20}
-                    style={{ marginBottom:-22}}
+                    style={{ marginBottom: -22 }}
                     onPress={() => setFieldValue("address", "")} // Clears the input when close icon is pressed
                   />
                 ) : null
@@ -266,7 +283,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
                       <TextInput.Icon
                         icon="close"
                         size={20}
-                        style={{ marginBottom:-22}}
+                        style={{ marginBottom: -22 }}
                         onPress={() => setFieldValue("gstNumber", "")} // Clears the input when close icon is pressed
                       />
                     ) : null
@@ -277,6 +294,13 @@ const CreateInvoiceForm = ({ selectedButton }) => {
                 )}
               </>
             )}
+
+            {loading && (
+              <View style={styles.loaderContainer}>
+                <ActivityIndicator size="large" color="#0000ff" />
+              </View>
+            )}
+
             {/* Add Items Button */}
             <View style={styles.buttonView}>
               <TouchableOpacity
@@ -289,9 +313,12 @@ const CreateInvoiceForm = ({ selectedButton }) => {
             </View>
             {/* Item Data Table */}
             {carts.length > 0 && (
-              <View style={{marginTop:10}}>
-                <TouchableOpacity style={{ alignSelf:"flex-end", marginRight:10}} onPress={() => dispatch(clearCart())}>
-                <Text style={{color:'#007BFF'}}>Clear Cart</Text>
+              <View style={{ marginTop: 10 }}>
+                <TouchableOpacity
+                  style={{ alignSelf: "flex-end", marginRight: 10 }}
+                  onPress={() => dispatch(clearCart())}
+                >
+                  <Text style={{ color: "#007BFF" }}>Clear Cart</Text>
                 </TouchableOpacity>
                 <ItemDataTable carts={carts} />
                 <PriceDetails setPaymentStatus={setPaymentStatus} />

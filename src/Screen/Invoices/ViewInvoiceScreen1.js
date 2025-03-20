@@ -37,7 +37,6 @@ function ViewInvoiceScreen1({ navigation }) {
     console.log(selectedShop, "selectedShop");
   }, [page, sortBy]);
 
-  
   useEffect(() => {
     setPage(1);
     let api = `invoice/getInvoices?vendorfk=${selectedShop?.id}&page=${page}&size=10&dateWise=${sortBy}`;
@@ -68,9 +67,7 @@ function ViewInvoiceScreen1({ navigation }) {
       // console.log(JSON.stringify(response))
       if (page == 1) {
         setInvoices(response.invoices);
-      }
-
-      if (response?.invoices?.length > 0) {
+      } else if (response?.invoices?.length > 0) {
         setInvoices((prevData) => [...prevData, ...response.invoices]);
       } else {
         setHasMore(false);
@@ -83,7 +80,6 @@ function ViewInvoiceScreen1({ navigation }) {
       setIsLoading(false);
     }
   };
-
 
   const loadMoreData = () => {
     if (!isLoading && hasMore) {

@@ -167,7 +167,6 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Image,
-  Pressable
 } from "react-native";
 import { Text, Card, Avatar, Button } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -175,7 +174,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
 import ConfirmModal from "../Modal/ConfirmModal";
 import UserDataContext from "../Store/UserDataContext";
-import { API_BASE_URL, createApi, NORM_URL } from "../Util/UtilApi";
+import { createApi, NORM_URL } from "../Util/UtilApi";
 import { useIsFocused } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
 // import { WalletContext } from "../Store/WalletContext";
@@ -184,10 +183,6 @@ import auth from "@react-native-firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSnackbar } from "../Store/SnackbarContext";
 import ChangeLanguageModal from "../Modal/ChangeLanguageModal";
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { fontSize,fontFamily } from "../Util/UtilApi";
-
-
 
 const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
   const [isFullImageModalVisible, setIsFullImageModalVisible] = useState(false);
@@ -202,6 +197,8 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
   const { userData, clearUserData } = useContext(UserDataContext);
   // const { setCreateuser } = useContext(WalletContext);
 
+
+  console.log("DATA OF USER IS SSSSSSSSSSSS",userData )
   const { t, i18n } = useTranslation();
   const isFocused = useIsFocused();
   const AdminOption = [
@@ -214,20 +211,21 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
       value: "AdminSection",
     },
   ];
+
   // const [sameMenuItems, setSameMeuItems] = useState()
   const [menuItems, setMenuItems] = useState();
   useEffect(() => {
     if (myOrdersTabShow) {
       setMenuItems([
-        ...(userData
-          ? [
-            {
-              icon: "language",
-              label: "Address",
-              value: "Address",
-            },
-          ]
-          : []),
+        // ...(userData
+        //   ? [
+        //       {
+        //         icon: "language",
+        //         label: "Address",
+        //         value: "Address",
+        //       },
+        //     ]
+        //   : []),
         {
           icon: "language",
           label: "Change Language",
@@ -238,25 +236,24 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
           label: "Edit  a Vendor ",
           value: "Edit a Vendor",
         },
-        ...(userData?.user?.roles === "admin" ? AdminOption : []),
+        ...(userData?.user?.rolesfk === null ? AdminOption : []),
 
         { icon: "policy", label: "Policies", value: "Policies" },
         ...(userData
           ? [{ icon: "logout", label: "Logout", value: "Logout" }]
           : []),
-        { label: "Need more help?", value: "needMoreHelp" },
       ]);
     } else {
       setMenuItems([
-        ...(userData
-          ? [
-            {
-              icon: "language",
-              label: "Address",
-              value: "Address",
-            },
-          ]
-          : []),
+        // ...(userData
+        //   ? [
+        //       {
+        //         icon: "language",
+        //         label: "Address",
+        //         value: "Address",
+        //       },
+        //     ]
+        //   : []),
         {
           icon: "language",
           label: "Change Language",
@@ -267,27 +264,19 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
           label: "Become a Vendor",
           value: "Become a Vendor",
         },
-        ...(userData?.user?.roles === "admin" ? AdminOption : []),
+        ...(userData?.user?.rolesfk === null ? AdminOption : []),
 
         { icon: "policy", label: "Policies", value: "Policies" },
         ...(userData
           ? [
-            {
-              icon: "person-add",
-              label: "Assign New Role",
-              value: "Assign New Role",
-            },
-            {
-              icon: "support-agent",
-              label: "All Queries and Support",
-              value: "AllQueryAndSupport",
-            },
-            { icon: "logout", label: "Logout", value: "Logout" },
-            { icon: "logout", label: "Logout1", value: "Logout1" },
-
-            { label: "Need more help?", value: "needMoreHelp" },
-
-          ]
+              {
+                icon: "person-add",
+                label: "Assign New Role",
+                value: "Assign New Role",
+              },
+              { icon: "logout", label: "Logout", value: "Logout" },
+              { icon: "logout", label: "Logout1", value: "Logout1" },
+            ]
           : []),
       ]);
     }
@@ -354,10 +343,12 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
 
   const handlePress = (value) => {
     console.log("Data of value ", value);
-    if (value == "Address") {
-      navigation.navigate("Address");
-      // navigation.navigate("TestingScreen");
-    } else if (value == "Policies") {
+    // if (value == "Address") {
+    //   navigation.navigate("Address");
+    //   // navigation.navigate("TestingScreen");
+    // }
+
+     if (value == "Policies") {
       navigation.navigate("Policies", {
         webUri: `${NORM_URL}/privacy-policy?view=mobile`,
         headerTitle: "Privacy and Policies",
@@ -378,24 +369,14 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
       setLanguageModalVisible(true);
     } else if (value == "Logout") {
       setVisible(true);
-    } else if (value === "AllQueryAndSupport") {
-      navigation.navigate("AllQueryAndSupport");
-    }
-    else if (value === "AdminSection") {
+    } else if (value === "AdminSection") {
       navigation.navigate("AdminSection");
     } else if (value === "Assign New Role") {
       navigation.navigate("AddroleScreen");
     } else if (value == "Logout1") {
-      navigation.navigate("login")
+      navigation.navigate("login");
     }
-    // else if (value === "needMoreHelp") {
-    //   navigation.navigate("Policies", {
-    //     webUri: `${API_BASE_URL}/helpandsupport?view=mobile`,
-    //     headerTitle: "Help & Support",
-    //   });
-    // }
   };
-
   const logoutHandler = async () => {
     try {
       const response = await createApi(
@@ -408,8 +389,13 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
       );
       console.log("response", response);
       showSnackbar("Logged out successfully", "success");
+      await auth().signOut();
       await clearUserData();
       // setCreateuser(null);
+      await AsyncStorage.clear();
+      await AsyncStorage.removeItem("allShops");
+      await AsyncStorage.removeItem("selectedShop");
+
       setVisible(false);
 
       navigation.dispatch(
@@ -418,7 +404,6 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
           routes: [{ name: "login" }],
         })
       );
-      await auth().signOut();
     } catch (error) {
       showSnackbar("Error logging out", "error");
       console.log("error logging out - ", error);
@@ -461,7 +446,8 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
                   onPress={() => {
                     if (userData?.user?.profilePicurl) {
                       openImageModal(
-                        `${NORM_URL}/${userData?.user?.profilePicurl
+                        `${NORM_URL}/${
+                          userData?.user?.profilePicurl
                         }?${new Date().getTime()}`
                       );
                     }
@@ -524,58 +510,27 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
                   </Button>
                 )}
               </View>
-
               <Card.Content style={{ backgroundColor: "#fff" }}>
-                {menuItems?.map((item, index) =>
-                  item?.value === "needMoreHelp" ? (
-                    <Pressable onPress={() => { handlePress("needMoreHelp") }} key={index}>
-                      <View>
-                        <Text style={{ fontFamily: "Poppins-Medium" }}>
-                          {t(item?.label)}
-                        </Text>
-                        <View style={styles.helpItem}>
-                          <View style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            gap: 5
-                          }}>
-                            {/* <MaterialCommunityIcons
-                              name="message-reply"
-                              size={24}
-                              color="black"
-                            /> */}
-                            <MaterialIcons name="support-agent" size={24} color="black" />
-                            <View style={{ flex: 1 }}>
-                              <Text style={{ fontFamily: "Poppins-Medium" }}>{t("24x7 support")}</Text>
-                              <Text style={{ fontFamily: "Poppins-Regular", color: "rgba(0, 0, 0, 0.5)", fontSize: fontSize.label }}>{t("Talk to us in your language")}</Text>
-                            </View>
-
-                            <Text style={{ fontFamily: "Poppins-Medium", color: "#007BFF" }}>{t("Support")}</Text>
-
-                          </View>
-                        </View>
-                      </View>
-                    </Pressable>
-                  ) :(
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() => handlePress(item.value)}
-                      style={styles.item}
-                    >
-                      <Icon
-                        name={item.icon}
-                        size={24}
-                        color="#26a0df"
-                        style={styles.icon}
-                      />
-                      <Text style={styles.label}>{t(item.label)}</Text>
-                      <Icon
-                        name="chevron-right"
-                        size={24}
-                        color="#000"
-                        style={styles.chevron}
-                      />
-                    </TouchableOpacity>
+                {menuItems?.map((item, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => handlePress(item.value)}
+                    style={styles.item}
+                  >
+                    <Icon
+                      name={item.icon}
+                      size={24}
+                      color="#26a0df"
+                      style={styles.icon}
+                    />
+                    <Text style={styles.label}>{t(item.label)}</Text>
+                    <Icon
+                      name="chevron-right"
+                      size={24}
+                      color="#000"
+                      style={styles.chevron}
+                    />
+                  </TouchableOpacity>
                 ))}
               </Card.Content>
             </Card>

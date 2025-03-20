@@ -8,6 +8,7 @@ const EditCustomerDetailsModal = ({
   visible,
   seteditmodal,
   SelectedEditItem,
+  onUpdate
 }) => {
   const validationSchema = Yup.object().shape({
     name: Yup.string()
@@ -39,15 +40,15 @@ const EditCustomerDetailsModal = ({
   // };
 
      
-  const updateCustomerDetails = (id, updatedValues) => {
-    console.log("Function value", updatedValues);
+  // const updateCustomerDetails = (id, updatedValues) => {
+  //   console.log("Function value", updatedValues);
   
-    // Assuming you are updating a single object, return the updated object
-    const updatedCustomer = { id, ...updatedValues };
+  //   // Assuming you are updating a single object, return the updated object
+  //   const updatedCustomer = { id, ...updatedValues };
   
-    console.log("Updated Customer Details:", updatedCustomer);
-    return updatedCustomer;
-  };
+  //   console.log("Updated Customer Details:", updatedCustomer);
+  //   return updatedCustomer;
+  // };
   
 
   const hideModal = () => {
@@ -72,16 +73,28 @@ const EditCustomerDetailsModal = ({
             address: SelectedEditItem?.address || "",
           }}
           validationSchema={validationSchema}
-          onSubmit={(values) => {
+          // onSubmit={(values) => {
+          //   console.log("Data", values);
+          //   const customerId = SelectedEditItem?.id;
+          //   if (customerId) {
+          //     onUpdate(customerId, values);
+          //     hideModal();
+          //   } else {
+          //     console.log("No customer ID found");
+          //   }
+          // }}
+
+
+          onSubmit={async (values) => {
             console.log("Data", values);
             const customerId = SelectedEditItem?.id;
             if (customerId) {
-              updateCustomerDetails(customerId, values);
-              hideModal();
+              await onUpdate(customerId, values); // Wait for API call to complete
             } else {
               console.log("No customer ID found");
             }
           }}
+          
         >
           {({
             handleChange,

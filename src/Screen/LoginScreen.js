@@ -36,9 +36,9 @@ const fontScale = PixelRatio.getFontScale();
 const getFontSize = (size) => size / fontScale;
 
 const LoginScreen = ({ navigation }) => {
-  const { login, isAuthenticated, storeData, setLoginDetail } =
+  const { login, isAuthenticated, storeData, setLoginDetail, handleLogin } =
     useContext(AuthContext);
-    const {userData, saveUserData} = useContext(UserDataContext);
+  const { userData, saveUserData } = useContext(UserDataContext);
   const [isLoading, setIsLoading] = useState(false);
   const { isPasskey } = usePasskey();
   const { width, height } = useWindowDimensions();
@@ -60,7 +60,7 @@ const LoginScreen = ({ navigation }) => {
     //   .required("Email is required"),
     mobile: Yup.string()
       .required("Phone number is required")
-      .matches(/^[0-9]+$/, "Phone number must be numeric")
+      .matches(/^\d{10}$/, "Mobile number must be exactly 10 digits")
       .min(10, "Phone number must be at least 10 digits")
       .max(12, "Phone number can be at most 15 digits"),
     password: Yup.string()
@@ -68,48 +68,48 @@ const LoginScreen = ({ navigation }) => {
       .required("Password is required"),
   });
 
-  const handleLogin = async (values, { resetForm }) => {
-    try {
-      console.log("login screen");
-      setIsLoading(true);
+  // const handleLogin = async (values, { resetForm }) => {
+  //   try {
+  //     console.log("login screen");
+  //     setIsLoading(true);
 
-      const payload = {
-        mobile : values?.mobile,
-        password : values?.password,
-      }
-      const response = await createApi('users/loginUser', payload);
-     await storeData("loginDetail", response);
-      setLoginDetail(response);
-      console.log("response of Login is , ", response);
-      await saveUserData(response);
-      // console.log(response.data, "newResponse");
-      // const data = await response.data;
-      // await storeData("loginDetail", data.result);
-      // setLoginDetail(data.result);
-      // const token = "dummyToken";
-      // login(token);
-      // if (isLoading) {
-      //   {
-      //     <View
-      //       style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-      //     >
-      //       <ActivityIndicator size="large" />
-      //     </View>;
-      //   }
-      // }
-      if (isPasskey) {
-        navigation.navigate("Passcode");
-      } else {
-        navigation.navigate("CreateNewPasscode");
-      }
-      resetForm();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      resetForm();
-      setIsLoading(false);
-    }
-  };
+  //     const payload = {
+  //       mobile: values?.mobile,
+  //       password: values?.password,
+  //     };
+  //     const response = await createApi("users/loginUser", payload);
+  //     await storeData("loginDetail", response);
+  //     setLoginDetail(response);
+  //     console.log("response of Login is , ", response);
+  //     await saveUserData(response);
+  //     // console.log(response.data, "newResponse");
+  //     // const data = await response.data;
+  //     // await storeData("loginDetail", data.result);
+  //     // setLoginDetail(data.result);
+  //     // const token = "dummyToken";
+  //     // login(token);
+  //     // if (isLoading) {
+  //     //   {
+  //     //     <View
+  //     //       style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+  //     //     >
+  //     //       <ActivityIndicator size="large" />
+  //     //     </View>;
+  //     //   }
+  //     // }
+  //     if (isPasskey) {
+  //       navigation.navigate("Passcode");
+  //     } else {
+  //       navigation.navigate("CreateNewPasscode");
+  //     }
+  //     resetForm();
+  //   } catch (err) {
+  //     console.error(err);
+  //   } finally {
+  //     resetForm();
+  //     setIsLoading(false);
+  //   }
+  // };
 
   // if (isLoading) {
   //   {
@@ -181,7 +181,23 @@ const LoginScreen = ({ navigation }) => {
       <Formik
         initialValues={{ mobile: "", password: "" }}
         validationSchema={validationSchema}
-        onSubmit={handleLogin}
+        onSubmit={async(value, {resetForm})=>{
+          try{
+            await handleLogin(value,navigation)
+            if (isPasskey) {
+              navigation.navigate("Passcode"); 
+            } else {
+              navigation.navigate("CreateNewPasscode"); 
+            }
+            resetForm()
+          }catch(error){
+            console.log("Unable to login ", error)
+          }finally{
+            resetForm()
+          }
+        }
+      }
+
       >
         {({
           handleChange,
@@ -190,6 +206,8 @@ const LoginScreen = ({ navigation }) => {
           values,
           errors,
           touched,
+          isValid,
+          dirty,
         }) => (
           <ScrollView
             contentContainerStyle={{ flexGrow: 1 }}
@@ -233,7 +251,7 @@ const LoginScreen = ({ navigation }) => {
                           fontFamily: "Poppins-Bold",
                         }}
                       >
-                        Welcome to Qwickbill
+                        Welcome to QwikBill
                       </Text>
                       <Text
                         style={{
@@ -307,9 +325,11 @@ const LoginScreen = ({ navigation }) => {
                     </View>
                     {/* <View style={{flex:1, backgroundColor:"green"}} ></View> */}
 
+
                     <View style={{ alignItems: "flex-end" }}>
                       <TouchableOpacity
-                        onPress={() => navigation.navigate("EnterNumberScreen")}
+                        onPress={() => navigation.navigate("EnterNumberScreen",{ isForgetPassword: true })
+                      }
                       >
                         <Text
                           style={{
@@ -336,57 +356,25 @@ const LoginScreen = ({ navigation }) => {
                         textColor="white"
                         style={[
                           styles.button,
-                          { borderRadius: 10},
+                          { borderRadius: 10 },
+                          !isValid || !dirty || !values.mobile || !values.password
+                            ? { backgroundColor: "#d3d3d3" }
+                            : { backgroundColor: "#1E90FF" },
                         ]}
+                        disabled={
+                          !isValid || !dirty || !values.mobile || !values.password
+                        }
                       >
                         <Text
-                          style={{ fontFamily: "Poppins-Medium", color: "white" }}
+                          style={{
+                            fontFamily: "Poppins-Medium",
+                            color: "white",
+                          }}
                         >
                           Login
                         </Text>
                       </Button>
-                      {/* <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "center",
-                        gap: 5,
-                      }}
-                    >
-                      <Button
-                        icon={"google"}
-                        // onPress={handleGoogleSignIn}
-                        textColor="white"
-                        style={[
-                          styles.button,
-                          { backgroundColor: "#DB4437", width: "40%" },
-                        ]}
-                      >
-                        Google
-                      </Button>
-                      <Button
-                        icon={"facebook"}
-                        // onPress={handleFacebookLogin}
-                        textColor="white"
-                        style={[
-                          styles.button,
-                          { backgroundColor: "#3b5998", width: "40%" },
-                        ]}
-                      >
-                        Facebook
-                      </Button>
-                    </View> */}
-
-                      {/* <Button
-                      // icon={"facebook"}
-                      onPress={() => navigation.navigate("SetPasswordScreen")}
-                      textColor="white"
-                      style={[
-                        styles.button,
-                        { backgroundColor: "#3b5998", width: "40%" },
-                      ]}
-                    >
-                      SetPassword
-                    </Button> */}
+                     
                     </View>
 
                     <View
@@ -439,7 +427,7 @@ const styles = StyleSheet.create({
   signup: {
     // alignSelf: "center",
     // marginVertical: 40,
-    fontFamily:"Poppins-Regular",
+    fontFamily: "Poppins-Regular",
     color: "grey",
     fontSize: getFontSize(14),
   },
@@ -453,8 +441,8 @@ const styles = StyleSheet.create({
   },
   signupText: {
     color: "#1E90FF",
-    fontFamily:"Poppins-Bold",
-    fontSize:getFontSize(14),
+    fontFamily: "Poppins-Bold",
+    fontSize: getFontSize(14),
   },
   img: {
     height: 140,
