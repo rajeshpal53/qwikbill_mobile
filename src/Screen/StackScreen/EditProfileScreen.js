@@ -191,10 +191,8 @@ export default function EditProfileScreen({ navigation }) {
   const handlePress = () => setDropdownVisible(!dropdownVisible);
 
   const editHandler = async () => {
-    let token = userData?.token;
     try {
       setModalVisible(false);
-      
       setIsLoading(true);
       console.log("post data beta is , ", postData);
 
@@ -203,22 +201,19 @@ export default function EditProfileScreen({ navigation }) {
         postData,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${userData?.token}`,
             "Content-Type": "multipart/form-data",
           },
         }
       );
 
       console.log("JSON Response:", response.data);
+        if( ( routeData && routeData?.mobile === userData?.user?.mobile ) || !routeData){
+          const saveUser = {
+            token: userData.token,
+            user: response?.data,
+          };
 
-      if (
-        (routeData && routeData?.mobile === userData?.user?.mobile) ||
-        !routeData
-      ) {
-        const saveUser = {
-          token: userData.token,
-          user: response?.data,
-        };
 
         saveUserData(saveUser);
       }
@@ -232,9 +227,12 @@ export default function EditProfileScreen({ navigation }) {
 
       navigation.goBack();
       // setModalVisible(false);
-    } catch (error) {
-      console.error(`Error with ${method.toUpperCase()} request to ${url}:`, error.response || error.message);
-      showSnackbar(t(`Failed to update proflie`), "error");
+    }catch (err) {
+      console.error("err", err);
+      showSnackbar(`Failed to update proflie`, "error");
+    // catch (error) {
+    //   console.error(`Error with ${method.toUpperCase()} request to ${url}:`, error.response || error.message);
+    //   showSnackbar(t(`Failed to update proflie`), "error");
     } finally {
       setIsLoading(false);
     }
@@ -492,7 +490,7 @@ export default function EditProfileScreen({ navigation }) {
                             borderBottomWidth: 1,
                             borderBottomColor: "rgba(0, 0, 0, 0.3)",
                           }}
-                          title={ "Select Gender"} //selectedGender ||
+                          title={ selectedGender} //selectedGender ||
                           expanded={dropdownVisible}
                           onPress={handlePress}
                           // left={(props) => <List.Icon {...props} icon="earth" />}

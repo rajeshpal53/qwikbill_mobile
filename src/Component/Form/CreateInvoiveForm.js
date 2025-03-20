@@ -31,10 +31,14 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const submit = useRef(false);
   const { userData } = useContext(UserDataContext);
   const { selectedShop } = useContext(ShopContext);
-  const [fetchdata, setfetchdata] = useState({ name: "", address: "" });
   const [loading, setLoading] = useState(false);
+  const timeoutId = useRef(null); // useRef to persist timeoutId
 
-  console.log("selected shop isuser , ", User);
+  useEffect(()=>{
+    console.log("selected shop isuser , ", selectedShop);
+  },[userData])
+
+
 
 
   const validationSchema = Yup.object({
@@ -54,32 +58,53 @@ const CreateInvoiceForm = ({ selectedButton }) => {
       .matches(/^\d{10}$/, "Phone must be 10 digits"),
   });
 
-  console.log("LOADING DATA IS ", selectedButton);
+  console.log("LOADING DATA IS ", User);
 
-  const fetchUserData = async (phoneNumber) => {
-    if (/^\d{10}$/.test(phoneNumber)) {
-      setLoading(true);
-      try {
-        const api = `users/getUserByMobile/${phoneNumber}`;
-        const headers = {
-          Authorization: `Bearer ${userData?.token}`, // Add token to headers
-        };
-        const response = await readApi(api, headers);
-
-        if (response) {
-          setUser(response);
-          setfetchdata({ name: response?.name, address: response?.address });
-        } else {
-          setfetchdata({ name: "", address: "" });
-        }
-      } catch (error) {
-        setfetchdata({ name: "", address: "" });
-        console.error("Error fetching User data:", error);
-      } finally {
-        setLoading(false);
+    const fetchUserData = async (phoneNumber, setFieldValue) => {
+      if (timeoutId.current) {
+        clearTimeout(timeoutId.current);
       }
-    }
-  };
+      timeoutId.current = setTimeout(async () => {
+        try {
+          if (/^\d{10}$/.test(phoneNumber)) {
+            setLoading(true);
+            try {
+              const api = `users/getUserByMobile/${phoneNumber}`;
+              const headers = {
+                Authorization: `Bearer ${userData?.token}`,
+              };
+              const response = await readApi(api, headers);
+              if (response) {
+                setUser(response);
+                setFieldValue("name", response?.name);
+                setFieldValue("address", response?.address);
+                setFieldValue("phone", phoneNumber);
+              } else {
+                setFieldValue("name", response?.name);
+                setFieldValue("address", response?.address);
+                setFieldValue("phone", phoneNumber);
+              }
+            } catch (error) {
+              setFieldValue("name", "");
+              setFieldValue("address", "");
+
+              setFieldValue("phone", phoneNumber);
+              console.error("Error fetching User data:", error);
+            } finally {
+              setLoading(false);
+            }
+          } else {
+            setFieldValue("name", "");
+            setFieldValue("address", "");
+            setFieldValue("phone", phoneNumber);
+          }
+        } catch (error) {
+          console.error("Error fetching HSN code data:", error);
+        }
+      }, 300);
+    };
+
+
 
   useEffect(() => {
     console.log("changed cart is , ", carts);
@@ -138,18 +163,18 @@ const CreateInvoiceForm = ({ selectedButton }) => {
       <Formik
         enableReinitialize={true}
         initialValues={{
-          name: fetchdata?.name || "",
-          address: fetchdata?.address || "",
+          name: "",
+          address:  "",
           gstNumber: "",
-          phone: User?.mobile || "",
+          phone: "",
         }}
         validationSchema={validationSchema}
         onSubmit={(values, { resetForm }) => {
           console.log("values are , ", values);
 
           const DataCustomer = {
-            name: fetchdata?.name || values?.name,
-            address: fetchdata?.address || values?.address,
+            name: values?.name,
+            address: values?.address,
             getNumber: User?.getNumber || values?.gstNumber,
             phone: User?.getNumber || values?.phone,
             userId: User?.id || undefined,
@@ -160,7 +185,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
             vendorfk: selectedShop?.id,
             statusfk: getStatusFk(),
             subtotal: cartsValue?.totalPrice,
-            address: "123 Main Street, City, Country",
+            // address: "123 Main Street, City, Country",
             discount: cartsValue?.discount,
             finaltotal: cartsValue?.afterdiscount,
             // vendorprofit: 100,
@@ -198,6 +223,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
             formData: payload,
             selectedButton: selectedButton,
             resetForm: resetForm,
+            // viewInvoiceData:payload
           });
           resetForm();
           // resetForm();
@@ -222,7 +248,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
               // onChangeText={handleChange("phone")}
               onChangeText={async (phoneNumber) => {
                 setFieldValue("phone", phoneNumber);
-                await fetchUserData(phoneNumber);
+                await fetchUserData(phoneNumber, setFieldValue);
               }}
               // onBlur={() => handlePhoneBlur(values.phone)}
               value={values.phone}
