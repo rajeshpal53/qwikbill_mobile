@@ -26,6 +26,8 @@ import { useDownloadInvoice } from "../Util/DownloadInvoiceHandler";
 import { useTranslation } from "react-i18next";
 import { AntDesign, Feather } from "@expo/vector-icons";
 
+
+
 const PdfScreen = ({ navigation }) => {
   const [pdfPath, setPdfPath] = useState("");
   const formData = useRoute()?.params?.formData || null;
@@ -56,13 +58,13 @@ const PdfScreen = ({ navigation }) => {
     }
   }, [viewInvoiceData]);
 
-  // useEffect(() => {
-  //   console.log("view InvoiceData is under useEffect formData , ", formData);
+  useEffect(() => {
+    console.log("view InvoiceData is under useEffect formData , ", formData);
 
-  //   if (formData) {
-  //     setCreatedInvoice(formData);
-  //   }
-  // }, [formData]);
+    // if (formData) {
+    //   setCreatedInvoice(formData);
+    // }
+  }, [formData]);
 
   const getTodaysDate = () => {
     const today = new Date();

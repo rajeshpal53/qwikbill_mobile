@@ -10,8 +10,6 @@ import { ActivityIndicator } from "react-native-paper";
 import ConfirmModal from "../../Modal/ConfirmModal";
 import { useNavigation } from "@react-navigation/native";
 
-
-
 const AllVenderScreen = () => {
   //   const { userData } = useContext(UserDataContext);
   const searchBarRef = useRef();
@@ -26,11 +24,8 @@ const AllVenderScreen = () => {
   const [totalpage, SetTotalpage] = useState(1);
   const [deleteModal, setDeleteModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState(null);
-  const navigation = useNavigation()
-
-
-
-
+  const navigation = useNavigation();
+  const searchbarRef = useRef(null);
 
   useEffect(() => {
     getAllVenderData();
@@ -68,14 +63,11 @@ const AllVenderScreen = () => {
     // setDeleteModal(true);
   };
 
-
-
   const onDelete = (item) => {
     console.log("item is edit 123, ", item);
     setDeleteItemId(item?.id);
     setDeleteModal(true);
   };
-
 
   const handleEditDetails = (item) => {
     console.log("item is edit 123, ", item);
@@ -89,9 +81,6 @@ const AllVenderScreen = () => {
     console.log("edit items clicked");
     navigation.navigate("ProductScreen");
   };
-
-
-
 
   const loadMoreData = () => {
     if (!loader && Hasmore && page < totalpage) {
@@ -110,20 +99,34 @@ const AllVenderScreen = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.Innercontainer}>
+        <View style={{ flex: 1 }}>
+          <Searchbarwithmic
+            // refuser={searchbarRef}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            setsearchmodal={setsearchmodal}
+            setTranscript={setTranscript}
+            placeholderText="Search User by name ..."
+            //    refuser={searchBarRef}
+          />
+        </View>
+      </View>
+
       <FlatList
-        ListHeaderComponent={
-          <View style={styles.container}>
-            <Searchbarwithmic
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              setsearchmodal={setsearchmodal}
-              setTranscript={setTranscript}
-              placeholderText="Search User by name ..."
-              refuser={searchBarRef}
-              searchData={()=>{}}
-            />
-          </View>
-        }
+        // ListHeaderComponent={
+        //   <View style={styles.container}>
+        //     <Searchbarwithmic
+        //       searchQuery={searchQuery}
+        //       setSearchQuery={setSearchQuery}
+        //       setsearchmodal={setsearchmodal}
+        //       setTranscript={setTranscript}
+        //       placeholderText="Search User by name ..."
+        //       refuser={searchBarRef}
+        //       searchData={() => {}}
+        //     />
+        //   </View>
+        // }
         data={VenderData}
         renderItem={({ item, index }) => (
           <AllVenderDataCard
@@ -162,7 +165,6 @@ const AllVenderScreen = () => {
         />
       )}
 
-
       {deleteModal && (
         <ConfirmModal
           visible={deleteModal}
@@ -184,6 +186,11 @@ const styles = StyleSheet.create({
     padding: 2,
     marginTop: 10,
   },
+  Innercontainer:{
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 5,
+  }
 });
 
 export default AllVenderScreen;

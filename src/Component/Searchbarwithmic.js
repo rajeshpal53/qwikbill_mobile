@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   TextInput,
@@ -39,7 +39,7 @@ const Searchbarwithmic = ({
   const [charIndex, setCharIndex] = useState(0);
   const [cancelVisible, setCancelVisible] = useState(false);
   const { showSnackbar } = useSnackbar();
-  const [stopPlaceHolder,setStopPlaceHolder]= useState(false)
+  const [stopPlaceHolder, setStopPlaceHolder] = useState(false);
   // Request microphone permission
   const requestMicrophonePermission = async () => {
     if (Platform.OS === "android") {
@@ -77,7 +77,7 @@ const Searchbarwithmic = ({
       }
 
       if (!recognizing) {
-        setsearchmodal(true)
+        setsearchmodal(true);
         // Start speech recognition
         ExpoSpeechRecognitionModule.start({
           lang: language,
@@ -122,14 +122,14 @@ const Searchbarwithmic = ({
       setTranscript(fullTranscript);
       setSearchQuery(fullTranscript);
       // fetchData()
-      searchData(fullTranscript)
+      searchData(fullTranscript);
     }
   });
 
   useSpeechRecognitionEvent("error", (event) => {
     // console.log("error code:", event.error, "error message:", event.message);
-    showSnackbar(event.message,"error"); // Show error message in the search input
-    console.log( "error message:", event.message);
+    showSnackbar(event.message, "error"); // Show error message in the search input
+    console.log("error message:", event.message);
   });
 
   // // // Close the modal
@@ -183,101 +183,107 @@ const Searchbarwithmic = ({
 
   // If placeholderText is an array, set up the typing effect
   useEffect(() => {
-    if (searchQuery !== ""|| stopPlaceHolder==true) return; // Stop placeholder animation when user types
-  
+    if (searchQuery !== "" || stopPlaceHolder == true) return; // Stop placeholder animation when user types
+
     if (isArray) {
       const currentPlaceholder = placeholderText[placeholderIndex];
-  
+
       if (charIndex < currentPlaceholder?.length) {
         const timeout = setTimeout(() => {
-          setSelectedPlaceholderText((prev) => prev + currentPlaceholder[charIndex]);
+          setSelectedPlaceholderText(
+            (prev) => prev + currentPlaceholder[charIndex]
+          );
           setCharIndex((prev) => prev + 1);
         }, 50); // Adjust typing speed
-  
+
         return () => clearTimeout(timeout);
       } else {
         const waitBeforeNext = setTimeout(() => {
           setSelectedPlaceholderText("");
           setCharIndex(0);
-          setPlaceholderIndex((prevIndex) => (prevIndex + 1) % placeholderText.length);
+          setPlaceholderIndex(
+            (prevIndex) => (prevIndex + 1) % placeholderText.length
+          );
         }, 2000); // Wait before switching placeholders
-  
+
         return () => clearTimeout(waitBeforeNext);
       }
     } else {
       setSelectedPlaceholderText(placeholderText);
     }
   }, [charIndex, placeholderIndex, placeholderText, isArray, searchQuery]);
-  
-  
+
   return (
     <View style={styles.wrapper}>
       <View style={styles.container}>
-      <Searchbar
-  ref={refuser || null}
-  style={styles.searchbar}
-  numberOfLines={1}
-  placeholder={SelectedPlaceholderText || "Search for ....."}
-  onFocus={() => {
-    setStopPlaceHolder(true);
-  }}
-  returnKeyType="search"
-  onSubmitEditing={() => {
-    if (showSearchedData) {
-      showSearchedData.current = true;
-    }
-    searchData(searchQuery);
-  }}
-  onIconPress={() => {
-    if (searchQuery.length > 0) {
-      searchData(searchQuery);
-    } else {
-      refuser.current?.focus(); // Focus input if search is empty
-    }
-  }}
-  inputStyle={styles.inputStyle}
-  onChangeText={(query) => {
-    setSearchQuery(query);
-    setCancelVisible(true);
-    if (query === "") {
-      setSelectedPlaceholderText(""); // Reset placeholder if search is cleared
-      setCharIndex(0);
-      fetchData?.();
-    }
-  }}
-  value={searchQuery}
-  right={() => (
-    <View style={{ flexDirection: "row", alignItems: "center" }}>
-      <TouchableOpacity
-        style={{ marginRight: 10 }}
-        onPress={() => {
-          if (searchQuery.trim() !== "") {
-            searchData(searchQuery);
-          } else {
-            refuser.current?.focus();
-          }
-        }}
-      >
-        <MaterialIcons name="search" size={24} color="black" />
-      </TouchableOpacity>
-      {searchQuery === "" ? (
-        <TouchableOpacity style={{ marginRight: 10 }} onPress={handleMicPress}>
-          <MaterialIcons name="mic" size={24} color="black" />
-        </TouchableOpacity>
-      ) : (
-        <TouchableOpacity
-          style={{ marginRight: 10 }}
-          onPress={() => {
-            setSearchQuery("");
-            fetchData?.();
+        <Searchbar
+          ref={refuser || null}
+          style={styles.searchbar}
+          numberOfLines={1}
+          placeholder={SelectedPlaceholderText || "Search for ....."}
+          onFocus={() => {
+            setStopPlaceHolder(true);
           }}
-        >
-          <MaterialIcons name="close" size={24} color="black" />
-        </TouchableOpacity>
-      )}
-    </View>
-  )}
-/>
+          returnKeyType="search"
+          onSubmitEditing={() => {
+            if (showSearchedData) {
+              showSearchedData.current = true;
+            }
+            searchData(searchQuery);
+          }}
+          onIconPress={() => {
+            if (searchQuery.length > 0) {
+              searchData(searchQuery);
+            } else {
+              refuser.current?.focus(); // Focus input if search is empty
+            }
+          }}
+          inputStyle={styles.inputStyle}
+          onChangeText={(query) => {
+            setSearchQuery(query);
+            setCancelVisible(true);
+            if (query === "") {
+              setSelectedPlaceholderText(""); // Reset placeholder if search is cleared
+              setCharIndex(0);
+              fetchData?.();
+            }
+          }}
+          value={searchQuery}
+          right={() => (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <TouchableOpacity
+                style={{ marginRight: 10 }}
+                onPress={() => {
+                  if (searchQuery.trim() !== "") {
+                    searchData(searchQuery);
+                  } else {
+                    refuser.current?.focus();
+                  }
+                }}
+              >
+                <MaterialIcons name="search" size={24} color="black" />
+              </TouchableOpacity>
+              {searchQuery === "" ? (
+                <TouchableOpacity
+                  style={{ marginRight: 10 }}
+                  onPress={handleMicPress}
+                >
+                  <MaterialIcons name="mic" size={24} color="black" />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  style={{ marginRight: 10 }}
+                  onPress={() => {
+                    setSearchQuery("");
+                    fetchData?.();
+                  }}
+                >
+                  <MaterialIcons name="close" size={24} color="black" />
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
+        />
       </View>
     </View>
   );
@@ -340,7 +346,7 @@ const styles = StyleSheet.create({
   inputStyle: {
     // textAlignVertical: "center", // Center input text vertically
     // paddingVertical: 10, // Remove additional vertical padding
-    paddingBottom:9,
+    paddingBottom: 9,
     // borderWidth:2,
     fontWeight: "medium",
     fontFamily: "Poppins-Medium",
