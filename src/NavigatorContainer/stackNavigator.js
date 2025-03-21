@@ -156,30 +156,30 @@ export default function StackNavigator() {
 
         <Stack.Screen name="viewClient" component={ViewClientScreen} />
 
-//         <Stack.Screen name="EditProfilePage" component={EditProfileScreen}
-//           options={{
-//             // headerShown: false,
-//             headerTitle: () => (
-//               <Text style={styles.headerTitle}>{("Edit Profile")}</Text>
-//             ),
-//             headerTitleAlign: "center",
-//             headerTintColor: "#000",
-//             headerShadowVisible: false,
-//             headerLeft: () => <CustomBackButton />,
-//           }}
-//         />
+{/* <Stack.Screen name="EditProfilePage" component={EditProfileScreen}
+          options={{
+            // headerShown: false,
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{("Edit Profile")}</Text>
+            ),
+            headerTitleAlign: "center",
+            headerTintColor: "#000",
+            headerShadowVisible: false,
+            headerLeft: () => <CustomBackButton />,
+          }}
+        />
 
-//         <Stack.Screen name="EditProfile"
-//           component={EditProfileScreen}
-//           options={{
-//             // headerShown: false,
-//             headerTitle: () => (
-//               <Text style={styles.headerTitle}>{("Update Profile")}</Text>
-//             ),
-//             headerTitleAlign: "center",
-//             headerTintColor: "#000",
-//             headerShadowVisible: false,
-        <Stack.Screen
+        <Stack.Screen name="EditProfile"
+          component={EditProfileScreen}
+          options={{
+            // headerShown: false,
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{("Update Profile")}</Text>
+            ),
+            headerTitleAlign: "center",
+            headerTintColor: "#000",
+            headerShadowVisible: false, */}
+             <Stack.Screen
           name="EditProfilePage"
           component={EditProfileScreen}
           options={{
@@ -192,6 +192,7 @@ export default function StackNavigator() {
             headerLeft: () => <CustomBackButton />,
           }}
         />
+       
 
         <Stack.Screen
           name="hsncode"
