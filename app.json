@@ -38,7 +38,7 @@
       "package": "com.wertone.qwikbill"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/qLogo.png"
     },
     "extra": {
       "eas": {

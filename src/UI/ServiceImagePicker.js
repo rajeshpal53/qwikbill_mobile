@@ -33,6 +33,8 @@ export default function ServiceImagePicker({
   format = "JPEG",
   camera = true,
   gallary = true,
+  fieldsDisabled = false, // ✅ Add this line
+
 }) {
   console.log("profile image is the , ", image);
   console.log("format is , ", format);
@@ -48,14 +50,13 @@ export default function ServiceImagePicker({
   useEffect(() => {
     const setImageUrlfunc = () => {
       console.log("pratham y image , ", image);
-
       setImageUrl(image?.uri);
+      console.log("image url in image picker", imageUrl)
     };
-
-    // if(image){
     setImageUrlfunc();
-    // }
   }, [image]);
+
+
 
   const closeModal = () => {
     setModalVisible(false);
@@ -167,8 +168,8 @@ export default function ServiceImagePicker({
       setFieldValue(uploadFieldName, {
         // uri: pickerResult.assets[0].uri,
         uri: compressedUri,
-        name: pickerResult.assets[0].fileName,
-        type: pickerResult.assets[0].mimeType,
+        name: pickerResult.assets[0].fileName ,
+        type: pickerResult.assets[0].mimeType ,
       });
 
       // setImage({
@@ -246,21 +247,28 @@ export default function ServiceImagePicker({
                 cache: FastImage.cacheControl.web,
               }}
               style={styles.avatar}
+              onLoadStart={() => console.log("🟡 Image loading started...")}
+              onLoad={() => console.log("✅ Image loaded successfully")}
+              onError={(error) => console.log("❌ Image Load Error:", error)}
             />
 
             {/* Edit Icon */}
-            <TouchableOpacity
-              style={styles.editIcon}
-              onPress={() => {
-                openModal();
-              }}
-            >
-              {label === "Profile Image" && !isAdmin ? (
-                <Entypo name="camera" size={20} color="#fff" />
-              ) : (
-                <MaterialIcons name="edit" size={20} color="#fff" />
-              )}
-            </TouchableOpacity>
+            {!fieldsDisabled && (
+              <TouchableOpacity
+                style={styles.editIcon}
+                onPress={() => {
+                  if (!fieldsDisabled) {
+                    openModal();
+                  }
+                }}
+              >
+                {label === "Profile Image" && !isAdmin ? (
+                  <Entypo name="camera" size={20} color="#fff" />
+                ) : (
+                  <MaterialIcons name="edit" size={20} color="#fff" />
+                )}
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       ) : (
@@ -292,7 +300,9 @@ export default function ServiceImagePicker({
 
             <Pressable
               onPress={() => {
-                openModal();
+                if (!fieldsDisabled) {
+                  openModal();
+                }
               }}
               style={{
                 minHeight: 48,
@@ -319,7 +329,9 @@ export default function ServiceImagePicker({
                     textAlign: "center",
                   }}
                 >
-                  Click to update {label?.toLowerCase()}
+                  {fieldsDisabled
+                    ? ""
+                    : `Click to update ${label?.toLowerCase()}`}
                 </Text>
               ) : (
                 <Text
@@ -356,44 +368,44 @@ export default function ServiceImagePicker({
             </Text>
 
             <View>
-              {camera && 
-              <TouchableOpacity
-                style={{ minHeight: 48, justifyContent: "center" }}
-                onPress={() => {
-                  closeModal();
-                  pickCameraImage();
-                }}
-              >
-                <Text
-                  style={{
-                    fontFamily: "Poppins-Regular",
-                    color: "rgba(0, 0, 0, 0.7)",
+              {camera &&
+                <TouchableOpacity
+                  style={{ minHeight: 48, justifyContent: "center" }}
+                  onPress={() => {
+                    closeModal();
+                    pickCameraImage();
                   }}
                 >
-                  1. Camera
-                </Text>
-              </TouchableOpacity>
+                  <Text
+                    style={{
+                      fontFamily: "Poppins-Regular",
+                      color: "rgba(0, 0, 0, 0.7)",
+                    }}
+                  >
+                    1. Camera
+                  </Text>
+                </TouchableOpacity>
               }
 
               <Divider />
 
-                  {gallary && 
-              <TouchableOpacity
-                style={{ minHeight: 48, justifyContent: "center" }}
-                onPress={() => {
-                  closeModal();
-                  pickGallaryImage();
-                }}
-              >
-                <Text
-                  style={{
-                    fontFamily: "Poppins-Regular",
-                    color: "rgba(0, 0, 0, 0.7)",
+              {gallary &&
+                <TouchableOpacity
+                  style={{ minHeight: 48, justifyContent: "center" }}
+                  onPress={() => {
+                    closeModal();
+                    pickGallaryImage();
                   }}
                 >
-                  2. Upload From Gallary
-                </Text>
-              </TouchableOpacity>
+                  <Text
+                    style={{
+                      fontFamily: "Poppins-Regular",
+                      color: "rgba(0, 0, 0, 0.7)",
+                    }}
+                  >
+                    2. Upload From Gallary
+                  </Text>
+                </TouchableOpacity>
               }
             </View>
           </View>

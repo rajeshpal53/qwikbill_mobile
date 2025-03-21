@@ -38,7 +38,7 @@ export default function HomeHeaderRight() {
         </Pressable>
       </View> */}
 
-      <SearchBarComp/>
+      {/* <SearchBarComp/> */}
 
       {(searchMode) && (<Entypo onPress={() => setSearchMode(false)} name="cross" size={30} color="#ffffff" />)}
       {/* <SearchHeader onSearch={onSearch} /> */}

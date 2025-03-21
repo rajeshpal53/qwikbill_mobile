@@ -26,100 +26,6 @@ import OTPInputView from "react-native-otp-entry";
 import { fontSize, fontFamily } from "../../Util/UtilApi";
 
 
-
-// function CustomerVerification({ loginDetail1, setIsOtp, setOtpValue }) {
-//   const [text, setText] = useState("");
-//   const genrateOTP = async () => {
-//     const obj = { email: text };
-//     console.log("object is ",obj);
-//     if (text === loginDetail1.email) {
-//       const response = await createApi("api/sendotp", obj, {
-//         "Content-Type": "application/json",
-//       });
-//       setOtpValue(response.result);
-//       console.log("jayesh ...",response.result);
-//       setIsOtp(true);
-//     }
-//   };
-//   return (
-//     <ScrollView contentContainerStyle={{ backgroundColor: "gray", elevation: 2 }}>
-//       <View style={stylesVerify.cardContainer}>
-//         <Card style={stylesVerify.card}>
-//           <Card.Content style={stylesVerify.cardContent}>
-//             <View style={stylesVerify.forgetPassImageContainer}>
-//               <Image
-//                 source={require("../../../assets/forgetpassword.jpeg")}
-//                 style={stylesVerify.myShopeImage}
-//               ></Image>
-//             </View>
-//             <View
-//               style={{
-//                 // backgroundColor:"orange",
-//                 alignItems: "center",
-//                 gap: 30,
-//               }}
-//             >
-//               <Text variant="headlineMedium" style={{ color: "black" }}>
-//                 Customer Verification
-//               </Text>
-//               <Text
-//                 variant="labelSmall"
-//                 style={{ color: "grey", textAlign: "center" }}
-//               >
-//                 we will send you one time pass word on this email
-//                 {loginDetail1 && loginDetail1.email} address
-//               </Text>
-//               {/* <TextInput
-//             style={{width:"200"}}
-//               placeholder="Mobile Number"
-//               value={text}
-//               keyboardType="number-pad"
-//               onChangeText={(newText) => setText(newText)}
-//             /> */}
-//               <TextInput
-//                 style={{
-//                   width: 200,
-//                   height: 40, // Fixed height
-//                   borderWidth: 1,
-//                   borderColor: "#ccc",
-//                   borderRadius: 8,
-//                   paddingHorizontal: 15,
-//                   paddingVertical: 8, // Prevents text shrinking
-//                   fontSize: 16,
-//                   backgroundColor: "#fff",
-//                   elevation: 2, // Adds subtle shadow
-//                   textAlignVertical: "center", // Keeps text vertically centered
-//                 }}
-//                 placeholder="Enter Mobile Number"
-//                 placeholderTextColor="#888"
-//                 maxLength={10} // Prevents more than 10 digits
-
-//                 value={text}
-//                 keyboardType="number-pad"
-//                 onChangeText={(newText) => setText(newText)}
-
-//               />
-
-
-//               <Button
-//                 mode="contained"
-//                 style={{ width: "50%" }}
-//                 onPress={genrateOTP}
-//               >
-//                 {" "}
-//                 Genrate OTP
-//               </Button>
-//             </View>
-//           </Card.Content>
-//         </Card>
-//       </View>
-//     </ScrollView>
-//   );
-// }
-
-
-
-
 import { OtpInput } from "react-native-otp-entry"; // Updated dependency
 import { useNavigation } from "@react-navigation/native";
 
@@ -241,15 +147,6 @@ function CustomerVerification({ loginDetail1 }) {
                   }}
                 />
 
-
-                // <OtpInput
-                //   numberOfDigits={6}
-                //   onTextChange={(otpValue) => setOtp(otpValue)}
-                //   theme={{
-                //     textInputStyle: stylesVerify.inputStyle,
-                //     focusedTextInputStyle: stylesVerify.focusedInputStyle,
-                //   }}
-                // />
               )}
 
 
@@ -275,8 +172,6 @@ function CustomerVerification({ loginDetail1 }) {
 
   );
 }
-
-
 
 
 

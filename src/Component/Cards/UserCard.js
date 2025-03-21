@@ -18,7 +18,9 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 const screenWidth = Dimensions.get("window").width;
 
+
 const UserCard = ({ item, index, HandleDeleteUser, handleEditProfile }) => {
+
   const [profileUrl, setProfileUrl] = useState("");
   const [fallbackText, setFallbackText] = useState("E");
 
@@ -86,7 +88,11 @@ const UserCard = ({ item, index, HandleDeleteUser, handleEditProfile }) => {
 
           <TouchableOpacity
             style={{ position: "absolute", right: 32, zIndex: 1 }}
-            onPress={() => console.log("Button preesed ")}
+            onPress={() => {
+              console.log("Editing User:", item); // Log the user data before opening modal
+              // handleEditUser(item);
+              handleEditProfile(item, index) 
+            }}
           >
             <MaterialIcons name="edit" size={18} color="#1E88E5" />
           </TouchableOpacity>

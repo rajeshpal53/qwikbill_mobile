@@ -5,8 +5,9 @@ import { FontAwesome, MaterialIcons,AntDesign,EvilIcons } from "@expo/vector-ico
 import { useRoute } from "@react-navigation/native";
 import { useDownloadInvoice } from "../../Util/DownloadInvoiceHandler";
 import { API_BASE_URL } from "../../Util/UtilApi";
+import { Feather } from "@expo/vector-icons";
 
-const TransactionDetailScreen = () => {
+const TransactionDetailScreen = ({item}) => {
   const route = useRoute();
   const [isLoading,setIsLoading]=useState(false);
   const[shareLoading, setShareLoading]=useState(false)
@@ -17,15 +18,9 @@ const TransactionDetailScreen = () => {
   }
  
   console.log(transaction, "transaction");
-  const {
-    amount,
-    createdAt,
-    transactionStatus,
-    id,
-    invoice = {},
-    user = {},
-    vendor={},
-  } = transaction.transaction;
+  const { createdAt, transactionStatus, id ,invoice = {},  vendor={},} = item;
+  const userName = item.user?.name ?? "Unknown "; 
+
   const handleDownload=async()=>{
     try{
       setIsLoading(true);
@@ -61,7 +56,7 @@ const TransactionDetailScreen = () => {
 
   return (
     <Card style={styles.card}>
-      <Text style={styles.amount}>₹{amount}</Text>
+      <Text style={styles.amount}>₹{userName}</Text>
       <View
       style={
         [styles.statusView,
@@ -112,7 +107,10 @@ const TransactionDetailScreen = () => {
       
       <View style={styles.section}>
         <View style={styles.userRow}>
-          <Avatar.Text size={50} label={user.name ? user.name.charAt(0).toUpperCase() : "U"} />
+          <Avatar.Text size={50} label={userName ? userName.charAt(0).toUpperCase() : 
+                        <Feather name="arrow-down-right" size={20} color={"white"}/>
+            
+          } />
           <View style={{marginLeft:10}}>
           <Text style={styles.label}>{user.name || "N/A"}</Text>
           <Text style={styles.label}>{user.mobile || "N/A"}</Text>

@@ -19,12 +19,14 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Icon from "react-native-vector-icons/Ionicons";
 // import Voice from "@react-native-voice/voice"; // Import Voice for speech recognition
 import UserDataContext from "../../Store/UserDataContext";
-import { deleteApi, fontSize, readApi } from "../../Util/UtilApi";
+import { deleteApi, fontSize, readApi,updateApi } from "../../Util/UtilApi";
 
 import NoDataFound from "../../../src/Components/NoDataFound";
 import UserCard from "../../Component/Cards/UserCard";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
 import OpenmiqModal from "../../Modal/Openmicmodal";
+import EditCustomerDetailsModal from "../../Modal/EditCustomerDetailsModal";
+import axios from "axios";
 
 
 const AllUsersScreen = ({ navigation }) => {
@@ -42,7 +44,11 @@ const AllUsersScreen = ({ navigation }) => {
   const [transcript, setTranscript] = useState(""); // State for transcript
   const PAGE_SIZE = 10;
   const [totalPages, settotalPages] = useState(1);
+
   const searchbarRef = useRef(null);
+  const [editModalVisible, setEditModalVisible] = useState(false)
+  const [selectedUser, setSelectedUser] = useState(null)
+
 
   useEffect(() => {
     getalldata();
@@ -73,6 +79,8 @@ const AllUsersScreen = ({ navigation }) => {
 
   const HandleDeleteUser = async (item) => {
     console.log("DATA OF ITEM ISSSSS", item.id);
+
+ 
     try {
       setIsLoading(true);
       if (item.id) {
@@ -102,7 +110,6 @@ const AllUsersScreen = ({ navigation }) => {
     if (updatedData && index >= 0) {
       const dataForUpdating = [...usersData];
       dataForUpdating[index] = updatedData;
-
       try {
         setUsersData(dataForUpdating);
       } catch (error) {
@@ -115,6 +122,7 @@ const AllUsersScreen = ({ navigation }) => {
 
   const handleEditProfile = (item, index) => {
     navigation.navigate("EditProfilePage", {
+
       item: item,
       onGoBack: (updatedData) => handleDataFromEditProfile(updatedData, index),
       isAdmin: true,
@@ -154,11 +162,27 @@ const AllUsersScreen = ({ navigation }) => {
       </View>
 
       <FlatList
+
+        ListHeaderComponent={
+          <View style={styles.container}>
+            <Searchbarwithmic
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              setsearchmodal={setsearchmodal}
+              setTranscript={setTranscript}
+              placeholderText="Search User by name ..."
+              refuser={searchBarRef}
+            // searchData={fetchSearchedData}
+            />
+          </View>
+        }
+
         data={usersData}
         renderItem={({ item, index }) => (
           <UserCard
             item={item}
             index={index}
+
             // navigation={navigation}
             HandleDeleteUser={HandleDeleteUser}
             handleEditProfile={handleEditProfile}
@@ -193,7 +217,20 @@ const AllUsersScreen = ({ navigation }) => {
           transcript={transcript}
         />
       )}
-    </View>
+//     </View>
+=======
+
+
+      {/* <EditCustomerDetailsModal
+        visible={editModalVisible}
+        seteditmodal={setEditModalVisible}
+        SelectedEditItem={selectedUser}
+        onUpdate={handleUpdateUser}
+      /> */}
+
+
+    </>
+
   );
 };
 
