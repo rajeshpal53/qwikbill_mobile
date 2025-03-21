@@ -185,14 +185,19 @@ const LoginScreen = ({ navigation }) => {
       <Formik
         initialValues={{ mobile: "", password: "" }}
         validationSchema={validationSchema}
-        onSubmit={async (value, { resetForm }) => {
-          try {
-            await handleLogin(value);
-            resetForm();
-          } catch (error) {
-            console.log("Unable to login ", error);
-          } finally {
-            resetForm();
+        onSubmit={async(value, {resetForm})=>{
+          try{
+            await handleLogin(value,navigation)
+            if (isPasskey) {
+              navigation.navigate("Passcode"); 
+            } else {
+              navigation.navigate("CreateNewPasscode"); 
+            }
+            resetForm()
+          }catch(error){
+            console.log("Unable to login ", error)
+          }finally{
+            resetForm()
           }
         }}
       >
@@ -322,9 +327,11 @@ const LoginScreen = ({ navigation }) => {
                     </View>
                     {/* <View style={{flex:1, backgroundColor:"green"}} ></View> */}
 
+
                     <View style={{ alignItems: "flex-end" }}>
                       <TouchableOpacity
-                        onPress={() => navigation.navigate("EnterNumberScreen")}
+                        onPress={() => navigation.navigate("EnterNumberScreen",{ isForgetPassword: true })
+                      }
                       >
                         <Text
                           style={{
@@ -375,48 +382,7 @@ const LoginScreen = ({ navigation }) => {
                           Login
                         </Text>
                       </Button>
-                      {/* <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "center",
-                        gap: 5,
-                      }}
-                    >
-                      <Button
-                        icon={"google"}
-                        // onPress={handleGoogleSignIn}
-                        textColor="white"
-                        style={[
-                          styles.button,
-                          { backgroundColor: "#DB4437", width: "40%" },
-                        ]}
-                      >
-                        Google
-                      </Button>
-                      <Button
-                        icon={"facebook"}
-                        // onPress={handleFacebookLogin}
-                        textColor="white"
-                        style={[
-                          styles.button,
-                          { backgroundColor: "#3b5998", width: "40%" },
-                        ]}
-                      >
-                        Facebook
-                      </Button>
-                    </View> */}
-
-                      {/* <Button
-                      // icon={"facebook"}
-                      onPress={() => navigation.navigate("SetPasswordScreen")}
-                      textColor="white"
-                      style={[
-                        styles.button,
-                        { backgroundColor: "#3b5998", width: "40%" },
-                      ]}
-                    >
-                      SetPassword
-                    </Button> */}
+                     
                     </View>
 
                     <View
