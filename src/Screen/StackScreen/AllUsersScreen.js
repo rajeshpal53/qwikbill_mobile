@@ -28,7 +28,8 @@ import OpenmiqModal from "../../Modal/Openmicmodal";
 import EditCustomerDetailsModal from "../../Modal/EditCustomerDetailsModal";
 import axios from "axios";
 
-const AllUsersScreen = ({navigation}) => {
+
+const AllUsersScreen = ({ navigation }) => {
   const { userData } = useContext(UserDataContext);
   const searchBarRef = useRef();
   const [searchQuery, setSearchQuery] = useState("");
@@ -43,8 +44,11 @@ const AllUsersScreen = ({navigation}) => {
   const [transcript, setTranscript] = useState(""); // State for transcript
   const PAGE_SIZE = 10;
   const [totalPages, settotalPages] = useState(1);
+
+  const searchbarRef = useRef(null);
   const [editModalVisible, setEditModalVisible] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
+
 
   useEffect(() => {
     getalldata();
@@ -73,77 +77,16 @@ const AllUsersScreen = ({navigation}) => {
     }
   };
 
-  
-  
-  // const handleUpdateUser = async (id, updatedValues) => {
-  //   if (!id) {
-  //     console.error(" Error: User ID is missing!");
-  //     alert("User ID is missing.");
-  //     return;
-  //   }
-  
-  //   console.log(" Checking if User Exists:", id);
-  
-  //   try {
-  //     setIsLoading(true); // Start loading
-  
-  //     const token = userData?.token?.trim(); // Ensure token has no spaces
-  //     if (!token) {
-  //       alert("Authentication error: No token found.");
-  //       return;
-  //     }
-  
-  //     const payload = {
-  //      // id,  // Ensure ID is passed in the request body
-  //       name: updatedValues.name,
-  //       email: updatedValues.email,
-  //       mobile: updatedValues.number,
-  //       address: updatedValues.address,
-  //     };
-  
-  //     console.log(" Sending Data:", payload);
-  
-  //       const api = `https://rajeshpal.online/qapi/users/upsertOnlyUserProfileImg`
-        
-  //     const response = await axios.post(api, payload, {
-  //      headers:{ Authorization: `Bearer ${token}`},
-  //      "Content-Type": "application/json" 
-
-  //     });
-  
-  //     console.log(" API Response:", response);
-  
-  //     if (response?.error) {
-  //       console.error("Failed to update user:", response);
-  //       alert(response.error || "Error updating user. Please try again.");
-  //       return;
-  //     }
-  
-  //     // Update usersData state in real-time
-  //     setUsersData((prevUsers) =>
-  //       prevUsers.map((user) => (user.id === id ? { ...user, ...updatedValues } : user))
-  //     );
-  
-  //     alert("User updated successfully!");
-  //     setEditModalVisible(false); // Close modal
-  //   } catch (error) {
-  //     console.error(" Update error:", error);
-  //     alert("Something went wrong. Please try again later.");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-  
-
-
   const HandleDeleteUser = async (item) => {
-    console.log("DATA OF ITEM ISSSSS", item.id)
+    console.log("DATA OF ITEM ISSSSS", item.id);
+
+ 
     try {
       setIsLoading(true);
       if (item.id) {
         const token = userData?.token;
         const deleteresponse = await deleteApi(`users/${item.id}`, {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         });
         if (deleteresponse) {
           setUsersData((prev) => prev.filter((data) => data.id !== item.id));
@@ -163,10 +106,7 @@ const AllUsersScreen = ({navigation}) => {
     }
   };
 
-
   const handleDataFromEditProfile = (updatedData, index) => {
-
-
     if (updatedData && index >= 0) {
       const dataForUpdating = [...usersData];
       dataForUpdating[index] = updatedData;
@@ -180,9 +120,6 @@ const AllUsersScreen = ({navigation}) => {
     }
   };
 
-
-
-
   const handleEditProfile = (item, index) => {
     navigation.navigate("EditProfilePage", {
 
@@ -191,7 +128,6 @@ const AllUsersScreen = ({navigation}) => {
       isAdmin: true,
     });
   };
-
 
   const loadMoreData = () => {
     if (hasMore && !isLoading && page < totalPages) {
@@ -209,8 +145,24 @@ const AllUsersScreen = ({navigation}) => {
   };
 
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      <View style={styles.container}>
+
+        <View style={{ flex: 1 }}>
+          <Searchbarwithmic
+            refuser={searchbarRef}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            setsearchmodal={setsearchmodal}
+            setTranscript={setTranscript}
+            placeholderText="Search User by name ..."
+            //    refuser={searchBarRef}
+          />
+        </View>
+      </View>
+
       <FlatList
+
         ListHeaderComponent={
           <View style={styles.container}>
             <Searchbarwithmic
@@ -224,6 +176,7 @@ const AllUsersScreen = ({navigation}) => {
             />
           </View>
         }
+
         data={usersData}
         renderItem={({ item, index }) => (
           <UserCard
@@ -233,7 +186,6 @@ const AllUsersScreen = ({navigation}) => {
             // navigation={navigation}
             HandleDeleteUser={HandleDeleteUser}
             handleEditProfile={handleEditProfile}
-
           />
         )}
         // renderItem={renderItem}
@@ -265,6 +217,8 @@ const AllUsersScreen = ({navigation}) => {
           transcript={transcript}
         />
       )}
+//     </View>
+=======
 
 
       {/* <EditCustomerDetailsModal
@@ -276,14 +230,15 @@ const AllUsersScreen = ({navigation}) => {
 
 
     </>
+
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    padding: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 5,
   },
 
   searchbar: {
