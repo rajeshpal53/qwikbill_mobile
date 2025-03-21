@@ -34,19 +34,16 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const [loading, setLoading] = useState(false);
   const timeoutId = useRef(null); // useRef to persist timeoutId
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log("selected shop isuser , ", selectedShop);
-  },[userData])
-
-
-
+  }, [userData]);
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
     address: Yup.string().required("Address is required"),
     gstNumber: Yup.string().matches(
       /^[A-Z]{2}[0-9]{1}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z0-9]{1}[Z]{1}[0-9]{1}$/,
-      'Invalid GSTIN format'
+      "Invalid GSTIN format"
     ),
     // gstNumber: Yup.string().when([], {
     //   is: () => selectedButton === "gst",
@@ -58,53 +55,49 @@ const CreateInvoiceForm = ({ selectedButton }) => {
       .matches(/^\d{10}$/, "Phone must be 10 digits"),
   });
 
-  console.log("LOADING DATA IS ", User);
-
-    const fetchUserData = async (phoneNumber, setFieldValue) => {
-      if (timeoutId.current) {
-        clearTimeout(timeoutId.current);
-      }
-      timeoutId.current = setTimeout(async () => {
-        try {
-          if (/^\d{10}$/.test(phoneNumber)) {
-            setLoading(true);
-            try {
-              const api = `users/getUserByMobile/${phoneNumber}`;
-              const headers = {
-                Authorization: `Bearer ${userData?.token}`,
-              };
-              const response = await readApi(api, headers);
-              if (response) {
-                setUser(response);
-                setFieldValue("name", response?.name);
-                setFieldValue("address", response?.address);
-                setFieldValue("phone", phoneNumber);
-              } else {
-                setFieldValue("name", response?.name);
-                setFieldValue("address", response?.address);
-                setFieldValue("phone", phoneNumber);
-              }
-            } catch (error) {
-              setFieldValue("name", "");
-              setFieldValue("address", "");
-
+  const fetchUserData = async (phoneNumber, setFieldValue) => {
+    if (timeoutId.current) {
+      clearTimeout(timeoutId.current);
+    }
+    timeoutId.current = setTimeout(async () => {
+      try {
+        if (/^\d{10}$/.test(phoneNumber)) {
+          setLoading(true);
+          try {
+            const api = `users/getUserByMobile/${phoneNumber}`;
+            const headers = {
+              Authorization: `Bearer ${userData?.token}`,
+            };
+            const response = await readApi(api, headers);
+            if (response) {
+              setUser(response);
+              setFieldValue("name", response?.name);
+              setFieldValue("address", response?.address);
               setFieldValue("phone", phoneNumber);
-              console.error("Error fetching User data:", error);
-            } finally {
-              setLoading(false);
+            } else {
+              setFieldValue("name", response?.name);
+              setFieldValue("address", response?.address);
+              setFieldValue("phone", phoneNumber);
             }
-          } else {
+          } catch (error) {
             setFieldValue("name", "");
             setFieldValue("address", "");
+
             setFieldValue("phone", phoneNumber);
+            console.error("Error fetching User data:", error);
+          } finally {
+            setLoading(false);
           }
-        } catch (error) {
-          console.error("Error fetching HSN code data:", error);
+        } else {
+          setFieldValue("name", "");
+          setFieldValue("address", "");
+          setFieldValue("phone", phoneNumber);
         }
-      }, 300);
-    };
-
-
+      } catch (error) {
+        console.error("Error fetching HSN code data:", error);
+      }
+    }, 300);
+  };
 
   useEffect(() => {
     console.log("changed cart is , ", carts);
@@ -164,7 +157,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
         enableReinitialize={true}
         initialValues={{
           name: "",
-          address:  "",
+          address: "",
           gstNumber: "",
           phone: "",
         }}
@@ -383,7 +376,9 @@ const CreateInvoiceForm = ({ selectedButton }) => {
                 >
                   <Text style={{ color: "#007BFF" }}>Clear Cart</Text>
                 </TouchableOpacity>
+
                 <ItemDataTable carts={carts} />
+
                 <PriceDetails setPaymentStatus={setPaymentStatus} />
               </View>
             )}
