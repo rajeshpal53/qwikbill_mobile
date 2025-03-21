@@ -223,11 +223,10 @@ export default function CreateInvoice({ navigation, route }) {
 
           <View style={styles.MainContainer}>
             <View style={styles.TextView}>
-             
+
                 <Text style={styles.headerText}>
                   Invoice No: - {invoiceNumber}
                 </Text>
-           
 
               <CreateInvoiveForm selectedButton={selectedValue} />
             </View>

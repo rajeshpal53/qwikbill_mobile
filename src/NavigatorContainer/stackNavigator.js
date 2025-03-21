@@ -622,9 +622,12 @@ export default function StackNavigator() {
         <Stack.Screen
           name="AddroleScreen"
           component={AddRole}
-          screenOptions={{
-            headerTitle: "Add Role",
+          options={{
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"Add Role"}</Text>
+            ),
             headerTitleAlign: "center",
+            // headerTitle: "Add Role",
           }}
         />
 
