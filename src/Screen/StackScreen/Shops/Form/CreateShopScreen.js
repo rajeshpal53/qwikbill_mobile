@@ -26,7 +26,7 @@ import * as Yup from "yup";
 import { useIsFocused, useRoute } from "@react-navigation/native";
 // import SelectionDropdown from "../../../../ComponentContainer/SelectionDropdown";
 
-import { API_BASE_URL, createApi, readApi } from "../../../../Util/UtilApi";
+import { API_BASE_URL, createApi, NORM_URL, readApi } from "../../../../Util/UtilApi";
 
 // import UserDataContext from "../../../../Store/UserDataContext";
 import { useSnackbar } from "../../../../Store/SnackbarContext";
@@ -84,10 +84,10 @@ const uploadImagesSchema = Yup.object().shape({
 const ShopValidataionSchema = Yup.object().shape({
   shopName: Yup.string().required("Shop Name is required"),
   shopAddress: Yup.string().required("Shop Address is required"),
-  gstNumber: Yup.string().matches(
-    /^[A-Z]{2}[0-9]{1}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z0-9]{1}[Z]{1}[0-9]{1}$/,
-    "Invalid GSTIN format"
-  ),
+  // gstNumber: Yup.string().matches(
+  //   /^[A-Z]{2}[0-9]{1}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z0-9]{1}[Z]{1}[0-9]{1}$/,
+  //   "Invalid GSTIN format. GSTIN should be 15 characters: State Code (2 letters) + 1 digit + PAN (5 letters + 4 digits + 1 letter) + 1 digit + 1 letter (usually Z) + 1 digit."
+  // )  
   // location: Yup.string().required("Location is required"),
   // kilometerRadius: Yup.number()
   //   .min(1, "Kilometer radius must be greater than 0")
@@ -244,9 +244,7 @@ const CreateShopScreen = ({ navigation }) => {
     latitude: routeData?.latitude || "",
     longitude: routeData?.longitude || "",
     isApproved: routeData?.shopname || false,
-
     gstNumber: routeData?.gstNumber || "",
-
     // isOnline: false,
     // isVerified: false,
     // homeDelivery: false,
@@ -476,7 +474,7 @@ const CreateShopScreen = ({ navigation }) => {
 
   const formatUrl = (url, imageDetail) => {
     const imageFile = {
-      uri: `${API_BASE_URL}${url}`,
+      uri: `${NORM_URL}${url}`,
       // uri: `${NORM_URL}/${url}`,
       name: `${imageDetail}.jpeg`,
       type: `image/jpeg`,
@@ -747,7 +745,6 @@ const CreateShopScreen = ({ navigation }) => {
                 },
               }
             );
-
             console.log("Service provider Updated successfullyyy: ", response);
 
             showSnackbar(t("Service provider Updated successfully"), "success");

@@ -23,6 +23,7 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
     navigation.navigate("CreateShopScreen", {
       editItem: item,
       isUpdateAddress: true,
+      
     });
   };
 
@@ -123,7 +124,7 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
             style={styles.closeButton}
             onPress={() => handleEdit(item)}
           >
-            <Text>Edit</Text>
+            <Text style={{color:"#fff"}}>Edit</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.ButtonView}>
@@ -131,7 +132,7 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
             style={styles.downloadButton}
             onPress={handleDelete}
           >
-            <Text>Delete</Text>
+             <Text style={{color:"#fff"}}>Delete</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -142,6 +143,7 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
 const styles = StyleSheet.create({
   UserCard: {
     marginVertical: 2,
+    backgroundColor:"#fff"
   },
   MainContainer: {
     paddingHorizontal: 5,
@@ -174,10 +176,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     flex: 0.45,
     alignItems: "center",
-    backgroundColor: "#F59E0B",
+    backgroundColor: "#26a0df",
   },
   downloadButton: {
-    backgroundColor: "#EF4444",
+    backgroundColor: "#1B4872",
     paddingVertical: 13,
     borderRadius: 10,
     flex: 0.5,
