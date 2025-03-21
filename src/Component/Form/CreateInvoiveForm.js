@@ -34,42 +34,44 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const [fetchdata, setfetchdata] = useState({ name: "", address: "" });
   const [loading, setLoading] = useState(false);
 
-  console.log("selected shop is , ", selectedShop);
+  console.log("selected shop isuser , ", User);
+
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
     address: Yup.string().required("Address is required"),
-    // gstNumber: Yup.string().required("GST Number is required"),
-    gstNumber: Yup.string().when([], {
-      is: () => selectedButton === "gst",
-      then: (schema) => schema.required("GST Number is required"),
-      otherwise: (schema) => schema.notRequired(),
-    }),
+    gstNumber: Yup.string().matches(
+      /^[A-Z]{2}[0-9]{1}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z0-9]{1}[Z]{1}[0-9]{1}$/,
+      'Invalid GSTIN format'
+    ),
+    // gstNumber: Yup.string().when([], {
+    //   is: () => selectedButton === "gst",
+    //   then: (schema) => schema.required("GST Number is required"),
+    //   otherwise: (schema) => schema.notRequired(),
+    // }),
     phone: Yup.string()
       .required("Phone is required")
       .matches(/^\d{10}$/, "Phone must be 10 digits"),
   });
 
-  const handlePhoneBlur = async (phoneNumber) => {
-    console.log("Phone number ", phoneNumber);
+  console.log("LOADING DATA IS ", selectedButton);
 
+  const fetchUserData = async (phoneNumber) => {
     if (/^\d{10}$/.test(phoneNumber)) {
       setLoading(true);
-
       try {
         const api = `users/getUserByMobile/${phoneNumber}`;
         const headers = {
           Authorization: `Bearer ${userData?.token}`, // Add token to headers
         };
         const response = await readApi(api, headers);
-        // console.log("response of getting userbyMobile is , ", response)
+
         if (response) {
           setUser(response);
-          setfetchdata({ name: response.name, address: response.address });
+          setfetchdata({ name: response?.name, address: response?.address });
         } else {
           setfetchdata({ name: "", address: "" });
         }
-        setUser(response);
       } catch (error) {
         setfetchdata({ name: "", address: "" });
         console.error("Error fetching User data:", error);
@@ -81,7 +83,8 @@ const CreateInvoiceForm = ({ selectedButton }) => {
 
   useEffect(() => {
     console.log("changed cart is , ", carts);
-  }, [carts]);
+    console.log("changed cart is , ", selectedButton);
+  }, [carts, selectedButton]);
 
   useEffect(() => {
     const handleBackPress = navigation.addListener("beforeRemove", (e) => {
@@ -144,6 +147,14 @@ const CreateInvoiceForm = ({ selectedButton }) => {
         onSubmit={(values, { resetForm }) => {
           console.log("values are , ", values);
 
+          const DataCustomer = {
+            name: fetchdata?.name || values?.name,
+            address: fetchdata?.address || values?.address,
+            getNumber: User?.getNumber || values?.gstNumber,
+            phone: User?.getNumber || values?.phone,
+            userId: User?.id || undefined,
+          };
+
           const extraData = {
             usersfk: User?.id,
             vendorfk: selectedShop?.id,
@@ -167,7 +178,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
 
           const payload = {
             ...extraData,
-            customerData: User,
+            customerData: DataCustomer,
             serviceProviderData: selectedShop,
             products: carts,
             // Pricedetails: [
@@ -181,9 +192,14 @@ const CreateInvoiceForm = ({ selectedButton }) => {
             // ],
           };
           console.log("Form Submitted Data:", payload?.products);
-          console.log("Form Submitted Data:", payload);
+          console.log("Form Submitted Data:123", payload);
           submit.current = true;
-          navigation.navigate("PDFScreen", { formData: payload });
+          navigation.navigate("PDFScreen", {
+            formData: payload,
+            selectedButton: selectedButton,
+            resetForm: resetForm,
+          });
+          resetForm();
           // resetForm();
           // dispatch(clearCart());
         }}
@@ -203,8 +219,12 @@ const CreateInvoiceForm = ({ selectedButton }) => {
               label="Phone"
               mode="flat"
               style={styles.input}
-              onChangeText={handleChange("phone")}
-              onBlur={() => handlePhoneBlur(values.phone)}
+              // onChangeText={handleChange("phone")}
+              onChangeText={async (phoneNumber) => {
+                setFieldValue("phone", phoneNumber);
+                await fetchUserData(phoneNumber);
+              }}
+              // onBlur={() => handlePhoneBlur(values.phone)}
               value={values.phone}
               right={
                 values.phone ? (
@@ -212,7 +232,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
                     icon="close"
                     size={20}
                     style={{ marginBottom: -22 }}
-                    onPress={() => setFieldValue("phone", "")} // Clears the input when close icon is pressed
+                    onPress={() => setFieldValue("phone", "")}
                   />
                 ) : null
               }
@@ -221,6 +241,11 @@ const CreateInvoiceForm = ({ selectedButton }) => {
               <Text style={styles.errorText}>{errors.phone}</Text>
             )}
             {/* Name Field */}
+            {loading && (
+              <View style={styles.loaderContainer}>
+                <ActivityIndicator size="large" color="#0000ff" />
+              </View>
+            )}
             <TextInput
               label="Name"
               mode="flat"
@@ -230,7 +255,13 @@ const CreateInvoiceForm = ({ selectedButton }) => {
               value={values.name}
               editable={!loading}
               right={
-                values.name ? (
+                loading ? (
+                  <ActivityIndicator
+                    size="small"
+                    color="#0000ff"
+                    style={{ marginBottom: -22, alignSelf: "center" }}
+                  />
+                ) : values.name ? (
                   <TextInput.Icon
                     icon="close"
                     size={20}
@@ -244,6 +275,12 @@ const CreateInvoiceForm = ({ selectedButton }) => {
               <Text style={styles.errorText}>{errors.name}</Text>
             )}
 
+            {loading && (
+              <View style={styles.loaderContainer}>
+                <ActivityIndicator size="large" color="#0000ff" />
+              </View>
+            )}
+
             {/* Address Field */}
             <TextInput
               label="Address"
@@ -254,7 +291,13 @@ const CreateInvoiceForm = ({ selectedButton }) => {
               value={values.address}
               editable={!loading}
               right={
-                values.address ? (
+                loading ? (
+                  <ActivityIndicator
+                    size="small"
+                    color="#0000ff"
+                    style={{ marginBottom: -22 }}
+                  />
+                ) : values.address ? (
                   <TextInput.Icon
                     icon="close"
                     size={20}
@@ -293,12 +336,6 @@ const CreateInvoiceForm = ({ selectedButton }) => {
                   <Text style={styles.errorText}>{errors.gstNumber}</Text>
                 )}
               </>
-            )}
-
-            {loading && (
-              <View style={styles.loaderContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
-              </View>
             )}
 
             {/* Add Items Button */}

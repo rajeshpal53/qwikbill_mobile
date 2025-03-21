@@ -82,6 +82,7 @@ const UserDetailsStore = ({ item }) => {
 const styles = StyleSheet.create({
   UserCard: {
     marginVertical: 10,
+    backgroundColor:"#fff"
   },
   MainContainer: {
     paddingHorizontal: 5,

@@ -3,9 +3,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from "@react-navigation/native";
 import UserDataContext from "./UserDataContext";
 import { createApi } from "../Util/UtilApi";
+
 import { usePasskey } from "../Store/PasskeyContext";
 import { useNavigation } from "@react-navigation/native";
-
+import { useSnackbar } from "./SnackbarContext";
 
 // Create the context
 export const AuthContext = createContext();
@@ -25,6 +26,7 @@ export const AuthProvider = ({ children }) => {
   const [selectedShop, setSelectedShop] = useState("");
   const [overlayHeight, setOverlayHeight] = useState("25%");
   const { userData, saveUserData } = useContext(UserDataContext);
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -116,11 +118,13 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
+      await auth().signOut();
       await AsyncStorage.removeItem("userToken");
       await AsyncStorage.removeItem("loginDetail");
       await AsyncStorage.clear();
       await AsyncStorage.removeItem("allShops");
       await AsyncStorage.removeItem("selectedShop");
+      showSnackbar("Logged out successfully", "success");
 
       setIsAuthenticated(false);
     } catch (e) {
