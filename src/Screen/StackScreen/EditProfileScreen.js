@@ -275,11 +275,11 @@ export default function EditProfileScreen({ navigation }) {
   if (!url) return null; // Handle null cases
 
   // Ensure no double slashes in the final URL
-  const formattedUrl = `${API_BASE_URL.replace(/\/$/, '')}/${url.replace(/^\//, '')}`;
+  const formattedUrl = `${NORM_URL.replace(/\/$/, '')}/${url.replace(/^\//, '')}`;
 
   const imageFile = {
     uri: formattedUrl,
-    name: `${imageDetail}.jpeg`,
+    name: `${imageDetail}.jpeg`,               
     type: `image/jpeg`,
   };
 

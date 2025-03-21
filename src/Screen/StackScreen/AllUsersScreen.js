@@ -148,7 +148,7 @@ const AllUsersScreen = ({ navigation }) => {
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <View style={styles.container}>
 
-        <View style={{ flex: 1 }}>
+        {/* <View style={{ flex: 1 }}>
           <Searchbarwithmic
             refuser={searchbarRef}
             searchQuery={searchQuery}
@@ -158,20 +158,20 @@ const AllUsersScreen = ({ navigation }) => {
             placeholderText="Search User by name ..."
             //    refuser={searchBarRef}
           />
-        </View>
+        </View> */}
       </View>
 
       <FlatList
 
         ListHeaderComponent={
-          <View style={styles.container}>
+          <View>
             <Searchbarwithmic
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
               setsearchmodal={setsearchmodal}
               setTranscript={setTranscript}
               placeholderText="Search User by name ..."
-              refuser={searchBarRef}
+
             // searchData={fetchSearchedData}
             />
           </View>
@@ -217,9 +217,7 @@ const AllUsersScreen = ({ navigation }) => {
           transcript={transcript}
         />
       )}
-//     </View>
-=======
-
+  
 
       {/* <EditCustomerDetailsModal
         visible={editModalVisible}
@@ -227,10 +225,7 @@ const AllUsersScreen = ({ navigation }) => {
         SelectedEditItem={selectedUser}
         onUpdate={handleUpdateUser}
       /> */}
-
-
-    </>
-
+  </View>
   );
 };
 
