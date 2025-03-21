@@ -72,7 +72,7 @@ export default function ViewShopsScreen() {
         const token = userData?.token;
         // const api = `vendors/${userData?.user?.id}`
         const response = await readApi(
-          `vendors//getVendorsByUserId/${userData?.user?.id}`,
+          `vendors/getVendorsByUserId/${userData?.user?.id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

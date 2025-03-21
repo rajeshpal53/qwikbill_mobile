@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { RadioButton, Text, TextInput } from "react-native-paper";
 import { Formik } from "formik";
@@ -12,7 +12,10 @@ const AddProduct = ({ navigation }) => {
   // const [showOptions, setShowOptions] = useState(false);
   // const [showHsnOptions, setShowHsnOptions] = useState(false);
   const [HSNCode, SetHSNCode] = useState();
-  const {selectedShop} = useContext(ShopContext);
+  const { selectedShop } = useContext(ShopContext);
+
+  const timeoutId = useRef(null); // useRef to persist timeoutId
+
 
   console.log("DATA OF HSNCODE IS ", HSNCode);
 
@@ -30,27 +33,57 @@ const AddProduct = ({ navigation }) => {
   });
 
   const HandleHsnCode = async (hsncode, setFieldValue) => {
-    console.log("Value of HSN code is -----------",hsncode)
-    try {
-      const api = `hsn-codes`;
-      const response = await readApi(api);
-      if (response) {
-        const matchedHsnCode = response.find((item) => item?.code === hsncode);
-        console.log("Matched HSN code is", matchedHsnCode);
-        if (matchedHsnCode) {
-          setFieldValue("HSNCode", matchedHsnCode?.code);
-          setFieldValue("TaxRate", matchedHsnCode?.taxrate);
-          SetHSNCode(matchedHsnCode);
-        } else {
-          console.log("No matching HSN code found");
-          setFieldValue("TaxRate", "");
-          setFieldValue("HSNCode", hsncode);
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching HSN code data:", error);
+    if (timeoutId.current) {
+      clearTimeout(timeoutId.current);
     }
+    timeoutId.current = setTimeout(async () => {
+      console.log("Value of HSN code is -----------", hsncode);
+      try {
+        const api = `hsn-codes`;
+        const response = await readApi(api);
+        if (response) {
+          const matchedHsnCode = response.find(
+            (item) => item?.code === hsncode
+          );
+          console.log("Matched HSN code is", matchedHsnCode);
+          if (matchedHsnCode) {
+            setFieldValue("HSNCode", matchedHsnCode?.code);
+            setFieldValue("TaxRate", matchedHsnCode?.taxrate);
+            SetHSNCode(matchedHsnCode);
+          } else {
+            console.log("No matching HSN code found");
+            setFieldValue("TaxRate", "");
+            setFieldValue("HSNCode", hsncode);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching HSN code data:", error);
+      }
+    }, 300);
   };
+
+  // const HandleHsnCode = async (hsncode, setFieldValue) => {
+  //   console.log("Value of HSN code is -----------", hsncode);
+  //   try {
+  //     const api = `hsn-codes`;
+  //     const response = await readApi(api);
+  //     if (response) {
+  //       const matchedHsnCode = response.find((item) => item?.code === hsncode);
+  //       console.log("Matched HSN code is", matchedHsnCode);
+  //       if (matchedHsnCode) {
+  //         setFieldValue("HSNCode", matchedHsnCode?.code);
+  //         setFieldValue("TaxRate", matchedHsnCode?.taxrate);
+  //         SetHSNCode(matchedHsnCode);
+  //       } else {
+  //         console.log("No matching HSN code found");
+  //         setFieldValue("TaxRate", "");
+  //         setFieldValue("HSNCode", hsncode);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching HSN code data:", error);
+  //   }
+  // };
 
   return (
     <ScrollView contentContainerStyle={{}}>
@@ -77,7 +110,6 @@ const AddProduct = ({ navigation }) => {
             isStock: values?.IsStockData,
             vendorfk: selectedShop.id,
             hsncode: parseInt(values.HSNCode),
-
           };
           console.log("Data is 15863", ProductData);
           try {
@@ -100,20 +132,22 @@ const AddProduct = ({ navigation }) => {
         }) => (
           <View style={styles.container}>
             {/* Product Category */}
-            <CategoryDropDown
-              selectedCat={values.ProductCategory}
-              setSelectedCat={(categoryId) =>
-                setFieldValue("ProductCategory", categoryId)
-              }
-            />
-            {touched.ProductCategory && errors.ProductCategory && (
-              <Text style={styles.errorText}>{errors.ProductCategory}</Text>
-            )}
+            <View style={{ marginBottom: 10 }}>
+              <CategoryDropDown
+                selectedCat={values.ProductCategory}
+                setSelectedCat={(categoryId) =>
+                  setFieldValue("ProductCategory", categoryId)
+                }
+              />
+              {touched.ProductCategory && errors.ProductCategory && (
+                <Text style={styles.errorText}>{errors.ProductCategory}</Text>
+              )}
+            </View>
 
             {/* Product Name */}
             <TextInput
               label="Product Name"
-              mode="outlined"
+              mode="flat"
               style={styles.input}
               onChangeText={handleChange("ProductName")}
               onBlur={handleBlur("ProductName")}
@@ -128,7 +162,7 @@ const AddProduct = ({ navigation }) => {
             <TextInput
               label="Purchase Price"
               keyboardType="numeric"
-              mode="outlined"
+              mode="flat"
               style={styles.input}
               onChangeText={handleChange("PurchasePrice")}
               onBlur={handleBlur("PurchasePrice")}
@@ -143,7 +177,7 @@ const AddProduct = ({ navigation }) => {
             <TextInput
               label="Selling Price"
               keyboardType="numeric"
-              mode="outlined"
+              mode="flat"
               style={styles.input}
               onChangeText={handleChange("SellingPrice")}
               onBlur={handleBlur("SellingPrice")}
@@ -157,10 +191,14 @@ const AddProduct = ({ navigation }) => {
             {/* HSN Code */}
             <TextInput
               label="HSN Code"
-              mode="outlined"
+              mode="flat"
               style={styles.input}
-              onChangeText={handleChange("HSNCode")}
-              onBlur={() => HandleHsnCode(values?.HSNCode, setFieldValue)}
+              // onChangeText={handleChange("HSNCode")}
+              onChangeText={async (HSNCode) => {
+                setFieldValue("HSNCode", HSNCode);
+                await HandleHsnCode(HSNCode, setFieldValue);
+              }}
+              // onBlur={() => HandleHsnCode(values?.HSNCode, setFieldValue)}
               value={values.HSNCode}
               error={touched.HSNCode && !!errors.HSNCode}
             />
@@ -172,7 +210,7 @@ const AddProduct = ({ navigation }) => {
             <TextInput
               label="Tax Value"
               keyboardType="numeric"
-              mode="outlined"
+              mode="flat"
               style={styles.input}
               onChangeText={handleChange("TaxRate")}
               value={values.TaxRate || ""}

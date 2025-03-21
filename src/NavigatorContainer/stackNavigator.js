@@ -82,7 +82,7 @@ import AllVendorDataScreen from "../Screen/StackScreen/AllVendorDataScreen.js";
 import ProductDetailsScreen from "../StackScreen/ProductSection/ProductDetailsScreen.js";
 import CustomerDetail from "../StackScreen/CustomerSection/CustomerDetails.js";
 import PoliciesDetailsScreen from "../StackScreen/PoliciesDetailsScreen.js";
-import AllQueryAndSupport from "../../src/Screen/StackScreen/QueriesScreens/AllQueryAndSupport.js"
+import AllQueryAndSupport from "../../src/Screen/StackScreen/QueriesScreens/AllQueryAndSupport.js";
 
 
 export default function StackNavigator() {
@@ -156,29 +156,39 @@ export default function StackNavigator() {
 
         <Stack.Screen name="viewClient" component={ViewClientScreen} />
 
-        <Stack.Screen name="EditProfilePage" component={EditProfileScreen}
-          options={{
-            // headerShown: false,
-            headerTitle: () => (
-              <Text style={styles.headerTitle}>{("Edit Profile")}</Text>
-            ),
-            headerTitleAlign: "center",
-            headerTintColor: "#000",
-            headerShadowVisible: false,
-            headerLeft: () => <CustomBackButton />,
-          }}
-        />
+//         <Stack.Screen name="EditProfilePage" component={EditProfileScreen}
+//           options={{
+//             // headerShown: false,
+//             headerTitle: () => (
+//               <Text style={styles.headerTitle}>{("Edit Profile")}</Text>
+//             ),
+//             headerTitleAlign: "center",
+//             headerTintColor: "#000",
+//             headerShadowVisible: false,
+//             headerLeft: () => <CustomBackButton />,
+//           }}
+//         />
 
-        <Stack.Screen name="EditProfile"
+//         <Stack.Screen name="EditProfile"
+//           component={EditProfileScreen}
+//           options={{
+//             // headerShown: false,
+//             headerTitle: () => (
+//               <Text style={styles.headerTitle}>{("Update Profile")}</Text>
+//             ),
+//             headerTitleAlign: "center",
+//             headerTintColor: "#000",
+//             headerShadowVisible: false,
+        <Stack.Screen
+          name="EditProfilePage"
           component={EditProfileScreen}
           options={{
-            // headerShown: false,
             headerTitle: () => (
-              <Text style={styles.headerTitle}>{("Update Profile")}</Text>
+              <Text style={styles.headerTitle}>{"EditProfilePage"}</Text>
             ),
+
             headerTitleAlign: "center",
-            headerTintColor: "#000",
-            headerShadowVisible: false,
+
             headerLeft: () => <CustomBackButton />,
           }}
         />
@@ -580,18 +590,18 @@ export default function StackNavigator() {
           component={CustomerDetails}
           options={{
             headerShown: true,
-            // headerTitle: t("Payments"),
-            tabBarIcon: ({ color, size }) => (
-              <Icon name="people-outline" color={color} size={size} />
-            ),
+            // // headerTitle: t("Payments"),
+            // tabBarIcon: ({ color, size }) => (
+            //   <Icon name="people-outline" color={color} size={size} />
+            // ),
             headerTitle: () => (
               <Text style={styles.headerTitle}>{"Customer Details"}</Text>
             ),
             headerTitleAlign: "center",
-            headerStyle: {
-              backgroundColor: "transparent",
-              // backgroundColor: "#fff"
-            },
+            // headerStyle: {
+            //   backgroundColor: "transparent",
+            //   // backgroundColor: "#fff"
+            // },
 
             headerLeft: () => <CustomBackButton />,
           }}
@@ -672,7 +682,6 @@ export default function StackNavigator() {
             headerTitle: "View Shop Details",
           }}
         />
-
 
       </Stack.Navigator>
 

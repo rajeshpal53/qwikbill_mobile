@@ -197,8 +197,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
   const { userData, clearUserData } = useContext(UserDataContext);
   // const { setCreateuser } = useContext(WalletContext);
 
-
-  console.log("DATA OF USER IS SSSSSSSSSSSS",userData )
+  console.log("DATA OF USER IS SSSSSSSSSSSS", userData);
   const { t, i18n } = useTranslation();
   const isFocused = useIsFocused();
   const AdminOption = [
@@ -236,7 +235,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
           label: "Edit  a Vendor ",
           value: "Edit a Vendor",
         },
-        ...(userData?.user?.rolesfk === null ? AdminOption : []),
+        ...(userData?.user?.roles === null ? AdminOption : []),
 
         { icon: "policy", label: "Policies", value: "Policies" },
         ...(userData
@@ -259,12 +258,12 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
           label: "Change Language",
           value: "changeLanguage",
         },
-        {
-          icon: "flag",
-          label: "Become a Vendor",
-          value: "Become a Vendor",
-        },
-        ...(userData?.user?.rolesfk === null ? AdminOption : []),
+        // {
+        //   icon: "flag",
+        //   label: "Become a Vendor",
+        //   value: "Become a Vendor",
+        // },
+        ...(userData?.user?.roles === null ? AdminOption : []),
 
         { icon: "policy", label: "Policies", value: "Policies" },
         ...(userData
@@ -275,7 +274,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
                 value: "Assign New Role",
               },
               { icon: "logout", label: "Logout", value: "Logout" },
-              { icon: "logout", label: "Logout1", value: "Logout1" },
+              // { icon: "logout", label: "Logout1", value: "Logout1" },
             ]
           : []),
       ]);
@@ -306,6 +305,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
       if (userData?.user?.profilePicurl) {
         const nevVar = `${NORM_URL}/${userData?.user?.profilePicurl}`;
         setImageUrl(nevVar);
+        console.log("Store image data is ", nevVar);
       } else if (userData?.user?.gender == null) {
         setImageUrl(`${NORM_URL}assets/mobile/neutral.png`);
       } else if (userData?.user?.gender === "Female") {
@@ -321,7 +321,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
     } else {
       setImageUrl(`${NORM_URL}assets/mobile/neutral.png`);
     }
-  }, [isFocused, userData]); // Removed imageUrl from dependency array
+  }, [isFocused, userData]);
 
   const languageModalOpen = () => {
     setLanguageModalVisible(true);
@@ -348,17 +348,18 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
     //   // navigation.navigate("TestingScreen");
     // }
 
-     if (value == "Policies") {
+    if (value == "Policies") {
       navigation.navigate("Policies", {
         webUri: `${NORM_URL}/privacy-policy?view=mobile`,
         headerTitle: "Privacy and Policies",
       });
-    } else if (value == "Become a Vendor") {
-      if (userData) {
-        navigation.navigate("AddServiceProvidersFormScreen");
-      } else {
-        setLoginConfirmModalVisible(true);
-      }
+
+      // else if (value == "Become a Vendor") {
+      //   if (userData) {
+      //     navigation.navigate("AddServiceProvidersFormScreen");
+      //   } else {
+      //     setLoginConfirmModalVisible(true);
+      //   }
     } else if (value === "Edit a Vendor") {
       if (userData) {
         navigation.navigate("ViewEditServicesScreen");
@@ -387,29 +388,38 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
           Authorization: `Bearer ${userData.token}`,
         }
       );
-      console.log("response", response);
-      showSnackbar("Logged out successfully", "success");
-      await auth().signOut();
-      await clearUserData();
-      // setCreateuser(null);
-      await AsyncStorage.clear();
-      await AsyncStorage.removeItem("allShops");
-      await AsyncStorage.removeItem("selectedShop");
+      console.log("response1523698", response);
 
-      setVisible(false);
+      if (response) {
+        // Handle success, show Snackbar message, and log out
+        showSnackbar("Logged out successfully", "success");
 
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: "login" }],
-        })
-      );
+        // Perform all the logout actions
+        // await auth().signOut();
+        await clearUserData();
+        await AsyncStorage.clear(); // Clear all AsyncStorage
+        await AsyncStorage.removeItem("allShops");
+        await AsyncStorage.removeItem("selectedShop");
+
+        console.log("Successfully logged out");
+
+        setVisible(false);
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "login" }],
+          })
+        );
+      } else {
+        console.error("Error during logout response:", response);
+        showSnackbar("Error logging out", "error");
+      }
     } catch (error) {
+      console.error("Error during logout - ", error);
       showSnackbar("Error logging out", "error");
-      console.log("error logging out - ", error);
+    }finally{
+      setVisible(false)
     }
-
-    // navigation.navigate("EnterNumber");
   };
 
   const handleEditPress = () => {
@@ -422,7 +432,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
-        routes: [{ name: "EnterNumber" }],
+        routes: [{ name: "login" }],
       })
     );
   };

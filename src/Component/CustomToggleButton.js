@@ -15,9 +15,9 @@ const CustomToggleButton = ({ options, value, onChange }) => {
             paddingHorizontal: 10,
             paddingVertical: 8,
             paddingTop:10,
-            backgroundColor: value === option.value ? 
-            // '#6200ee' 
-            '#0c3b73' 
+            backgroundColor: value === option.value ?
+            // '#6200ee'
+            '#0c3b73'
             : '#ddd',
             margin: 5,
             borderRadius: 5,

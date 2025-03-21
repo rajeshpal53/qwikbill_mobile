@@ -13,7 +13,13 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import UserDataContext from "../../Store/UserDataContext";
 // import { useLocation } from "../../Store/LocationContext";
-import { API_BASE_URL, createApi, IMAGE_BASE_URL, NORM_URL, updateApi } from "../../Util/UtilApi";
+import {
+  API_BASE_URL,
+  createApi,
+  IMAGE_BASE_URL,
+  NORM_URL,
+  updateApi,
+} from "../../Util/UtilApi";
 import { useSnackbar } from "../../Store/SnackbarContext";
 import ConfirmModal from "../../Modal/ConfirmModal";
 import { useTranslation } from "react-i18next";
@@ -23,9 +29,13 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import axios from "axios";
 import { useRoute } from "@react-navigation/native";
 
-const referenceDate = new Date('2025-01-08T07:29:04.338Z');
+const referenceDate = new Date("2025-01-08T07:29:04.338Z");
 // Minimum date for a person to be at least 5 years old
-const minAgeDate = new Date(referenceDate.getFullYear() - 5, referenceDate.getMonth(), referenceDate.getDate());
+const minAgeDate = new Date(
+  referenceDate.getFullYear() - 5,
+  referenceDate.getMonth(),
+  referenceDate.getDate()
+);
 
 const validationSchema = Yup.object().shape({
   // profileImage: Yup.mixed().required("Profile image is required"),
@@ -37,37 +47,45 @@ const validationSchema = Yup.object().shape({
     .min(10, "mobile number must be at least 10 digits")
     .max(15, "mobile number must be at most 15 digits"),
   // email: Yup.string().email("Invalid email").required("Email is required"),
-  gender: Yup.string().required("Gender is required"),
+  gender: Yup.string().required("Gender is required").nullable(),
   address: Yup.string()
     .required("address is required")
     .min(4, "address atleast 4 characters long"),
-  dob: Yup.string().required("DOB is required")
-    .test(
-      "min-age",
-      "You must be at least 5 years old",
-      function (value) {
-        if (!value) return false;
+  dob: Yup.string()
+    .required("DOB is required")
+    .test("min-age", "You must be at least 5 years old", function (value) {
+      if (!value) return false;
 
-        // Parse the entered DOB
-        const enteredDate = new Date(value);
+      // Parse the entered DOB
+      const enteredDate = new Date(value);
 
-        // Ensure it's a valid date
-        if (isNaN(enteredDate.getTime())) return false;
+      // Ensure it's a valid date
+      if (isNaN(enteredDate.getTime())) return false;
 
-        // Get today's date
-        const today = new Date();
+      // Get today's date
+      const today = new Date();
 
-        // Calculate the minimum age date (5 years ago from today)
-        const minAgeDate = new Date(
-          today.getFullYear() - 5,
-          today.getMonth(),
-          today.getDate()
-        );
+      // Calculate the minimum age date (5 years ago from today)
+      const minAgeDate = new Date(
+        today.getFullYear() - 5,
+        today.getMonth(),
+        today.getDate()
+      );
 
-        // The entered DOB must be earlier than or equal to minAgeDate
-        return enteredDate <= minAgeDate;
-      }
-    ),
+      // The entered DOB must be earlier than or equal to minAgeDate
+      return enteredDate <= minAgeDate;
+    }),
+  // country: Yup.string().required("Country is required"),
+  // state: Yup.string().required("State is required"),
+  // city: Yup.string().required("City is required"),
+  // area: Yup.string().required("Area is required"),
+  // pincode: Yup.string()
+  //   .required("Pincode is required")
+  //   .matches(/^[0-9]{6}$/, "Pincode must be 6 digits"),
+  // age: Yup.number()
+  //   .required("age is required")
+  //   .min(5, "age is atleast 5 years") // Minimum age limit
+  //   .max(99, "age must be at most 99"), // Maximum age limit
 
 });
 
@@ -103,15 +121,16 @@ export default function EditProfileScreen({ navigation }) {
   const [profileImage, setProfileImage] = useState(null);
   const routeData = useRoute().params?.item || null;
   const onGoBack = useRoute().params?.onGoBack || null;
+  const today = new Date();
   const [initialData, setInitialData] = useState({
     name: "",
     mobile: "",
     email: "",
     gender: "",
-    dob: null,
+    dob: new Date() || null,
     address: "",
-    latitude: "",
-    longitude: "",
+    // latitude: "",
+    // longitude: "",
     profileImage: null,
     aadharFrontImage: null,
     aadharBackImage: null,
@@ -136,8 +155,8 @@ export default function EditProfileScreen({ navigation }) {
 
   useEffect(() => {
     const setInitialDataFunc = async (Data) => {
-      console.log("🔍 API Response Data:", Data); // ✅ Check full API response
 
+      console.log("Hetting data issss", Data);
       setInitialData({
         name: Data?.user?.name || "",
         mobile: Data?.user?.mobile || "",
@@ -147,16 +166,13 @@ export default function EditProfileScreen({ navigation }) {
         dob: (Data?.user?.dob && parseServerDate(Data?.user?.dob)) || null,
         pincode: Data?.user?.pincodefk || "",
         address: Data?.user?.address || "",
-        latitude: Data?.user?.latitude || "",
-        longitude: Data?.user?.longitude || "",
-        // profileImage:
-        //   (Data?.user?.profilePicurl &&
-        //     formatUrl(Data?.user?.profilePicurl, "profilePicurl")) ||
-        //   null,
 
-        profileImage: Data?.user?.profilePicurl
-        ? formatUrl(Data?.user?.profilePicurl, "profilePicurl")  // Use API image if available
-        : null,
+        // latitude: Data?.user?.latitude || "",
+        // longitude: Data?.user?.longitude || "",
+        profileImage:
+          (Data?.user?.profilePicurl &&
+            formatUrl(Data?.user?.profilePicurl, "profilePicurl")) ||
+          null,
 
         aadharFrontImage:
           (Data?.aadharCardFronturl &&
@@ -166,7 +182,6 @@ export default function EditProfileScreen({ navigation }) {
           (Data?.aadharCardFronturl &&
             formatUrl(Data?.aadharCardBackurl, "aadharCardBackurl")) ||
           null,
-
       });
 
     };
@@ -186,18 +201,17 @@ export default function EditProfileScreen({ navigation }) {
 
   console.log("userData is m ", userData);
 
-
   useEffect(() => {
     console.log("postData is , ", postData);
   }, [postData]);
 
-
   const handlePress = () => setDropdownVisible(!dropdownVisible);
 
   const editHandler = async () => {
-    let token = userData?.token
+    let token = userData?.token;
     try {
       setModalVisible(false);
+      
       setIsLoading(true);
       console.log("post data beta is , ", postData);
 
@@ -209,31 +223,37 @@ export default function EditProfileScreen({ navigation }) {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
-
         }
       );
 
       console.log("JSON Response:", response.data);
 
-      if ((routeData && routeData?.mobile === userData?.user?.mobile) || !routeData) {
+      if (
+        (routeData && routeData?.mobile === userData?.user?.mobile) ||
+        !routeData
+      ) {
         const saveUser = {
           token: userData.token,
           user: response?.data,
         };
+
+
         saveUserData(saveUser);
       }
 
       showSnackbar(t("Your profile has been updated Successfully"), "success");
 
       if (routeData && onGoBack) {
-        console.log("route set dara, ", response?.data)
+
+        console.log("route set dara, ", response?.data);
+
         onGoBack(response?.data);
       }
 
       navigation.goBack();
       // setModalVisible(false);
-    } catch (err) {
-      console.error("err", err);
+    } catch (error) {
+      console.error(`Error with ${method.toUpperCase()} request to ${url}:`, error.response || error.message);
       showSnackbar(t(`Failed to update proflie`), "error");
     } finally {
       setIsLoading(false);
@@ -241,6 +261,7 @@ export default function EditProfileScreen({ navigation }) {
   };
 
   useEffect(() => {
+    console.log("USER DATA IS SHOWING ", userData?.user?.gender);
     setSelectedGender(userData?.user?.gender || "Select Gender");
   }, [userData]);
 
@@ -295,14 +316,17 @@ export default function EditProfileScreen({ navigation }) {
   };
 
   const formatDate = (date) => {
-    console.log("formatted date is for display is 1 , ", date)
-    const day = date.getDate().toString().padStart(2, '0'); // Ensures 2 digits
-  const month = date.toLocaleString('default', { month: 'long' }); // Full month name
-  const year = date.getFullYear();
-  console.log("formatted date is for display is , ", `${day} ${month} ${year}`)
-  return `${day} ${month} ${year}`; // Concatenate in "DD Month YYYY" format
+    console.log("formatted date is for display is 1 , ", date);
+    const day = date.getDate().toString().padStart(2, "0"); // Ensures 2 digits
+    const month = date.toLocaleString("default", { month: "long" }); // Full month name
+    const year = date.getFullYear();
+    console.log(
+      "formatted date is for display is , ",
+      `${day} ${month} ${year}`
+    );
+    return `${day} ${month} ${year}`; // Concatenate in "DD Month YYYY" format
   };
-  
+
 
   const setLocationFields = async (data, setFieldValue) => {
     if (data?.latitude && data.longitude) {
@@ -316,9 +340,8 @@ export default function EditProfileScreen({ navigation }) {
 
 
   const showPopUpMessage = (massage, msgType) => {
-
-    showSnackbar(massage, msgType)
-  }
+    showSnackbar(massage, msgType);
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -326,6 +349,33 @@ export default function EditProfileScreen({ navigation }) {
 
         initialValues={initialData}
         enableReinitialize={true}
+        // initialValues={{
+        //   name: userData?.user?.name || "",
+        //   mobile: userData?.user?.mobile || "",
+        //   email: userData?.user?.email || "",
+        //   gender: userData?.user?.gender || "",
+        //   dob:
+        //     (userData?.user?.dob && parseServerDate(userData?.user?.dob)) ||
+        //     new Date() ||
+        //     null,
+        //   latitude: userData?.user?.latitude || "",
+        //   longitude: userData?.user?.longitude || "",
+        //   address: userData?.user?.address || "",
+        //   aadharFrontImage:
+        //     (userData?.aadharCardFronturl &&
+        //       formatUrl(userData?.aadharCardFronturl, "aadharCardFronturl")) ||
+        //     null,
+        //   aadharBackImage:
+        //     (userData?.aadharCardFronturl &&
+        //       formatUrl(userData?.aadharCardBackurl, "aadharCardBackurl")) ||
+        //     null,
+        //   profileImage:
+        //     (userData?.user?.profilePicurl &&
+        //       formatUrl(userData?.user?.profilePicurl, "profilePicurl")) ||
+        //     null,
+
+        // }}
+
         validationSchema={validationSchema}
         onSubmit={(values) => {
           // Handle form submission
@@ -335,7 +385,9 @@ export default function EditProfileScreen({ navigation }) {
 
           profileFormData.append("name", values?.name);
           profileFormData.append("mobile", values?.mobile);
-          console.log("why profile not comming is , ", values?.profileImage)
+
+          console.log("why profile not comming is , ", values?.profileImage);
+
           if (values?.profileImage) {
             profileFormData.append("profilePicurl", values?.profileImage);
           }
@@ -357,6 +409,7 @@ export default function EditProfileScreen({ navigation }) {
           if (values?.longitude) {
             profileFormData.append("longitude", values.longitude);
           }
+
 
           setPostData(profileFormData);
         }}
@@ -391,7 +444,10 @@ export default function EditProfileScreen({ navigation }) {
                       btnLabel="Upload Profile Image"
                       isAdmin={true}
                     /> */}
-                    {console.log("profile image is sssddd, ", values?.profileImage)}
+                    {console.log(
+                      "profile image is sssddd, ",
+                      values?.profileImage
+                    )}
                     <View>
                       <ServiceImagePicker
                         image={values?.profileImage}
@@ -400,7 +456,6 @@ export default function EditProfileScreen({ navigation }) {
                         setFieldValue={setFieldValue}
                         uploadFieldName={"profileImage"}
                         type={"rounded"}
-                        fieldsDisabled={fieldsDisabled}  // ✅ This prop is passed
 
                       />
                       {touched.profileImage && errors.profileImage ? (
@@ -462,8 +517,14 @@ export default function EditProfileScreen({ navigation }) {
                       <View>
                         <List.Accordion
                           accessibilityLabel="Gender"
-                          style={{ height: 56, borderBottomWidth: 1, borderBottomColor: "rgba(0, 0, 0, 0.3)" }}
-                          title={selectedGender || "Select Gender"}
+
+                          style={{
+                            height: 56,
+                            borderBottomWidth: 1,
+                            borderBottomColor: "rgba(0, 0, 0, 0.3)",
+                          }}
+                          title={ "Select Gender"} //selectedGender ||
+
                           expanded={dropdownVisible}
                           onPress={handlePress}
                         // left={(props) => <List.Icon {...props} icon="earth" />}
@@ -476,6 +537,7 @@ export default function EditProfileScreen({ navigation }) {
                                 <List.Item
                                   key={index}
                                   title={item.gender}
+
                                   onPress={() => {
                                     setSelectedGender(item.gender);
                                     setFieldValue("gender", item.gender);
@@ -493,6 +555,15 @@ export default function EditProfileScreen({ navigation }) {
 
                      
                     </View>
+
+                    {/* <AddressForm
+                      extraData={extraData}
+                      setExtraData={setExtraData}
+                      userData={userData.user}
+                      token={userData.token}
+                    /> */}
+
+
                     <View style={{ marginTop: 10 }}>
                       <View style={styles.dateTitle}>
                         <Text style={styles.dateTitleText}>DOB*</Text>

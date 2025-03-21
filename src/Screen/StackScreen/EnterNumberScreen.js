@@ -93,19 +93,18 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
     console.log("Enter number is ", phoneNumber);
     try {
       const response = await readApi(`users/getUserByMobile/${phoneNumber}`);
-      console.log("USER DATA ______", response);
+      if(response?.mobile===phoneNumber){
+        return false
+      }else{
+        return true
+      }
 
-      if (response.status === 200) {
-        console.log("If condition working ");
-        return false;
-      }
     } catch (error) {
-      if (error.response && error.response.status === 404) {
-        console.log("If condition working ");
-        return true;
-      }
+
+      console.log("Unable to fetch data is ", error)
+      return true
     }
-    return true;
+    // return true;
   };
 
   const carouselItems = [

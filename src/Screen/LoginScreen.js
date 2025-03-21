@@ -30,7 +30,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import UserDataContext from "../Store/UserDataContext";
 
 const { height } = Dimensions.get("window");
-console.log("height", height);
+console.log("height-------", height);
 const fontScale = PixelRatio.getFontScale();
 
 const getFontSize = (size) => size / fontScale;
@@ -54,15 +54,17 @@ const LoginScreen = ({ navigation }) => {
   // }, []);
 
   const { showSnackbar } = useSnackbar();
+
   const validationSchema = Yup.object().shape({
     // email: Yup.string()
     //   .email("Invalid email address")
     //   .required("Email is required"),
     mobile: Yup.string()
-      .required("Phone number is required")
-      .matches(/^\d{10}$/, "Mobile number must be exactly 10 digits")
-      .min(10, "Phone number must be at least 10 digits")
-      .max(12, "Phone number can be at most 15 digits"),
+    .required("Phone number is required")
+    .matches(/^[0-9]+$/, "Phone number must be numeric")
+    .min(10, "Phone number must be at least 10 digits")
+    .max(12, "Phone number can be at most 15 digits"),
+    
     password: Yup.string()
       .min(6, "Password must be at least 6 characters")
       .required("Password is required"),
@@ -149,6 +151,8 @@ const LoginScreen = ({ navigation }) => {
   //         resetForm();
   //       }
   // }
+  console.log("Testing case")
+
   const togglePasswordVisibility = () => {
     setPassIsSecure((prevState) => !prevState);
   };
@@ -195,9 +199,7 @@ const LoginScreen = ({ navigation }) => {
           }finally{
             resetForm()
           }
-        }
-      }
-
+        }}
       >
         {({
           handleChange,
@@ -279,12 +281,12 @@ const LoginScreen = ({ navigation }) => {
                       <TextInput
                         label="Mobile Number"
                         style={styles.input}
-                        // autoCorrect={false}
                         mode="flat"
                         onChangeText={handleChange("mobile")}
                         onBlur={handleBlur("mobile")}
                         value={values.mobile}
-                        keyboardType="numeric"
+                        keyboardType="phone-pad"
+                        maxLength={10}
                         right={
                           <TextInput.Icon
                             icon={() => (
@@ -294,7 +296,6 @@ const LoginScreen = ({ navigation }) => {
                                 color="gray"
                               />
                             )}
-                            onPress={togglePasswordVisibility}
                           />
                         }
                         // autoCapitalize="none"
@@ -302,6 +303,7 @@ const LoginScreen = ({ navigation }) => {
                       {touched.mobile && errors.mobile && (
                         <Text style={styles.error}>{errors.mobile}</Text>
                       )}
+
                       <TextInput
                         mode="flat"
                         label="Password"
@@ -357,12 +359,18 @@ const LoginScreen = ({ navigation }) => {
                         style={[
                           styles.button,
                           { borderRadius: 10 },
-                          !isValid || !dirty || !values.mobile || !values.password
+                          !isValid ||
+                          !dirty ||
+                          !values.mobile ||
+                          !values.password
                             ? { backgroundColor: "#d3d3d3" }
                             : { backgroundColor: "#1E90FF" },
                         ]}
                         disabled={
-                          !isValid || !dirty || !values.mobile || !values.password
+                          !isValid ||
+                          !dirty ||
+                          !values.mobile ||
+                          !values.password
                         }
                       >
                         <Text
