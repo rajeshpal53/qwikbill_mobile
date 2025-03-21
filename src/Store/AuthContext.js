@@ -1,39 +1,41 @@
- //AuthContext.js
-import React, { createContext, useState, useEffect, useMemo, useContext } from "react";
+import React, { createContext, useState, useEffect, useContext } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from "@react-navigation/native";
 import UserDataContext from "./UserDataContext";
 import { createApi } from "../Util/UtilApi";
+
+import { usePasskey } from "../Store/PasskeyContext";
+import { useNavigation } from "@react-navigation/native";
 import { useSnackbar } from "./SnackbarContext";
+
 // Create the context
 export const AuthContext = createContext();
 
 // Create a provider component
 export const AuthProvider = ({ children }) => {
+  const { isPasskey } = usePasskey();
+  //const navigation = useNavigation();  
+
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginDetail, setLoginDetail] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const isFocused = useIsFocused();
   const [searchMode, setSearchMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedShop, setSelectedShop] = useState('');
-  const [overlayHeight, setOverlayHeight] = useState('25%')
+  const [selectedShop, setSelectedShop] = useState("");
+  const [overlayHeight, setOverlayHeight] = useState("25%");
   const { userData, saveUserData } = useContext(UserDataContext);
   const { showSnackbar } = useSnackbar();
 
-  // Check if user is logged in on app startup
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
         const token = await AsyncStorage.getItem("userToken");
-        // const token2= await AsyncStorage.getItem("loginDetail");
-        //   console.log(token2,"token2")
-          console.log(token,"token12345")
-        //   setLoginDetail(token2)
+        console.log(token, "token12345");
 
         if (token) {
           setIsAuthenticated(true);
-
         }
       } catch (e) {
         console.error(e);
@@ -46,7 +48,7 @@ export const AuthProvider = ({ children }) => {
   }, [isFocused]);
 
   const login = async (token) => {
-    console.log("Data of tokes", token)
+    console.log("Data of tokens", token);
     try {
       await AsyncStorage.setItem("userToken", userData?.token);
       setIsAuthenticated(true);
@@ -54,12 +56,13 @@ export const AuthProvider = ({ children }) => {
       console.error(e);
     }
   };
+
   const storeData = async (key, value) => {
-    console.log(`Value is key ${key},${value}`)
+    console.log(`Value is key ${key},${value}`);
     try {
       await AsyncStorage.setItem(key, JSON.stringify(value));
-      if(key==="loginDetail"){
-        setLoginDetail(value)
+      if (key === "loginDetail") {
+        setLoginDetail(value);
       }
     } catch (error) {
       console.error("Error setting item:", error);
@@ -76,50 +79,42 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-   const handleLogin = async (values) => {
-      try {
-        console.log("login screen");
-        setIsLoading(true);
+  
+  const handleLogin = async (values,navigation) => {
 
-        const payload = {
-          mobile: values?.mobile,
-          password: values?.password,
-        };
-        const response = await createApi("users/loginUser", payload);
-        await storeData("loginDetail", response);
-        setLoginDetail(response);
-        console.log("response of Login is , ", response);
-        await saveUserData(response);
-        // console.log(response.data, "newResponse");
-        // const data = await response.data;
-        // await storeData("loginDetail", data.result);
-        // setLoginDetail(data.result);
-        // const token = "dummyToken";
-        // login(token);
-        // if (isLoading) {
-        //   {
-        //     <View
-        //       style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        //     >
-        //       <ActivityIndicator size="large" />
-        //     </View>;
-        //   }
-        // }
-        if (isPasskey) {
-          navigation.navigate("Passcode");
-        } else {
-          navigation.navigate("CreateNewPasscode");
-        }
-        // resetForm();
-      } catch (err) {
-        console.error(err);
-      } finally {
-        // resetForm();
-        setIsLoading(false);
+    try {
+      console.log("login screen");
+
+      setIsLoading(true);
+
+      const payload = {
+        mobile: values?.mobile,
+        password: values?.password,
+      };
+          
+      const storedPassword = await AsyncStorage.getItem("updatedPassword");
+
+      if (storedPassword && storedPassword !== values.password) {
+        alert("Incorrect password. Please enter the updated password.");
+        return;
       }
-    };
 
+      const response = await createApi("users/loginUser", payload);
+      await storeData("loginDetail", response);
+      setLoginDetail(response);
+      console.log("response of Login is , ", response);
+      await saveUserData(response);
 
+      if (navigation) {
+        navigation.navigate("passcode"); // Change "HomeScreen" to your actual screen name
+      }
+      
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const logout = async () => {
     try {
@@ -136,47 +131,29 @@ export const AuthProvider = ({ children }) => {
       console.error(e);
     }
   };
-    // const value = useMemo(()=>{
-    //  return  {
-    //   isAuthenticated,
-    //   login,
-    //   logout,
-    //   isLoading,
-    //   storeData,
-    //   getData,
-    //   loginDetail,
-    //   setLoginDetail,
-    // }
-    // } ,[ isAuthenticated,
-    //   login,
-    //   logout,
-    //   isLoading,
-    //   storeData,
-    //   getData,
-    //   loginDetail,
-    //   setLoginDetail])
+
   return (
     <AuthContext.Provider
-      value={ {
-           isAuthenticated,
-           login,
-           logout,
-           isLoading,
-           setIsLoading,
-           storeData,
-           getData,
-           loginDetail,
-           setLoginDetail,
-           searchMode,
-           setSearchMode,
-           searchQuery,
-           setSearchQuery,
-           selectedShop,
-           setSelectedShop,
-           overlayHeight,
-           setOverlayHeight,
-           handleLogin
-         }}
+      value={{
+        isAuthenticated,
+        login,
+        logout,
+        isLoading,
+        setIsLoading,
+        storeData,
+        getData,
+        loginDetail,
+        setLoginDetail,
+        searchMode,
+        setSearchMode,
+        searchQuery,
+        setSearchQuery,
+        selectedShop,
+        setSelectedShop,
+        overlayHeight,
+        setOverlayHeight,
+        handleLogin,
+      }}
     >
       {children}
     </AuthContext.Provider>

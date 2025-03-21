@@ -84,12 +84,15 @@ import CustomerDetail from "../StackScreen/CustomerSection/CustomerDetails.js";
 import PoliciesDetailsScreen from "../StackScreen/PoliciesDetailsScreen.js";
 import AllQueryAndSupport from "../../src/Screen/StackScreen/QueriesScreens/AllQueryAndSupport.js";
 
+
 export default function StackNavigator() {
   const Stack = createStackNavigator();
   const [isConnected, setIsConnected] = useState(false);
   const [isLandscape, setIsLandscape] = useState(false);
   const { isAuthenticated, isLoading, searchMode } = useContext(AuthContext);
   const { userData } = useContext(UserDataContext);
+  const [isForgetPasswordState, setIsForgetPasswordState] = useState(false);
+
   // const { shopDetails } = useContext(ShopDetailContext);
 
   // const ViewCustomerWithTour  = withCopilot(AddCustomerScreen)
@@ -107,7 +110,9 @@ export default function StackNavigator() {
   return (
     <>
       <Stack.Navigator
-        initialRouteName={userData ? "Passcode" : "login"}
+        // initialRouteName={userData ? "Passcode" : "login"}
+        initialRouteName={isForgetPasswordState ? "login" : userData ? "Passcode" : "login"}
+
         screenOptions={
           {
             // headerTitle: "Create Invoice",
@@ -151,6 +156,29 @@ export default function StackNavigator() {
 
         <Stack.Screen name="viewClient" component={ViewClientScreen} />
 
+//         <Stack.Screen name="EditProfilePage" component={EditProfileScreen}
+//           options={{
+//             // headerShown: false,
+//             headerTitle: () => (
+//               <Text style={styles.headerTitle}>{("Edit Profile")}</Text>
+//             ),
+//             headerTitleAlign: "center",
+//             headerTintColor: "#000",
+//             headerShadowVisible: false,
+//             headerLeft: () => <CustomBackButton />,
+//           }}
+//         />
+
+//         <Stack.Screen name="EditProfile"
+//           component={EditProfileScreen}
+//           options={{
+//             // headerShown: false,
+//             headerTitle: () => (
+//               <Text style={styles.headerTitle}>{("Update Profile")}</Text>
+//             ),
+//             headerTitleAlign: "center",
+//             headerTintColor: "#000",
+//             headerShadowVisible: false,
         <Stack.Screen
           name="EditProfilePage"
           component={EditProfileScreen}
@@ -160,6 +188,7 @@ export default function StackNavigator() {
             ),
 
             headerTitleAlign: "center",
+
             headerLeft: () => <CustomBackButton />,
           }}
         />
@@ -535,13 +564,11 @@ export default function StackNavigator() {
         />
         <Stack.Screen
           name="EnterNumberScreen"
-          component={EnterNumberScreen}
-          screenOptions={{ headerShown: false }}
-          // options={{ title: 'Login '}}
-          options={{
-            headerShown: false,
-          }}
-        />
+          options={{ headerShown: false }}
+        >
+          {(props) => <EnterNumberScreen {...props} setIsForgetPasswordState={setIsForgetPasswordState} />}
+        </Stack.Screen>
+
         <Stack.Screen
           name="Signup"
           component={SignupScreen}
@@ -655,6 +682,7 @@ export default function StackNavigator() {
             headerTitle: "View Shop Details",
           }}
         />
+
       </Stack.Navigator>
 
       <CheckInternet

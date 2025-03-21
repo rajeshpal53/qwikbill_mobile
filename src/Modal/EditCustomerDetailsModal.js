@@ -13,7 +13,9 @@ const EditCustomerDetailsModal = ({
   visible,
   seteditmodal,
   SelectedEditItem,
+  onUpdate,
   setCustomerData,
+
 }) => {
   const { userData } = useContext(UserDataContext);
   const navigation = useNavigation()
@@ -50,15 +52,18 @@ const EditCustomerDetailsModal = ({
   //   return updatedCustomerDetails; // Return the updated array (useful for React state)
   // };
 
+
+     
   // const updateCustomerDetails = (id, updatedValues) => {
   //   console.log("Function value", updatedValues);
-
+  
   //   // Assuming you are updating a single object, return the updated object
   //   const updatedCustomer = { id, ...updatedValues };
-
+  
   //   console.log("Updated Customer Details:", updatedCustomer);
   //   return updatedCustomer;
   // };
+
 
   const hideModal = () => {
     seteditmodal((prev) => !prev);
@@ -119,6 +124,7 @@ const EditCustomerDetailsModal = ({
               console.log("Unable to update User ", error);
             }
           }}
+          
         >
           {({
             handleChange,

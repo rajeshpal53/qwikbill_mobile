@@ -8,17 +8,24 @@ const SetPasswordSreen = ({ navigation }) => {
 
   const HandalsetPasswordModal = () => {
     setVisible((prevState) => !prevState);
+    console("hello friends !")
+    alert("hello everyone")
   };
+
+
   return (
     <View style={{ flex: 1 }}>
       <TouchableOpacity onPress={HandalsetPasswordModal}>
         <Text>Set Password</Text>
       </TouchableOpacity>
+
       {visible && (
         <SetpasswordModal
           visible={visible}
-          HandalsetPasswordModal={HandalsetPasswordModal}
+          closeModal={HandalsetPasswordModal}
           navigation={navigation}
+      
+
         />
       )}
     </View>

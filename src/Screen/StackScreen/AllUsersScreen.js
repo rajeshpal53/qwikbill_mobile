@@ -19,12 +19,14 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Icon from "react-native-vector-icons/Ionicons";
 // import Voice from "@react-native-voice/voice"; // Import Voice for speech recognition
 import UserDataContext from "../../Store/UserDataContext";
-import { deleteApi, fontSize, readApi } from "../../Util/UtilApi";
+import { deleteApi, fontSize, readApi,updateApi } from "../../Util/UtilApi";
 
 import NoDataFound from "../../../src/Components/NoDataFound";
 import UserCard from "../../Component/Cards/UserCard";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
 import OpenmiqModal from "../../Modal/Openmicmodal";
+import EditCustomerDetailsModal from "../../Modal/EditCustomerDetailsModal";
+import axios from "axios";
 
 const AllUsersScreen = ({navigation}) => {
   const { userData } = useContext(UserDataContext);
@@ -41,6 +43,8 @@ const AllUsersScreen = ({navigation}) => {
   const [transcript, setTranscript] = useState(""); // State for transcript
   const PAGE_SIZE = 10;
   const [totalPages, settotalPages] = useState(1);
+  const [editModalVisible, setEditModalVisible] = useState(false)
+  const [selectedUser, setSelectedUser] = useState(null)
 
   useEffect(() => {
     getalldata();
@@ -69,15 +73,77 @@ const AllUsersScreen = ({navigation}) => {
     }
   };
 
+  
+  
+  // const handleUpdateUser = async (id, updatedValues) => {
+  //   if (!id) {
+  //     console.error(" Error: User ID is missing!");
+  //     alert("User ID is missing.");
+  //     return;
+  //   }
+  
+  //   console.log(" Checking if User Exists:", id);
+  
+  //   try {
+  //     setIsLoading(true); // Start loading
+  
+  //     const token = userData?.token?.trim(); // Ensure token has no spaces
+  //     if (!token) {
+  //       alert("Authentication error: No token found.");
+  //       return;
+  //     }
+  
+  //     const payload = {
+  //      // id,  // Ensure ID is passed in the request body
+  //       name: updatedValues.name,
+  //       email: updatedValues.email,
+  //       mobile: updatedValues.number,
+  //       address: updatedValues.address,
+  //     };
+  
+  //     console.log(" Sending Data:", payload);
+  
+  //       const api = `https://rajeshpal.online/qapi/users/upsertOnlyUserProfileImg`
+        
+  //     const response = await axios.post(api, payload, {
+  //      headers:{ Authorization: `Bearer ${token}`},
+  //      "Content-Type": "application/json" 
+
+  //     });
+  
+  //     console.log(" API Response:", response);
+  
+  //     if (response?.error) {
+  //       console.error("Failed to update user:", response);
+  //       alert(response.error || "Error updating user. Please try again.");
+  //       return;
+  //     }
+  
+  //     // Update usersData state in real-time
+  //     setUsersData((prevUsers) =>
+  //       prevUsers.map((user) => (user.id === id ? { ...user, ...updatedValues } : user))
+  //     );
+  
+  //     alert("User updated successfully!");
+  //     setEditModalVisible(false); // Close modal
+  //   } catch (error) {
+  //     console.error(" Update error:", error);
+  //     alert("Something went wrong. Please try again later.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+  
+
 
   const HandleDeleteUser = async (item) => {
-    console.log("DATA OF ITEM ISSSSS",item.id )
+    console.log("DATA OF ITEM ISSSSS", item.id)
     try {
       setIsLoading(true);
       if (item.id) {
         const token = userData?.token;
-        const deleteresponse = await deleteApi(`users/${item.id}`,{
-          Authorization:`Bearer ${token}`
+        const deleteresponse = await deleteApi(`users/${item.id}`, {
+          Authorization: `Bearer ${token}`
         });
         if (deleteresponse) {
           setUsersData((prev) => prev.filter((data) => data.id !== item.id));
@@ -100,10 +166,10 @@ const AllUsersScreen = ({navigation}) => {
 
   const handleDataFromEditProfile = (updatedData, index) => {
 
+
     if (updatedData && index >= 0) {
       const dataForUpdating = [...usersData];
       dataForUpdating[index] = updatedData;
-
       try {
         setUsersData(dataForUpdating);
       } catch (error) {
@@ -115,8 +181,11 @@ const AllUsersScreen = ({navigation}) => {
   };
 
 
+
+
   const handleEditProfile = (item, index) => {
     navigation.navigate("EditProfilePage", {
+
       item: item,
       onGoBack: (updatedData) => handleDataFromEditProfile(updatedData, index),
       isAdmin: true,
@@ -151,7 +220,7 @@ const AllUsersScreen = ({navigation}) => {
               setTranscript={setTranscript}
               placeholderText="Search User by name ..."
               refuser={searchBarRef}
-              // searchData={fetchSearchedData}
+            // searchData={fetchSearchedData}
             />
           </View>
         }
@@ -160,6 +229,7 @@ const AllUsersScreen = ({navigation}) => {
           <UserCard
             item={item}
             index={index}
+
             // navigation={navigation}
             HandleDeleteUser={HandleDeleteUser}
             handleEditProfile={handleEditProfile}
@@ -195,6 +265,16 @@ const AllUsersScreen = ({navigation}) => {
           transcript={transcript}
         />
       )}
+
+
+      {/* <EditCustomerDetailsModal
+        visible={editModalVisible}
+        seteditmodal={setEditModalVisible}
+        SelectedEditItem={selectedUser}
+        onUpdate={handleUpdateUser}
+      /> */}
+
+
     </>
   );
 };

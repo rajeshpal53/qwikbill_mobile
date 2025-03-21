@@ -16,6 +16,8 @@ export const PasskeyProvider = ({ children }) => {
       if (storedPasskey) {
         setPasskey(storedPasskey);
         setIsPasskey(true)
+      }else{
+        setIsPasskey(false)
       }
     } catch (error) {
       console.error('Failed to load passkey', error);
@@ -27,6 +29,8 @@ export const PasskeyProvider = ({ children }) => {
     try {
       await AsyncStorage.setItem('passkey', key);
       setPasskey(key);
+      setIsPasskey(true); // Ensure it updates when saving a new passkey
+
     } catch (error) {
       console.error('Failed to save passkey', error);
     }
