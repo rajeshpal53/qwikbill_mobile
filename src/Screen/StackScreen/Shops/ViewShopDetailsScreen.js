@@ -6,31 +6,37 @@ import UserDataContext from "../../../Store/UserDataContext";
 import UserDetailsStore from "../../../Component/UserDetailsstore";
 import ShopDetailsStore from "../../../Component/ShopDetailsStore";
 import ConfirmModal from "../../../Modal/ConfirmModal";
-
+import { NORM_URL,deleteApi } from "../../../Util/UtilApi";
+import { useSnackbar } from "../../../Store/SnackbarContext";
 
 const ViewShopDetailsScreen = ({ route }) => {
   const { item } = route.params;
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
   const [ShopDeleteId, setShopDeleteId] = useState(null);
-
+  const[isLoading,setIsLoading]=useState(false)
+  const {showSnackbar}=useSnackbar();
+  const defaultImage = require("../../../../assets/myShop.jpg");
   const DeleteHandler = async () => {
-    //
     try {
       setIsLoading(true);
-      const response = await deleteApi(`addresses/${ShopDeleteId}`);
+      console.log(ShopDeleteId,";lkjhgfds")
+      const response = await deleteApi(`vendors/${ShopDeleteId}`);
       // await fetchAllAddresses();
-      await removeAddress(ShopDeleteId);
       console.log("response of delete is , ", response);
-
-      showSnackbar("Address Deleted Successfully", "success");
+      showSnackbar("Shop Delete Deleted Successfully", "success");
     } catch (error) {
-      console.error("Error deleting Address , ", error);
-      showSnackbar("SomeThing Went Wrong , Please Try Again", "error");
+      console.error("Error deleting Shop , ", error.message,error);
+      showSnackbar(`SomeThing Went Wrong , Please Try Again ${error}`, "error");
     } finally {
       setIsLoading(false);
       setConfirmModalVisible(false);
     }
   };
+
+  
+  // const updateImageUrl = debounce((profilePicurl) => {
+  //   setProfileUrl(`${profilePicurl}?${new Date().getTime()}`);
+  // }, 100);
 
   console.log("DATA OF ITEM IS SSSSSSSSSSS", item);
   return (
@@ -38,15 +44,21 @@ const ViewShopDetailsScreen = ({ route }) => {
       <View style={Styles.MainContainer}>
         <Card>
           <View style={Styles.ImageCard}>
+            {console.log(`${NORM_URL}${item.shopImage}?${new Date().getTime()}`,"dldldldllddl")}
             <Card.Cover
               // source={{ uri: imageUrl }}
-              source={require("../../../../assets/myShop.jpg")}
+              source={
+                item.shopImage && typeof item.shopImage === "string" && item.shopImage.trim() !== ""
+                  ? { uri: `${NORM_URL}${item.shopImage}?${new Date().getTime()}` }
+                  : defaultImage
+              }
               resizeMode="cover"
               style={{
                 borderTopLeftRadius: 10,
                 borderTopRightRadius: 10,
                 borderBottomLeftRadius: 0,
                 borderBottomRightRadius: 0,
+                backgroundColor:"#fff",
                 height: 180, // or any desired height
               }}
             />
@@ -84,7 +96,6 @@ const ViewShopDetailsScreen = ({ route }) => {
 
 const Styles = StyleSheet.create({
   MainContainer: {
-    borderWidth: 2,
     paddingVertical: 10,
     paddingHorizontal: 10,
     flex: 1,
