@@ -26,7 +26,8 @@ import UserCard from "../../Component/Cards/UserCard";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
 import OpenmiqModal from "../../Modal/Openmicmodal";
 
-const AllUsersScreen = ({navigation}) => {
+
+const AllUsersScreen = ({ navigation }) => {
   const { userData } = useContext(UserDataContext);
   const searchBarRef = useRef();
   const [searchQuery, setSearchQuery] = useState("");
@@ -41,6 +42,7 @@ const AllUsersScreen = ({navigation}) => {
   const [transcript, setTranscript] = useState(""); // State for transcript
   const PAGE_SIZE = 10;
   const [totalPages, settotalPages] = useState(1);
+  const searchbarRef = useRef(null);
 
   useEffect(() => {
     getalldata();
@@ -69,15 +71,14 @@ const AllUsersScreen = ({navigation}) => {
     }
   };
 
-
   const HandleDeleteUser = async (item) => {
-    console.log("DATA OF ITEM ISSSSS",item.id )
+    console.log("DATA OF ITEM ISSSSS", item.id);
     try {
       setIsLoading(true);
       if (item.id) {
         const token = userData?.token;
-        const deleteresponse = await deleteApi(`users/${item.id}`,{
-          Authorization:`Bearer ${token}`
+        const deleteresponse = await deleteApi(`users/${item.id}`, {
+          Authorization: `Bearer ${token}`,
         });
         if (deleteresponse) {
           setUsersData((prev) => prev.filter((data) => data.id !== item.id));
@@ -97,9 +98,7 @@ const AllUsersScreen = ({navigation}) => {
     }
   };
 
-
   const handleDataFromEditProfile = (updatedData, index) => {
-
     if (updatedData && index >= 0) {
       const dataForUpdating = [...usersData];
       dataForUpdating[index] = updatedData;
@@ -114,7 +113,6 @@ const AllUsersScreen = ({navigation}) => {
     }
   };
 
-
   const handleEditProfile = (item, index) => {
     navigation.navigate("EditProfilePage", {
       item: item,
@@ -122,7 +120,6 @@ const AllUsersScreen = ({navigation}) => {
       isAdmin: true,
     });
   };
-
 
   const loadMoreData = () => {
     if (hasMore && !isLoading && page < totalPages) {
@@ -140,21 +137,23 @@ const AllUsersScreen = ({navigation}) => {
   };
 
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      <View style={styles.container}>
+
+        <View style={{ flex: 1 }}>
+          <Searchbarwithmic
+            refuser={searchbarRef}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            setsearchmodal={setsearchmodal}
+            setTranscript={setTranscript}
+            placeholderText="Search User by name ..."
+            //    refuser={searchBarRef}
+          />
+        </View>
+      </View>
+
       <FlatList
-        ListHeaderComponent={
-          <View style={styles.container}>
-            <Searchbarwithmic
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              setsearchmodal={setsearchmodal}
-              setTranscript={setTranscript}
-              placeholderText="Search User by name ..."
-              refuser={searchBarRef}
-              // searchData={fetchSearchedData}
-            />
-          </View>
-        }
         data={usersData}
         renderItem={({ item, index }) => (
           <UserCard
@@ -163,7 +162,6 @@ const AllUsersScreen = ({navigation}) => {
             // navigation={navigation}
             HandleDeleteUser={HandleDeleteUser}
             handleEditProfile={handleEditProfile}
-
           />
         )}
         // renderItem={renderItem}
@@ -195,15 +193,15 @@ const AllUsersScreen = ({navigation}) => {
           transcript={transcript}
         />
       )}
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    padding: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 5,
   },
 
   searchbar: {

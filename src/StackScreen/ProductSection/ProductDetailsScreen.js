@@ -6,7 +6,13 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import React, { useEffect, useState, useContext, useCallback } from "react";
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useCallback,
+  useRef,
+} from "react";
 import {
   FAB,
   Searchbar,
@@ -56,6 +62,7 @@ const ProductDetailsScreen = ({ navigation }) => {
   const [filterOptionSelect, SetfilterOptionSelect] = useState("");
   const [totalPages, setTotalPages] = useState(1);
   const [mainLoading, setMainLoading] = useState(false);
+  const showSearchedData = useRef(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -66,7 +73,6 @@ const ProductDetailsScreen = ({ navigation }) => {
     }, [])
   );
 
-  console.log("DATA OF PRODUCT IS ", Productdata);
   const Apistore = (page) => {
     // Start building the base API URL
     let api = `products/getProducts?vendorefk=${selectedShop?.id}&page=${page}&limit=${PAGE_SIZE}`;
@@ -82,17 +88,15 @@ const ProductDetailsScreen = ({ navigation }) => {
     return api;
   };
 
-   const handleFilterChange = (filterOption) => {
+  const handleFilterChange = (filterOption) => {
     setloader(true);
     SetfilterOptionSelect(filterOption);
     setPage(1);
   };
 
   useEffect(() => {
-    // When page or filter changes, fetch new data
     getproductdata(page);
   }, [page, filterOptionSelect, bulkUploadModalVisible]);
-
 
   const getproductdata = async (page) => {
     if (page === 1) {
@@ -125,8 +129,6 @@ const ProductDetailsScreen = ({ navigation }) => {
     }
   };
 
-
-  //  // Load more data when reaching the end
   const loadMoreData = () => {
     if (!loader && hasMore && page < totalPages) {
       setPage((prevPage) => prevPage + 1);
@@ -148,10 +150,39 @@ const ProductDetailsScreen = ({ navigation }) => {
     // <FileUploadModal />;
   };
 
-  // Filter modal Operation
-  // const handleFiltermodal = () => {
-  //   setFilterModal(true);
-  // };
+
+
+  useEffect(()=>{console.log("DATA OF PRODUCT IS ",Productdata)},[Productdata])
+
+
+  //Search Function
+  const fetchSearchedData = () => {
+    if (!searchQuery.trim()) {
+      setSearchedData([]);
+      return;
+    }
+
+    try {
+      setloader(true);
+      const filteredData = Productdata.filter(item => {
+        return item.name.toLowerCase().includes(searchQuery.toLowerCase());
+      });
+
+      console.log("Filtered Data: ", filteredData);
+
+      setSearchedData(filteredData);
+
+    } catch (error) {
+      console.log("Filtering failed:", error);
+      setSearchedData([]);
+    } finally {
+      setloader(false);
+    }
+  };
+
+
+
+
 
   const Loader = () => {
     if (!loader) return null;
@@ -168,28 +199,30 @@ const ProductDetailsScreen = ({ navigation }) => {
     </View>
   ) : (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          marginTop: 5,
+        }}
+      >
+        <View style={{ flex: 1 }}>
+          <Searchbarwithmic
+            // refuser={searchbarRef}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            setsearchmodal={setsearchmodal}
+            setTranscript={setTranscript}
+            placeholderText="Search User by name ..."
+            searchData={fetchSearchedData}
+            // showSearchedData={showSearchedData}
+
+          />
+        </View>
+      </View>
       <FlatList
         ListHeaderComponent={() => (
           <>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginTop: 5,
-              }}
-            >
-              <View style={{ flex: 1 }}>
-                <Searchbarwithmic
-                  searchQuery={searchQuery}
-                  setSearchQuery={setSearchQuery}
-                  setsearchmodal={setsearchmodal}
-                  setTranscript={setTranscript}
-                  placeholderText="Search User by name ..."
-                  //    refuser={searchBarRef}
-                />
-              </View>
-            </View>
-
             <View style={styles.allbuttonView}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {[
@@ -399,10 +432,6 @@ export default ProductDetailsScreen;
 // }, [filterOptionSelect]);
 // const api = `products/getProductByVendorfk/${selectedShop?.id}?page=${page}&limit=${PAGE_SIZE}`;
 
-
-
-
-
-  // useEffect(() => {
-  //   getproductdata();
-  // }, [page, isfocused, bulkUploadModalVisible, filterOptionSelect]);
+// useEffect(() => {
+//   getproductdata();
+// }, [page, isfocused, bulkUploadModalVisible, filterOptionSelect]);

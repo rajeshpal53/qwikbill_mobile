@@ -105,6 +105,20 @@ export const updateApi = async (endpoint, data, headers) => {
     3:"partially paid",
   }
 
+  export const RoleStatusName={
+   1:"owner",
+   2:"manager",
+   3:"employee",
+   4:"viewer",
+
+  }
+  export const roleStatus= {
+    owner:1,
+    manager:2,
+    employee:3,
+    viewer:4
+  }
+
 
 export const ButtonColor  = {
   SubmitBtn :"#007bff",

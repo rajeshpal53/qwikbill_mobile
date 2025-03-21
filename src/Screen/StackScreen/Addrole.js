@@ -18,6 +18,7 @@ import { ShopContext } from "../../Store/ShopContext";
 import DropDownList from "../../UI/DropDownList";
 import { useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
+import { useSnackbar } from "../../Store/SnackbarContext";
 
 const AddRole = () => {
   const { userData } = useContext(UserDataContext);
@@ -27,8 +28,10 @@ const AddRole = () => {
   const navigation = useNavigation();
   const submit = useRef(false);
   const pickerRef = useRef();
+  const [AddRode, SetAddRole] = useState("");
+  const { showSnackbar } = useSnackbar();
 
-  const timeoutId = useRef(null); // useRef to persist timeoutId
+  const timeoutId = useRef(null);
 
   // Default roles
   const roleOptions = [
@@ -47,10 +50,9 @@ const AddRole = () => {
     userName: Yup.string().required("User Name is required"),
   });
 
-
-  useEffect(()=>{
-    console.log("User data is getting ", User)
-  },[User])
+  useEffect(() => {
+    console.log("User data is getting12358 ", selectedShop);
+  }, [selectedShop]);
 
   const fetchUserData = async (phoneNumber, setFieldValue) => {
     if (timeoutId.current) {
@@ -67,7 +69,7 @@ const AddRole = () => {
             };
             const response = await readApi(api, headers);
             if (response) {
-              setUser(response?.name);
+              setUser(response);
               setFieldValue("userName", response?.name);
               setFieldValue("userMobile", phoneNumber);
             } else {
@@ -92,38 +94,84 @@ const AddRole = () => {
     }, 300);
   };
 
-  const handleCreateCustomer = async (dataToSend) => {
-    let api = `customers/createCustomer`;
-    const headers = {
-      Authorization: `Bearer ${userData?.token}`, // Add token to headers
-    };
-    try {
-      const response = await createApi(api,{ ...headers,  data: dataToSend});
-      console.log("Create data is ", response);
-    } catch (err) {
-      console.log("Unable to Create customer data", err);
-    }
-  };
+  useEffect(() => {
+    const handleBackPress = navigation.addListener("beforeRemove", (e) => {
+      const hasFilledForm = User?.name || User?.address || User?.phone;
 
-  const handleSubmitData = async (dataToSend) => {
-    let api = `roles`;
-    const headers = {
-      Authorization: `Bearer ${userData?.token}`, // Add token to headers
-    };
-    try {
-      const response = await createApi(api,{ ...headers,  data: dataToSend,});
-      console.log("Create data is ", response);
-    } catch (err) {
-      console.log("Unable to Create Role data", err);
+      if (hasFilledForm && !submit.current) {
+        e.preventDefault();
+
+        Alert.alert(
+          "Warning!",
+          "If you go back, all of your filled form data will be lost. Are you sure you want to go back?",
+          [
+            {
+              text: "Cancel",
+              style: "cancel",
+            },
+            {
+              text: "Yes",
+              style: "destructive",
+              onPress: () => {
+                navigation.dispatch(e.data.action);
+                return true;
+              },
+            },
+          ]
+        );
+      }
+    });
+
+    return handleBackPress;
+  }, [navigation, User]);
+
+  const getStatusFk = () => {
+    if (AddRode == "owner") {
+      return 1;
+    } else if (AddRode == "manager") {
+      return 2;
+    } else if (AddRode == "employee") {
+      return 3;
+    } else if (AddRode == "viewer") {
+      return 4;
+    } else {
+      return 5;
     }
   };
 
   const HandleBothData = async (dataToSend) => {
+    console.log("USER DATA IS12 ", dataToSend);
+    let data = {};
     if (User) {
-      await handleSubmitData(dataToSend);
+      data = {
+        vendorfk: selectedShop?.id,
+        usersfk: selectedShop?.user?.id,
+        rolesfk: getStatusFk(),
+      };
+      console.log("DATA OF USER IS156", data);
     } else {
-      await handleCreateCustomer(dataToSend);
-      await handleSubmitData(dataToSend);
+      data = {
+        mobile: dataToSend?.userMobile,
+        name: dataToSend?.userName,
+        vendorfk: selectedShop?.id,
+        rolesfk: getStatusFk(),
+      };
+    }
+
+    try {
+      setLoading(true);
+      const headers = {
+        Authorization: `Bearer ${userData?.token}`,
+      };
+      console.log("Passing data is ", data)
+      const response = await createApi(`userRoles`, data, headers);
+      console.log("DATA OF RESPONSE IS123", response);
+      showSnackbar(" update profile successfully", "success");
+    } catch (error) {
+      console.log("Unable to create a data is ", error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -138,7 +186,6 @@ const AddRole = () => {
         }}
         validationSchema={validationSchema}
         onSubmit={async (values, { resetForm }) => {
-          console.log("Form values before submit:", values);
           const { userMobile, userName, userRole, selectShop } = values;
           const dataToSend = {
             userMobile,
@@ -146,12 +193,11 @@ const AddRole = () => {
             userRole,
             selectShop,
           };
-          console.log("DATA IS DATA TO SEND ", dataToSend)
           await HandleBothData(dataToSend);
-
-          // await HandleBothData();
-          resetForm(); // Reset form after submission
+          resetForm();
           submit.current = true;
+          navigation.goBack();
+
         }}
       >
         {({
@@ -163,8 +209,8 @@ const AddRole = () => {
           touched,
           setFieldValue,
         }) => {
-          console.log("Selected field is ",values)
-          console.log("Selected error is ",errors)
+          console.log("Selected field is ", values);
+          console.log("Selected error is ", errors);
           return (
             <View style={styles.form}>
               {/* Header */}
@@ -199,7 +245,7 @@ const AddRole = () => {
               </View>
 
               {/* Shop Description */}
-              {selectedShop?.details != null && (
+              {selectedShop?.details && selectedShop?.details !== "" && (
                 <>
                   <Text style={styles.label}>Shop Description</Text>
                   <View style={styles.TextShopDes}>
@@ -266,28 +312,31 @@ const AddRole = () => {
 
               {/* User Role Dropdown */}
               <Text style={styles.label}>User Role</Text>
-              <Picker
-                selectedValue={values.userRole}
-                onValueChange={(itemValue) =>
-                  setFieldValue("userRole", itemValue)
-                }
-                ref={pickerRef}
-                style={{ width: "100%", height: 80 }}
-              >
-                <Picker.Item label="Select Role" enabled={false} />
-                {roleOptions && roleOptions.length > 0
-                  ? roleOptions.map((role, index) => (
-                      <Picker.Item
-                        key={index}
-                        label={role?.label || "Unknown Role"} // Default label if missing
-                        value={role?.value || ""} // Default value if missing
-                      />
-                    ))
-                  : null}
-              </Picker>
-              {touched.userRole && errors.userRole && (
-                <Text style={styles.errorText}>{errors.userRole}</Text>
-              )}
+              <View style={{ borderBottomWidth: 2, marginBottom: 10 }}>
+                <Picker
+                  selectedValue={values.userRole}
+                  onValueChange={(itemValue) => {
+                    setFieldValue("userRole", itemValue);
+                    SetAddRole(itemValue);
+                  }}
+                  ref={pickerRef}
+                  style={{ width: "100%", height: 60 }}
+                >
+                  <Picker.Item label="Select Role" enabled={false} />
+                  {roleOptions && roleOptions.length > 0
+                    ? roleOptions.map((role, index) => (
+                        <Picker.Item
+                          key={index}
+                          label={role?.label || "Unknown Role"} // Default label if missing
+                          value={role?.value || ""} // Default value if missing
+                        />
+                      ))
+                    : null}
+                </Picker>
+                {touched.userRole && errors.userRole && (
+                  <Text style={styles.errorText}>{errors.userRole}</Text>
+                )}
+              </View>
 
               {/* Submit Button */}
               <TouchableOpacity style={styles.button} onPress={handleSubmit}>
@@ -340,7 +389,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize.labelLarge,
     fontFamily: "Poppins-Regular",
     fontWeight: "bold",
-    marginBottom: 8,
+    // marginBottom: 8,
   },
   input: {
     marginBottom: 15,
