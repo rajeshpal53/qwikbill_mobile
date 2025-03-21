@@ -9,7 +9,7 @@ const CustomBackButton = ({marginTop=0}) => {
 
   return (
     <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginLeft:10, justifyContent:"center",width:48,height:48,marginTop:marginTop}}>
-        <Icon name="chevron-left" size={40} color="black" />
+        <Icon name="chevron-left" size={40} color="#fff" />
     </TouchableOpacity>
   );
 };

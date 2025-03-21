@@ -114,7 +114,7 @@ const AdminSectionScreen = ({ navigation }) => {
   useEffect(() => {
     if (userData) {
       if (userData?.user?.profilePicurl) {
-        setImageUrl(`${NORM_URL}/${userData?.user?.profilePicurl}`);
+        setImageUrl(`${NORM_URL}/${userData?.user?.profilePicurl}?${new Date()}`);
       } else if (userData?.user?.gender == null) {
         setImageUrl();
       } else if (userData?.user?.gender === "Female") {

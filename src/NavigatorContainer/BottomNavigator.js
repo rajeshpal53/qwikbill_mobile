@@ -110,7 +110,7 @@ export default function BottomNavigator() {
           //       </Text>
           //     )
           //   : "",
-          headerLeft: () => <CustomBackButton />,
+          // headerLeft: () => <CustomBackButton />,
         }}
       />
 
@@ -132,74 +132,10 @@ export default function BottomNavigator() {
           //   backgroundColor: "transparent",
           //   // backgroundColor: "#fff"
           // },
-          headerLeft: () => <CustomBackButton />,
+          // headerLeft: () => <CustomBackButton />,
         }}
       />
 
-      {/* <Tab.Screen
-          name="Products"
-          component={ProductDetailsScreen}
-          options={{
-            headerShown: true,
-            tabBarIcon: ({ color, size }) => (
-              <Icon name="pricetag-outline" color={color} size={size} />
-            ),
-            headerTitle: !searchMode
-              ? () => (
-                  <Text
-                    style={{ color: "white", fontSize: 20, fontWeight: "bold" }}
-                  >
-                    Products
-                  </Text>
-                )
-              : "",
-
-            headerTitleAlign: "left",
-          }}
-        /> */}
-      {/* <Tab.Screen
-        name="Customer"
-        component={CustomerDetail}
-        options={{
-          headerShown: true,
-          // headerTitle: t("Payments"),
-          tabBarIcon: ({ color, size }) => (
-            <Icon name="people-outline" color={color} size={size} />
-          ),
-          headerTitle: () => (
-            <Text style={styles.headerTitle}>{"Customer Details"}</Text>
-          ),
-          headerTitleAlign: "center",
-          headerStyle: {
-            backgroundColor: "transparent",
-            // backgroundColor: "#fff"
-          },
-          headerLeft: () => <CustomBackButton />,
-        }}
-      /> */}
-
-      {/* <Tab.Screen
-          name="Customer"
-          component={Customer}
-          options={{
-            headerShown: true,
-            tabBarLabel: "Customer",
-            tabBarIcon: ({ color, size }) => (
-              <Icon name="people-outline" color={color} size={size} />
-            ),
-            headerTitle: !searchMode
-              ? () => (
-                  <Text
-                    style={{ color: "white", fontSize: 20, fontWeight: "bold" }}
-                  >
-                    Customer
-                  </Text>
-                )
-              : "",
-
-            headerTitleAlign: "left",
-          }}
-        /> */}
 
       <Tab.Screen
         name="Profile Setting"
@@ -212,7 +148,7 @@ export default function BottomNavigator() {
           ),
 
           headerTitle: () => (
-            <Text style={styles.headerTitle}>{" Profile Setting"}</Text>
+            <Text style={styles.headerTitle}>{"Profile Setting"}</Text>
           ),
 
 
@@ -231,15 +167,7 @@ export default function BottomNavigator() {
           // headerRight: () => "",
         }}
       />
-      {/* <Tab.Screen
-          name="more"
-          component={ProfileSetting}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <Feather name="more-horizontal" size={size} color="#0c3b73" />
-            ),
-          }}
-        /> */}
+      
     </Tab.Navigator>
   );
 }
@@ -248,5 +176,6 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
     fontSize: fontSize.headingSmall,
     fontWeight: "bold",
+    color:"#fff"
   },
 });

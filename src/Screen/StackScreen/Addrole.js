@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Formik } from "formik";
 import {
@@ -11,6 +12,7 @@ import {
 } from "react-native";
 import { TextInput } from "react-native-paper";
 import * as Yup from "yup";
+
 import { ButtonColor, createApi, fontSize, readApi } from "../../Util/UtilApi";
 import { useContext } from "react";
 import UserDataContext from "../../Store/UserDataContext";
@@ -185,6 +187,7 @@ const AddRole = () => {
           selectShop: selectedShop?.shopname || "default",
         }}
         validationSchema={validationSchema}
+
         onSubmit={async (values, { resetForm }) => {
           const { userMobile, userName, userRole, selectShop } = values;
           const dataToSend = {
@@ -197,7 +200,6 @@ const AddRole = () => {
           resetForm();
           submit.current = true;
           navigation.goBack();
-
         }}
       >
         {({
@@ -207,6 +209,7 @@ const AddRole = () => {
           errors,
           handleSubmit,
           touched,
+
           setFieldValue,
         }) => {
           console.log("Selected field is ", values);
@@ -345,6 +348,8 @@ const AddRole = () => {
             </View>
           );
         }}
+
+      
       </Formik>
     </ScrollView>
   );
@@ -355,10 +360,11 @@ const pickerStyles = StyleSheet.create({
     paddingHorizontal: 15,
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 4,
+    borderRadius: 8,
     backgroundColor: "white",
     fontSize: 16,
     marginBottom: 15,
+    color: "#333",
   },
 });
 
@@ -384,6 +390,8 @@ const styles = StyleSheet.create({
   },
   form: {
     marginTop: 10,
+
+   
   },
   label: {
     fontSize: fontSize.labelLarge,
@@ -392,36 +400,40 @@ const styles = StyleSheet.create({
     // marginBottom: 8,
   },
   input: {
+
     marginBottom: 15,
     backgroundColor: "white",
     height: 45,
     borderRadius: 4,
+
   },
   errorText: {
     color: "red",
     fontSize: 12,
-    marginBottom: 10,
+    marginTop: 5,
   },
   button: {
     backgroundColor: ButtonColor.SubmitBtn,
+
     paddingVertical: 15,
     borderRadius: 5,
+
     alignItems: "center",
     marginTop: 20,
   },
   buttonText: {
     color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 18,
+    fontWeight: "600",
   },
-  TextShopDes: {
-    borderWidth: 1,
-    backgroundColor: "#fff",
-    paddingVertical: 10,
-    marginHorizontal: 2,
-    paddingHorizontal: 5,
-    borderRadius: 4,
-    marginBottom: 10,
+  descriptionContainer: {
+    backgroundColor: "#f9f9f9",
+    padding: 15,
+    borderRadius: 8,
+  },
+  descriptionText: {
+    fontSize: 16,
+    color: "#444",
   },
 });
 

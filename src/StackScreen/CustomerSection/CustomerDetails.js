@@ -289,6 +289,7 @@ const styles = StyleSheet.create({
   },
 });
 
+
 export default CustomerDetail;
 
 // const filteredData = customerData
@@ -372,3 +373,4 @@ export default CustomerDetail;
         onPress={() => console.log("FAB pressed")}
       /> */
 }
+
