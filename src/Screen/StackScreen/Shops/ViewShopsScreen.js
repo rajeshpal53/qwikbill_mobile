@@ -42,27 +42,16 @@ export default function ViewShopsScreen() {
   const isFocused = useIsFocused();
   const { userData } = useContext(UserDataContext);
 
+  const [searchedData, setSearchedData] = useState([]);
+  const [searchCalled, setSearchCalled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
   const [searchmodal, setsearchmodal] = useState(false); // State for modal visibility
   const [transcript, setTranscript] = useState(""); // State for transcript
   const [SelectedBtn, setSelectedBtn] = useState("");
   const [selectedModal, setSelectedModal] = useState(null); // Track which modal is open by ID
 
-  // useEffect(() => {
-  //   const getShopData = async () => {
-
-  //     try{
-  //     const response = await readApi(`api/shop/list`);
-  //     setShopData(response.result);
-
-  //     }catch(error){
-  //       console.error("error", error)
-  //     }finally{
-  //       setIsLoading(false);
-  //     }
-  //   };
-  //   getShopData();
-  // }, [isFocused]);
+  console.log("shopData is ", shopData);
 
   useEffect(() => {
     console.log("Inside a useeffect ");
@@ -79,7 +68,6 @@ export default function ViewShopsScreen() {
             },
           }
         );
-
         setShopData(response);
       } catch (err) {
         setShopData([]);
@@ -100,6 +88,33 @@ export default function ViewShopsScreen() {
   //   };
 
   //   fetchSearchingData();
+  // }, [searchQuery]);
+  useEffect(() => {
+    searchdata();
+  }, [searchQuery]);
+
+const searchdata = () => {
+  if (searchQuery?.length > 0) {
+    const found = shopData.filter(
+      (item) => item?.shopname?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setSearchedData(found);
+    setSearchCalled(true);
+  } else {
+    setSearchedData([]);
+    setSearchCalled(false); 
+  }
+};
+// useEffect(() => {
+//   searchdata();
+// }, [searchQuery]);
+
+
+  // useEffect(() => {
+  //   if(searchQuery?.length <= 0) {
+  //     setSearchedData([]);
+  //     setSearchCalled(false);
+  //   }
   // }, [searchQuery]);
 
   if (isLoading) {
@@ -166,6 +181,7 @@ export default function ViewShopsScreen() {
           setsearchmodal={setsearchmodal}
           setTranscript={setTranscript}
           placeholderText="Search Vender ..."
+          searchData={searchdata}
           //    refuser={searchBarRef}
         />
 
@@ -190,7 +206,7 @@ export default function ViewShopsScreen() {
         </View> */}
 
         <FlatList
-          data={shopData}
+          data={searchCalled ? searchedData : shopData}
           renderItem={({ item, index }) => (
             <ViewAllVendersCard
               item={item}

@@ -26,6 +26,8 @@ const AllVenderScreen = () => {
   const [deleteItemId, setDeleteItemId] = useState(null);
   const navigation = useNavigation();
   const searchbarRef = useRef(null);
+    const [searchedData, setSearchedData] = useState([]);
+    const [searchCalled, setSearchCalled] = useState(false);
 
   useEffect(() => {
     getAllVenderData();
@@ -88,6 +90,41 @@ const AllVenderScreen = () => {
     }
   };
 
+   const fetchSearchedData = async () => {
+      try {
+        setSearchCalled(true);
+        setloader(true);
+        const trimmedQuery = searchQuery?.trim();
+        console.log("trimmedQuery DATA IS ", trimmedQuery)
+
+        let api = `users/searchUser?searchTerm=${trimmedQuery}`;
+
+        const response = await readApi(api, {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userData?.token}`,
+        });
+
+        console.log("RESPONSE DATA IS ", response)
+
+        if (response?.users?.length > 0) {
+          setSearchedData(response?.users);
+        } else {
+          setSearchedData([]);
+        }
+      } catch (error) {
+        console.log("Unable to get data ", error)
+        if (error?.status === 404) {
+          setSearchedData([]);
+
+        }
+      } finally {
+        setloader(false);
+      }
+    };
+
+
+
+
   const Loader = () => {
     if (!loader) return null;
     return (
@@ -109,6 +146,8 @@ const AllVenderScreen = () => {
             setTranscript={setTranscript}
             placeholderText="Search User by name ..."
             //    refuser={searchBarRef}
+            searchData={fetchSearchedData}
+
           />
         </View>
       </View>
@@ -127,7 +166,7 @@ const AllVenderScreen = () => {
         //     />
         //   </View>
         // }
-        data={VenderData}
+        data={( searchQuery?.length > 0 && searchCalled ) ? searchedData : VenderData}
         renderItem={({ item, index }) => (
           <AllVenderDataCard
             item={item}
