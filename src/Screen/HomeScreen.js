@@ -260,10 +260,10 @@ export default function HomeScreen({ navigation }) {
                       // keepTooltipPosition={true} // Keeps the tooltip in place
                       style={{
                         position: "absolute",
-                        width: width * 0.6, // Adjust width based on screen width
-                        top: height * 0.07, // Adjust top position
-                        height: 32,
-                        marginLeft: 30,
+                        width: width * 0.7, // Adjust width based on screen width
+                        top: height * 0.01, // Adjust top position
+                        height: 35,
+                        marginLeft: 25,
                       }}
                     />
 
@@ -475,8 +475,9 @@ const styles = StyleSheet.create({
     paddingVertical: responsiveHeight(1),
   },
   dropDownContainer: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    // paddingVertical: 10,
+    paddingHorizontal: 10,
+    marginTop:25
   },
   viewsContainer: {
     height: "54%",

@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Formik } from "formik";
 import {
@@ -19,8 +18,9 @@ import UserDataContext from "../../Store/UserDataContext";
 import { ShopContext } from "../../Store/ShopContext";
 import DropDownList from "../../UI/DropDownList";
 import { useNavigation } from "@react-navigation/native";
-import { Picker } from "@react-native-picker/picker";
 import { useSnackbar } from "../../Store/SnackbarContext";
+import CustomDropdown from "../../Component/CustomeDropdown";
+import AddroleDropdown from "../../Component/AddRoleDropdown";
 
 const AddRole = () => {
   const { userData } = useContext(UserDataContext);
@@ -32,29 +32,22 @@ const AddRole = () => {
   const pickerRef = useRef();
   const [AddRode, SetAddRole] = useState("");
   const { showSnackbar } = useSnackbar();
+  const [selectedStatus, setSelectedStatus] = useState("Select Role");
 
   const timeoutId = useRef(null);
 
-  // Default roles
-  const roleOptions = [
-    { label: "Owner", value: "owner" },
-    { label: "Manager", value: "manager" },
-    { label: "Employee", value: "employee" },
-    { label: "Viewer", value: "viewer" },
-  ];
+  const roleOptions = ["Owner", "Manager", "Employee", "Viewer"];
 
-  // Validation schema
   const validationSchema = Yup.object({
     userRole: Yup.string().required("User Role is required"),
     userMobile: Yup.string()
       .required("Phone is required")
       .matches(/^\d{10}$/, "Phone must be 10 digits"),
     userName: Yup.string().required("User Name is required"),
+    email: Yup.string()
+      .email("Invalid email format")
+      .required("Email is required"),
   });
-
-  useEffect(() => {
-    console.log("User data is getting12358 ", selectedShop);
-  }, [selectedShop]);
 
   const fetchUserData = async (phoneNumber, setFieldValue) => {
     if (timeoutId.current) {
@@ -74,9 +67,6 @@ const AddRole = () => {
               setUser(response);
               setFieldValue("userName", response?.name);
               setFieldValue("userMobile", phoneNumber);
-            } else {
-              setFieldValue("userName", response?.name);
-              setFieldValue("userMobile", phoneNumber);
             }
           } catch (error) {
             setFieldValue("userName", "");
@@ -86,8 +76,7 @@ const AddRole = () => {
             setLoading(false);
           }
         } else {
-          // If phone number is not valid (less than 10 digits or non-numeric)
-          setFieldValue("userName", ""); // Clear userName when the phone number is invalid
+          setFieldValue("userName", "");
           setFieldValue("userMobile", phoneNumber);
         }
       } catch (error) {
@@ -128,13 +117,13 @@ const AddRole = () => {
   }, [navigation, User]);
 
   const getStatusFk = () => {
-    if (AddRode == "owner") {
+    if (selectedStatus == "Owner") {
       return 1;
-    } else if (AddRode == "manager") {
+    } else if (selectedStatus == "Manager") {
       return 2;
-    } else if (AddRode == "employee") {
+    } else if (selectedStatus == "Employee") {
       return 3;
-    } else if (AddRode == "viewer") {
+    } else if (selectedStatus == "Viewer") {
       return 4;
     } else {
       return 5;
@@ -142,7 +131,6 @@ const AddRole = () => {
   };
 
   const HandleBothData = async (dataToSend) => {
-    console.log("USER DATA IS12 ", dataToSend);
     let data = {};
     if (User) {
       data = {
@@ -150,11 +138,11 @@ const AddRole = () => {
         usersfk: selectedShop?.user?.id,
         rolesfk: getStatusFk(),
       };
-      console.log("DATA OF USER IS156", data);
     } else {
       data = {
         mobile: dataToSend?.userMobile,
         name: dataToSend?.userName,
+        email: dataToSend?.email,
         vendorfk: selectedShop?.id,
         rolesfk: getStatusFk(),
       };
@@ -165,12 +153,10 @@ const AddRole = () => {
       const headers = {
         Authorization: `Bearer ${userData?.token}`,
       };
-      console.log("Passing data is ", data)
       const response = await createApi(`userRoles`, data, headers);
-      console.log("DATA OF RESPONSE IS123", response);
-      showSnackbar(" update profile successfully", "success");
+      showSnackbar("Profile updated successfully", "success");
     } catch (error) {
-      console.log("Unable to create a data is ", error);
+      console.log("Unable to create data", error);
       setLoading(false);
     } finally {
       setLoading(false);
@@ -184,16 +170,17 @@ const AddRole = () => {
           userMobile: "",
           userName: "",
           userRole: "",
+          email: "",
           selectShop: selectedShop?.shopname || "default",
         }}
         validationSchema={validationSchema}
-
         onSubmit={async (values, { resetForm }) => {
-          const { userMobile, userName, userRole, selectShop } = values;
+          const { userMobile, userName, userRole, email, selectShop } = values;
           const dataToSend = {
             userMobile,
             userName,
             userRole,
+            email,
             selectShop,
           };
           await HandleBothData(dataToSend);
@@ -209,42 +196,13 @@ const AddRole = () => {
           errors,
           handleSubmit,
           touched,
-
           setFieldValue,
         }) => {
-          console.log("Selected field is ", values);
-          console.log("Selected error is ", errors);
           return (
             <View style={styles.form}>
-              {/* Header */}
               <View style={styles.header}>
                 <Text style={styles.headerText}>Owner Name</Text>
                 <Text style={styles.subHeaderText}>{userData?.user?.name}</Text>
-              </View>
-
-              {/* Shop Dropdown */}
-              <View>
-                <Text
-                  style={{
-                    fontSize: fontSize.labelLarge,
-                    fontFamily: "Poppins-Regular",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Select Shop
-                </Text>
-
-                <View style={{ borderBottomWidth: 2, marginBottom: 10 }}>
-                  <DropDownList
-                    options={allShops}
-                    onValueChange={(selectedShop) =>
-                      setFieldValue("selectShop", selectedShop)
-                    }
-                  />
-                  {touched.selectShop && errors.selectShop && (
-                    <Text style={styles.errorText}>{errors.selectShop}</Text>
-                  )}
-                </View>
               </View>
 
               {/* Shop Description */}
@@ -266,7 +224,6 @@ const AddRole = () => {
                   setFieldValue("userMobile", phoneNumber);
                   await fetchUserData(phoneNumber, setFieldValue);
                 }}
-                // onBlur={handleBlur("userMobile")}
                 value={values.userMobile}
                 keyboardType="phone-pad"
                 right={
@@ -280,10 +237,10 @@ const AddRole = () => {
                   ) : null
                 }
               />
-
               {touched.userMobile && errors.userMobile && (
                 <Text style={styles.errorText}>{errors.userMobile}</Text>
               )}
+
               {loading && (
                 <View style={styles.loaderContainer}>
                   <ActivityIndicator size="large" color="#0000ff" />
@@ -313,33 +270,46 @@ const AddRole = () => {
                 <Text style={styles.errorText}>{errors.userName}</Text>
               )}
 
+              {/* Email */}
+              <TextInput
+                mode="flat"
+                label="Enter User Email"
+                style={styles.input}
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+                value={values.email}
+                keyboardType="email-address"
+              />
+              {touched.email && errors.email && (
+                <Text style={styles.errorText}>{errors.email}</Text>
+              )}
+
+              {/* Shop Dropdown */}
+              <View style = {{marginBottom:10}}>
+                <Text style={styles.label}>Select Shop</Text>
+                <View>
+                  <DropDownList
+                    options={allShops}
+                    onValueChange={(selectedShop) =>
+                      setFieldValue("selectShop", selectedShop)
+                    }
+                  />
+                </View>
+              </View>
+
               {/* User Role Dropdown */}
               <Text style={styles.label}>User Role</Text>
-              <View style={{ borderBottomWidth: 2, marginBottom: 10 }}>
-                <Picker
-                  selectedValue={values.userRole}
-                  onValueChange={(itemValue) => {
-                    setFieldValue("userRole", itemValue);
-                    SetAddRole(itemValue);
-                  }}
-                  ref={pickerRef}
-                  style={{ width: "100%", height: 60 }}
-                >
-                  <Picker.Item label="Select Role" enabled={false} />
-                  {roleOptions && roleOptions.length > 0
-                    ? roleOptions.map((role, index) => (
-                        <Picker.Item
-                          key={index}
-                          label={role?.label || "Unknown Role"} // Default label if missing
-                          value={role?.value || ""} // Default value if missing
-                        />
-                      ))
-                    : null}
-                </Picker>
-                {touched.userRole && errors.userRole && (
-                  <Text style={styles.errorText}>{errors.userRole}</Text>
-                )}
-              </View>
+              <AddroleDropdown
+                paymentStatuses={roleOptions}
+                setSelectedStatus={setSelectedStatus}
+                selectedStatus={selectedStatus}
+                userRole={(assignRole) => {
+                  setFieldValue("userRole", assignRole);
+                }}
+              />
+              {touched.userRole && errors.userRole && (
+                <Text style={styles.errorText}>{errors.userRole}</Text>
+              )}
 
               {/* Submit Button */}
               <TouchableOpacity style={styles.button} onPress={handleSubmit}>
@@ -348,92 +318,72 @@ const AddRole = () => {
             </View>
           );
         }}
-
-      
       </Formik>
     </ScrollView>
   );
 };
 
-const pickerStyles = StyleSheet.create({
-  inputAndroid: {
-    paddingHorizontal: 15,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    backgroundColor: "white",
-    fontSize: 16,
-    marginBottom: 15,
-    color: "#333",
-  },
-});
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    padding: 20,
   },
   header: {
-    marginBottom: 10,
+    marginBottom: 15,
+    paddingHorizontal: 10,
   },
   headerText: {
-    fontSize: fontSize.headingSmall,
+    fontSize: 20,
     fontFamily: "Poppins-Regular",
     fontWeight: "bold",
+    color: "#333",
   },
   subHeaderText: {
-    fontSize: fontSize.headingSmall,
+    fontSize: 16,
     fontFamily: "Poppins-Regular",
     marginVertical: 5,
+    color: "#666",
   },
   form: {
     marginTop: 10,
-
-   
   },
   label: {
-    fontSize: fontSize.labelLarge,
+    fontSize: 16,
     fontFamily: "Poppins-Regular",
     fontWeight: "bold",
-    // marginBottom: 8,
+    color: "#333",
+    marginBottom: 8,
   },
   input: {
-
     marginBottom: 15,
     backgroundColor: "white",
     height: 45,
-    borderRadius: 4,
-
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    fontSize: 16,
   },
   errorText: {
     color: "red",
     fontSize: 12,
-    marginTop: 5,
+    marginBottom: 10,
   },
   button: {
     backgroundColor: ButtonColor.SubmitBtn,
-
     paddingVertical: 15,
-    borderRadius: 5,
-
+    borderRadius: 8,
     alignItems: "center",
     marginTop: 20,
+    marginBottom: 10,
   },
   buttonText: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "600",
   },
-  descriptionContainer: {
-    backgroundColor: "#f9f9f9",
-    padding: 15,
-    borderRadius: 8,
-  },
-  descriptionText: {
-    fontSize: 16,
-    color: "#444",
+  loaderContainer: {
+    alignItems: "center",
+    marginVertical: 20,
   },
 });
 

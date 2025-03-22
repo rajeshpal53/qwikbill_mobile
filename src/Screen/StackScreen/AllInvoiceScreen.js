@@ -19,6 +19,8 @@ const AllInvoiceScreen = () => {
   const [page, setPage] = useState(1);
   const PAZE_SIZE = 10;
   const [totalpage, SetTotalpage] = useState(1);
+const [searchedData, setSearchedData] = useState([]);
+  const [searchCalled, setSearchCalled] = useState(false);
 
   useEffect(() => {
     GetallInvoiceData();
@@ -54,6 +56,39 @@ const AllInvoiceScreen = () => {
     }
   };
 
+    const fetchSearchedData = async () => {
+      try {
+        setSearchCalled(true);
+        setIsLoading(true);
+        const trimmedQuery = searchQuery?.trim();
+        console.log("trimmedQuery DATA IS ", trimmedQuery)
+
+        let api = `invoice/searchInvoices/5?searchTerm=Enterprises`;
+
+        const response = await readApi(api, {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userData?.token}`,
+        });
+
+        console.log("RESPONSE DATA IS ", response)
+
+        if (response?.users?.length > 0) {
+          setSearchedData(response?.users);
+        } else {
+          setSearchedData([]);
+        }
+      } catch (error) {
+        console.log("Unable to get data ", error)
+        if (error?.status === 404) {
+          setSearchedData([]);
+
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+
   const Loader = () => {
     if (!loader) return null;
     return (
@@ -75,11 +110,11 @@ const AllInvoiceScreen = () => {
               setTranscript={setTranscript}
               placeholderText="Search User by name ..."
               refuser={searchBarRef}
-              // searchData={fetchSearchedData}
-            />
+              searchData={fetchSearchedData}
+              />
           </View>
         }
-        data={InvoiceData}
+        data={( searchQuery?.length > 0 && searchCalled ) ? searchedData : InvoiceData}
         renderItem={({ item, index }) => <AllInvoiceCard item={item} />}
         keyExtractor={(item, index) => `${item.id}-${index}`}
         // onScrollBeginDrag={handleSearchBar}

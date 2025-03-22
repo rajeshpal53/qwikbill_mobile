@@ -13,7 +13,12 @@ import ProductDetailsScreen from "../StackScreen/ProductSection/ProductDetailsSc
 import { AuthContext } from "../Store/AuthContext.js";
 import HomeHeaderRight from "../Components/HeaderComponents/HomeHeaderRight.js";
 import { fontSize } from "../Util/UtilApi.js";
-export default function BottomNavigator() {
+
+export default function BottomNavigator({
+  roleDetails,
+  setroleDetails,
+  fetchServiceProvider,
+}) {
   const [searchQuery, setSearchQuery] = useState("");
   // const { searchMode } = useContext(AuthContext);
   const Tab = createBottomTabNavigator();
@@ -136,10 +141,9 @@ export default function BottomNavigator() {
         }}
       />
 
-
       <Tab.Screen
         name="Profile Setting"
-        component={ProfileSetting}
+        // component={ProfileSetting}
         options={{
           headerShown: true,
           tabBarLabel: "Profile",
@@ -150,24 +154,18 @@ export default function BottomNavigator() {
           headerTitle: () => (
             <Text style={styles.headerTitle}>{"Profile Setting"}</Text>
           ),
-
-
-          // headerTitle: !searchMode
-          //   ? () => (
-          //       <Text
-          //         style={{ color: "white", fontSize: 20, fontWeight: "bold" }}
-          //       >
-          //         Profile Setting
-          //       </Text>
-          //     )
-          //   : "",
           headerTitleAlign: "center",
-
-          // headerTitleAlign: !searchMode ? "center" : "left",
-          // headerRight: () => "",
         }}
-      />
-      
+      >
+        {({ navigation }) => (
+          <ProfileSetting
+            navigation={navigation}
+            roleDetails={roleDetails}
+            setroleDetails={setroleDetails}
+            fetchServiceProvider={fetchServiceProvider}
+          />
+        )}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 }
@@ -176,6 +174,6 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
     fontSize: fontSize.headingSmall,
     fontWeight: "bold",
-    color:"#fff"
+    color: "#fff",
   },
 });
