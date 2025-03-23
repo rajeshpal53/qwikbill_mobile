@@ -41,11 +41,14 @@ const AllRoleDetailsCard = ({ item }) => {
                   </Text>
                 </View>
                 <View>
-                  <Text style={styles.label}> {item?.user?.email || "No Email Provided"}</Text>
+                  <Text style={styles.label}>
+                    {item?.user?.email || "No Email Provided"}
+                  </Text>
                 </View>
-
                 <View>
-                  <Text style={styles.label}>{item?.role?.name || "No Role Provided"}</Text>
+                  <Text style={styles.label}>
+                    {item?.role?.name || "No Role Provided"}
+                  </Text>
                 </View>
               </View>
             </View>

@@ -72,9 +72,7 @@ const EditRole = () => {
           keyExtractor={(item) => item.id.toString()}
           ListEmptyComponent={() => (
             <View style={{ alignItems: "center", marginTop: 20 }}>
-              <Text style={{ fontSize: 16, color: "gray" }}>
-                No roles found.
-              </Text>
+              <Text style={{ fontSize: 16, color: "gray" }}>No roles found.</Text>
             </View>
           )}
           contentContainerStyle={styles.flatListContainer}
@@ -84,7 +82,9 @@ const EditRole = () => {
         <FAB
           icon="plus"
           style={styles.fab}
-          onPress={() => navigation.navigate("AddroleScreen")}
+          onPress={() =>
+            navigation.navigate("AddroleScreen", { editData: false })
+          }
         />
       </View>
     </View>

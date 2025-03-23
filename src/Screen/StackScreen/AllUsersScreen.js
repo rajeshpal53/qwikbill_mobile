@@ -185,7 +185,7 @@ const AllUsersScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+    <View style={{ flex: 1, backgroundColor:"#fff"  }}>
       <View style={styles.container}>
         {/* <View style={{ flex: 1 }}>
           <Searchbarwithmic
@@ -202,7 +202,7 @@ const AllUsersScreen = ({ navigation }) => {
 
       <FlatList
         ListHeaderComponent={
-          <View>
+          <View style={{paddingHorizontal:8}}>
             <Searchbarwithmic
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}

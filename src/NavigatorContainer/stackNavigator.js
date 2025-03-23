@@ -275,7 +275,7 @@ export default function StackNavigator() {
 
             headerTitleAlign: "center",
 
-            headerLeft: () => <CustomBackButton />,
+            // headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -571,9 +571,9 @@ export default function StackNavigator() {
               <Text style={styles.headerTitle}>{"Admin Section"}</Text>
             ),
             headerTitleAlign: "center",
-            headerTintColor: "#000",
-            headerShadowVisible: false,
-            headerLeft: () => <CustomBackButton />,
+            // headerTintColor: "#000",
+            // headerShadowVisible: false,
+            // headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -586,7 +586,7 @@ export default function StackNavigator() {
             ),
 
             headerTitleAlign: "center",
-            headerLeft: () => <CustomBackButton />,
+            // headerLeft: () => <CustomBackButton />,
           }}
         ></Stack.Screen>
 
@@ -599,7 +599,7 @@ export default function StackNavigator() {
             ),
 
             headerTitleAlign: "center",
-            headerLeft: () => <CustomBackButton />,
+            // headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -612,7 +612,7 @@ export default function StackNavigator() {
             ),
 
             headerTitleAlign: "center",
-            headerLeft: () => <CustomBackButton />,
+            // headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -625,7 +625,7 @@ export default function StackNavigator() {
             ),
 
             headerTitleAlign: "center",
-            headerLeft: () => <CustomBackButton />,
+            // headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -686,7 +686,7 @@ export default function StackNavigator() {
             //   // backgroundColor: "#fff"
             // },
 
-            headerLeft: () => <CustomBackButton />,
+            // headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -782,7 +782,7 @@ export default function StackNavigator() {
             headerShown: false,
             headerTintColor: "#000",
             headerShadowVisible: false,
-            headerLeft: () => <CustomBackButton />,
+            // headerLeft: () => <CustomBackButton />,
           }}
         />
         <Stack.Screen

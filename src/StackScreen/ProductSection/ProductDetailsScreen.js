@@ -79,7 +79,7 @@ const ProductDetailsScreen = ({ navigation }) => {
     // Start building the base API URL
     let api = `products/getProducts?vendorefk=${selectedShop?.id}&page=${page}&limit=${PAGE_SIZE}`;
     if (filterOptionSelect === "Sort By Name") {
-      api += `&sortBy=reverseAlphabetical`;
+      api += `&sortBy=alphabetical`;
     } else if (filterOptionSelect === "Low to High Price") {
       api += `&sortBy=lowToHigh`;
     } else if (filterOptionSelect === "High to Low Price") {
