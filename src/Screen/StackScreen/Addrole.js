@@ -17,12 +17,14 @@ import { useContext } from "react";
 import UserDataContext from "../../Store/UserDataContext";
 import { ShopContext } from "../../Store/ShopContext";
 import DropDownList from "../../UI/DropDownList";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSnackbar } from "../../Store/SnackbarContext";
 import CustomDropdown from "../../Component/CustomeDropdown";
 import AddroleDropdown from "../../Component/AddRoleDropdown";
 
 const AddRole = () => {
+  const route = useRoute();
+  const { editData } = route.params;
   const { userData } = useContext(UserDataContext);
   const { allShops, selectedShop } = useContext(ShopContext);
   const [User, setUser] = useState("");
@@ -33,8 +35,13 @@ const AddRole = () => {
   const [AddRode, SetAddRole] = useState("");
   const { showSnackbar } = useSnackbar();
   const [selectedStatus, setSelectedStatus] = useState("Select Role");
-
   const timeoutId = useRef(null);
+
+  // console.log("EDIT DATA IS ", editData)
+
+  useEffect(() => {
+    console.log("SELECTED SHOP IS ", selectedShop);
+  }, [selectedShop]);
 
   const roleOptions = ["Owner", "Manager", "Employee", "Viewer"];
 
@@ -168,10 +175,11 @@ const AddRole = () => {
       <Formik
         initialValues={{
           userMobile: "",
-          userName: "",
-          userRole: "",
-          email: "",
-          selectShop: selectedShop?.shopname || "default",
+          userName: editData?.user?.name || "",
+          userRole: editData?.role?.id || "",
+          email: editData?.user?.email || "",
+          selectShop:
+            editData?.vendor?.id || selectedShop?.shopname || "default",
         }}
         validationSchema={validationSchema}
         onSubmit={async (values, { resetForm }) => {
@@ -243,7 +251,7 @@ const AddRole = () => {
 
               {loading && (
                 <View style={styles.loaderContainer}>
-                  <ActivityIndicator size="large" color="#0000ff" />
+                  <ActivityIndicator size="small" color="#0000ff" />
                 </View>
               )}
 
@@ -256,7 +264,13 @@ const AddRole = () => {
                 onBlur={handleBlur("userName")}
                 value={values.userName}
                 right={
-                  values.userName ? (
+                  loading ? (
+                    <ActivityIndicator
+                      size={10}
+                      color="#000"
+                      style={{ marginBottom: -22 }}
+                    />
+                  ) : values.userName ? (
                     <TextInput.Icon
                       icon="close"
                       size={20}
@@ -274,7 +288,7 @@ const AddRole = () => {
               <TextInput
                 mode="flat"
                 label="Enter User Email"
-                style={styles.input}
+                style={[styles.input, { color: "#fff" }]}
                 onChangeText={handleChange("email")}
                 onBlur={handleBlur("email")}
                 value={values.email}
@@ -285,7 +299,7 @@ const AddRole = () => {
               )}
 
               {/* Shop Dropdown */}
-              <View style = {{marginBottom:10}}>
+              <View style={{ marginBottom: 10 }}>
                 <Text style={styles.label}>Select Shop</Text>
                 <View>
                   <DropDownList
@@ -327,20 +341,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
-    padding: 20,
+    padding: 10,
   },
   header: {
-    marginBottom: 15,
-    paddingHorizontal: 10,
+    marginBottom: 10,
+    paddingHorizontal: 5,
   },
   headerText: {
-    fontSize: 20,
+    // fontSize: 20,
+    fontSize: fontSize.heading,
     fontFamily: "Poppins-Regular",
     fontWeight: "bold",
     color: "#333",
   },
   subHeaderText: {
-    fontSize: 16,
+    fontSize: fontSize.headingSmall,
     fontFamily: "Poppins-Regular",
     marginVertical: 5,
     color: "#666",
@@ -349,7 +364,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   label: {
-    fontSize: 16,
+    fontSize: fontSize.labelLarge,
     fontFamily: "Poppins-Regular",
     fontWeight: "bold",
     color: "#333",
@@ -357,16 +372,18 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 15,
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     height: 45,
     borderRadius: 8,
     paddingHorizontal: 10,
-    fontSize: 16,
+    fontSize: fontSize.labelLarge,
+    fontFamily: "Poppins-Regular",
   },
   errorText: {
     color: "red",
-    fontSize: 12,
+    fontSize: fontSize.label,
     marginBottom: 10,
+    fontFamily: "Poppins-Regular",
   },
   button: {
     backgroundColor: ButtonColor.SubmitBtn,
@@ -378,12 +395,15 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
-    fontSize: 18,
-    fontWeight: "600",
+    fontSize: fontSize.labelLarge,
+    fontFamily: "Poppins-Regular",
+    // fontWeight: "600",
   },
   loaderContainer: {
-    alignItems: "center",
-    marginVertical: 20,
+    // alignItems: "center",
+    // marginVertical: 20,
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
   },
 });
 

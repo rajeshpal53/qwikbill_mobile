@@ -1,11 +1,19 @@
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; // for using icons
+import { useNavigation } from "@react-navigation/native";
 
 const RoleDetailsScreen = ({ route }) => {
   // Get the passed item object from route.params
   const item = route.params;
+  const navigation = useNavigation()
 
-  console.log("DATA I AM GETTING IN ", item?.item?.item?.user?.name);
+  console.log("DATA I AM GETTING IN ", item?.item);
+
+
+  const HandleEditRole = ()=>{
+    navigation.navigate("AddroleScreen", { editData: item?.item })
+  }
+
 
   return (
     <View style={style.main}>
@@ -29,7 +37,7 @@ const RoleDetailsScreen = ({ route }) => {
 
       {/* Button Section */}
       <View style={style.ButtonView}>
-        <TouchableOpacity style={style.button} onPress={() => { console.log("Edit Button pressed") }}>
+        <TouchableOpacity style={style.button} onPress={HandleEditRole}>
           <Text style={style.buttonText}>Edit</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[style.button, style.deleteButton]} onPress={() => { console.log("Delete Button pressed") }}>
