@@ -7,7 +7,8 @@ import * as Sharing from "expo-sharing";
 import * as IntentLauncher from "expo-intent-launcher";
 import { StorageAccessFramework } from "expo-file-system";
 import { useStorageLocationContext } from "../Store/StorageLocationContext";
-
+import * as Linking from "expo-linking";
+import Share from "react-native-share";
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -265,6 +266,25 @@ export const useDownloadInvoice = () => {
       Alert.alert("Download Failed", "Unable to download the invoice.");
     }
   };
+  const shareInvoiceOnWhatsApp = async (api, orderId=1) => {
+    try {
+      const result = await FileSystem.downloadAsync(
+        api,
+        FileSystem.documentDirectory + `invoice_${orderId}.pdf`
+      );
+      console.log(result, "- result");
+      const shareOptions = {
+        url: result.uri, // Correct file URI format
+        type: "application/pdf",
+        social: Share.Social.WHATSAPP, // Direct WhatsApp sharing
+        message: "Here is your invoice.",
+      };
+      await Share.shareSingle(shareOptions);
+    } catch (error) {
+      console.error("Error downloading or sharing invoice:", error);
+      Alert.alert("Download Failed", "Unable to download the invoice.");
+    }
+  };
 
   // Determine which function to call based on callFor argument
   //   useEffect(() => {
@@ -278,6 +298,7 @@ export const useDownloadInvoice = () => {
   return {
     downloadInvoicePressHandler,
     shareInvoicePressHandler,
+    shareInvoiceOnWhatsApp,
     isLoading
   };
 };

@@ -12,14 +12,17 @@ const TransactionDetailScreen = ({item}) => {
   const [isLoading,setIsLoading]=useState(false);
   const[shareLoading, setShareLoading]=useState(false)
   const transaction = route.params;
+  const { createdAt, transactionStatus, id ,invoice,vendor,user,paymentMode} = route.params.item||null;
+
+
+  console.log(route.params.item,"itemmmmmm")
  const { downloadInvoicePressHandler, shareInvoicePressHandler } =useDownloadInvoice();
   if (!transaction) {
     return <Text style={styles.errorText}>Error: No transaction data provided.</Text>;
   }
- 
+  
   console.log(transaction, "transaction");
-  const { createdAt, transactionStatus, id ,invoice = {},  vendor={},} = item;
-  const userName = item.user?.name ?? "Unknown "; 
+  const userName = user?.name || "Unknown "; 
 
   const handleDownload=async()=>{
     try{
@@ -30,7 +33,7 @@ const TransactionDetailScreen = ({item}) => {
                 invoice?.id,
                 invoice?.name
               );
-    }catch(err){
+    }catch(error){
       console.log("error in downloading pdf , ", error);
 
     }finally{
@@ -77,7 +80,7 @@ const TransactionDetailScreen = ({item}) => {
       </Text>
     </View>
       
-      <Text style={styles.date}>{new Date(createdAt).toLocaleString()}</Text>
+      <Text style={styles.date}>{new Date(createdAt)?.toLocaleString()}</Text>
       
       <View style={styles.section}>
         <View style={styles.row}>
@@ -85,7 +88,7 @@ const TransactionDetailScreen = ({item}) => {
           <FontAwesome name="credit-card" size={16} color="gray" />
           <Text style={styles.label}>Payment Mode </Text>
           </View>
-          <Text style={styles.label}> {invoice.paymentMode || "N/A"}</Text>
+          <Text style={styles.label}> {invoice?.paymentMode || "N/A"}</Text>
         </View>
         <View style={styles.row}>
         <View style={styles.preRow}>
@@ -93,32 +96,32 @@ const TransactionDetailScreen = ({item}) => {
           <Text style={styles.label}>Invoice ID:</Text>
 
           </View>
-          <Text style={styles.label}> {invoice.id || "N/A"}</Text>
+          <Text style={styles.label}> {invoice?.id || "N/A"}</Text>
         </View>
         <View style={styles.row}>
         <View style={styles.preRow}>
         <FontAwesome name="hashtag" size={16} color="gray" />
           <Text style={styles.label}>Provision Number:</Text>
           </View>
-          <Text> {invoice.provisionNumber || "N/A"}</Text>
+          <Text> {invoice?.provisionNumber || "N/A"}</Text>
          
         </View>
       </View>
       
       <View style={styles.section}>
         <View style={styles.userRow}>
-          <Avatar.Text size={50} label={userName ? userName.charAt(0).toUpperCase() : 
+          <Avatar.Text size={50} label={userName ? userName?.charAt(0)?.toUpperCase() : 
                         <Feather name="arrow-down-right" size={20} color={"white"}/>
             
           } />
           <View style={{marginLeft:10}}>
-          <Text style={styles.label}>{user.name || "N/A"}</Text>
-          <Text style={styles.label}>{user.mobile || "N/A"}</Text>
+          <Text style={styles.label}>{user?.name || "N/A"}</Text>
+          <Text style={styles.label}>{user?.mobile || "N/A"}</Text>
           </View>
         </View>
         <View style={styles.preRow}>
           <MaterialIcons name="location-on" size={16} color="gray" />
-          <Text style={styles.address}>{invoice.address || "N/A"}</Text>
+          <Text style={styles.address}>{invoice?.address || "N/A"}</Text>
         </View>
       </View>
       <View style={styles.section}>
@@ -127,7 +130,7 @@ const TransactionDetailScreen = ({item}) => {
           <FontAwesome name="id-card" size={16} color="gray" />
           <Text style={styles.label}>Shop Name:</Text>
           </View>
-          <Text style={styles.label}>{vendor.shopname||"N/A"}</Text>
+          <Text style={styles.label}>{vendor?.shopname||"N/A"}</Text>
         </View>
         <View style={styles.row}>
           <View style={styles.preRow}>
@@ -141,7 +144,7 @@ const TransactionDetailScreen = ({item}) => {
         <FontAwesome name="money" size={16} color="gray" />
         <Text style={styles.label}>Shop Profit:</Text>
         </View>
-        <Text style={styles.label}> ₹{invoice.vendorprofit ?? "N/A"}</Text>
+        <Text style={styles.label}> ₹{invoice?.vendorprofit ?? "N/A"}</Text>
         </View>
       </View>
       
