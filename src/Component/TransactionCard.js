@@ -121,7 +121,6 @@ const TransactionCard = ({ item }) => {
   : "N/A";
 
 
-
   const firstLetter = "U"; // Default letter since user.name is missing
 
   return (
