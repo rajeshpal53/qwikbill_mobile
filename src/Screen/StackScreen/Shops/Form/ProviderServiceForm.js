@@ -11,7 +11,7 @@ import {
   RichEditor,
   RichToolbar,
 } from "react-native-pell-rich-editor";
-import { QuillEditor, QuillToolbar } from "react-native-cn-quill";
+// import { QuillEditor, QuillToolbar } from "react-native-cn-quill";
 // import QuillEditor from "react-native-cn-quill/lib/QuillEditor";
 // import QuillToolbar from "react-native-cn-quill/lib/QuillToolbar";
 
@@ -199,7 +199,7 @@ const ProviderServiceForm = ({
       /> */}
     </View>
 
-  
+
 
 {/* <View
       style={{

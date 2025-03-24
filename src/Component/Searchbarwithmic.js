@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "#fff",
     // justifyContent: "center",
     // alignItems: "center",
-    paddingHorizontal: 10,
+    // paddingHorizontal: 10,
   },
   container: {
     alignItems: "center",
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
   searchbar: {
     height: 45, // Increase height to make sure the placeholder can be vertically centered
     borderRadius: 10,
-    backgroundColor: "#EDEDED",
+    backgroundColor: "#fff",
     // justifyContent: "center", // Vertically center the content
     // paddingVertical: 0, // Remove extra padding for centering
     marginVertical: 2,

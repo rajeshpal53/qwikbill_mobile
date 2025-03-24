@@ -55,6 +55,8 @@ const ProductDetailsScreen = ({ navigation }) => {
   const [loader, setloader] = useState(false);
   const { userData } = useContext(UserDataContext);
   const [searchedData, setSearchedData] = useState([]);
+  const [searchCalled, setSearchCalled] = useState(false);
+
   const { selectedShop } = useContext(ShopContext);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
@@ -77,9 +79,9 @@ const ProductDetailsScreen = ({ navigation }) => {
     // Start building the base API URL
     let api = `products/getProducts?vendorefk=${selectedShop?.id}&page=${page}&limit=${PAGE_SIZE}`;
     if (filterOptionSelect === "Sort By Name") {
-      api += `&sortByName=AtoZ`;
+      api += `&sortBy=alphabetical`;
     } else if (filterOptionSelect === "Low to High Price") {
-      api += `&sortBy=lowTohigh`;
+      api += `&sortBy=lowToHigh`;
     } else if (filterOptionSelect === "High to Low Price") {
       api += `&sortBy=highToLow`;
     } else {
@@ -156,30 +158,36 @@ const ProductDetailsScreen = ({ navigation }) => {
 
 
   //Search Function
-  const fetchSearchedData = () => {
-    if (!searchQuery.trim()) {
-      setSearchedData([]);
-      return;
-    }
-
+  const fetchSearchedData = async () => {
     try {
-      setloader(true);
-      const filteredData = Productdata.filter(item => {
-        return item.name.toLowerCase().includes(searchQuery.toLowerCase());
+      setSearchCalled(true);
+      setIsLoading(true);
+      const trimmedQuery = searchQuery?.trim();
+      console.log("trimmedQuery DATA IS ", trimmedQuery);
+
+      let api = `products/searchProducts?searchTerm=${trimmedQuery}`;
+
+      const response = await readApi(api, {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userData?.token}`,
       });
 
-      console.log("Filtered Data: ", filteredData);
+      console.log("RESPONSE DATA IS ", response);
 
-      setSearchedData(filteredData);
-
+      if (response?.users?.length > 0) {
+        setSearchedData(response?.users);
+      } else {
+        setSearchedData([]);
+      }
     } catch (error) {
-      console.log("Filtering failed:", error);
-      setSearchedData([]);
+      console.log("Unable to get data ", error);
+      if (error?.status === 404) {
+        setSearchedData([]);
+      }
     } finally {
-      setloader(false);
+      setIsLoading(false);
     }
   };
-
 
 
 
@@ -247,7 +255,7 @@ const ProductDetailsScreen = ({ navigation }) => {
             </View>
           </>
         )}
-        data={Productdata}
+        data={ searchQuery?.length > 0 && searchCalled ? searchedData : Productdata}
         renderItem={({ item, index }) => (
           <ProductDetailsCard
             item={item}
