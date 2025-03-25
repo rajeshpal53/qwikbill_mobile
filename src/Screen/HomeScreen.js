@@ -73,8 +73,8 @@ export default function HomeScreen({ navigation }) {
   const { canStart, start, stop, eventEmitter } = useTourGuideController();
 
   useEffect(() => {
-    console.log("allshops in homescreen 1, ", allShops);
-  }, [allShops]);
+    console.log("allshops in homescreen 1, ", selectedShop);
+  }, [selectedShop]);
 
   useEffect(() => {
     const checkIfTourSeen = async () => {

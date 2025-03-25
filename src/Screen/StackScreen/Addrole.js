@@ -21,10 +21,13 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSnackbar } from "../../Store/SnackbarContext";
 import CustomDropdown from "../../Component/CustomeDropdown";
 import AddroleDropdown from "../../Component/AddRoleDropdown";
+// import RNPickerSelect from "react-native-picker-select";
+import { Picker } from "@react-native-picker/picker";
 
 const AddRole = () => {
   const route = useRoute();
   const { editData } = route.params;
+  const {isUpdateEditdata} = route.params;
   const { userData } = useContext(UserDataContext);
   const { allShops, selectedShop } = useContext(ShopContext);
   const [User, setUser] = useState("");
@@ -37,13 +40,20 @@ const AddRole = () => {
   const [selectedStatus, setSelectedStatus] = useState("Select Role");
   const timeoutId = useRef(null);
 
-  // console.log("EDIT DATA IS ", editData)
+  console.log("EDIT DATA IS ", isUpdateEditdata);
 
   useEffect(() => {
-    console.log("SELECTED SHOP IS ", selectedShop);
-  }, [selectedShop]);
+    console.log("SELECTED SHOP IS ", editData);
+  }, [editData]);
 
-  const roleOptions = ["Owner", "Manager", "Employee", "Viewer"];
+  const roleOptions = [
+    { label: "Owner", value: "Owner" },
+    { label: "Manager", value: "Manager" },
+    { label: "Employee", value: "Employee" },
+    { label: "Viewer", value: "Viewer" },
+  ];
+
+  // const roleOptions = ["Owner", "Manager", "Employee", "Viewer"];
 
   const validationSchema = Yup.object({
     userRole: Yup.string().required("User Role is required"),
@@ -124,13 +134,13 @@ const AddRole = () => {
   }, [navigation, User]);
 
   const getStatusFk = () => {
-    if (selectedStatus == "Owner") {
+    if (AddRode == "Owner") {
       return 1;
-    } else if (selectedStatus == "Manager") {
+    } else if (AddRode == "Manager") {
       return 2;
-    } else if (selectedStatus == "Employee") {
+    } else if (AddRode == "Employee") {
       return 3;
-    } else if (selectedStatus == "Viewer") {
+    } else if (AddRode == "Viewer") {
       return 4;
     } else {
       return 5;
@@ -144,6 +154,7 @@ const AddRole = () => {
         vendorfk: selectedShop?.id,
         usersfk: selectedShop?.user?.id,
         rolesfk: getStatusFk(),
+        email: dataToSend?.email,
       };
     } else {
       data = {
@@ -155,18 +166,41 @@ const AddRole = () => {
       };
     }
 
-    try {
-      setLoading(true);
-      const headers = {
-        Authorization: `Bearer ${userData?.token}`,
+    if (isUpdateEditdata) {
+      console.log("VALUE OF DATA IS ", data);
+      console.log("Value of edit user is ", editData);
+      const updatedValue = {
+        ...editData,
+        role: {
+          ...editData.role,
+          id: data.rolesfk,
+        },
+        vendor: {
+          ...editData.vendor,
+          id: data.vendorfk,
+        },
+        user: {
+          ...editData.user,
+          name: dataToSend?.userName || editData.user.name,
+          email: dataToSend?.email || editData.user.email,
+        },
       };
-      const response = await createApi(`userRoles`, data, headers);
-      showSnackbar("Profile updated successfully", "success");
-    } catch (error) {
-      console.log("Unable to create data", error);
-      setLoading(false);
-    } finally {
-      setLoading(false);
+
+      console.log("This is the updated details", updatedValue);
+    } else {
+      try {
+        setLoading(true);
+        const headers = {
+          Authorization: `Bearer ${userData?.token}`,
+        };
+        const response = await createApi(`userRoles`, data, headers);
+        showSnackbar("Profile updated successfully", "success");
+      } catch (error) {
+        console.log("Unable to create data", error);
+        setLoading(false);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -192,9 +226,9 @@ const AddRole = () => {
             selectShop,
           };
           await HandleBothData(dataToSend);
-          resetForm();
+          // resetForm();
           submit.current = true;
-          navigation.goBack();
+          // navigation.goBack();
         }}
       >
         {({
@@ -206,22 +240,13 @@ const AddRole = () => {
           touched,
           setFieldValue,
         }) => {
+          console.log("FILLED DATA OF VALUE ", values);
           return (
             <View style={styles.form}>
               <View style={styles.header}>
                 <Text style={styles.headerText}>Owner Name</Text>
                 <Text style={styles.subHeaderText}>{userData?.user?.name}</Text>
               </View>
-
-              {/* Shop Description */}
-              {selectedShop?.details && selectedShop?.details !== "" && (
-                <>
-                  <Text style={styles.label}>Shop Description</Text>
-                  <View style={styles.TextShopDes}>
-                    <Text style={styles.TextShop}>{selectedShop?.details}</Text>
-                  </View>
-                </>
-              )}
 
               {/* User Mobile Number */}
               <TextInput
@@ -298,6 +323,17 @@ const AddRole = () => {
                 <Text style={styles.errorText}>{errors.email}</Text>
               )}
 
+              {/* Shop Description */}
+              <View style={{ marginBottom: 10 }}>
+                <Text style={styles.label}>Shop Description</Text>
+                <View style={styles.TextShopDes}>
+                  <Text style={styles.TextShop}>
+                    {selectedShop?.details ||
+                      "This is dummy data, This is a shop details. "}
+                  </Text>
+                </View>
+              </View>
+
               {/* Shop Dropdown */}
               <View style={{ marginBottom: 10 }}>
                 <Text style={styles.label}>Select Shop</Text>
@@ -312,18 +348,41 @@ const AddRole = () => {
               </View>
 
               {/* User Role Dropdown */}
-              <Text style={styles.label}>User Role</Text>
-              <AddroleDropdown
-                paymentStatuses={roleOptions}
-                setSelectedStatus={setSelectedStatus}
-                selectedStatus={selectedStatus}
-                userRole={(assignRole) => {
-                  setFieldValue("userRole", assignRole);
-                }}
-              />
-              {touched.userRole && errors.userRole && (
-                <Text style={styles.errorText}>{errors.userRole}</Text>
-              )}
+              <View style={{ marginBottom: 10 }}>
+                <Text
+                  style={{
+                    fontSize: fontSize.labelLarge,
+                    fontFamily: "Poppins-Regular",
+                    fontWeight: "bold",
+                    color: "#333",
+                  }}
+                >
+                  User Role
+                </Text>
+                <Picker
+                  selectedValue={values.userRole}
+                  onValueChange={(itemValue) => {
+                    setFieldValue("userRole", itemValue);
+                    SetAddRole(itemValue);
+                  }}
+                  ref={pickerRef}
+                  style={{ width: "100%", height: 60 }}
+                >
+                  <Picker.Item label="Select Role" enabled={false} />
+                  {roleOptions && roleOptions.length > 0
+                    ? roleOptions.map((role, index) => (
+                        <Picker.Item
+                          key={index}
+                          label={role?.label || "Unknown Role"} // Default label if missing
+                          value={role?.value || ""} // Default value if missing
+                        />
+                      ))
+                    : null}
+                </Picker>
+                {touched.userRole && errors.userRole && (
+                  <Text style={styles.errorText}>{errors.userRole}</Text>
+                )}
+              </View>
 
               {/* Submit Button */}
               <TouchableOpacity style={styles.button} onPress={handleSubmit}>
@@ -387,11 +446,11 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: ButtonColor.SubmitBtn,
-    paddingVertical: 15,
+    paddingVertical: 10,
     borderRadius: 8,
     alignItems: "center",
     marginTop: 20,
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   buttonText: {
     color: "#fff",
@@ -405,6 +464,36 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "flex-end",
   },
+  TextShopDes: {
+    // borderWidth:2,
+    // paddingVertical:10,
+    marginBottom: 3,
+  },
+  TextShop: {
+    paddingVertical: 5,
+    fontSize: fontSize.labelMedium,
+    fontFamily: "Poppins-Regular",
+  },
 });
 
 export default AddRole;
+
+{
+  /* <AddroleDropdown
+  paymentStatuses={roleOptions}
+  setSelectedStatus={setSelectedStatus}
+  selectedStatus={selectedStatus}
+  userRole={(assignRole) => {
+    setFieldValue("userRole", assignRole);
+  }}
+/>; */
+}
+
+// {selectedShop?.details && selectedShop?.details !== "" && (
+//   <>
+//     <Text style={styles.label}>Shop Description</Text>
+//     <View style={styles.TextShopDes}>
+//       <Text style={styles.TextShop}>{selectedShop?.details}</Text>
+//     </View>
+//   </>
+// )}
