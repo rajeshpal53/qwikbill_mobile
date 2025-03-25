@@ -30,6 +30,15 @@ const AllVenderScreen = () => {
   const [searchedData, setSearchedData] = useState([]);
   const [searchCalled, setSearchCalled] = useState(false);
 
+
+    useEffect(() => {
+      if (searchQuery?.length <= 0) {
+        setSearchedData([]);
+        setSearchCalled(false);
+      }
+    }, [searchQuery]);
+
+    
   useEffect(() => {
     getAllVenderData();
   }, [page]);
@@ -106,8 +115,8 @@ const AllVenderScreen = () => {
 
       console.log("RESPONSE DATA IS ", response);
 
-      if (response?.users?.length > 0) {
-        setSearchedData(response?.users);
+      if (response?.vendors?.length > 0) {
+        setSearchedData(response?.vendors);
       } else {
         setSearchedData([]);
       }
@@ -130,6 +139,9 @@ const AllVenderScreen = () => {
     );
   };
 
+
+  console.log("DATA IS SEARCH DATA , ", searchedData)
+
   return (
     <View style={styles.container}>
       <View style={styles.Innercontainer}>
@@ -148,19 +160,6 @@ const AllVenderScreen = () => {
       </View>
 
       <FlatList
-        // ListHeaderComponent={
-        //   <View style={styles.container}>
-        //     <Searchbarwithmic
-        //       searchQuery={searchQuery}
-        //       setSearchQuery={setSearchQuery}
-        //       setsearchmodal={setsearchmodal}
-        //       setTranscript={setTranscript}
-        //       placeholderText="Search User by name ..."
-        //       refuser={searchBarRef}
-        //       searchData={() => {}}
-        //     />
-        //   </View>
-        // }
         data={
           searchQuery?.length > 0 && searchCalled ? searchedData : VenderData
         }

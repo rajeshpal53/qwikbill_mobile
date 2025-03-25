@@ -6,7 +6,9 @@ import { useNavigation } from "@react-navigation/native";
 const AllInvoiceCard = ({ item }) => {
   const navigation = useNavigation();
 
-  
+
+  console.log("DATA OF ITEM IS SHOW", item)
+
 
   return (
     <Pressable
