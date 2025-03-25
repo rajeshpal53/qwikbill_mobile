@@ -20,7 +20,7 @@ function InvoiceTransactionScreen() {
   const fetchinvoiceData=async()=>{
     try{
       setIsLoading(true)
-    const response=  await readApi("transaction/getTransactionsByVendorfk/22?page=1&limit=10")
+    const response=  await readApi(`transaction/getTransactionsByInvoicefk/${invoices.invoicefk}`)
     console.log(response,"response")
       setTransactions(response.transactions)
     }catch(err){
@@ -38,7 +38,7 @@ function InvoiceTransactionScreen() {
   }
 
   return (
-  <View>
+  <View style={{flex:1}}>
       <FlatList
       data={transactions}
         renderItem={({item})=>(<TransactionCard item={item}/>)}
