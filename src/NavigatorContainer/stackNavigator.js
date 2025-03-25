@@ -85,6 +85,8 @@ import PoliciesDetailsScreen from "../StackScreen/PoliciesDetailsScreen.js";
 import AllQueryAndSupport from "../../src/Screen/StackScreen/QueriesScreens/AllQueryAndSupport.js";
 import EditRole from "../Screen/StackScreen/EditRole.js";
 import RoleDetailsScreen from "../Screen/StackScreen/RoleDetailsScreen.js";
+import InvoiceTransactionScreen from '../Screen/StackScreen/InvoiceTransactionScreen.js'
+
 
 export default function StackNavigator() {
   const Stack = createStackNavigator();
@@ -310,6 +312,13 @@ export default function StackNavigator() {
           component={CustomerDetailScreen}
           options={{
             headerTitle: "Customer Details",
+          }}
+        />
+         <Stack.Screen
+          name="InvoiceTransactionScreen"
+          component={InvoiceTransactionScreen}
+          options={{
+            headerTitle: "Transaction Details",
           }}
         />
         <Stack.Screen
