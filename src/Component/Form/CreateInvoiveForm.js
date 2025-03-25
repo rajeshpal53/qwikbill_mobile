@@ -14,12 +14,15 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import ItemDataTable from "../Cards/ItemDataTable";
-import { useDispatch, useSelector } from "react-redux";
-import { ButtonColor, fontSize, readApi } from "../../Util/UtilApi";
+import {  useSelector } from "react-redux";
+import { ButtonColor, createApi, fontSize, readApi } from "../../Util/UtilApi";
 import { clearCart } from "../../Redux/slices/CartSlice";
 import PriceDetails from "../PriceDetails";
 import UserDataContext from "../../Store/UserDataContext";
 import { ShopContext } from "../../Store/ShopContext";
+import { useSnackbar } from "../../Store/SnackbarContext";
+import { useDispatch } from "react-redux";
+
 
 const CreateInvoiceForm = ({ selectedButton }) => {
   const dispatch = useDispatch();
@@ -33,7 +36,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const { selectedShop } = useContext(ShopContext);
   const [loading, setLoading] = useState(false);
   const timeoutId = useRef(null); // useRef to persist timeoutId
-
+  const {showSnackbar}=useSnackbar()
   useEffect(() => {
     console.log("selected shop isuser , ", selectedShop);
   }, [userData]);
@@ -151,6 +154,105 @@ const CreateInvoiceForm = ({ selectedButton }) => {
     }
   };
 
+    const handleGenerate = async (button = "download",formData,resetForm) => {
+      // setIsGenerated(true); // Trigger PDF generation when the button is pressed
+      if (selectedButton === "gst") {
+        try {
+          let api = "invoice/invoices";
+          const { customerData, serviceProviderData, ...payloadData } = formData;
+          const newProducts = payloadData?.products?.map((item) => {
+            return {
+              id: item?.id,
+              productname: item?.name,
+              price: item?.sellPrice,
+              quantity: item?.quantity,
+            };
+          });
+  
+          const newPayload = {
+            ...payloadData,
+            products: newProducts,
+            type: "gst",
+          };
+          console.log("after removing someData, payloadData is , ", newPayload);
+          console.log("userData is , ", userData);
+          console.log("userData token is , ", userData?.token);
+  
+          const response = await createApi(api, newPayload, {
+            Authorization: `Bearer ${userData?.token}`,
+          });
+  
+          console.log("response of create invoice is, ", response);
+          showSnackbar("Invoice Created Successfully", "success");
+          // setCreatedInvoice(response?.customer);
+          dispatch(clearCart());
+          resetForm()
+          // invoiceCreated.current = true;
+  
+          if (button == "download") {
+            console.log("Inside a if condition",response.customer);
+            return response;
+          } else if (button == "generate") {
+            console.log("Inside a else if condition ");
+            dispatch(clearCart());
+            navigation.pop(2);
+          }
+        } catch (error) {
+          console.log("error creating invoice is , ", error);
+          showSnackbar("Something went wrong creating Invoice is", "error");
+        }
+        console.log("Button pressed");
+      } else {
+        console.log("This is from GST PDf ");
+        try {
+          let api = "invoice/invoices";
+  
+          const { customerData, serviceProviderData, ...payloadData } = formData;
+  
+          const newProducts = payloadData?.products?.map((item) => {
+            return {
+              id: item?.id,
+              productname: item?.name,
+              price: item?.sellPrice,
+              quantity: item?.quantity,
+            };
+          });
+  
+          const newPayload = {
+            ...payloadData,
+            products: newProducts,
+            type: "provisional",
+          };
+          console.log("after removing someData, payloadData is , ", newPayload);
+          console.log("userData is , ", userData);
+          console.log("userData token is , ", userData?.token);
+  
+          const response = await createApi(api, newPayload, {
+            Authorization: `Bearer ${userData?.token}`,
+          });
+  
+          console.log("response of create invoice is, ", response);
+          showSnackbar("Invoice Created Successfully", "success");
+          // setCreatedInvoice(response?.customer);
+          dispatch(clearCart());
+          resetForm()
+          // invoiceCreated.current = true;
+          if (button == "download") {
+            console.log("Inside a if condition", response.customer);
+            return response;
+          } else if (button == "generate") {
+            console.log("Inside a else if condition ");
+            dispatch(clearCart());
+            navigation.pop(2);
+          }
+        } catch (error) {
+          console.log("error creating invoice is , ", error);
+          showSnackbar("Something went wrong creating Invoice is", "error");
+        }
+        console.log("Button pressed");
+      }
+    };
+
   return (
     <ScrollView>
       <Formik
@@ -162,7 +264,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           phone: "",
         }}
         validationSchema={validationSchema}
-        onSubmit={(values, { resetForm }) => {
+        onSubmit={ async (values, { resetForm }) => {
           console.log("values are , ", values);
 
           const DataCustomer = {
@@ -212,13 +314,17 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           console.log("Form Submitted Data:", payload?.products);
           console.log("Form Submitted Data:123", payload);
           submit.current = true;
-          navigation.navigate("PDFScreen", {
-            formData: payload,
-            selectedButton: selectedButton,
-            resetForm: resetForm,
-            // viewInvoiceData:payload
-          });
-          resetForm();
+          const customerResponse=  await handleGenerate("download",payload,resetForm)
+          if(customerResponse){
+            navigation.navigate("PDFScreen", {
+              viewInvoiceData: customerResponse,
+              selectedButton: selectedButton,
+              resetForm: resetForm,
+              customerResponse:customerResponse
+              // viewInvoiceData:payload
+            });
+            resetForm();
+          }
           // resetForm();
           // dispatch(clearCart());
         }}

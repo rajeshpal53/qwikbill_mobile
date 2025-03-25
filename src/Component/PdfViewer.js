@@ -36,6 +36,7 @@ const PdfScreen = ({ navigation }) => {
   const selectedButton = useRoute()?.params?.selectedButton || null;
   const resetForm = useRoute()?.params?.resetForm
   const viewInvoiceData = useRoute()?.params?.viewInvoiceData || null;
+  const customerResponse=useRoute()?.params?.customerResponse||null
   const dispatch = useDispatch();
   const [isGenerated, setIsGenerated] = useState(false); // State to track PDF generation
   const { userData } = useContext(UserDataContext);
@@ -62,10 +63,10 @@ const PdfScreen = ({ navigation }) => {
 
   useEffect(() => {
     console.log("view InvoiceData is under useEffect formData , ", formData);
-
-    // if (formData) {
-    //   setCreatedInvoice(formData);
-    // }
+      
+    if (formData) {
+      setCreatedInvoice(customerResponse);
+    }
   }, [formData]);
 
   const getTodaysDate = () => {
@@ -76,110 +77,6 @@ const PdfScreen = ({ navigation }) => {
 
     const formattedDate = `${day}/${month}/${year}`;
     return formattedDate;
-  };
-
-  const handleGenerate = async (button = "download") => {
-    // setIsGenerated(true); // Trigger PDF generation when the button is pressed
-    if (selectedButton === "gst") {
-      try {
-        let api = "invoice/invoices";
-
-        const { customerData, serviceProviderData, ...payloadData } = formData;
-
-        const newProducts = payloadData?.products?.map((item) => {
-          return {
-            id: item?.id,
-            productname: item?.name,
-            price: item?.sellPrice,
-            quantity: item?.quantity,
-          };
-        });
-
-        const newPayload = {
-          ...payloadData,
-          products: newProducts,
-          type: "gst",
-        };
-        console.log("after removing someData, payloadData is , ", newPayload);
-        console.log("userData is , ", userData);
-        console.log("userData token is , ", userData?.token);
-
-        const response = await createApi(api, newPayload, {
-          Authorization: `Bearer ${userData?.token}`,
-        });
-
-        console.log("response of create invoice is, ", response);
-        showSnackbar("Invoice Created Successfully", "success");
-        setCreatedInvoice(response?.customer);
-        dispatch(clearCart());
-        resetForm()
-
-        invoiceCreated.current = true;
-
-        if (button == "download") {
-          console.log("Inside a if condition ");
-          return response?.customer;
-        } else if (button == "generate") {
-          console.log("Inside a else if condition ");
-          dispatch(clearCart());
-          navigation.pop(2);
-        }
-      } catch (error) {
-        console.log("error creating invoice is , ", error);
-        showSnackbar("Something went wrong creating Invoice is", "error");
-      }
-      console.log("Button pressed");
-    } else {
-      console.log("This is from GST PDf ");
-      try {
-        let api = "invoice/invoices";
-
-        const { customerData, serviceProviderData, ...payloadData } = formData;
-
-        const newProducts = payloadData?.products?.map((item) => {
-          return {
-            id: item?.id,
-            productname: item?.name,
-            price: item?.sellPrice,
-            quantity: item?.quantity,
-          };
-        });
-
-        const newPayload = {
-          ...payloadData,
-          products: newProducts,
-          type: "provisional",
-        };
-        console.log("after removing someData, payloadData is , ", newPayload);
-        console.log("userData is , ", userData);
-        console.log("userData token is , ", userData?.token);
-
-        const response = await createApi(api, newPayload, {
-          Authorization: `Bearer ${userData?.token}`,
-        });
-
-        console.log("response of create invoice is, ", response);
-        showSnackbar("Invoice Created Successfully", "success");
-        setCreatedInvoice(response?.customer);
-        dispatch(clearCart());
-        resetForm()
-
-        invoiceCreated.current = true;
-
-        if (button == "download") {
-          console.log("Inside a if condition ");
-          return response?.customer;
-        } else if (button == "generate") {
-          console.log("Inside a else if condition ");
-          dispatch(clearCart());
-          navigation.pop(2);
-        }
-      } catch (error) {
-        console.log("error creating invoice is , ", error);
-        showSnackbar("Something went wrong creating Invoice is", "error");
-      }
-      console.log("Button pressed");
-    }
   };
 
   const handleDownload = async () => {
@@ -225,7 +122,6 @@ const PdfScreen = ({ navigation }) => {
       );
     } else {
       console.log("invoice data that we get for share is , ", createdInvoice);
-
       try {
         setShareLoading(true);
         await shareInvoicePressHandler(
