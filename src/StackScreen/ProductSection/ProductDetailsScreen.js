@@ -75,6 +75,15 @@ const ProductDetailsScreen = ({ navigation }) => {
     }, [])
   );
 
+
+    useEffect(() => {
+      if (searchQuery?.length <= 0) {
+        setSearchedData([]);
+        setSearchCalled(false);
+      }
+    }, [searchQuery]);
+    
+
   const Apistore = (page) => {
     // Start building the base API URL
     let api = `products/getProducts?vendorefk=${selectedShop?.id}&page=${page}&limit=${PAGE_SIZE}`;
@@ -154,14 +163,13 @@ const ProductDetailsScreen = ({ navigation }) => {
 
 
 
-  useEffect(()=>{console.log("DATA OF PRODUCT IS ",Productdata)},[Productdata])
 
 
   //Search Function
   const fetchSearchedData = async () => {
     try {
       setSearchCalled(true);
-      setIsLoading(true);
+      setloader(true);
       const trimmedQuery = searchQuery?.trim();
       console.log("trimmedQuery DATA IS ", trimmedQuery);
 
@@ -172,10 +180,10 @@ const ProductDetailsScreen = ({ navigation }) => {
         Authorization: `Bearer ${userData?.token}`,
       });
 
-      console.log("RESPONSE DATA IS ", response);
+      console.log("RESPONSE DATA IS45989", response);
 
-      if (response?.users?.length > 0) {
-        setSearchedData(response?.users);
+      if (response?.length > 0) {
+        setSearchedData(response);
       } else {
         setSearchedData([]);
       }
@@ -185,7 +193,7 @@ const ProductDetailsScreen = ({ navigation }) => {
         setSearchedData([]);
       }
     } finally {
-      setIsLoading(false);
+      setloader(false);
     }
   };
 

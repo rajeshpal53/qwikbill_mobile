@@ -263,7 +263,7 @@ export default ViewInvoiceScreen1;
 //   const fetchInvoices = async (pageNum=1, api=`invoice/getInvoices?vendorfk=${
 //         selectedShop?.id
 //       }&page=${page}&size=10${sortBy ? `&dateWise=${sortBy}` : ""}`) => {
-       
+
 //   //  if(api===`invoice/getInvoices?vendorfk=${selectedShop?.id}&page=${page}&size=10${sortBy ? `&dateWise=${sortBy}` : ""}`){
 //   //         setSelected("All")
 //   //     }
@@ -323,7 +323,7 @@ export default ViewInvoiceScreen1;
 //   finally{
 //     setIsLoading(false);
 //   }
-    
+
 //   };
 //   const Loader = () => {
 //     if (!isLoading) return null;
@@ -391,8 +391,8 @@ export default ViewInvoiceScreen1;
 //             </View>
 //           }
 //         />
-  
-     
+
+
 //       <FAB
 //         style={{
 //           position: "absolute",

@@ -531,7 +531,7 @@ const ProfileSetting = ({
                       <Button
                         icon="pencil"
                         mode="contained"
-                        buttonColor="#0c3b73"
+                        buttonColor="#007bff"
                         style={styles.button}
                       >
                         {t("Edit")}
