@@ -13,11 +13,14 @@ import { FAB } from "react-native-paper";
 const EditRole = () => {
   const [RoleData, setRoleData] = useState([]);
   const { userData } = useContext(UserDataContext);
-  const { allShops, setAllShops } = useContext(ShopContext);
+  const { allShops, selectedShop } = useContext(ShopContext);
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
   const isFocused = useIsFocused();
+
+  console.log("DATA OF SELECTED SHOP ", selectedShop?.id)
+
 
   useEffect(() => {
     const getRoleData = async () => {
@@ -26,10 +29,10 @@ const EditRole = () => {
         Authorization: `Bearer ${userData?.token}`,
       };
       try {
-        const response = await readApi(`userRoles/1`, headers);
-        console.log("GET ALL DATA IS ", response);
+        const response = await readApi(`userRoles/getUserRoleByVendorfk/${selectedShop?.id}`, headers);
+        console.log("GET ALL DATA IS125 ", response?.data);
         if (response?.data) {
-          setRoleData([response.data]);
+          setRoleData(response.data);
           console.log("GET ALL DATA IS response", response.data);
         } else {
           setRoleData([]); // If no data is found
@@ -42,7 +45,7 @@ const EditRole = () => {
       }
     };
     getRoleData();
-  }, [isFocused, setAllShops]);
+  }, [isFocused, selectedShop]);
 
   const Loader = () => {
     if (!loading) return null;
@@ -69,7 +72,7 @@ const EditRole = () => {
         <FlatList
           data={RoleData}
           renderItem={({ item }) => <AllRoleDetailsCard item={item} />}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => (item.id ? item.id.toString() : Math.random().toString())}
           ListEmptyComponent={() => (
             <View style={{ alignItems: "center", marginTop: 20 }}>
               <Text style={{ fontSize: 16, color: "gray" }}>No roles found.</Text>
@@ -83,7 +86,7 @@ const EditRole = () => {
           icon="plus"
           style={styles.fab}
           onPress={() =>
-            navigation.navigate("AddroleScreen", { editData: false })
+            navigation.navigate("AddroleScreen", {isUpdateEditdata: false, })
           }
         />
       </View>
