@@ -13,7 +13,7 @@ import ProductDetailsScreen from "../StackScreen/ProductSection/ProductDetailsSc
 import { AuthContext } from "../Store/AuthContext.js";
 import HomeHeaderRight from "../Components/HeaderComponents/HomeHeaderRight.js";
 import { fontSize } from "../Util/UtilApi.js";
-
+import ViewInvoiceScreen1 from "../Screen/Invoices/ViewInvoiceScreen1.js";
 export default function BottomNavigator({
   roleDetails,
   setroleDetails,
@@ -94,7 +94,7 @@ export default function BottomNavigator({
       />
       <Tab.Screen
         name="Invoice"
-        component={FilterInvoiceScreen}
+        component={ViewInvoiceScreen1}
         // component={Invoice}
         options={{
           headerShown: true,

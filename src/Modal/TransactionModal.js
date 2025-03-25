@@ -30,7 +30,7 @@ const{showSnackbar}=useSnackbar()
             userfk: invoices?.userfk,
             amount: amount}
             console.log(payload)
-        const response =await createApi("qapi/transaction/transactions",payload, {
+        const response =await createApi("transaction/transactions",payload, {
                 Authorization: `Bearer ${userData.token}`,
               })
               console.log(response,"of Transaction")
@@ -39,7 +39,8 @@ const{showSnackbar}=useSnackbar()
  
     }
     }catch(err){
-        showSnackbar("Failed to Create Transaction","error")
+      console.log(err.data.message,"error response")
+        showSnackbar(`${err.data.message}`,"error")
 
     }finally{
         onClose();
