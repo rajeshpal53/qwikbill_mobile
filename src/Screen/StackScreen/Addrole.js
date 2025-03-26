@@ -25,9 +25,6 @@ import AddroleDropdown from "../../Component/AddRoleDropdown";
 import { Picker } from "@react-native-picker/picker";
 
 const AddRole = () => {
-  const route = useRoute();
-  const { editData } = route.params;
-  const {isUpdateEditdata} = route.params;
   const { userData } = useContext(UserDataContext);
   const { allShops, selectedShop } = useContext(ShopContext);
   const [User, setUser] = useState("");
@@ -37,14 +34,11 @@ const AddRole = () => {
   const pickerRef = useRef();
   const [AddRode, SetAddRole] = useState("");
   const { showSnackbar } = useSnackbar();
-  const [selectedStatus, setSelectedStatus] = useState("Select Role");
   const timeoutId = useRef(null);
 
-  console.log("EDIT DATA IS ", isUpdateEditdata);
-
-  useEffect(() => {
-    console.log("SELECTED SHOP IS ", editData);
-  }, [editData]);
+  // useEffect(() => {
+  //   console.log("SELECTED SHOP IS ", editData);
+  // }, [editData]);
 
   const roleOptions = [
     { label: "Owner", value: "Owner" },
@@ -165,42 +159,18 @@ const AddRole = () => {
         rolesfk: getStatusFk(),
       };
     }
-
-    if (isUpdateEditdata) {
-      console.log("VALUE OF DATA IS ", data);
-      console.log("Value of edit user is ", editData);
-      const updatedValue = {
-        ...editData,
-        role: {
-          ...editData.role,
-          id: data.rolesfk,
-        },
-        vendor: {
-          ...editData.vendor,
-          id: data.vendorfk,
-        },
-        user: {
-          ...editData.user,
-          name: dataToSend?.userName || editData.user.name,
-          email: dataToSend?.email || editData.user.email,
-        },
+    try {
+      setLoading(true);
+      const headers = {
+        Authorization: `Bearer ${userData?.token}`,
       };
-
-      console.log("This is the updated details", updatedValue);
-    } else {
-      try {
-        setLoading(true);
-        const headers = {
-          Authorization: `Bearer ${userData?.token}`,
-        };
-        const response = await createApi(`userRoles`, data, headers);
-        showSnackbar("Profile updated successfully", "success");
-      } catch (error) {
-        console.log("Unable to create data", error);
-        setLoading(false);
-      } finally {
-        setLoading(false);
-      }
+      const response = await createApi(`userRoles`, data, headers);
+      showSnackbar("Profile updated successfully", "success");
+    } catch (error) {
+      console.log("Unable to create data", error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -209,11 +179,10 @@ const AddRole = () => {
       <Formik
         initialValues={{
           userMobile: "",
-          userName: editData?.user?.name || "",
-          userRole: editData?.role?.id || "",
-          email: editData?.user?.email || "",
-          selectShop:
-            editData?.vendor?.id || selectedShop?.shopname || "default",
+          userName:  "",
+          userRole:  "",
+          email:  "",
+          selectShop: selectedShop?.shopname || "default",
         }}
         validationSchema={validationSchema}
         onSubmit={async (values, { resetForm }) => {
@@ -226,9 +195,9 @@ const AddRole = () => {
             selectShop,
           };
           await HandleBothData(dataToSend);
-          // resetForm();
+          resetForm();
           submit.current = true;
-          // navigation.goBack();
+          navigation.goBack();
         }}
       >
         {({
