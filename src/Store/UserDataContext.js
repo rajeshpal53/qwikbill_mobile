@@ -23,27 +23,30 @@ export const UserDataProvider = ({ children }) => {
   }, []);
 
 
-  const fetchUserData=()=>{
-    console.log("2 check before Promise")
-     return new Promise(
-      (resolve,reject)=>{
+  const fetchUserData = () => {
+    console.log("2 check before Promise");
 
-        AsyncStorage.getItem('userData')
+    return new Promise((resolve, reject) => {
+      AsyncStorage.getItem('userData')
         .then((storedData) => {
           if (storedData) {
-            setUserData(JSON.parse(storedData));
-             console.log("3check resolve Promise")
-            resolve(JSON.parse(storedData))
-            console.log("4 after resolve")
+            const parsedData = JSON.parse(storedData);
+            setUserData(parsedData);
+
+            console.log("3 check resolve Promise", parsedData);
+            resolve(parsedData);
+            console.log("4 after resolve");
+          } else {
+            reject("No user data found in AsyncStorage");
           }
         })
         .catch((error) => {
           console.log('Error loading user data:', error);
-          reject(error)
+          reject(error);
         });
-      }
-    )
-  }
+    });
+  };
+
 
 
   // Function to store data both in state and AsyncStorage
