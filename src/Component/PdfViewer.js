@@ -27,6 +27,8 @@ import { clearCart } from "../Redux/slices/CartSlice";
 import { useDownloadInvoice } from "../Util/DownloadInvoiceHandler";
 import { useTranslation } from "react-i18next";
 import { AntDesign, Feather,FontAwesome5,MaterialCommunityIcons} from "@expo/vector-icons";
+import Pdf from 'react-native-pdf';
+
 
 
 
@@ -43,7 +45,7 @@ const PdfScreen = ({ navigation }) => {
   const invoiceCreated = useRef(false);
   const [createdInvoice, setCreatedInvoice] = useState(null);
   const { showSnackbar } = useSnackbar();
-
+  const [isLoading,setIsLoading]=useState(true)
   console.log("createdInvoice----------", createdInvoice);
   console.log("selectedButton----------", selectedButton);
 
@@ -53,6 +55,7 @@ const PdfScreen = ({ navigation }) => {
   const { downloadInvoicePressHandler, shareInvoicePressHandler,shareInvoiceOnWhatsApp } =
     useDownloadInvoice();
 
+  
   useEffect(() => {
     console.log("view InvoiceData is under useEffect , ", viewInvoiceData);
 
@@ -68,6 +71,11 @@ const PdfScreen = ({ navigation }) => {
       setCreatedInvoice(customerResponse);
     }
   }, [formData]);
+
+  const pdfSource = {
+    uri: `${API_BASE_URL}invoice/downloadInvoice/${createdInvoice?.id}`, // Change to your PDF URL
+    cache: true,
+  };
 
   const getTodaysDate = () => {
     const today = new Date();
@@ -184,24 +192,43 @@ const PdfScreen = ({ navigation }) => {
         userfk:viewInvoiceData?.usersfk||viewInvoiceData?.userfk,
       }
     }
+
+  
   return (
     <View style={{ flex: 1 }}>
       {/* <View style={{alignItems:"center"}}>
         <Text style={{fontFamily:"Poppins-Bold", fontSize:fontSize.headingSmall}}>Invoice Preview</Text>
       </View> */}
-
+        {isLoading && <ActivityIndicator size="large" color="blue" />}
       {viewInvoiceData ? (
-        <WebView
-          originWhitelist={["*"]}
-          source={{ html: generatePDF(viewInvoiceData) }}
-          style={{ height: "80%"}}
+       <Pdf
+       style={{ height: "60%"  }}
+          source={pdfSource}
+          trustAllCerts={false}
+          onLoadComplete={(numberOfPages) => {
+            console.log(`PDF loaded with ${numberOfPages} pages`);
+            setIsLoading(false)
+          }}
+          onError={(error) => {
+            console.log(error,"flflflfllf");
+            
+          }}
+         
         />
       ) : (
-        <WebView
-          originWhitelist={["*"]}
-          source={{ html: generatePDF(formData) }}
-          style={{ height: "80%"  }}
-        />
+        <Pdf
+        style={{ height: "80%"  }}
+           source={pdfSource}
+           onLoadComplete={(numberOfPages) => {
+             console.log(`PDF loaded with ${numberOfPages} pages`);
+             setIsLoading(false)
+           }}
+           onError={(error) => {
+             console.log(error);
+             
+           }}
+          
+         />
       )}
      <Card style={styles.card}>
       {/* Customer Name and Amount Section */}

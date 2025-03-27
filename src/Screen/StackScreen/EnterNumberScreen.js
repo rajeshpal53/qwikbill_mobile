@@ -66,6 +66,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const { login, isAuthenticated, storeData, setLoginDetail, handleLogin } =
     useContext(AuthContext);
+    const [idToken,setIdToken]=useState(null);
   // const [phoneNumber, setPhoneNumber] = useState('');
 
   const Validation = Yup.object().shape({
@@ -73,22 +74,34 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       .required("Phone number is required")
       .matches(/^[0-9]+$/, "Phone number must be numeric")
       .min(10, "Phone number must be at least 10 digits")
-      .max(12, "Phone number can be at most 15 digits")
-      .test(
-        "check-number-availability",
-        "Number is already registered. Try a different number.",
-        async (value) => {
-          if (value && value.length === 10) {
-            // Check if the number is already registered
-            const isAvailable = await checkPhoneNumberAvailability(value);
-            console.log("VALUE IN PRESENT IS SSS123", isAvailable);
-            return isAvailable;
-          }
-          return true;
-        }
-      ),
+      .max(10, "Phone number can be at most 10 digits")
+      // .test(
+      //   "check-number-availability",
+      //   "Number is already registered. Try a different number.",
+      //   async (value) => {
+      //     if (value && value.length === 10) {
+      //       // Check if the number is already registered
+      //       const isAvailable = await checkPhoneNumberAvailability(value);
+      //       console.log("VALUE IN PRESENT IS SSS123", isAvailable);
+      //       return isAvailable;
+      //     }
+      //     return true;
+      //   }
+      // ),
   });
 
+  useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        const tokenCall = await AsyncStorage.getItem("FCMToken");
+        setFCMToken(tokenCall);
+        console.log("FCMToken", JSON.parse(tokenCall));
+      } catch (err) {
+        console.error("failed to get token");
+      }
+    };
+    fetchToken();
+  }, []);
   const checkPhoneNumberAvailability = async (phoneNumber) => {
     console.log("Enter number is ", phoneNumber);
     try {
@@ -164,12 +177,15 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
   useEffect(() => {
     async function signOutUser() {
       try {
+        setIsLoading(true)
         // showSnackbar("User signed out successfully (19.0.0)", "success");
         await auth().signOut();
         //log.info('User signed out successfully');
       } catch (error) {
         console.error("Error signing out:", error);
         // showSnackbar("User signed out failed (19.0.0)", "error");
+      }finally{
+        setIsLoading(false)
       }
     }
     signOutUser();
@@ -185,15 +201,16 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       // log.info("debugg44444");
       if (user) {
         setIsVerified(true);
-        const idToken = await user.getIdToken();
+        // const idToken = await user.getIdToken();
+        setIdToken(await user.getIdToken());
         console.log("debugg55555", user);
         // const fToken=await AsyncStorage.getItem("FCMToken");
         // Alert.alert("Success", "Auto-verified successfully!");
         let pNumber = user.phoneNumber.replace("+91", "");
         // const response= await postData(pNumber,fToken,idToken);
         showSnackbar("Login successfully!", "success");
-
         setPasswordModalVisible(true);
+     
       }
     });
 
@@ -230,25 +247,25 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
   const postData = async (password, isForgetPassword,navigation) => {
     setIsLoading(true);
     console.log("FCMToken:", FCMToken);
-
     const payload = {
       mobile: phoneNumber,
       password,
+      idToken:idToken,
+      FCMToken:[FCMToken]
     };
 
     console.log("Payload:", payload);
 
     try {
       if (payload?.mobile) {
-        let apiEndpoint = isForgetPassword ? `users/forgetPassword` : `users/signUp`;
-        let apiFunction = isForgetPassword ? updateApi : createApi;
+        let apiEndpoint =`users/signUp`;
 
-        const response = await apiFunction(apiEndpoint, payload);
+        const response = await createApi(apiEndpoint, payload);
         console.log(`${isForgetPassword ? "Forgot Password" : "Sign-Up"} Response:`, response);
-
+      
         await saveUserData(response);
-        await handleLogin(response,navigation);
-        
+        await handleLogin({mobile:response?.user?.mobile,password:payload?.password},navigation);
+
         await AsyncStorage.setItem("updatedPassword", password);
 
 
@@ -338,14 +355,16 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
         const user = userCredential.user; // Authenticated user object
         // Fetch the ID token for backend verification
         const idToken = await user.getIdToken();
+        setIdToken(idToken);
         console.log("debugg77777 pra", user, idToken);
+        setPasswordModalVisible(true);
 
-        const isIdTokenValidate = await idTokenValidate(idToken);
 
-        if (isIdTokenValidate) {
-          setPasswordModalVisible(true);
+        // const isIdTokenValidate = await idTokenValidate(idToken);
 
-        }
+        // if (isIdTokenValidate) {
+
+        // }
       }
     } catch (error) {
       // Alert.alert("Invalid Code", "The code you entered is incorrect.");
