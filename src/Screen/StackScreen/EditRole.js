@@ -1,7 +1,12 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
 import UserDataContext from "../../Store/UserDataContext";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { ButtonColor, readApi } from "../../Util/UtilApi";
 import { ShopContext } from "../../Store/ShopContext";
 import DropDownList from "../../UI/DropDownList";
@@ -11,41 +16,88 @@ import { FlatList } from "react-native-gesture-handler";
 import { FAB } from "react-native-paper";
 
 const EditRole = () => {
+  const route = useRoute();
+  const { isAdmin, AdminRoleData } = route.params;
   const [RoleData, setRoleData] = useState([]);
   const { userData } = useContext(UserDataContext);
   const { allShops, selectedShop } = useContext(ShopContext);
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const isFocused = useIsFocused();
 
-  console.log("DATA OF SELECTED SHOP ", selectedShop?.id)
+  const [searchmodal, setsearchmodal] = useState(false);
+  const [transcript, setTranscript] = useState("");
+  const [searchedData, setSearchedData] = useState([]);
+  const [searchCalled, setSearchCalled] = useState(false);
 
+  console.log("DATA OF SELECTED SHOP ", selectedShop?.id);
+
+  console.log("IS ADMIN DATA IS ", isAdmin);
+  console.log("IS AdminRoleData DATA IS ", AdminRoleData?.id);
 
   useEffect(() => {
-    const getRoleData = async () => {
-      setLoading(true);
-      const headers = {
-        Authorization: `Bearer ${userData?.token}`,
-      };
-      try {
-        const response = await readApi(`userRoles/getUserRoleByVendorfk/${selectedShop?.id}`, headers);
-        console.log("GET ALL DATA IS125 ", response?.data);
-        if (response?.data) {
-          setRoleData(response.data);
-          console.log("GET ALL DATA IS response", response.data);
-        } else {
-          setRoleData([]); // If no data is found
-        }
-      } catch (error) {
-        console.log("Unable to fetch Role data", error);
-        setRoleData([]); // On error, clear the list
-      } finally {
-        setLoading(false);
-      }
+    searchdata();
+  }, [searchQuery]);
+
+  const getRoleData = async () => {
+    setLoading(true);
+    const headers = {
+      Authorization: `Bearer ${userData?.token}`,
     };
+    let api = ``;
+
+    if (isAdmin) {
+      if (AdminRoleData?.id) {
+        api = `userRoles/getUserRoleByVendorfk/${AdminRoleData.id}`;
+      } else {
+        console.log("AdminRoleData.id is missing");
+        setLoading(false);
+        return;
+      }
+    } else {
+      if (selectedShop?.id) {
+        api = `userRoles/getUserRoleByVendorfk/${selectedShop.id}`;
+      } else {
+        console.log("selectedShop.id is missing");
+        setLoading(false);
+        return;
+      }
+    }
+    try {
+      const response = await readApi(api, headers);
+      console.log("GET ALL DATA IS125 ", response?.data);
+      if (response?.data) {
+        setRoleData(response.data);
+        console.log("GET ALL DATA IS response", response.data);
+      } else {
+        setRoleData([]); // If no data is found
+      }
+    } catch (error) {
+      console.log("Unable to fetch Role data", error);
+      setRoleData([]); // On error, clear the list
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     getRoleData();
   }, [isFocused, selectedShop]);
+
+  const searchdata = () => {
+    if (searchQuery?.length > 0) {
+      const found = RoleData.filter((item) =>
+        item?.user?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSearchedData(found);
+      setSearchCalled(true);
+    } else {
+      setSearchedData([]);
+      setSearchCalled(false);
+    }
+  };
 
   const Loader = () => {
     if (!loading) return null;
@@ -61,33 +113,47 @@ const EditRole = () => {
       <View style={styles.container}>
         {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <Searchbarwithmic placeholderText="Search User by name ..." />
+          <Searchbarwithmic
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            setsearchmodal={setsearchmodal}
+            setTranscript={setTranscript}
+            placeholderText="Search Vender ..."
+            searchData={searchdata}
+          />
         </View>
 
         {/* Dropdown List */}
-        <View style={styles.dropdownContainer}>
-          <DropDownList options={allShops} />
-        </View>
+        {!isAdmin && (
+          <View style={styles.dropdownContainer}>
+            <DropDownList options={allShops} />
+          </View>
+        )}
 
         <FlatList
-          data={RoleData}
-          renderItem={({ item }) => <AllRoleDetailsCard item={item} />}
-          keyExtractor={(item) => (item.id ? item.id.toString() : Math.random().toString())}
+          data={searchCalled ? searchedData : RoleData}
+          renderItem={({ item }) => (
+            <AllRoleDetailsCard item={item} getRoleData={getRoleData} />
+          )}
+          keyExtractor={(item) =>
+            item.id ? item.id.toString() : Math.random().toString()
+          }
           ListEmptyComponent={() => (
             <View style={{ alignItems: "center", marginTop: 20 }}>
-              <Text style={{ fontSize: 16, color: "gray" }}>No roles found.</Text>
+              <Text style={{ fontSize: 16, color: "gray" }}>
+                No roles found.
+              </Text>
             </View>
           )}
           contentContainerStyle={styles.flatListContainer}
           ListFooterComponent={Loader}
+          showsVerticalScrollIndicator={false}
         />
 
         <FAB
           icon="plus"
           style={styles.fab}
-          onPress={() =>
-            navigation.navigate("AddroleScreen", {isUpdateEditdata: false, })
-          }
+          onPress={() => navigation.navigate("AddroleScreen")}
         />
       </View>
     </View>
