@@ -25,7 +25,7 @@ import { FontProvider } from "./src/Store/FontProvider.js";
 import { TourGuideProvider } from "rn-tourguide";
 import { ShopProvider } from "./src/Store/ShopContext.js";
 import { StorageLocationProvider } from "./src/Store/StorageLocationContext.js";
-
+import { setupTokenRefreshListener, requestUserPermission } from "./src/Util/NotificationHandler.js";
 const customTheme = {
   ...DefaultTheme,
   colors: {
@@ -38,6 +38,15 @@ const customTheme = {
 };
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(true);
+  const[fcmToken, setFcmToken] = useState(null);
+  useEffect(() => {
+    // Request permission and retrieve token on startup
+    requestUserPermission();
+    // Set up the token refresh listener
+    const unsubscribeTokenRefresh = setupTokenRefreshListener(setFcmToken);
+    // Clean up the token refresh listener
+    return () => unsubscribeTokenRefresh();
+  }, []);
 
   useEffect(() => {
     const loadFonts = async () => {

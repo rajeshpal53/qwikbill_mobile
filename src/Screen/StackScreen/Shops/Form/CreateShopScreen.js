@@ -788,8 +788,8 @@ const CreateShopScreen = ({ navigation }) => {
           }
 
           if (routeData) {
-            console.log("DATA OF USER ", routeData)
-            console.log(
+            console.log("DATA OF USER", routeData)
+            console.error(
               "Something went Wrong Updating Service Provider route data",
               error
             );

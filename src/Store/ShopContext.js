@@ -181,9 +181,14 @@ export const ShopProvider = ({ children }) => {
   // Function to update selected shop
   const updateSelectedShop = async (shop) => {
     setSelectedShop(shop);
-    console.log("shop to update is , ", shop);
-    await AsyncStorage.setItem("selectedShop", JSON.stringify(shop));
-  };
+    console.log("shop to update is:", shop);
+  
+    if (shop) {
+      await AsyncStorage.setItem("selectedShop", JSON.stringify(shop));
+    } else {
+      await AsyncStorage.removeItem("selectedShop");
+    }
+  }
 
   // if (loader) {
   //   <View style={{ flex: 1, justifyContent: "center" }}>
