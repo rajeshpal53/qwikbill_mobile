@@ -83,12 +83,12 @@ export const AuthProvider = ({ children }) => {
   const handleLogin = async (values,navigation) => {
 
     try {
-      console.log("login screen");
+      console.log("login screen",values);
 
       setIsLoading(true);
 
       const payload = {
-        mobile: values?.mobile,
+        mobile: values.mobile,
         password: values?.password,
       };
           
@@ -104,7 +104,7 @@ export const AuthProvider = ({ children }) => {
       setLoginDetail(response);
       console.log("response of Login is , ", response);
       await saveUserData(response);
-
+      
       if (navigation) {
         navigation.navigate("passcode"); // Change "HomeScreen" to your actual screen name
       }

@@ -186,10 +186,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSnackbar } from "../Store/SnackbarContext";
 import ChangeLanguageModal from "../Modal/ChangeLanguageModal";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-
-
-
-
+import { ShopContext } from "../Store/ShopContext";
 
 
 const ProfileSetting = ({
@@ -211,7 +208,9 @@ const ProfileSetting = ({
   // const { setCreateuser } = useContext(WalletContext);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+const{updateSelectedShop}=useContext(
+  ShopContext
+)
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchServiceProvider(userData);
@@ -429,11 +428,12 @@ const ProfileSetting = ({
       if (response) {
         // Handle success, show Snackbar message, and log out
         showSnackbar("Logged out successfully", "success");
-
+        
         // Perform all the logout actions
         // await auth().signOut();
         await clearUserData();
         await AsyncStorage.clear(); // Clear all AsyncStorage
+        updateSelectedShop(null)
         await AsyncStorage.removeItem("allShops");
         await AsyncStorage.removeItem("selectedShop");
 
