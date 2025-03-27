@@ -40,6 +40,8 @@ const AddRole = () => {
   //   console.log("SELECTED SHOP IS ", editData);
   // }, [editData]);
 
+  console.log("DATA OF USER IS ", User?.id)
+
   const roleOptions = [
     { label: "Owner", value: "Owner" },
     { label: "Manager", value: "Manager" },
@@ -82,6 +84,7 @@ const AddRole = () => {
           } catch (error) {
             setFieldValue("userName", "");
             setFieldValue("userMobile", phoneNumber);
+            setUser("");
             console.error("Error fetching User data:", error);
           } finally {
             setLoading(false);
@@ -146,9 +149,9 @@ const AddRole = () => {
     if (User) {
       data = {
         vendorfk: selectedShop?.id,
-        usersfk: selectedShop?.user?.id,
+        usersfk:  User?.id,
         rolesfk: getStatusFk(),
-        email: dataToSend?.email,
+        email:  User?.email,
       };
     } else {
       data = {
@@ -165,6 +168,7 @@ const AddRole = () => {
         Authorization: `Bearer ${userData?.token}`,
       };
       const response = await createApi(`userRoles`, data, headers);
+      console.log("DATA OF SUBMIT ", response)
       showSnackbar("Profile updated successfully", "success");
     } catch (error) {
       console.log("Unable to create data", error);
@@ -181,7 +185,7 @@ const AddRole = () => {
           userMobile: "",
           userName:  "",
           userRole:  "",
-          email:  "",
+          email:   User?.email || "",
           selectShop: selectedShop?.shopname || "default",
         }}
         validationSchema={validationSchema}
@@ -253,18 +257,13 @@ const AddRole = () => {
               <TextInput
                 mode="flat"
                 label="Enter User Name"
-                style={styles.input}
+                style={!User ? styles.input : { ...styles.input, backgroundColor: "#f3f3f3" }}
                 onChangeText={handleChange("userName")}
                 onBlur={handleBlur("userName")}
                 value={values.userName}
+                editable={!User}
                 right={
-                  loading ? (
-                    <ActivityIndicator
-                      size={10}
-                      color="#000"
-                      style={{ marginBottom: -22 }}
-                    />
-                  ) : values.userName ? (
+                   values.userName && !User ? (
                     <TextInput.Icon
                       icon="close"
                       size={20}
