@@ -5,6 +5,7 @@ import {
   useFocusEffect,
   useIsFocused,
   useNavigation,
+  useRoute,
 } from "@react-navigation/native";
 import { ButtonColor, readApi } from "../../Util/UtilApi";
 import { ShopContext } from "../../Store/ShopContext";
@@ -15,6 +16,8 @@ import { FlatList } from "react-native-gesture-handler";
 import { FAB } from "react-native-paper";
 
 const EditRole = () => {
+  const route = useRoute();
+  const { isAdmin, AdminRoleData } = route.params;
   const [RoleData, setRoleData] = useState([]);
   const { userData } = useContext(UserDataContext);
   const { allShops, selectedShop } = useContext(ShopContext);
@@ -31,6 +34,9 @@ const EditRole = () => {
 
   console.log("DATA OF SELECTED SHOP ", selectedShop?.id);
 
+  console.log("IS ADMIN DATA IS ", isAdmin);
+  console.log("IS AdminRoleData DATA IS ", AdminRoleData?.id);
+
   useEffect(() => {
     searchdata();
   }, [searchQuery]);
@@ -40,11 +46,27 @@ const EditRole = () => {
     const headers = {
       Authorization: `Bearer ${userData?.token}`,
     };
+    let api = ``;
+
+    if (isAdmin) {
+      if (AdminRoleData?.id) {
+        api = `userRoles/getUserRoleByVendorfk/${AdminRoleData.id}`;
+      } else {
+        console.log("AdminRoleData.id is missing");
+        setLoading(false);
+        return;
+      }
+    } else {
+      if (selectedShop?.id) {
+        api = `userRoles/getUserRoleByVendorfk/${selectedShop.id}`;
+      } else {
+        console.log("selectedShop.id is missing");
+        setLoading(false);
+        return;
+      }
+    }
     try {
-      const response = await readApi(
-        `userRoles/getUserRoleByVendorfk/${selectedShop?.id}`,
-        headers
-      );
+      const response = await readApi(api, headers);
       console.log("GET ALL DATA IS125 ", response?.data);
       if (response?.data) {
         setRoleData(response.data);
@@ -102,9 +124,11 @@ const EditRole = () => {
         </View>
 
         {/* Dropdown List */}
-        <View style={styles.dropdownContainer}>
-          <DropDownList options={allShops} />
-        </View>
+        {!isAdmin && (
+          <View style={styles.dropdownContainer}>
+            <DropDownList options={allShops} />
+          </View>
+        )}
 
         <FlatList
           data={searchCalled ? searchedData : RoleData}
