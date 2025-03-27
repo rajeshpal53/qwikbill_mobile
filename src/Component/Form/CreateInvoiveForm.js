@@ -168,7 +168,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
               quantity: item?.quantity,
             };
           });
-  
+
           const newPayload = {
             ...payloadData,
             products: newProducts,
@@ -177,18 +177,18 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           console.log("after removing someData, payloadData is , ", newPayload);
           console.log("userData is , ", userData);
           console.log("userData token is , ", userData?.token);
-  
+
           const response = await createApi(api, newPayload, {
             Authorization: `Bearer ${userData?.token}`,
           });
-  
+
           console.log("response of create invoice is, ", response);
           showSnackbar("Invoice Created Successfully", "success");
           // setCreatedInvoice(response?.customer);
           dispatch(clearCart());
           resetForm()
           // invoiceCreated.current = true;
-  
+
           if (button == "download") {
             console.log("Inside a if condition",response.customer);
             return response;
@@ -206,9 +206,9 @@ const CreateInvoiceForm = ({ selectedButton }) => {
         console.log("This is from GST PDf ");
         try {
           let api = "invoice/invoices";
-  
+
           const { customerData, serviceProviderData, ...payloadData } = formData;
-  
+
           const newProducts = payloadData?.products?.map((item) => {
             return {
               id: item?.id,
@@ -217,7 +217,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
               quantity: item?.quantity,
             };
           });
-  
+
           const newPayload = {
             ...payloadData,
             products: newProducts,
@@ -226,11 +226,11 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           console.log("after removing someData, payloadData is , ", newPayload);
           console.log("userData is , ", userData);
           console.log("userData token is , ", userData?.token);
-  
+
           const response = await createApi(api, newPayload, {
             Authorization: `Bearer ${userData?.token}`,
           });
-  
+
           console.log("response of create invoice is, ", response);
           showSnackbar("Invoice Created Successfully", "success");
           // setCreatedInvoice(response?.customer);

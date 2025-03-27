@@ -12,7 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 import { debounce } from "lodash";
 import AllVendorDataScreen from "../../Screen/StackScreen/AllVendorDataScreen";
 
-const AllVenderDataCard = ({ item, onDelete, onEditDetails, onEditItems }) => {
+const AllVenderDataCard = ({ item, onDelete, onEditDetails, onEditItems, onRole }) => {
   const { height, width } = useWindowDimensions(); // Use hook to get dimensions
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
@@ -72,6 +72,7 @@ const AllVenderDataCard = ({ item, onDelete, onEditDetails, onEditItems }) => {
             onDelete: onDelete,
             onEditDetails: onEditDetails,
             onEditItems: onEditItems,
+            onRole : onRole
           });
         }}
       >
