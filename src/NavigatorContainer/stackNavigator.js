@@ -85,8 +85,7 @@ import PoliciesDetailsScreen from "../StackScreen/PoliciesDetailsScreen.js";
 import AllQueryAndSupport from "../../src/Screen/StackScreen/QueriesScreens/AllQueryAndSupport.js";
 import EditRole from "../Screen/StackScreen/EditRole.js";
 import RoleDetailsScreen from "../Screen/StackScreen/RoleDetailsScreen.js";
-import InvoiceTransactionScreen from '../Screen/StackScreen/InvoiceTransactionScreen.js'
-
+import InvoiceTransactionScreen from "../Screen/StackScreen/InvoiceTransactionScreen.js";
 
 export default function StackNavigator() {
   const Stack = createStackNavigator();
@@ -147,19 +146,32 @@ export default function StackNavigator() {
     }
   };
 
-  const serviceProviderFetching = () => {
-    console.log("1before fetchuserData");
-    fetchUserData().then((respo) => {
-      console.log(respo, " 5 data fetchUserData");
-      if (respo) {
-        fetchServiceProvider(respo);
-      }
-    });
-  };
-
   useEffect(() => {
-    serviceProviderFetching();
+    fetchUserData()
+      .then((userData) => {
+        console.log("User Data: ", userData);
+        if (userData) {
+          fetchServiceProvider(userData);
+        }
+      })
+      .catch((error) => {
+        console.log("Error fetching user data: ", error);
+      });
   }, []);
+
+  // const serviceProviderFetching = () => {
+  //   console.log("1before fetchuserData");
+  //   fetchUserData().then((respo) => {
+  //     console.log(respo, " 5 data fetchUserData");
+  //     if (respo) {
+  //       fetchServiceProvider(respo);
+  //     }
+  //   });
+  // };
+
+  // useEffect(() => {
+  //   serviceProviderFetching();
+  // }, []);
 
   if (isLoading) {
     return (
@@ -314,7 +326,7 @@ export default function StackNavigator() {
             headerTitle: "Customer Details",
           }}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="InvoiceTransactionScreen"
           component={InvoiceTransactionScreen}
           options={{

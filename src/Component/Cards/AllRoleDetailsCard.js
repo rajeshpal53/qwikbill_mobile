@@ -58,7 +58,11 @@ const AllRoleDetailsCard = ({ item, getRoleData }) => {
           </View>
           <View style={styles.row}>
             <View style={styles.iconContainer}>
-              <MaterialCommunityIcons name="phone" size={18} color="#4B5563" />
+              <MaterialCommunityIcons
+                name="phone"
+                size={18}
+                color="#4B5563"
+              />
             </View>
             <View>
               <Text style={styles.label}>
@@ -95,6 +99,8 @@ const AllRoleDetailsCard = ({ item, getRoleData }) => {
               </Text>
             </View>
           </View>
+
+
 
           {/* Buttons with Icons */}
           <View style={styles.buttonContainer}>
