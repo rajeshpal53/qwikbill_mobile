@@ -75,19 +75,19 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       .min(10, "Phone number must be at least 10 digits")
       .max(12, "Phone number can be at most 15 digits")
       .test(
-        "check-number-availability",
-        "Number is already registered. Try a different number.",
-        async (value) => {
-          if (value && value.length === 10) {
-            // Check if the number is already registered
-            const isAvailable = await checkPhoneNumberAvailability(value);
-            console.log("VALUE IN PRESENT IS SSS123", isAvailable);
-            return isAvailable;
-          }
-          return true;
-        }
-      ),
-  });
+      "check-number-availability",
+      (value) =>
+        isForgetPassword
+          ? "Number not registered. Please sign up first."
+          : "Number is already registered. Try a different number.",
+      async (value) => {
+        if (!value || value.length < 10) return false; // Ensure a valid number format
+        const isAvailable = await checkPhoneNumberAvailability(value);
+        return isForgetPassword ? !isAvailable : isAvailable; // Flip logic based on the flow
+      }
+    ),
+});
+
 
   const checkPhoneNumberAvailability = async (phoneNumber) => {
     console.log("Enter number is ", phoneNumber);
@@ -227,35 +227,86 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
   };
 
 
-  const postData = async (password, isForgetPassword,navigation) => {
+  // const postData = async (password, isForgetPassword,navigation) => {
+  //   setIsLoading(true);
+  //   console.log("FCMToken:", FCMToken);
+
+  //   const payload = {
+  //     mobile: phoneNumber,
+  //     password,
+  //   };
+
+  //   console.log("Payload:", payload);
+
+  //   try {
+  //     if (payload?.mobile) {
+  //       let apiEndpoint = isForgetPassword ? `users/forgetPassword` : `users/signUp`;
+  //       let apiFunction = isForgetPassword ? updateApi : createApi;
+
+  //       const response = await apiFunction(apiEndpoint, payload);
+  //       console.log(`${isForgetPassword ? "Forgot Password" : "Sign-Up"} Response:`, response);
+
+  //       await saveUserData(response);
+  //       await handleLogin(response,navigation);
+        
+  //       await AsyncStorage.setItem("updatedPassword", password);
+
+
+  //       if (isForgetPassword) {
+  //         setIsForgetPasswordState(true);
+  //       }
+
+  //       return true;
+  //     }
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     return false;
+  //   } finally {
+  //     setIsLoading(false);
+  //     alert("Password reset successfully!");
+  //   }
+  // };
+
+
+
+  const postData = async (password, isForgetPassword, navigation) => {
     setIsLoading(true);
     console.log("FCMToken:", FCMToken);
-
+  
     const payload = {
       mobile: phoneNumber,
       password,
     };
-
+  
     console.log("Payload:", payload);
-
+  
     try {
       if (payload?.mobile) {
         let apiEndpoint = isForgetPassword ? `users/forgetPassword` : `users/signUp`;
         let apiFunction = isForgetPassword ? updateApi : createApi;
-
-        const response = await apiFunction(apiEndpoint, payload);
+  
+        const response = await apiFunction(apiEndpoint, payload,{timeout :10000});
         console.log(`${isForgetPassword ? "Forgot Password" : "Sign-Up"} Response:`, response);
-
-        await saveUserData(response);
-        await handleLogin(response,navigation);
+            
         
+
         await AsyncStorage.setItem("updatedPassword", password);
-
-
+  
         if (isForgetPassword) {
-          setIsForgetPasswordState(true);
-        }
 
+          await AsyncStorage.removeItem("loginDetail");
+          await saveUserData(null);
+          setIsForgetPasswordState(false); // Reset state
+  
+  
+          navigation.reset({ index: 0, routes: [{ name: "login" }] });
+  
+          alert("Password reset successfully! Please log in with your new password.");
+        } else {
+          await saveUserData(response);
+          await handleLogin(payload, navigation);
+        }
+  
         return true;
       }
     } catch (error) {
@@ -263,9 +314,9 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       return false;
     } finally {
       setIsLoading(false);
-      alert("Password reset successfully!");
     }
   };
+  
 
 
 

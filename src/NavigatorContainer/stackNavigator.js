@@ -111,7 +111,7 @@ export default function StackNavigator() {
     <>
       <Stack.Navigator
         // initialRouteName={userData ? "Passcode" : "login"}
-        initialRouteName={isForgetPasswordState ? "login" : userData ? "Passcode" : "login"}
+        initialRouteName={isForgetPasswordState ? "login" : userData ?.token?  "Passcode" : "login"}
 
         screenOptions={
           {
