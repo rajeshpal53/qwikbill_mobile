@@ -8,8 +8,10 @@ import {
   FlatList,
 } from "react-native";
 import { fontSize } from "../Util/UtilApi";
+import Icon from "react-native-vector-icons/FontAwesome"; // Import the Icon component
+import { MaterialCommunityIcons } from "@expo/vector-icons"; // Import MaterialCommunityIcons
 
-const CustomDropdown = ({
+const AddroleDropdown = ({
   paymentStatuses,
   setSelectedStatus,
   selectedStatus,
@@ -38,6 +40,8 @@ const CustomDropdown = ({
       {/* Custom Dropdown Button */}
       <TouchableOpacity style={styles.dropdownButton} onPress={toggleModal}>
         <Text style={styles.dropdownText}>{selectedStatus}</Text>
+        {/* Right-side dropdown icon */}
+        <Icon name="caret-down" size={15}  style={styles.icon} />
       </TouchableOpacity>
 
       {/* Modal for Dropdown */}
@@ -70,23 +74,31 @@ const CustomDropdown = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
-    width: "60%",
+    // backgroundColor: "#fff",
+    width: "100%",
   },
 
   dropdownButton: {
-    backgroundColor: "#fff",
-    justifyContent: "flex-end",
-    alignItems: "flex-end",
-    paddingVertical: 2,
-    borderRadius: 10,
+    flexDirection: "row", // Align text and icon horizontally
+    justifyContent: "space-between", // Space out text and icon
+    alignItems: "center", // Center vertically
+    paddingVertical: 8,
+    // borderRadius: 10,
+    // borderWidth: 1, // Add border to button if needed
+    borderColor: "#ddd", // Border color for the dropdown
+    // paddingHorizontal: 12, // Add some padding around text and icon
   },
+  icon: {
+    marginRight: 20, // Add space between text and icon
+  },
+
   dropdownText: {
     // fontSize: 16,
     fontWeight: "bold",
     color: "#333",
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.labelMedium,
+    paddingHorizontal:10
   },
   modalOverlay: {
     flex: 1,
@@ -115,4 +127,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CustomDropdown;
+export default AddroleDropdown;

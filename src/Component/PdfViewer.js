@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   View,
-  Button,
+  
   StyleSheet,
   Alert,
   Platform,
@@ -13,18 +13,20 @@ import {
   API_BASE_URL,
   createApi,
   fontSize,
+  formatDate,
   generatePDF,
+  statusName
 } from "../Util/UtilApi";
 import UserDataContext from "../Store/UserDataContext";
 import { useRoute } from "@react-navigation/native";
 import { useSnackbar } from "../Store/SnackbarContext";
-import { ActivityIndicator, Text } from "react-native-paper";
+import { ActivityIndicator, Card, Text,Button } from "react-native-paper";
 import { useDispatch } from "react-redux";
 import { clearCart } from "../Redux/slices/CartSlice";
 // import RNHTMLtoPDF from "react-native-html-to-pdf";
 import { useDownloadInvoice } from "../Util/DownloadInvoiceHandler";
 import { useTranslation } from "react-i18next";
-import { AntDesign, Feather } from "@expo/vector-icons";
+import { AntDesign, Feather,FontAwesome5,MaterialCommunityIcons} from "@expo/vector-icons";
 
 
 
@@ -34,6 +36,7 @@ const PdfScreen = ({ navigation }) => {
   const selectedButton = useRoute()?.params?.selectedButton || null;
   const resetForm = useRoute()?.params?.resetForm
   const viewInvoiceData = useRoute()?.params?.viewInvoiceData || null;
+  const customerResponse=useRoute()?.params?.customerResponse||null
   const dispatch = useDispatch();
   const [isGenerated, setIsGenerated] = useState(false); // State to track PDF generation
   const { userData } = useContext(UserDataContext);
@@ -47,7 +50,7 @@ const PdfScreen = ({ navigation }) => {
   const { t } = useTranslation();
   const [downloadLoading, setDownloadLoading] = useState(false);
   const [shareLoading, setShareLoading] = useState(false);
-  const { downloadInvoicePressHandler, shareInvoicePressHandler } =
+  const { downloadInvoicePressHandler, shareInvoicePressHandler,shareInvoiceOnWhatsApp } =
     useDownloadInvoice();
 
   useEffect(() => {
@@ -60,10 +63,10 @@ const PdfScreen = ({ navigation }) => {
 
   useEffect(() => {
     console.log("view InvoiceData is under useEffect formData , ", formData);
-
-    // if (formData) {
-    //   setCreatedInvoice(formData);
-    // }
+      
+    if (formData) {
+      setCreatedInvoice(customerResponse);
+    }
   }, [formData]);
 
   const getTodaysDate = () => {
@@ -74,110 +77,6 @@ const PdfScreen = ({ navigation }) => {
 
     const formattedDate = `${day}/${month}/${year}`;
     return formattedDate;
-  };
-
-  const handleGenerate = async (button = "download") => {
-    // setIsGenerated(true); // Trigger PDF generation when the button is pressed
-    if (selectedButton === "gst") {
-      try {
-        let api = "invoice/invoices";
-
-        const { customerData, serviceProviderData, ...payloadData } = formData;
-
-        const newProducts = payloadData?.products?.map((item) => {
-          return {
-            id: item?.id,
-            productname: item?.name,
-            price: item?.sellPrice,
-            quantity: item?.quantity,
-          };
-        });
-
-        const newPayload = {
-          ...payloadData,
-          products: newProducts,
-          type: "gst",
-        };
-        console.log("after removing someData, payloadData is , ", newPayload);
-        console.log("userData is , ", userData);
-        console.log("userData token is , ", userData?.token);
-
-        const response = await createApi(api, newPayload, {
-          Authorization: `Bearer ${userData?.token}`,
-        });
-
-        console.log("response of create invoice is, ", response);
-        showSnackbar("Invoice Created Successfully", "success");
-        setCreatedInvoice(response?.customer);
-        dispatch(clearCart());
-        resetForm()
-
-        invoiceCreated.current = true;
-
-        if (button == "download") {
-          console.log("Inside a if condition ");
-          return response?.customer;
-        } else if (button == "generate") {
-          console.log("Inside a else if condition ");
-          dispatch(clearCart());
-          navigation.pop(2);
-        }
-      } catch (error) {
-        console.log("error creating invoice is , ", error);
-        showSnackbar("Something went wrong creating Invoice is", "error");
-      }
-      console.log("Button pressed");
-    } else {
-      console.log("This is from GST PDf ");
-      try {
-        let api = "invoice/invoices";
-
-        const { customerData, serviceProviderData, ...payloadData } = formData;
-
-        const newProducts = payloadData?.products?.map((item) => {
-          return {
-            id: item?.id,
-            productname: item?.name,
-            price: item?.sellPrice,
-            quantity: item?.quantity,
-          };
-        });
-
-        const newPayload = {
-          ...payloadData,
-          products: newProducts,
-          type: "provisional",
-        };
-        console.log("after removing someData, payloadData is , ", newPayload);
-        console.log("userData is , ", userData);
-        console.log("userData token is , ", userData?.token);
-
-        const response = await createApi(api, newPayload, {
-          Authorization: `Bearer ${userData?.token}`,
-        });
-
-        console.log("response of create invoice is, ", response);
-        showSnackbar("Invoice Created Successfully", "success");
-        setCreatedInvoice(response?.customer);
-        dispatch(clearCart());
-        resetForm()
-
-        invoiceCreated.current = true;
-
-        if (button == "download") {
-          console.log("Inside a if condition ");
-          return response?.customer;
-        } else if (button == "generate") {
-          console.log("Inside a else if condition ");
-          dispatch(clearCart());
-          navigation.pop(2);
-        }
-      } catch (error) {
-        console.log("error creating invoice is , ", error);
-        showSnackbar("Something went wrong creating Invoice is", "error");
-      }
-      console.log("Button pressed");
-    }
   };
 
   const handleDownload = async () => {
@@ -223,7 +122,6 @@ const PdfScreen = ({ navigation }) => {
       );
     } else {
       console.log("invoice data that we get for share is , ", createdInvoice);
-
       try {
         setShareLoading(true);
         await shareInvoicePressHandler(
@@ -237,55 +135,55 @@ const PdfScreen = ({ navigation }) => {
         setShareLoading(false);
       }
     }
+   
 
-    // try {
-    //   // You can use the react-native-share library to share the PDF
-    //   console.log("share 1");
-    //   const htmlContent = generatePDF(formData);
-    //   console.log("share 2");
-    //   let options = {
-    //     html: htmlContent,
-    //     fileName: "Invoice",
-    //     directory: "Documents",
-    //   };
+  }
 
-    //   console.log("share 3 , ", options);
-
-    //   // const file = await RNHTMLtoPDF.convert(options)
-
-    //   console.log("share 4 , ", file);
-
-    //   if (!file?.filePath) {
-    //     Alert.alert("Error", "Generate the PDF first!");
-    //     return;
-    //   }
-
-    //   const shareOptions = {
-    //     title: "Share Invoice",
-    //     // message: "Check out this invoice",
-    //     url: Platform.OS === "android" ? `file://${file.filePath}` : file,
-    //     type: "application/pdf",
-    //   };
-
-    //   console.log("shareOptions is , ", shareOptions);
-
-    //   await Share.open(shareOptions); // Open native share options
-    // } catch (error) {
-    //   console.log("Error sharing the document", error);
-    // }
-  };
-
-  // const downloadInvoiceHandler = async (api, id, name) => {
-  //   console.log("api , ", api);
-  //   console.log("id , ", id);
-  //   console.log("name , ", name);
-  //   await downloadInvoicePressHandler(api, id, name);
-  // };
-
-  // const shareInvoiceHandler = (api, id, name) => {
-  //   shareInvoicePressHandler(api, id, name);
-  // };
-
+    const handleWhatsappShare= async()=>{
+      if (!createdInvoice) {
+        showSnackbar(
+          "Invoice Not Created, First Click On Generate Button",
+          "error"
+        );
+      } else {
+        console.log("invoice data that we get for share is , ", createdInvoice);
+  
+        try {
+          await shareInvoiceOnWhatsApp(
+            `${API_BASE_URL}invoice/downloadInvoice/${createdInvoice?.id}`,
+            createdInvoice?.id,
+            createdInvoice?.name
+          );
+        } catch (error) {
+          console.log("error in sharing pdf , ", error);
+        } finally {
+          setShareLoading(false);
+        }
+      }
+    }
+   let params={}
+    if(formData){
+      params={
+        shopname:formData?.vendor?.shopname,
+        userName:formData.user?.name,
+        finaltotal:formData?.finaltotal,
+        paidAmount:parseInt(formData?.finaltotal-formData?.remainingamount),
+        vendorfk:formData?.vendorfk ,
+        invoicefk:formData?.id ,
+        userfk:formData?.usersfk||formData?.userfk,
+      
+      }
+    }else{
+      params={
+        shopname:viewInvoiceData?.vendor?.shopname,
+        userName:viewInvoiceData.user?.name,
+        finaltotal:viewInvoiceData?.finaltotal,
+        paidAmount:parseInt(viewInvoiceData?.finaltotal-viewInvoiceData?.remainingamount),
+        vendorfk:viewInvoiceData?.vendorfk ,
+        invoicefk:viewInvoiceData?.id ,
+        userfk:viewInvoiceData?.usersfk||viewInvoiceData?.userfk,
+      }
+    }
   return (
     <View style={{ flex: 1 }}>
       {/* <View style={{alignItems:"center"}}>
@@ -296,88 +194,69 @@ const PdfScreen = ({ navigation }) => {
         <WebView
           originWhitelist={["*"]}
           source={{ html: generatePDF(viewInvoiceData) }}
-          style={{ height: "100%" }}
+          style={{ height: "80%"}}
         />
       ) : (
         <WebView
           originWhitelist={["*"]}
           source={{ html: generatePDF(formData) }}
-          style={{ height: "100%" }}
+          style={{ height: "80%"  }}
         />
       )}
-
-      <View style={styles.buttonsContainer}>
-        {!createdInvoice && (
-          <TouchableOpacity
-            disabled={createdInvoice ? true : false}
-            onPress={handleGenerate}
-            style={{
-              backgroundColor: "#9C27B0",
-              alignItems: "center",
-              paddingVertical: 8,
-              borderRadius: 5,
-            }}
-          >
-            <Text style={{ color: "#fff" }}>{t("Generate")}</Text>
-          </TouchableOpacity>
-        )}
-        {/*
-        <Button
-          disabled={createdInvoice ? true : false}
-          title="Generate"
-          onPress={handleGenerate}
-          style={{backgroundColor:"#FF9800"}}
-        /> */}
-
-        <View style={styles.downloadShareButtons}>
-          <TouchableOpacity
-            onPress={handleShare}
-            disabled={createdInvoice ? false : true}
-            style={[
-              styles.touchableButtonsStyle,
-              {
-                backgroundColor: "#2196F3",
-                opacity: createdInvoice ? 1 : 0.5,
-                flexDirection: "row",
-                justifyContent: "center",
-              },
-            ]}
-          >
-            <Feather name="share" size={22} color="#fff" />
-            <Text style={{ color: "#fff", paddingLeft: 4 }}>{t("Share")}</Text>
-            {shareLoading && (
-              <View style={styles.loaderOverlay}>
-                <ActivityIndicator color="#fff" size="small" />
-              </View>
-            )}
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={handleDownload}
-            disabled={createdInvoice ? false : true}
-            style={[
-              styles.touchableButtonsStyle,
-              {
-                backgroundColor: "#4CAF50",
-                opacity: createdInvoice ? 1 : 0.5,
-                flexDirection: "row",
-                justifyContent: "center",
-              },
-            ]}
-          >
-            <AntDesign name="download" size={22} color="#fff" />
-
-            <Text style={{ color: "#fff", paddingLeft: 4 }}>
-              {t("Download")}
-            </Text>
-            {downloadLoading && (
-              <View style={styles.loaderOverlay}>
-                <ActivityIndicator color="#fff" size="small" />
-              </View>
-            )}
-          </TouchableOpacity>
+     <Card style={styles.card}>
+      {/* Customer Name and Amount Section */}
+      <View style={styles.headerContainer}>
+        <View style={styles.detailContainer}>
+        <Text style={styles.userName}> Bill To :{viewInvoiceData?.user?.name || formData?.user?.name}</Text>
+        <Text style={styles.unpaidText}>Genrated By :{viewInvoiceData?.vendor?.shopname || formData?.vendor?.shopname}</Text>
+        </View>
+        <View style={styles.amountContainer}>
+          <Text style={styles.amountText}>₹{ viewInvoiceData?.finaltotal||formData?.finaltotal}</Text>
+          <Text style={styles.unpaidText}>
+  {statusName[viewInvoiceData?.statusfk || formData?.statusfk]?.toUpperCase()}
+</Text>
         </View>
       </View>
+
+      {/* Action Buttons */}
+      <View style={styles.actionButtons}>
+        <TouchableOpacity style={styles.recordButton} onPress={()=>{navigation.navigate("InvoiceTransactionScreen",{invoices:params})}}>
+          <MaterialCommunityIcons
+                  name="newspaper-variant"
+                  size={24}
+                  color="#fff"
+                />
+          <Text style={styles.buttonText}> Transactions</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.paymentButton} onPress={handleWhatsappShare}>
+        <FontAwesome5 name="whatsapp" size={24} color="#fff" />
+        <Text style={styles.buttonText}>  Share Link</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Print, Download, Share Buttons */}
+      <View style={styles.bottomButtons}>
+        <TouchableOpacity style={[styles.iconButton,{opacity:0.5}]} disabled={true}>
+          <Feather name="printer" size={22} color="#4CAF50" />
+          <Text style={styles.iconText}>Print</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.iconButton} onPress={handleDownload} disabled={!createdInvoice}>
+          <AntDesign name="download" size={22} color="#2196F3" />
+          <Text style={styles.iconText}>Download</Text>
+          {downloadLoading && <ActivityIndicator color="#2196F3" size="small" />}
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.iconButton} onPress={handleShare} disabled={!createdInvoice}>
+          <Feather name="share" size={22} color="#9C27B0" />
+          <Text style={styles.iconText}>Share</Text>
+          {shareLoading && <ActivityIndicator color="#9C27B0" size="small" />}
+        </TouchableOpacity>
+      </View>
+    </Card>
+
+
+     
     </View>
   );
 };
@@ -390,6 +269,90 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     gap: 20,
     padding: 20,
+  },
+  card: {
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    marginTop: 10,
+    height:"30%"
+  
+  },
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+    paddingHorizontal:20
+  },
+  userName: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  amountContainer: {
+    flexDirection: "column",
+    alignItems: "flex-end",
+  },
+  detailContainer:{
+    flexDirection: "column",
+    alignItems: "flex-start",
+  },
+  amountText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#000",
+  },
+  unpaidText: {
+    fontSize: 14,
+  },
+  actionButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 10,
+  },
+  recordButton: {
+    flex: 1,
+    paddingVertical: 10,
+    backgroundColor: "#26a0df",
+    alignItems: "center",
+    borderRadius: 5,
+    marginRight: 5,
+    flexDirection:"row",
+    justifyContent:"center"
+  },
+  paymentButton: {
+    flex: 1,
+    
+    paddingVertical: 10,
+    backgroundColor: "#4CAF50",
+    alignItems: "center",
+    borderRadius: 5,
+    flexDirection:"row",
+    justifyContent:"center"
+
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  bottomButtons: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 15,
+  },
+  iconButton: {
+    alignItems: "center",
+  },
+  iconText: {
+    marginTop: 4,
+    fontSize: 14,
+    color: "#000",
+  },
+
+  
+  upperButton:{
+    flexDirection:"row",
+    justifyContent:"center"
   },
   downloadShareButtons: {
     flexDirection: "row",

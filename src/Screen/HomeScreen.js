@@ -669,7 +669,7 @@ export default function HomeScreen({ navigation }) {
     const venderStatus = async () => {
       try {
         setIsLoading(true);
-        setVendorStatus(null);  // 🚀 Reset previous data to prevent stale data
+        setVendorStatus(null);
 
         const response = await readApi(`invoice/getVendorStats/${selectedShop.id}`);
 
@@ -677,9 +677,13 @@ export default function HomeScreen({ navigation }) {
 
           console.log("Dashboard Vendor Status Response:", response);
           setVendorStatus({ ...response })
+          await AsyncStorage.setItem("vendorStatus", JSON.stringify(response));
+
         } else {
           console.log("Something went wrong, please try again!");
           setVendorStatus({});
+          await AsyncStorage.removeItem("vendorStatus"); // Clear AsyncStorage on error
+
         }
       } catch (error) {
         console.log("Unable to get vendor dashboard data", error);
@@ -695,6 +699,12 @@ export default function HomeScreen({ navigation }) {
 
   }, [userData?.user?.mobile, selectedShop?.id, isFocused]);
 
+  
+  const total =
+    (vendorStatus?.totalSales || 0) +
+    (vendorStatus?.activeInvoices || 0) +
+    (vendorStatus?.newCustomers || 0) +
+    (vendorStatus?.totalInvoices || 0);
 
 
   const goToHandler = (Screen) => {
@@ -833,20 +843,30 @@ export default function HomeScreen({ navigation }) {
 
                 }}
               >
-                <View style={{ flexDirection: "row", gap: 7, height: 110, marginTop: 15, }}>
-                  <StatCard title="Total Sales" value={`$${vendorStatus?.totalSales ?? "N/A"}`} change="+12.5%" />
-                  <StatCard title="Active Invoices" value={vendorStatus?.activeInvoices ?? "N/A"} change="+5" />
-                  <StatCard title="New Customers" value={vendorStatus?.newCustomers ?? "N/A"} change="+3" />
-                  <StatCard title="Total Invoices" value={vendorStatus?.totalInvoices ?? "N/A"} change="+7" />
+                <View style={{ flexDirection: "row", gap: 7, height: 100, marginTop: 15,}}>
+                  <StatCard title="Total Sales" value={`$${vendorStatus?.totalSales ?? "N/A"}`} />
+                  <StatCard title="Active Invoices" value={vendorStatus?.activeInvoices ?? "N/A"}  />
+                  <StatCard title="New Customers" value={vendorStatus?.newCustomers ?? "N/A"}  />
+                  <StatCard title="Total Invoices" value={vendorStatus?.totalInvoices ?? "N/A"}  />
                 </View>
               </ScrollView>
             )}
 
 
 
-            {allShops && allShops.length > 0 && vendorStatus != null && (
+            {/* {allShops && allShops.length > 0 && vendorStatus != null && (
               <PieChartComponent ket={userData?.user?.mobile} vendorStatus={vendorStatus} />
+            )} */}
+
+            {allShops && allShops.length > 0 && vendorStatus != null && total > 0 ? (
+              <PieChartComponent key={userData?.user?.mobile} vendorStatus={vendorStatus} />
+            ) : (
+              <View style={{justifyContent:"center",alignItems:"center",marginTop:-25}}>
+                <Image source={require("../../assets/noDataFound.png")} style={{height:250,width:250}}/>
+              <Text style={{ textAlign: "center", color: "gray" }}>No vendor data is available </Text>
+              </View>
             )}
+
 
 
             <View style={{ flex: 2.7 }}>
@@ -925,9 +945,9 @@ const StatCard = ({ title, value, change }) => {
     <Card style={styles.statCard}>
       <View style={{ flexDirection: "row", }}>
         <Text style={{ marginRight: 15, fontSize: fontSize.label, fontFamily: fontFamily.medium }}>{title}</Text>
-        <Text style={[styles.statChange, { color: change.includes("-") ? "red" : "green" }]}>
+        {/* <Text style={[styles.statChange, { color: change.includes("-") ? "red" : "green" }]}>
           {change}
-        </Text>
+        </Text> */}
       </View>
       <Text style={{ fontSize: fontSize.label, fontFamily: fontFamily.bold, marginLeft: 5 }}>{value ?? "N/A"}</Text>
 
@@ -993,7 +1013,7 @@ const styles = StyleSheet.create({
     marginTop: 5
   },
   dropDownContainer: {
-    paddingVertical: 5,
+    paddingVertical: 6,
     paddingHorizontal: 20,
     backgroundColor: "#f6f2f7",
     borderRadius: 10,
@@ -1041,7 +1061,7 @@ const styles = StyleSheet.create({
     height: "65%",
     marginHorizontal: 3,
     paddingVertical: 15,
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
     borderRadius: 10,
     backgroundColor: "#fff",
     shadowColor: "#000",  // Use black for a soft shadow
@@ -1051,7 +1071,7 @@ const styles = StyleSheet.create({
     elevation: 4, // More depth on Android
     justifyContent: "flex-end",
     alignSelf: "flex-end",
-
+    width:140
   },
 
   flatList: {

@@ -2,16 +2,17 @@ import { FlatList, ScrollView, StyleSheet, Text } from "react-native";
 import { View } from "react-native";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
 import OpenmiqModal from "../../Modal/Openmicmodal";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import NoDataFound from "../../Components/NoDataFound";
 import { readApi } from "../../Util/UtilApi";
 import AllVenderDataCard from "../../Component/Cards/AllVenderDataCard";
 import { ActivityIndicator } from "react-native-paper";
 import ConfirmModal from "../../Modal/ConfirmModal";
 import { useNavigation } from "@react-navigation/native";
+import UserDataContext from "../../Store/UserDataContext";
 
 const AllVenderScreen = () => {
-  //   const { userData } = useContext(UserDataContext);
+  const { userData } = useContext(UserDataContext);
   const searchBarRef = useRef();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchmodal, setsearchmodal] = useState(false); // State for modal visibility
@@ -26,7 +27,18 @@ const AllVenderScreen = () => {
   const [deleteItemId, setDeleteItemId] = useState(null);
   const navigation = useNavigation();
   const searchbarRef = useRef(null);
+  const [searchedData, setSearchedData] = useState([]);
+  const [searchCalled, setSearchCalled] = useState(false);
 
+
+    useEffect(() => {
+      if (searchQuery?.length <= 0) {
+        setSearchedData([]);
+        setSearchCalled(false);
+      }
+    }, [searchQuery]);
+
+    
   useEffect(() => {
     getAllVenderData();
   }, [page]);
@@ -58,7 +70,6 @@ const AllVenderScreen = () => {
   //Delete API
   const handleDeleteService = (item) => {
     console.log("item is edit 123, ", item);
-
     // setDeleteItemId(item?.id);
     // setDeleteModal(true);
   };
@@ -88,6 +99,37 @@ const AllVenderScreen = () => {
     }
   };
 
+  const fetchSearchedData = async () => {
+    try {
+      setSearchCalled(true);
+      setloader(true);
+      const trimmedQuery = searchQuery?.trim();
+      console.log("trimmedQuery DATA IS ", trimmedQuery);
+
+      let api = `vendors/searchVendor?searchTerm=${trimmedQuery}`;
+
+      const response = await readApi(api, {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userData?.token}`,
+      });
+
+      console.log("RESPONSE DATA IS ", response);
+
+      if (response?.vendors?.length > 0) {
+        setSearchedData(response?.vendors);
+      } else {
+        setSearchedData([]);
+      }
+    } catch (error) {
+      console.log("Unable to get data ", error);
+      if (error?.status === 404) {
+        setSearchedData([]);
+      }
+    } finally {
+      setloader(false);
+    }
+  };
+
   const Loader = () => {
     if (!loader) return null;
     return (
@@ -96,6 +138,9 @@ const AllVenderScreen = () => {
       </View>
     );
   };
+
+
+  console.log("DATA IS SEARCH DATA , ", searchedData)
 
   return (
     <View style={styles.container}>
@@ -109,25 +154,15 @@ const AllVenderScreen = () => {
             setTranscript={setTranscript}
             placeholderText="Search User by name ..."
             //    refuser={searchBarRef}
+            searchData={fetchSearchedData}
           />
         </View>
       </View>
 
       <FlatList
-        // ListHeaderComponent={
-        //   <View style={styles.container}>
-        //     <Searchbarwithmic
-        //       searchQuery={searchQuery}
-        //       setSearchQuery={setSearchQuery}
-        //       setsearchmodal={setsearchmodal}
-        //       setTranscript={setTranscript}
-        //       placeholderText="Search User by name ..."
-        //       refuser={searchBarRef}
-        //       searchData={() => {}}
-        //     />
-        //   </View>
-        // }
-        data={VenderData}
+        data={
+          searchQuery?.length > 0 && searchCalled ? searchedData : VenderData
+        }
         renderItem={({ item, index }) => (
           <AllVenderDataCard
             item={item}
@@ -186,11 +221,11 @@ const styles = StyleSheet.create({
     padding: 2,
     marginTop: 10,
   },
-  Innercontainer:{
+  Innercontainer: {
     flexDirection: "row",
     alignItems: "center",
     marginTop: 5,
-  }
+  },
 });
 
 export default AllVenderScreen;

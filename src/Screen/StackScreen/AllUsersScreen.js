@@ -19,7 +19,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Icon from "react-native-vector-icons/Ionicons";
 // import Voice from "@react-native-voice/voice"; // Import Voice for speech recognition
 import UserDataContext from "../../Store/UserDataContext";
-import { deleteApi, fontSize, readApi,updateApi } from "../../Util/UtilApi";
+import { deleteApi, fontSize, readApi, updateApi } from "../../Util/UtilApi";
 
 import NoDataFound from "../../../src/Components/NoDataFound";
 import UserCard from "../../Component/Cards/UserCard";
@@ -27,7 +27,7 @@ import Searchbarwithmic from "../../Component/Searchbarwithmic";
 import OpenmiqModal from "../../Modal/Openmicmodal";
 import EditCustomerDetailsModal from "../../Modal/EditCustomerDetailsModal";
 import axios from "axios";
-
+import { useSnackbar } from "../../Store/SnackbarContext";
 
 const AllUsersScreen = ({ navigation }) => {
   const { userData } = useContext(UserDataContext);
@@ -46,9 +46,18 @@ const AllUsersScreen = ({ navigation }) => {
   const [totalPages, settotalPages] = useState(1);
 
   const searchbarRef = useRef(null);
-  const [editModalVisible, setEditModalVisible] = useState(false)
-  const [selectedUser, setSelectedUser] = useState(null)
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const { showSnackbar } = useSnackbar()
 
+  useEffect(() => {
+    if (searchQuery?.length <= 0) {
+      setSearchedData([]);
+      setSearchCalled(false);
+    }
+  }, [searchQuery]);
+
+  console.log("Search Data is ", searchedData);
 
   useEffect(() => {
     getalldata();
@@ -77,34 +86,90 @@ const AllUsersScreen = ({ navigation }) => {
     }
   };
 
-  const HandleDeleteUser = async (item) => {
-    console.log("DATA OF ITEM ISSSSS", item.id);
+  // const HandleDeleteUser = async (item) => {
+  //   console.log("DATA OF ITEM ISSSSS", item.id);
+  //   try {
+  //     setIsLoading(true);
+  //     if (item.id) {
+  //       const token = userData?.token;
+  //       console.log("token is ", token)
+  //       const deleteresponse = await deleteApi(`users/${item.id}`
+  //       //   {
+  //       //   Authorization: `Bearer ${token}`,
+  //       // }
+  //     );
 
- 
+  //       console.log("response for delete is ", deleteresponse)
+
+  //       console.log(`https://rajeshpal.online/qapi/users/${item.id}`)
+  //       if (deleteresponse) {
+  //         showSnackbar("This user data is deleted successfully", "success")
+  //         setUsersData((prev) => prev.filter((data) => data.id !== item.id));
+  //       } else {
+  //         setIsLoading(false);
+  //         console.log("Failed to delete the Response: ", deleteresponse);
+  //       }
+  //     } else {
+  //       setIsLoading(false);
+  //       console.log("Unable to get Id");
+  //     }
+  //   } catch (error) {
+  //     showSnackbar("unable to delete this data ", "error")
+  //     console.log("Unable to fetch Delete API : ", error);
+  //     setIsLoading(false);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+
+  const HandleDeleteUser = async (item) => {
+    console.log("Attempting to delete user with ID:", item.id);
+
+    if (!item?.id) {
+      console.log("Error: Item ID is missing");
+      showSnackbar(" Unable to get user ID", "error");
+      return;
+    }
+
+    console.log("item name  is ", item.name)
+
     try {
       setIsLoading(true);
-      if (item.id) {
-        const token = userData?.token;
-        const deleteresponse = await deleteApi(`users/${item.id}`, {
-          Authorization: `Bearer ${token}`,
-        });
-        if (deleteresponse) {
-          setUsersData((prev) => prev.filter((data) => data.id !== item.id));
-        } else {
-          setIsLoading(false);
-          console.log("Failed to delete the Response: ", deleteresponse);
-        }
+
+      const existingUser = usersData.find((data) => data.id === item.id);
+      if (!existingUser) {
+        showSnackbar(" user  not found or already deleted !", "error");
+        return;
+      }
+
+      const apiUrl = `users/${item.id}`;
+      console.log("Deleting user at API URL:", apiUrl);
+
+      const deleteresponse = await deleteApi(apiUrl);
+
+      console.log("Delete API response:", deleteresponse);
+
+      if (deleteresponse?.success) {
+        showSnackbar("User deleted successfully", "success");
+        setUsersData((prev) => prev.filter((data) => data.id !== item.id));
+        await getalldata();
       } else {
-        setIsLoading(false);
-        console.log("Unable to get Id");
+        showSnackbar("Failed to delete user", "error");
+        console.log("Delete response does not indicate success:", deleteresponse);
       }
     } catch (error) {
-      console.log("Unable to fetch Delete API : ", error);
-      setIsLoading(false);
+
+      console.log("Error deleting user:", error?.response?.data || error?.message || error);
+      showSnackbar("Unable to delete this user", "error");
+
+
     } finally {
       setIsLoading(false);
     }
   };
+
+
 
   const handleDataFromEditProfile = (updatedData, index) => {
     if (updatedData && index >= 0) {
@@ -122,7 +187,6 @@ const AllUsersScreen = ({ navigation }) => {
 
   const handleEditProfile = (item, index) => {
     navigation.navigate("EditProfilePage", {
-
       item: item,
       onGoBack: (updatedData) => handleDataFromEditProfile(updatedData, index),
       isAdmin: true,
@@ -130,8 +194,44 @@ const AllUsersScreen = ({ navigation }) => {
   };
 
   const loadMoreData = () => {
-    if (hasMore && !isLoading && page < totalPages) {
+    if (
+      searchedData?.length <= 0 &&
+      hasMore &&
+      !isLoading &&
+      page < totalPages
+    ) {
       setPage((prev) => prev + 1);
+    }
+  };
+
+  const fetchSearchedData = async () => {
+    try {
+      setSearchCalled(true);
+      setIsLoading(true);
+      const trimmedQuery = searchQuery?.trim();
+      console.log("trimmedQuery DATA IS ", trimmedQuery);
+
+      let api = `users/searchUser?searchTerm=${trimmedQuery}`;
+
+      const response = await readApi(api, {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userData?.token}`,
+      });
+
+      console.log("RESPONSE DATA IS ", response);
+
+      if (response?.users?.length > 0) {
+        setSearchedData(response?.users);
+      } else {
+        setSearchedData([]);
+      }
+    } catch (error) {
+      console.log("Unable to get data ", error);
+      if (error?.status === 404) {
+        setSearchedData([]);
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -147,7 +247,6 @@ const AllUsersScreen = ({ navigation }) => {
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <View style={styles.container}>
-
         {/* <View style={{ flex: 1 }}>
           <Searchbarwithmic
             refuser={searchbarRef}
@@ -162,27 +261,26 @@ const AllUsersScreen = ({ navigation }) => {
       </View>
 
       <FlatList
-
         ListHeaderComponent={
-          <View>
+          <View style={{ paddingHorizontal: 8 }}>
             <Searchbarwithmic
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
               setsearchmodal={setsearchmodal}
               setTranscript={setTranscript}
               placeholderText="Search User by name ..."
-
-            // searchData={fetchSearchedData}
+              searchData={fetchSearchedData}
             />
           </View>
         }
 
-        data={usersData}
+        data={
+          searchQuery?.length > 0 && searchCalled ? searchedData : usersData
+        }
         renderItem={({ item, index }) => (
           <UserCard
             item={item}
             index={index}
-
             // navigation={navigation}
             HandleDeleteUser={HandleDeleteUser}
             handleEditProfile={handleEditProfile}
@@ -217,7 +315,6 @@ const AllUsersScreen = ({ navigation }) => {
           transcript={transcript}
         />
       )}
-  
 
       {/* <EditCustomerDetailsModal
         visible={editModalVisible}
@@ -225,7 +322,7 @@ const AllUsersScreen = ({ navigation }) => {
         SelectedEditItem={selectedUser}
         onUpdate={handleUpdateUser}
       /> */}
-  </View>
+    </View>
   );
 };
 

@@ -24,6 +24,8 @@ const UserCard = ({ item, index, HandleDeleteUser, handleEditProfile }) => {
   const [profileUrl, setProfileUrl] = useState("");
   const [fallbackText, setFallbackText] = useState("E");
 
+  console.log("jayesh selected user data is ", item)
+
   // useEffect(() => {
   //   const setUrl = () => {
   //     if (item?.profilePicurl) {
@@ -81,9 +83,12 @@ const UserCard = ({ item, index, HandleDeleteUser, handleEditProfile }) => {
 
           <TouchableOpacity
             style={{ position: "absolute", right: 0, zIndex: 1 }}
-            onPress={() => HandleDeleteUser(item)}
+            onPress={() => {
+              console.log("item select for delete is ", item.id);
+              HandleDeleteUser(item)
+            }}
           >
-            <MaterialIcons name="delete" size={18} color="#1E88E5" />
+            <MaterialIcons name="delete" size={20} color="#1E88E5" />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -91,10 +96,10 @@ const UserCard = ({ item, index, HandleDeleteUser, handleEditProfile }) => {
             onPress={() => {
               console.log("Editing User:", item); // Log the user data before opening modal
               // handleEditUser(item);
-              handleEditProfile(item, index) 
+              handleEditProfile(item, index)
             }}
           >
-            <MaterialIcons name="edit" size={18} color="#1E88E5" />
+            <MaterialIcons name="edit" size={20} color="#1E88E5" />
           </TouchableOpacity>
 
 
@@ -131,7 +136,7 @@ const UserCard = ({ item, index, HandleDeleteUser, handleEditProfile }) => {
                   fontFamily: "Poppins-SemiBold",
                   marginRight: 22,
                   fontSize: fontSize.labelMedium,
-                  maxWidth:"80%"
+                  maxWidth: "80%"
                 }}
               >
                 {item?.name ? item.name : "no name"}
