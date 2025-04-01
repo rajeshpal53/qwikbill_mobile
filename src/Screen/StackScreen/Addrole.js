@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Formik } from "formik";
 import {
@@ -18,11 +17,17 @@ import { useContext } from "react";
 import UserDataContext from "../../Store/UserDataContext";
 import { ShopContext } from "../../Store/ShopContext";
 import DropDownList from "../../UI/DropDownList";
-import { useNavigation } from "@react-navigation/native";
-import { Picker } from "@react-native-picker/picker";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSnackbar } from "../../Store/SnackbarContext";
+import CustomDropdown from "../../Component/CustomeDropdown";
+import AddroleDropdown from "../../Component/AddRoleDropdown";
+// import RNPickerSelect from "react-native-picker-select";
+import { Picker } from "@react-native-picker/picker";
 
 const AddRole = () => {
+  const route = useRoute();
+  const { editData } = route.params;
+  const {isUpdateEditdata} = route.params;
   const { userData } = useContext(UserDataContext);
   const { allShops, selectedShop } = useContext(ShopContext);
   const [User, setUser] = useState("");
@@ -32,29 +37,34 @@ const AddRole = () => {
   const pickerRef = useRef();
   const [AddRode, SetAddRole] = useState("");
   const { showSnackbar } = useSnackbar();
-
+  const [selectedStatus, setSelectedStatus] = useState("Select Role");
   const timeoutId = useRef(null);
 
-  // Default roles
+  console.log("EDIT DATA IS ", isUpdateEditdata);
+
+  useEffect(() => {
+    console.log("SELECTED SHOP IS ", editData);
+  }, [editData]);
+
   const roleOptions = [
-    { label: "Owner", value: "owner" },
-    { label: "Manager", value: "manager" },
-    { label: "Employee", value: "employee" },
-    { label: "Viewer", value: "viewer" },
+    { label: "Owner", value: "Owner" },
+    { label: "Manager", value: "Manager" },
+    { label: "Employee", value: "Employee" },
+    { label: "Viewer", value: "Viewer" },
   ];
 
-  // Validation schema
+  // const roleOptions = ["Owner", "Manager", "Employee", "Viewer"];
+
   const validationSchema = Yup.object({
     userRole: Yup.string().required("User Role is required"),
     userMobile: Yup.string()
       .required("Phone is required")
       .matches(/^\d{10}$/, "Phone must be 10 digits"),
     userName: Yup.string().required("User Name is required"),
+    email: Yup.string()
+      .email("Invalid email format")
+      .required("Email is required"),
   });
-
-  useEffect(() => {
-    console.log("User data is getting12358 ", selectedShop);
-  }, [selectedShop]);
 
   const fetchUserData = async (phoneNumber, setFieldValue) => {
     if (timeoutId.current) {
@@ -74,9 +84,6 @@ const AddRole = () => {
               setUser(response);
               setFieldValue("userName", response?.name);
               setFieldValue("userMobile", phoneNumber);
-            } else {
-              setFieldValue("userName", response?.name);
-              setFieldValue("userMobile", phoneNumber);
             }
           } catch (error) {
             setFieldValue("userName", "");
@@ -86,8 +93,7 @@ const AddRole = () => {
             setLoading(false);
           }
         } else {
-          // If phone number is not valid (less than 10 digits or non-numeric)
-          setFieldValue("userName", ""); // Clear userName when the phone number is invalid
+          setFieldValue("userName", "");
           setFieldValue("userMobile", phoneNumber);
         }
       } catch (error) {
@@ -128,13 +134,13 @@ const AddRole = () => {
   }, [navigation, User]);
 
   const getStatusFk = () => {
-    if (AddRode == "owner") {
+    if (AddRode == "Owner") {
       return 1;
-    } else if (AddRode == "manager") {
+    } else if (AddRode == "Manager") {
       return 2;
-    } else if (AddRode == "employee") {
+    } else if (AddRode == "Employee") {
       return 3;
-    } else if (AddRode == "viewer") {
+    } else if (AddRode == "Viewer") {
       return 4;
     } else {
       return 5;
@@ -142,38 +148,59 @@ const AddRole = () => {
   };
 
   const HandleBothData = async (dataToSend) => {
-    console.log("USER DATA IS12 ", dataToSend);
     let data = {};
     if (User) {
       data = {
         vendorfk: selectedShop?.id,
         usersfk: selectedShop?.user?.id,
         rolesfk: getStatusFk(),
+        email: dataToSend?.email,
       };
-      console.log("DATA OF USER IS156", data);
     } else {
       data = {
         mobile: dataToSend?.userMobile,
         name: dataToSend?.userName,
+        email: dataToSend?.email,
         vendorfk: selectedShop?.id,
         rolesfk: getStatusFk(),
       };
     }
 
-    try {
-      setLoading(true);
-      const headers = {
-        Authorization: `Bearer ${userData?.token}`,
+    if (isUpdateEditdata) {
+      console.log("VALUE OF DATA IS ", data);
+      console.log("Value of edit user is ", editData);
+      const updatedValue = {
+        ...editData,
+        role: {
+          ...editData.role,
+          id: data.rolesfk,
+        },
+        vendor: {
+          ...editData.vendor,
+          id: data.vendorfk,
+        },
+        user: {
+          ...editData.user,
+          name: dataToSend?.userName || editData.user.name,
+          email: dataToSend?.email || editData.user.email,
+        },
       };
-      console.log("Passing data is ", data)
-      const response = await createApi(`userRoles`, data, headers);
-      console.log("DATA OF RESPONSE IS123", response);
-      showSnackbar(" update profile successfully", "success");
-    } catch (error) {
-      console.log("Unable to create a data is ", error);
-      setLoading(false);
-    } finally {
-      setLoading(false);
+
+      console.log("This is the updated details", updatedValue);
+    } else {
+      try {
+        setLoading(true);
+        const headers = {
+          Authorization: `Bearer ${userData?.token}`,
+        };
+        const response = await createApi(`userRoles`, data, headers);
+        showSnackbar("Profile updated successfully", "success");
+      } catch (error) {
+        console.log("Unable to create data", error);
+        setLoading(false);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -182,24 +209,26 @@ const AddRole = () => {
       <Formik
         initialValues={{
           userMobile: "",
-          userName: "",
-          userRole: "",
-          selectShop: selectedShop?.shopname || "default",
+          userName: editData?.user?.name || "",
+          userRole: editData?.role?.id || "",
+          email: editData?.user?.email || "",
+          selectShop:
+            editData?.vendor?.id || selectedShop?.shopname || "default",
         }}
         validationSchema={validationSchema}
-
         onSubmit={async (values, { resetForm }) => {
-          const { userMobile, userName, userRole, selectShop } = values;
+          const { userMobile, userName, userRole, email, selectShop } = values;
           const dataToSend = {
             userMobile,
             userName,
             userRole,
+            email,
             selectShop,
           };
           await HandleBothData(dataToSend);
-          resetForm();
+          // resetForm();
           submit.current = true;
-          navigation.goBack();
+          // navigation.goBack();
         }}
       >
         {({
@@ -209,53 +238,15 @@ const AddRole = () => {
           errors,
           handleSubmit,
           touched,
-
           setFieldValue,
         }) => {
-          console.log("Selected field is ", values);
-          console.log("Selected error is ", errors);
+          console.log("FILLED DATA OF VALUE ", values);
           return (
             <View style={styles.form}>
-              {/* Header */}
               <View style={styles.header}>
                 <Text style={styles.headerText}>Owner Name</Text>
                 <Text style={styles.subHeaderText}>{userData?.user?.name}</Text>
               </View>
-
-              {/* Shop Dropdown */}
-              <View>
-                <Text
-                  style={{
-                    fontSize: fontSize.labelLarge,
-                    fontFamily: "Poppins-Regular",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Select Shop
-                </Text>
-
-                <View style={{ borderBottomWidth: 2, marginBottom: 10 }}>
-                  <DropDownList
-                    options={allShops}
-                    onValueChange={(selectedShop) =>
-                      setFieldValue("selectShop", selectedShop)
-                    }
-                  />
-                  {touched.selectShop && errors.selectShop && (
-                    <Text style={styles.errorText}>{errors.selectShop}</Text>
-                  )}
-                </View>
-              </View>
-
-              {/* Shop Description */}
-              {selectedShop?.details && selectedShop?.details !== "" && (
-                <>
-                  <Text style={styles.label}>Shop Description</Text>
-                  <View style={styles.TextShopDes}>
-                    <Text style={styles.TextShop}>{selectedShop?.details}</Text>
-                  </View>
-                </>
-              )}
 
               {/* User Mobile Number */}
               <TextInput
@@ -266,7 +257,6 @@ const AddRole = () => {
                   setFieldValue("userMobile", phoneNumber);
                   await fetchUserData(phoneNumber, setFieldValue);
                 }}
-                // onBlur={handleBlur("userMobile")}
                 value={values.userMobile}
                 keyboardType="phone-pad"
                 right={
@@ -280,13 +270,13 @@ const AddRole = () => {
                   ) : null
                 }
               />
-
               {touched.userMobile && errors.userMobile && (
                 <Text style={styles.errorText}>{errors.userMobile}</Text>
               )}
+
               {loading && (
                 <View style={styles.loaderContainer}>
-                  <ActivityIndicator size="large" color="#0000ff" />
+                  <ActivityIndicator size="small" color="#0000ff" />
                 </View>
               )}
 
@@ -299,7 +289,13 @@ const AddRole = () => {
                 onBlur={handleBlur("userName")}
                 value={values.userName}
                 right={
-                  values.userName ? (
+                  loading ? (
+                    <ActivityIndicator
+                      size={10}
+                      color="#000"
+                      style={{ marginBottom: -22 }}
+                    />
+                  ) : values.userName ? (
                     <TextInput.Icon
                       icon="close"
                       size={20}
@@ -313,9 +309,56 @@ const AddRole = () => {
                 <Text style={styles.errorText}>{errors.userName}</Text>
               )}
 
+              {/* Email */}
+              <TextInput
+                mode="flat"
+                label="Enter User Email"
+                style={[styles.input, { color: "#fff" }]}
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+                value={values.email}
+                keyboardType="email-address"
+              />
+              {touched.email && errors.email && (
+                <Text style={styles.errorText}>{errors.email}</Text>
+              )}
+
+              {/* Shop Description */}
+              <View style={{ marginBottom: 10 }}>
+                <Text style={styles.label}>Shop Description</Text>
+                <View style={styles.TextShopDes}>
+                  <Text style={styles.TextShop}>
+                    {selectedShop?.details ||
+                      "This is dummy data, This is a shop details. "}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Shop Dropdown */}
+              <View style={{ marginBottom: 10 }}>
+                <Text style={styles.label}>Select Shop</Text>
+                <View>
+                  <DropDownList
+                    options={allShops}
+                    onValueChange={(selectedShop) =>
+                      setFieldValue("selectShop", selectedShop)
+                    }
+                  />
+                </View>
+              </View>
+
               {/* User Role Dropdown */}
-              <Text style={styles.label}>User Role</Text>
-              <View style={{ borderBottomWidth: 2, marginBottom: 10 }}>
+              <View style={{ marginBottom: 10 }}>
+                <Text
+                  style={{
+                    fontSize: fontSize.labelLarge,
+                    fontFamily: "Poppins-Regular",
+                    fontWeight: "bold",
+                    color: "#333",
+                  }}
+                >
+                  User Role
+                </Text>
                 <Picker
                   selectedValue={values.userRole}
                   onValueChange={(itemValue) => {
@@ -348,93 +391,109 @@ const AddRole = () => {
             </View>
           );
         }}
-
-      
       </Formik>
     </ScrollView>
   );
 };
 
-const pickerStyles = StyleSheet.create({
-  inputAndroid: {
-    paddingHorizontal: 15,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    backgroundColor: "white",
-    fontSize: 16,
-    marginBottom: 15,
-    color: "#333",
-  },
-});
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    padding: 10,
   },
   header: {
     marginBottom: 10,
+    paddingHorizontal: 5,
   },
   headerText: {
-    fontSize: fontSize.headingSmall,
+    // fontSize: 20,
+    fontSize: fontSize.heading,
     fontFamily: "Poppins-Regular",
     fontWeight: "bold",
+    color: "#333",
   },
   subHeaderText: {
     fontSize: fontSize.headingSmall,
     fontFamily: "Poppins-Regular",
     marginVertical: 5,
+    color: "#666",
   },
   form: {
     marginTop: 10,
-
-   
   },
   label: {
     fontSize: fontSize.labelLarge,
     fontFamily: "Poppins-Regular",
     fontWeight: "bold",
-    // marginBottom: 8,
+    color: "#333",
+    marginBottom: 8,
   },
   input: {
-
     marginBottom: 15,
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     height: 45,
-    borderRadius: 4,
-
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    fontSize: fontSize.labelLarge,
+    fontFamily: "Poppins-Regular",
   },
   errorText: {
     color: "red",
-    fontSize: 12,
-    marginTop: 5,
+    fontSize: fontSize.label,
+    marginBottom: 10,
+    fontFamily: "Poppins-Regular",
   },
   button: {
     backgroundColor: ButtonColor.SubmitBtn,
-
-    paddingVertical: 15,
-    borderRadius: 5,
-
+    paddingVertical: 10,
+    borderRadius: 8,
     alignItems: "center",
     marginTop: 20,
+    // marginBottom: 10,
   },
   buttonText: {
     color: "#fff",
-    fontSize: 18,
-    fontWeight: "600",
+    fontSize: fontSize.labelLarge,
+    fontFamily: "Poppins-Regular",
+    // fontWeight: "600",
   },
-  descriptionContainer: {
-    backgroundColor: "#f9f9f9",
-    padding: 15,
-    borderRadius: 8,
+  loaderContainer: {
+    // alignItems: "center",
+    // marginVertical: 20,
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
   },
-  descriptionText: {
-    fontSize: 16,
-    color: "#444",
+  TextShopDes: {
+    // borderWidth:2,
+    // paddingVertical:10,
+    marginBottom: 3,
+  },
+  TextShop: {
+    paddingVertical: 5,
+    fontSize: fontSize.labelMedium,
+    fontFamily: "Poppins-Regular",
   },
 });
 
 export default AddRole;
+
+{
+  /* <AddroleDropdown
+  paymentStatuses={roleOptions}
+  setSelectedStatus={setSelectedStatus}
+  selectedStatus={selectedStatus}
+  userRole={(assignRole) => {
+    setFieldValue("userRole", assignRole);
+  }}
+/>; */
+}
+
+// {selectedShop?.details && selectedShop?.details !== "" && (
+//   <>
+//     <Text style={styles.label}>Shop Description</Text>
+//     <View style={styles.TextShopDes}>
+//       <Text style={styles.TextShop}>{selectedShop?.details}</Text>
+//     </View>
+//   </>
+// )}

@@ -19,7 +19,7 @@ function DropDownList({ options, setSelectedshop }) {
   const [isLoading, setIsLoading] = useState(false);
   // const [options, setOptions] = useState([]);
 
-  console.log("selectedShop--------------",selectedShop)
+  console.log("selectedShop--------------", selectedShop);
 
   // const [selectedShop, setSelectedShop] = useState("");
   // console.log(shopDetails, "newShopDetails");
@@ -42,38 +42,41 @@ function DropDownList({ options, setSelectedshop }) {
   //   }, [selectedShop])
 
   return (
-    <View style={styles.pickerContainer}>
+    <View style={styles.container}>
       {isLoading && <ActivityIndicator size="small" />}
-      <Picker
-        enabled={options?.length > 0} // Disable the picker if options.length is 0
-        mode="dropdown"
-        style={{ width: "95%" }}
-        ref={pickerRef}
-        selectedValue={selectedShop}
-        onValueChange={(itemValue) => {
-          console.log("itemVaue is , ", itemValue);
-          updateSelectedShop(itemValue);
-        }}
-      >
-        {!selectedShop && (
-          <Picker.Item
-            label="Please select your Shop"
-            value=""
-            color="#888888"
-            enabled={false}
-          />
-        )}
+      <View style={styles.pickerWrapper}>
+        <Picker
+          enabled={options?.length > 0} // Disable the picker if options.length is 0
+          mode="dropdown"
+          // style={{ width: "95%" }}
+          style={styles.pickerStyle}
+          ref={pickerRef}
+          selectedValue={selectedShop}
+          onValueChange={(itemValue) => {
+            console.log("itemVaue is , ", itemValue);
+            updateSelectedShop(itemValue);
+          }}
+        >
+          {!selectedShop && (
+            <Picker.Item
+              label="Please select your Shop"
+              value=""
+              color="#888888"
+              enabled={false}
+            />
+          )}
 
-        {options?.map((item, index) => (
-          <Picker.Item
-            key={index}
-            // value={item?.shopname}
-            value={item}
-            label={item?.shopname}
-            color="#555555"
-          />
-        ))}
-      </Picker>
+          {options?.map((item, index) => (
+            <Picker.Item
+              key={index}
+              // value={item?.shopname}
+              value={item}
+              label={item?.shopname}
+              color="#555555"
+            />
+          ))}
+        </Picker>
+      </View>
       {/* <TouchableOpacity style={{ justifyContent: "center" }}>
         <MaterialCommunityIcons name="reload" size={20} />
       </TouchableOpacity> */}
@@ -81,12 +84,31 @@ function DropDownList({ options, setSelectedshop }) {
   );
 }
 const styles = StyleSheet.create({
-  pickerContainer: {
+  container: {
+    flex: 1, // Ensures full-screen height
+    justifyContent: "center", // Centers the content vertically
+    alignItems: "center", // Centers the content horizontally
+  },
+  pickerWrapper: {
+    width: "100%", // Adjust width as needed
+    alignItems: "center", // Center content horizontally
+    justifyContent: "center", // Center the Picker vertically
     // borderWidth: 1,
-    borderColor: "#0c3b73",
-    borderRadius: responsiveWidth(3),
+    // borderColor: "#0c3b73",
+    borderRadius: 10,
+    // padding: 10,
+    // backgroundColor: "#fff",
+    height: 40,
+  },
+  pickerStyle: {
     width: "100%",
-    flexDirection: "row",
+    height: 60, // Adjust height for visibility
+  },
+  selectedShopText: {
+    fontSize: 16,
+    color: "#333",
+    marginBottom: 10,
+    textAlign: "center",
   },
 });
 

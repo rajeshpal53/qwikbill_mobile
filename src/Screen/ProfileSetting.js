@@ -167,6 +167,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Image,
+  RefreshControl,
 } from "react-native";
 import { Text, Card, Avatar, Button } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -184,7 +185,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSnackbar } from "../Store/SnackbarContext";
 import ChangeLanguageModal from "../Modal/ChangeLanguageModal";
 
-const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
+const ProfileSetting = ({
+  navigation,
+  roleDetails,
+  setroleDetails,
+  fetchServiceProvider,
+}) => {
   const [isFullImageModalVisible, setIsFullImageModalVisible] = useState(false);
   const [selectedImageUri, setSelectedImageUri] = useState(null);
   const [loginConfirmModalVisible, setLoginConfirmModalVisible] =
@@ -196,14 +202,17 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
   const { showSnackbar } = useSnackbar();
   const { userData, clearUserData } = useContext(UserDataContext);
   // const { setCreateuser } = useContext(WalletContext);
+  const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  console.log("DATA OF USER IS SSSSSSSSSSSS", userData);
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchServiceProvider(userData);
+    setRefreshing(false);
+  };
   const { t, i18n } = useTranslation();
   const isFocused = useIsFocused();
   const AdminOption = [
-    // {icon: "person-add", label: "Add Service Provider Admin", value: "AddServiceProvider"},
-    // {icon: "edit", label: "Edit Service Provider Admin", value: "EditServiceProvider"},
-    // {icon: "person", label: "All Users", value: "AllUsers"},
     {
       icon: "person",
       label: " Admin Section ",
@@ -213,73 +222,82 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
 
   // const [sameMenuItems, setSameMeuItems] = useState()
   const [menuItems, setMenuItems] = useState();
+
   useEffect(() => {
-    if (myOrdersTabShow) {
-      setMenuItems([
-        // ...(userData
-        //   ? [
-        //       {
-        //         icon: "language",
-        //         label: "Address",
-        //         value: "Address",
-        //       },
-        //     ]
-        //   : []),
-        {
-          icon: "language",
-          label: "Change Language",
-          value: "changeLanguage",
-        },
-        {
-          icon: "flag",
-          label: "Edit  a Vendor ",
-          value: "Edit a Vendor",
-        },
-        ...(userData?.user?.roles === null ? AdminOption : []),
+    const UpdatemanuItem = () => {
+      setIsLoading(true);
+      try {
+        const baseItem = [
+          {
+            icon: "language",
+            label: "Change Language",
+            value: "changeLanguage",
+          },
+          ...(userData?.user?.roles === null ? AdminOption : []),
+          { icon: "policy", label: "Policies", value: "Policies" },
 
-        { icon: "policy", label: "Policies", value: "Policies" },
-        ...(userData
-          ? [{ icon: "logout", label: "Logout", value: "Logout" }]
-          : []),
-      ]);
-    } else {
-      setMenuItems([
-        // ...(userData
-        //   ? [
-        //       {
-        //         icon: "language",
-        //         label: "Address",
-        //         value: "Address",
-        //       },
-        //     ]
-        //   : []),
-        {
-          icon: "language",
-          label: "Change Language",
-          value: "changeLanguage",
-        },
-        // {
-        //   icon: "flag",
-        //   label: "Become a Vendor",
-        //   value: "Become a Vendor",
-        // },
-        ...(userData?.user?.roles === null ? AdminOption : []),
+          ...(userData
+            ? [
+                {
+                  icon: "person-add",
+                  label: roleDetails ? "Edit Role" : "Assign New Role",
+                  value: roleDetails ? "Edit Role" : "Assign New Role",
+                },
+                // { icon: "logout", label: "Logout1", value: "Logout1" },
+              ]
+            : []),
+          ...(userData
+            ? [{ icon: "logout", label: "Logout", value: "Logout" }]
+            : []),
+        ];
 
-        { icon: "policy", label: "Policies", value: "Policies" },
-        ...(userData
-          ? [
-              {
-                icon: "person-add",
-                label: "Assign New Role",
-                value: "Assign New Role",
-              },
-              { icon: "logout", label: "Logout", value: "Logout" },
-              // { icon: "logout", label: "Logout1", value: "Logout1" },
-            ]
-          : []),
-      ]);
-    }
-  }, [myOrdersTabShow, isFocused, userData]);
+        setMenuItems(baseItem);
+      } catch (error) {
+        console.log("Unable to fetch data ", error);
+      } finally {
+        setIsLoading(true);
+      }
+    };
+    UpdatemanuItem();
+  }, [roleDetails, isFocused, userData]);
+
+  // if (roleDetails) {
+  //   setMenuItems([
+  //     {
+  //       icon: "language",
+  //       label: "Change Language",
+  //       value: "changeLanguage",
+  //     },
+  //     ...(userData?.user?.roles === null ? AdminOption : []),
+
+  //     { icon: "policy", label: "Policies", value: "Policies" },
+  //     ...(userData
+  //       ? [{ icon: "logout", label: "Logout", value: "Logout" }]
+  //       : []),
+  //   ]);
+  // } else {
+  //   setMenuItems([
+  //     {
+  //       icon: "language",
+  //       label: "Change Language",
+  //       value: "changeLanguage",
+  //     },
+  //     ...(userData?.user?.roles === null ? AdminOption : []),
+
+  //     { icon: "policy", label: "Policies", value: "Policies" },
+  //     ...(userData
+  //       ? [
+  //           {
+  //             icon: "person-add",
+  //             label: roleDetails ? "Edit Role" : "Assign New Role",
+  //             value: roleDetails ? "Edit Role" : "Assign New Role",
+  //           },
+  //           { icon: "logout", label: "Logout", value: "Logout" },
+  //           // { icon: "logout", label: "Logout1", value: "Logout1" },
+  //         ]
+  //       : []),
+  //   ]);
+  // }
 
   // useEffect(() => {
   //   if (userData) {
@@ -374,6 +392,8 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
       navigation.navigate("AdminSection");
     } else if (value === "Assign New Role") {
       navigation.navigate("AddroleScreen");
+    } else if (value === "Edit Role") {
+      navigation.navigate("EditRoleScreen");
     } else if (value == "Logout1") {
       navigation.navigate("login");
     }
@@ -417,8 +437,8 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
     } catch (error) {
       console.error("Error during logout - ", error);
       showSnackbar("Error logging out", "error");
-    }finally{
-      setVisible(false)
+    } finally {
+      setVisible(false);
     }
   };
 
@@ -441,7 +461,17 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
     <>
       {/* <Text>{t("hello there")}</Text> */}
       <SafeAreaView style={styles.container}>
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#0a6846"]}
+              progressBackgroundColor={"#fff"}
+            />
+          }
+        >
           <View>
             <Card style={styles.card}>
               <View
@@ -501,7 +531,7 @@ const ProfileSetting = ({ navigation, myOrdersTabShow }) => {
                       <Button
                         icon="pencil"
                         mode="contained"
-                        buttonColor="#0c3b73"
+                        buttonColor="#007bff"
                         style={styles.button}
                       >
                         {t("Edit")}

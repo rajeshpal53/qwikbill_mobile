@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, ActivityIndicator  } from "react-native";
 import { fontSize, getRandomImage, NORM_URL } from "../../Util/UtilApi";
 import { useEffect, useState } from "react";
 import { Card, Avatar, Divider } from "react-native-paper";
@@ -14,9 +14,24 @@ import AllVendorDataScreen from "../../Screen/StackScreen/AllVendorDataScreen";
 
 const AllVenderDataCard = ({ item, onDelete, onEditDetails, onEditItems }) => {
   const { height, width } = useWindowDimensions(); // Use hook to get dimensions
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   const navigation = useNavigation();
   const [imageurl, setImageUrl] = useState("");
+
+  // useEffect(() => {
+  //   if (item?.shopImage) {
+  //     const tempUrl = `${NORM_URL}/${item?.shopImage}?${new Date().getTime()}`;
+  //     updateImageUrl(tempUrl);
+  //   } else {
+  //     const tempUrl = getRandomImage();
+  //     updateImageUrl(tempUrl);
+  //   }
+  // }, []);
+
+  // const updateImageUrl = debounce((imageurl) => {
+  //   setImageUrl(imageurl);
+  // }, 100);
 
   useEffect(() => {
     if (item?.shopImage) {
@@ -30,7 +45,9 @@ const AllVenderDataCard = ({ item, onDelete, onEditDetails, onEditItems }) => {
 
   const updateImageUrl = debounce((imageurl) => {
     setImageUrl(imageurl);
+    setIsImageLoaded(true); // Set image loaded state to true once the image URL is set
   }, 100);
+
 
   return (
     // <View>
@@ -65,12 +82,22 @@ const AllVenderDataCard = ({ item, onDelete, onEditDetails, onEditItems }) => {
           }}
         >
           <View style={styles.avatarContainer}>
-            {imageurl && (
+            {/* {imageurl && (
               <Avatar.Image
                 size={60}
                 source={{ uri: imageurl }}
                 style={{ marginRight: width * 0.02 }} // Inline style for margin
               />
+            )}
+          </View> */}
+          {isImageLoaded ? (  // Conditionally render the image after it has loaded
+              <Avatar.Image
+                size={60}
+                source={{ uri: imageurl }}
+                style={{ marginRight: width * 0.02 }} // Inline style for margin
+              />
+            ) : (
+              <ActivityIndicator size="small" color="#0000ff" /> // Show loading indicator while the image is loading
             )}
           </View>
 

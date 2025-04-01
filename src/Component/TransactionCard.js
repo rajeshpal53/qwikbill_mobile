@@ -121,8 +121,9 @@ const TransactionCard = ({ item }) => {
   : "N/A";
 
 
-
   const firstLetter = "U"; // Default letter since user.name is missing
+  console.log("Navigating with item:", item);
+
 
   return (
     <Pressable onPress={() => navigation.navigate("TransactionDetailScreen", { item })}>

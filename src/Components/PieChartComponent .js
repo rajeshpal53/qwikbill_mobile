@@ -14,7 +14,7 @@ const PieChartComponent = ({ vendorStatus }) => {
     }, [vendorStatus]);
 
     if (!vendorStatus) {
-        return <Text style={{fontFamily:fontFamily.medium,fontSize:fontSize.label}}>Loading Chart...</Text>;
+        return <Text style={{ fontFamily: fontFamily.medium, fontSize: fontSize.label }}>Loading Chart...</Text>;
     }
 
     // useEffect(() => {
@@ -41,10 +41,10 @@ const PieChartComponent = ({ vendorStatus }) => {
     const chartData =
         total === 0
             ? [
-                { key: 1, value: 25, svg: { fill: "#ddd" }, label: "Transactions" },
-                { key: 2, value: 25, svg: { fill: "#ddd" }, label: "Total Sales" },
-                { key: 3, value: 25, svg: { fill: "#ddd" }, label: "Payments" },
-                { key: 4, value: 25, svg: { fill: "#ddd" }, label: "Other" },
+                // { key: 1, value: 25, svg: { fill: "#ddd" }, label: "Transactions" },
+                // { key: 2, value: 25, svg: { fill: "#ddd" }, label: "Total Sales" },
+                // { key: 3, value: 25, svg: { fill: "#ddd" }, label: "Payments" },
+                // { key: 4, value: 25, svg: { fill: "#ddd" }, label: "Other" },
             ]
             : [
                 { key: 1, value: vendorStatus.totalSales, svg: { fill: "#2ecc71" }, label: "Total Sales" },

@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 
 import {
   createStackNavigator,
@@ -74,7 +74,7 @@ import InvoicePreviewScreen from "../Screen/Invoices/InvoicePreviewScreen.js";
 import TransactionScreen from "../Screen/Transactions/TransactionScreen.js";
 import TransactionDetailScreen from "../Screen/Transactions/TransactionDetailScreen.js";
 import AdminSectionScreen from "../Screen/StackScreen/AdminSectionScreen.js";
-import { fontSize } from "../Util/UtilApi.js";
+import { fontSize, readApi } from "../Util/UtilApi.js";
 import AllUsersScreen from "../Screen/StackScreen/AllUsersScreen.js";
 import AllInvoiceScreen from "../Screen/StackScreen/AllInvoiceScreen.js";
 import AllVendorScreen from "../Screen/StackScreen/AllVendorScreen.js";
@@ -83,6 +83,9 @@ import ProductDetailsScreen from "../StackScreen/ProductSection/ProductDetailsSc
 import CustomerDetail from "../StackScreen/CustomerSection/CustomerDetails.js";
 import PoliciesDetailsScreen from "../StackScreen/PoliciesDetailsScreen.js";
 import AllQueryAndSupport from "../../src/Screen/StackScreen/QueriesScreens/AllQueryAndSupport.js";
+import EditRole from "../Screen/StackScreen/EditRole.js";
+import RoleDetailsScreen from "../Screen/StackScreen/RoleDetailsScreen.js";
+import InvoiceTransactionScreen from '../Screen/StackScreen/InvoiceTransactionScreen.js'
 
 
 export default function StackNavigator() {
@@ -90,12 +93,73 @@ export default function StackNavigator() {
   const [isConnected, setIsConnected] = useState(false);
   const [isLandscape, setIsLandscape] = useState(false);
   const { isAuthenticated, isLoading, searchMode } = useContext(AuthContext);
-  const { userData } = useContext(UserDataContext);
+  const { userData, fetchUserData, clearUserData } =
+    useContext(UserDataContext);
   const [isForgetPasswordState, setIsForgetPasswordState] = useState(false);
+  const [roleDetails, setroleDetails] = useState(false);
 
   // const { shopDetails } = useContext(ShopDetailContext);
 
   // const ViewCustomerWithTour  = withCopilot(AddCustomerScreen)
+  // console.log("DATA OF USER IS ", userData);
+
+  const fetchServiceProvider = async (userData) => {
+    try {
+      if (userData) {
+        const userfk = userData?.user?.id;
+        console.log("USERFK ", userfk);
+        const response = await readApi(`userRoles/${userfk}`, {
+          Authorization: `Bearer ${userData?.token}`,
+        });
+
+        console.log(response, "aaaaaaaa");
+
+        if (Object.keys(response?.data).length > 0) {
+          setroleDetails(true);
+        } else {
+          setroleDetails(false);
+        }
+      } else {
+        console.log("service Provider Not Found , ", userData);
+        setroleDetails(false);
+      }
+    } catch (err) {
+      console.log("Error is , , - ", err);
+      console.log("err.data.status", err.status);
+      // const statusCode = err?.status;
+      // console.log("Extracted Status Code: ", statusCode);
+      // if (err.status == 403 || err.status == 401) {
+      //   console.log("Unauthorized! Redirecting...");
+      //   showSnackbar("Session Expired! Please login again.", "error");
+      // await clearUserData();
+      //   await AsyncStorage.removeItem("remoteMessages");
+      //   await AsyncStorage.removeItem("userAddresses");
+      //   navigationRef.dispatch(
+      //     CommonActions.reset({
+      //       index: 0,
+      //       routes: [{ name: "EnterNumber" }],
+      //     })
+      //   );
+      // }
+      // setroleDetails(false);
+    } finally {
+      // setIsLoading(false);
+    }
+  };
+
+  const serviceProviderFetching = () => {
+    console.log("1before fetchuserData");
+    fetchUserData().then((respo) => {
+      console.log(respo, " 5 data fetchUserData");
+      if (respo) {
+        fetchServiceProvider(respo);
+      }
+    });
+  };
+
+  useEffect(() => {
+    serviceProviderFetching();
+  }, []);
 
   if (isLoading) {
     return (
@@ -111,14 +175,38 @@ export default function StackNavigator() {
     <>
       <Stack.Navigator
         // initialRouteName={userData ? "Passcode" : "login"}
-        initialRouteName={isForgetPasswordState ? "login" : userData ?.token?  "Passcode" : "login"}
-
+        initialRouteName={
+          isForgetPasswordState ? "login" : userData ? "Passcode" : "login"
+        }
         screenOptions={
           {
             // headerTitle: "Create Invoice",
           }
         }
       >
+        <Stack.Screen
+          name="wertone"
+          options={{
+            headerShown: false,
+            cardStyle: { backgroundColor: "#fff" },
+          }}
+        >
+          {({ navigation }) => (
+            <BottomNavigator
+              navigation={navigation}
+              roleDetails={roleDetails}
+              setroleDetails={setroleDetails}
+              fetchServiceProvider={fetchServiceProvider}
+            />
+          )}
+        </Stack.Screen>
+
+        {/* <Stack.Screen
+          name="wertone"
+          component={BottomNavigator}
+          options={{ headerShown: false }}
+        /> */}
+
         <Stack.Screen
           name="AddCustomer"
           component={AddCustomerScreen}
@@ -156,7 +244,7 @@ export default function StackNavigator() {
 
         <Stack.Screen name="viewClient" component={ViewClientScreen} />
 
-{/* <Stack.Screen name="EditProfilePage" component={EditProfileScreen}
+        {/* <Stack.Screen name="EditProfilePage" component={EditProfileScreen}
           options={{
             // headerShown: false,
             headerTitle: () => (
@@ -179,7 +267,7 @@ export default function StackNavigator() {
             headerTitleAlign: "center",
             headerTintColor: "#000",
             headerShadowVisible: false, */}
-             <Stack.Screen
+        <Stack.Screen
           name="EditProfilePage"
           component={EditProfileScreen}
           options={{
@@ -189,10 +277,9 @@ export default function StackNavigator() {
 
             headerTitleAlign: "center",
 
-            headerLeft: () => <CustomBackButton />,
+            // headerLeft: () => <CustomBackButton />,
           }}
         />
-       
 
         <Stack.Screen
           name="hsncode"
@@ -225,6 +312,13 @@ export default function StackNavigator() {
           component={CustomerDetailScreen}
           options={{
             headerTitle: "Customer Details",
+          }}
+        />
+         <Stack.Screen
+          name="InvoiceTransactionScreen"
+          component={InvoiceTransactionScreen}
+          options={{
+            headerTitle: "Transaction Details",
           }}
         />
         <Stack.Screen
@@ -486,9 +580,9 @@ export default function StackNavigator() {
               <Text style={styles.headerTitle}>{"Admin Section"}</Text>
             ),
             headerTitleAlign: "center",
-            headerTintColor: "#000",
-            headerShadowVisible: false,
-            headerLeft: () => <CustomBackButton />,
+            // headerTintColor: "#000",
+            // headerShadowVisible: false,
+            // headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -501,7 +595,7 @@ export default function StackNavigator() {
             ),
 
             headerTitleAlign: "center",
-            headerLeft: () => <CustomBackButton />,
+            // headerLeft: () => <CustomBackButton />,
           }}
         ></Stack.Screen>
 
@@ -514,7 +608,7 @@ export default function StackNavigator() {
             ),
 
             headerTitleAlign: "center",
-            headerLeft: () => <CustomBackButton />,
+            // headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -527,7 +621,7 @@ export default function StackNavigator() {
             ),
 
             headerTitleAlign: "center",
-            headerLeft: () => <CustomBackButton />,
+            // headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -540,15 +634,10 @@ export default function StackNavigator() {
             ),
 
             headerTitleAlign: "center",
-            headerLeft: () => <CustomBackButton />,
+            // headerLeft: () => <CustomBackButton />,
           }}
         />
 
-        <Stack.Screen
-          name="wertone"
-          component={BottomNavigator}
-          options={{ headerShown: false }}
-        />
         <Stack.Screen
           name="local"
           component={LocalAuthScreen}
@@ -563,11 +652,13 @@ export default function StackNavigator() {
             headerShown: false,
           }}
         />
-        <Stack.Screen
-          name="EnterNumberScreen"
-          options={{ headerShown: false }}
-        >
-          {(props) => <EnterNumberScreen {...props} setIsForgetPasswordState={setIsForgetPasswordState} />}
+        <Stack.Screen name="EnterNumberScreen" options={{ headerShown: false }}>
+          {(props) => (
+            <EnterNumberScreen
+              {...props}
+              setIsForgetPasswordState={setIsForgetPasswordState}
+            />
+          )}
         </Stack.Screen>
 
         <Stack.Screen
@@ -604,7 +695,7 @@ export default function StackNavigator() {
             //   // backgroundColor: "#fff"
             // },
 
-            headerLeft: () => <CustomBackButton />,
+            // headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -626,6 +717,30 @@ export default function StackNavigator() {
           options={{
             headerTitle: () => (
               <Text style={styles.headerTitle}>{"Add Role"}</Text>
+            ),
+            headerTitleAlign: "center",
+            // headerTitle: "Add Role",
+          }}
+        />
+
+        <Stack.Screen
+          name="EditRoleScreen"
+          component={EditRole}
+          options={{
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"Edit Role"}</Text>
+            ),
+            headerTitleAlign: "center",
+            // headerTitle: "Add Role",
+          }}
+        />
+
+        <Stack.Screen
+          name="RoleDetailsScreen"
+          component={RoleDetailsScreen}
+          options={{
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"User Role Details"}</Text>
             ),
             headerTitleAlign: "center",
             // headerTitle: "Add Role",
@@ -676,7 +791,7 @@ export default function StackNavigator() {
             headerShown: false,
             headerTintColor: "#000",
             headerShadowVisible: false,
-            headerLeft: () => <CustomBackButton />,
+            // headerLeft: () => <CustomBackButton />,
           }}
         />
         <Stack.Screen
@@ -686,7 +801,6 @@ export default function StackNavigator() {
             headerTitle: "View Shop Details",
           }}
         />
-
       </Stack.Navigator>
 
       <CheckInternet
@@ -701,5 +815,11 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
     fontSize: fontSize.headingSmall,
     fontWeight: "bold",
+  },
+  fab: {
+    position: "absolute",
+    margin: 16,
+    right: 0,
+    bottom: 0,
   },
 });
