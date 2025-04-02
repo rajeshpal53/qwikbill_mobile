@@ -61,9 +61,6 @@ const AddRole = () => {
       .required("Phone is required")
       .matches(/^\d{10}$/, "Phone must be 10 digits"),
     userName: Yup.string().required("User Name is required"),
-    email: Yup.string()
-      .email("Invalid email format")
-      .required("Email is required"),
   });
 
   const fetchUserData = async (phoneNumber, setFieldValue) => {

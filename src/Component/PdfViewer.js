@@ -211,7 +211,7 @@ const PdfScreen = ({ navigation }) => {
           }}
           onError={(error) => {
             console.log(error,"flflflfllf");
-            
+            setIsLoading(false)
           }}
          
         />
@@ -225,7 +225,8 @@ const PdfScreen = ({ navigation }) => {
            }}
            onError={(error) => {
              console.log(error);
-             
+             setIsLoading(false)
+
            }}
           
          />
