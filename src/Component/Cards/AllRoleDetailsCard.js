@@ -1,14 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Card } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; // for using icons
 import { useNavigation } from "@react-navigation/native"; // Import useNavigation hook
-import { ButtonColor, fontFamily, fontSize } from "../../Util/UtilApi";
+import { ButtonColor, deleteApi, fontFamily, fontSize } from "../../Util/UtilApi";
 import EditRoleModal from "../../Components/Modal/EditRoleModal";
+import UserDataContext from "../../Store/UserDataContext";
 
-const AllRoleDetailsCard = ({ item, getRoleData }) => {
+
+const AllRoleDetailsCard = ({ item, getRoleData , setRoleId, setVisible}) => {
   const [isEditModalVisible, setEditModalVisible] = useState(false);
   const [selectedRole, setselectedRole] = useState(null);
+
+
+  const {userData} = useContext(UserDataContext)
 
   useEffect(() => {
     console.log("DATA OF ITEM IS123 ", item);
@@ -20,9 +25,12 @@ const AllRoleDetailsCard = ({ item, getRoleData }) => {
     setselectedRole(item);
   };
 
-  const HandleDeleteRole = () => {
-    console.log("Delete user is");
-  };
+  const HandleRole = (item) =>{
+    console.log("Data of is is ", item)
+    setRoleId(item?.id)
+    setVisible(true);
+
+  }
 
   const closeEditModal = () => {
     setEditModalVisible(false);
@@ -119,7 +127,7 @@ const AllRoleDetailsCard = ({ item, getRoleData }) => {
 
             <TouchableOpacity
               style={[styles.button, styles.deleteButton]}
-              onPress={HandleDeleteRole}
+              onPress={() => HandleRole(item) }
             >
               <MaterialCommunityIcons
                 name="trash-can"
