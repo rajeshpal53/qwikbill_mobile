@@ -178,7 +178,7 @@ const TransactionDetailScreen = ({ item }) => {
               <View style={styles.row}>
                 <View style={styles.preRow}>
                   <FontAwesome name="hashtag" size={16} color="gray" />
-                  <Text style={styles.label}>Provision Number:</Text>
+                  <Text style={styles.label}>Invoice Number:</Text>
                 </View>
                 <Text> {item.invoiceNumber || "N/A"}</Text>
 
