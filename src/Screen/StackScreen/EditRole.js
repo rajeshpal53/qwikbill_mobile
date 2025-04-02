@@ -135,9 +135,11 @@ const EditRole = () => {
   };
 
   const searchdata = () => {
+
     if (searchQuery?.length > 0) {
+      const trimmedQuery = searchQuery.trim();
       const found = RoleData.filter((item) =>
-        item?.user?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+        item?.user?.name?.toLowerCase().includes(trimmedQuery.toLowerCase())
       );
       setSearchedData(found);
       setSearchCalled(true);

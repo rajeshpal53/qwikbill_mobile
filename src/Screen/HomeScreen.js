@@ -613,20 +613,20 @@ export default function HomeScreen({ navigation }) {
 
 
 
-  useEffect(() => {
-    const checkIfTourSeen = async () => {
-      try {
-        const hasSeenTour = await AsyncStorage.getItem("hasSeenTour");
-        if (!hasSeenTour && canStart) {
-          start();
-        }
-      } catch (error) {
-        console.log("Error checking tour guide status", error);
-      }
-    };
+  // useEffect(() => {
+  //   const checkIfTourSeen = async () => {
+  //     try {
+  //       const hasSeenTour = await AsyncStorage.getItem("hasSeenTour");
+  //       if (!hasSeenTour && canStart) {
+  //         start();
+  //       }
+  //     } catch (error) {
+  //       console.log("Error checking tour guide status", error);
+  //     }
+  //   };
 
-    checkIfTourSeen();
-  }, [canStart]);
+  //   checkIfTourSeen();
+  // }, [canStart]);
 
 
   useEffect(() => {

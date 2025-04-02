@@ -38,6 +38,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import OpenmiqModal from "../../Modal/Openmicmodal";
 import CustomeFilterDropDown from "../../Component/CustomFilterDropDown";
 import { useFocusEffect } from "@react-navigation/native";
+import NoDataFound from "../../Components/NoDataFound";
 
 const ProductDetailsScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -84,20 +85,7 @@ const ProductDetailsScreen = ({ navigation }) => {
     }, [searchQuery]);
 
 
-  const Apistore = (page) => {
-    // Start building the base API URL
-    let api = `products/getProducts?vendorefk=${selectedShop?.id}&page=${page}&limit=${PAGE_SIZE}`;
-    if (filterOptionSelect === "Sort By Name") {
-      api += `&sortBy=alphabetical`;
-    } else if (filterOptionSelect === "Low to High Price") {
-      api += `&sortBy=lowToHigh`;
-    } else if (filterOptionSelect === "High to Low Price") {
-      api += `&sortBy=highToLow`;
-    } else {
-      api = `products/getProducts?vendorefk=${selectedShop?.id}&page=${page}&limit=${PAGE_SIZE}`;
-    }
-    return api;
-  };
+  
 
   const handleFilterChange = (filterOption) => {
     setloader(true);
@@ -107,38 +95,57 @@ const ProductDetailsScreen = ({ navigation }) => {
 
   useEffect(() => {
     getproductdata(page);
-  }, [page, filterOptionSelect, bulkUploadModalVisible]);
+}, [page, filterOptionSelect, bulkUploadModalVisible, selectedShop?.id]); // Ensure it re-fetches when shop changes
 
-  const getproductdata = async (page) => {
+const getproductdata = async (page) => {
     if (page === 1) {
-      setHasMore(true);
-      setMainLoading(true);
+        setHasMore(true);
+        setMainLoading(true);
     }
     setloader(true);
     try {
-      const api = Apistore(page);
-      const response = await readApi(api);
+        const api = Apistore(page);
+        console.log("API URL:", api);
 
-      console.log("DATA OF responce is ", response);
+        if (api) {
+            const response = await readApi(api);
+            console.log("API Response:", response);
 
-      if (page == 1) {
-        SetProductData(response?.products);
-        setTotalPages(response?.totalPages || 1);
-      } else if (response?.products?.length > 0) {
-        SetProductData((prevData) => [...prevData, ...response?.products]);
-      } else {
-        setHasMore(false);
-      }
+            SetProductData((prevData) => {
+                if (page === 1) {
+                    return response?.products || []; // Reset data for first page
+                } 
+                return response?.products?.length > 0 ? [...prevData, ...response?.products] : prevData;
+            });
+
+            setTotalPages(response?.totalPages || 1);
+            setHasMore(response?.products?.length > 0);
+        }
     } catch (error) {
-      if (page === 1) {
-        SetProductData([]);
-      }
-      console.log("Unable to fetch Data", error);
+        if (page === 1) {
+            SetProductData([]);
+        }
+        console.error("Unable to fetch data", error);
     } finally {
-      setloader(false);
-      setMainLoading(false);
+        setloader(false);
+        setMainLoading(false);
     }
-  };
+};
+
+const Apistore = (page) => {
+    let api = `products/getProducts?vendorfk=${selectedShop?.id}&page=${page}&limit=${PAGE_SIZE}`;
+    
+    if (filterOptionSelect === "Sort By Name") {
+        api += "&sortBy=alphabetical";
+    } else if (filterOptionSelect === "Low to High Price") {
+        api += "&sortBy=lowToHigh";
+    } else if (filterOptionSelect === "High to Low Price") {
+        api += "&sortBy=highToLow";
+    }
+    
+    return api;
+};
+
 
   const loadMoreData = () => {
     if (!loader && hasMore && page < totalPages) {
@@ -282,10 +289,8 @@ const ProductDetailsScreen = ({ navigation }) => {
         ListFooterComponent={Loader}
         contentContainerStyle={styles.flatListContainer}
         ListEmptyComponent={() => (
-          <View style={{ alignItems: "center", marginTop: 20 }}>
-            <Text style={{ fontSize: 16, color: "gray" }}>
-              No products found.
-            </Text>
+          <View style={{flex:1,marginTop: "40%",}}>
+           <NoDataFound textString={"No Products Found"}/>
           </View>
         )}
       />
