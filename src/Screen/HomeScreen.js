@@ -857,14 +857,14 @@ export default function HomeScreen({ navigation }) {
               <PieChartComponent ket={userData?.user?.mobile} vendorStatus={vendorStatus} />
             )} */}
 
-            {allShops && allShops.length > 0 && vendorStatus != null && total > 0 ? (
+            {/* {allShops && allShops.length > 0 && vendorStatus != null && total > 0 ? (
               <PieChartComponent key={userData?.user?.mobile} vendorStatus={vendorStatus} />
             ) : (
               <View style={{justifyContent:"center",alignItems:"center",marginTop:-25}}>
                 <Image source={require("../../assets/noDataFound.png")} style={{height:250,width:250}}/>
               <Text style={{ textAlign: "center", color: "gray" }}>No vendor data is available </Text>
               </View>
-            )}
+            )} */}
 
 
 
