@@ -419,12 +419,14 @@ export default function StackNavigator() {
                 setIsLandscape={setIsLandscape}
               />
             ),
-            headerLeft: () => (
-              <CustomBackButton
-                isLandscape={isLandscape}
-                setIsLandscape={setIsLandscape}
-              />
-            ),
+            headerTitleAlign: "center",
+            // headerLeft: () => (
+            //   <CustomBackButton
+            //     isLandscape={isLandscape}
+            //     setIsLandscape={setIsLandscape}
+            //   />
+            // ),
+            headerTitleAlign: "center",
           }}
         />
         <Stack.Screen
@@ -456,12 +458,13 @@ export default function StackNavigator() {
                 setIsLandscape={setIsLandscape}
               />
             ),
-            headerLeft: () => (
-              <CustomBackButton
-                isLandscape={isLandscape}
-                setIsLandscape={setIsLandscape}
-              />
-            ),
+            headerTitleAlign: "center",
+            // headerLeft: () => (
+            //   <CustomBackButton
+            //     isLandscape={isLandscape}
+            //     setIsLandscape={setIsLandscape}
+            //   />
+            // ),
           })}
         />
         <Stack.Screen
@@ -475,12 +478,13 @@ export default function StackNavigator() {
                 setIsLandscape={setIsLandscape}
               />
             ),
-            headerLeft: () => (
-              <CustomBackButton
-                isLandscape={isLandscape}
-                setIsLandscape={setIsLandscape}
-              />
-            ),
+            headerTitleAlign: "center",
+            // headerLeft: () => (
+            //   <CustomBackButton
+            //     isLandscape={isLandscape}
+            //     setIsLandscape={setIsLandscape}
+            //   />
+            // ),
           })}
         />
         <Stack.Screen
@@ -488,12 +492,13 @@ export default function StackNavigator() {
           component={TransactionScreen}
           options={({ route }) => ({
             headerTitle: "Transactions",
-            headerLeft: () => (
-              <CustomBackButton
-                isLandscape={isLandscape}
-                setIsLandscape={setIsLandscape}
-              />
-            ),
+            // headerLeft: () => (
+            //   <CustomBackButton
+            //     isLandscape={isLandscape}
+            //     setIsLandscape={setIsLandscape}
+            //   />
+            // ),
+            headerTitleAlign: "center",
           })}
         />
         <Stack.Screen
@@ -501,12 +506,13 @@ export default function StackNavigator() {
           component={TransactionDetailScreen}
           options={({ route }) => ({
             headerTitle: "Transaction Detail",
-            headerLeft: () => (
-              <CustomBackButton
-                isLandscape={isLandscape}
-                setIsLandscape={setIsLandscape}
-              />
-            ),
+            // headerLeft: () => (
+            //   <CustomBackButton
+            //     isLandscape={isLandscape}
+            //     setIsLandscape={setIsLandscape}
+            //   />
+            // ),
+            headerTitleAlign: "center",
           })}
         />
         <Stack.Screen
@@ -514,12 +520,13 @@ export default function StackNavigator() {
           component={InvoicePreviewScreen}
           options={({ route }) => ({
             headerTitle: "preview Invoices",
-            headerLeft: () => (
-              <CustomBackButton
-                isLandscape={isLandscape}
-                setIsLandscape={setIsLandscape}
-              />
-            ),
+            // headerLeft: () => (
+            //   <CustomBackButton
+            //     isLandscape={isLandscape}
+            //     setIsLandscape={setIsLandscape}
+            //   />
+            // ),
+            headerTitleAlign: "center",
           })}
         />
         <Stack.Screen
@@ -629,7 +636,7 @@ export default function StackNavigator() {
           component={AllVendorScreen}
           options={{
             headerTitle: () => (
-              <Text style={styles.headerTitle}>{"All Vender"}</Text>
+              <Text style={styles.headerTitle}>{"All Vendor"}</Text>
             ),
 
             headerTitleAlign: "center",

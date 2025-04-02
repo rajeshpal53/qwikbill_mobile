@@ -7,7 +7,7 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { ButtonColor, readApi } from "../../Util/UtilApi";
+import { ButtonColor, deleteApi, readApi } from "../../Util/UtilApi";
 import { ShopContext } from "../../Store/ShopContext";
 import DropDownList from "../../UI/DropDownList";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
@@ -15,7 +15,9 @@ import AllRoleDetailsCard from "../../Component/Cards/AllRoleDetailsCard";
 import { FlatList } from "react-native-gesture-handler";
 import { FAB } from "react-native-paper";
 import NoDataFound from "../../Components/NoDataFound";
-
+import OpenmiqModal from "../../Modal/Openmicmodal";
+import DeleteModal from "../../UI/DeleteModal";
+import { useSnackbar } from "../../Store/SnackbarContext";
 
 const EditRole = () => {
   const route = useRoute();
@@ -26,18 +28,15 @@ const EditRole = () => {
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState("");
-
+  const { showSnackbar } = useSnackbar();
   const isFocused = useIsFocused();
 
   const [searchmodal, setsearchmodal] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [searchedData, setSearchedData] = useState([]);
   const [searchCalled, setSearchCalled] = useState(false);
-
-  console.log("DATA OF SELECTED SHOP ", selectedShop?.id);
-
-  console.log("IS ADMIN DATA IS ", RoleData.length);
-  console.log("IS AdminRoleData DATA IS ", AdminRoleData?.id);
+  const [visible, setVisible] = useState(false);
+  const [roleId, setRoleId] = useState("");
 
   useEffect(() => {
     searchdata();
@@ -87,6 +86,30 @@ const EditRole = () => {
   useEffect(() => {
     getRoleData();
   }, [isFocused, selectedShop]);
+  
+
+  const HandleDeleteRole = async (roleId) => {
+    console.log("Data of item is 345", roleId);
+    try {
+      setLoading(true);
+      if (roleId) {
+        const deleteResponse = await deleteApi(`roles/${roleId}`);
+        if (deleteResponse) {
+          showSnackbar("Role deleted successfully!", "success");
+          setRoleData((prev) => prev.filter((role) => role.id != roleId));
+        } else {
+          console.log("Failed to delete the offer. Response: ", deleteResponse);
+        }
+      } else {
+        console.log("Unable to get Id");
+      }
+    } catch (error) {
+      console.log("Unable to fetch Delete API : ", error);
+    } finally {
+      setLoading(false);
+      setVisible(false);
+    }
+  };
 
   const searchdata = () => {
     if (searchQuery?.length > 0) {
@@ -135,7 +158,12 @@ const EditRole = () => {
         <FlatList
           data={searchCalled ? searchedData : RoleData}
           renderItem={({ item }) => (
-            <AllRoleDetailsCard item={item} getRoleData={getRoleData} />
+            <AllRoleDetailsCard
+              item={item}
+              getRoleData={getRoleData}
+              setRoleId={setRoleId}
+              setVisible={setVisible}
+            />
           )}
           keyExtractor={(item) =>
             item.id ? item.id.toString() : Math.random().toString()
@@ -153,7 +181,6 @@ const EditRole = () => {
               </View>
             ) : null
           }
-
           // ListEmptyComponent={() => (
           //   <View style={{ alignItems: "center", marginTop: 20 }}>
           //     <Text style={{ fontSize: 16, color: "gray" }}>
@@ -171,6 +198,22 @@ const EditRole = () => {
           style={styles.fab}
           onPress={() => navigation.navigate("AddroleScreen")}
         />
+
+        {searchmodal && (
+          <OpenmiqModal
+            modalVisible={searchmodal}
+            setModalVisible={setsearchmodal}
+            transcript={transcript}
+          />
+        )}
+
+        {visible && (
+          <DeleteModal
+            visible={visible}
+            setVisible={setVisible}
+            handleDelete={() => HandleDeleteRole(roleId)}
+          />
+        )}
       </View>
     </View>
   );
