@@ -26,7 +26,6 @@ const EditRole = () => {
   const { userData } = useContext(UserDataContext);
   const { allShops, selectedShop } = useContext(ShopContext);
   const [loading, setLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("")
   const [filteredData, setFilteredData] = useState([])
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState("");
@@ -209,12 +208,6 @@ const EditRole = () => {
           data={filteredData} // Use filteredData instead of RoleData
           keyboardShouldPersistTaps="handled"
           renderItem={({ item }) => <AllRoleDetailsCard item={item} />}
-          keyExtractor={(item) => (item.id ? item.id.toString() : Math.random().toString())}
-          ListEmptyComponent={() => (
-            <View style={{ alignItems: "center", marginTop: 20 }}>
-              <Text style={{ fontSize: 16, color: "gray" }}>No roles found.</Text>
-            </View>
-          )}
           keyExtractor={(item) =>
             item.id ? item.id.toString() : Math.random().toString()
           }
