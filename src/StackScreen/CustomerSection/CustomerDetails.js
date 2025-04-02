@@ -181,6 +181,8 @@ import EditCustomerDetailsModal from "../../Modal/EditCustomerDetailsModal";
 import { API_BASE_URL, readApi } from "../../Util/UtilApi";
 import { ShopContext } from "../../Store/ShopContext";
 import { useIsFocused } from "@react-navigation/native";
+import NoDataFound from "../../Components/NoDataFound";
+import OpenmiqModal from "../../Modal/Openmicmodal";
 
 const CustomerDetail = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -193,8 +195,17 @@ const CustomerDetail = ({ navigation }) => {
   const [error, setError] = useState(null);
   const { selectedShop } = useContext(ShopContext);
   const isFocused = useIsFocused();
+  const [searchedData, setSearchedData] = useState([]);
+  const [searchCalled, setSearchCalled] = useState(false);
+
 
   console.log("DATA OF EDIT ", customerData);
+
+  useEffect(() => {
+    searchdata();
+  }, [searchQuery]);
+
+
 
   useEffect(() => {
     let api = `customers/getCustomersByVendorId/${selectedShop?.id}`;
@@ -220,6 +231,21 @@ const CustomerDetail = ({ navigation }) => {
 
   // };
 
+  const searchdata = () => {
+    if (searchQuery?.length > 0) {
+      const found = customerData.filter((item) =>
+        item?.user?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSearchedData(found);
+      setSearchCalled(true);
+    } else {
+      setSearchedData([]);
+      setSearchCalled(false);
+    }
+  };
+
+
+
   const Loader = () => {
     if (!loading) return null;
     return (
@@ -240,10 +266,11 @@ const CustomerDetail = ({ navigation }) => {
               setsearchmodal={setsearchmodal}
               setTranscript={setTranscript}
               placeholderText="Search User by name..."
+              searchData={searchdata}
             />
           </View>
         }
-        data={customerData}
+        data={ searchCalled ? searchedData : customerData}
         renderItem={({ item }) => (
           <CustomerDetailsCard
             item={item}
@@ -252,28 +279,34 @@ const CustomerDetail = ({ navigation }) => {
             seteditmodal={seteditmodal}
             setCustomerData={setCustomerData}
 
+
           />
         )}
         keyExtractor={(item) => item.id.toString()}
         ListFooterComponent={Loader}
         contentContainerStyle={styles.flatListContainer}
-        ListEmptyComponent={() => (
-          <View style={{ alignItems: "center", marginTop: 20 }}>
-            <Text style={{ fontSize: 16, color: "gray" }}>
-              No products found.
-            </Text>
-          </View>
-        )}
+        ListEmptyComponent={() =>
+          !loading && customerData.length <= 0 ? (
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: "40%",
+              }}
+            >
+              <NoDataFound textString={"No Users Found"} />
+            </View>
+          ) : null
+        }
       />
 
-      {/* {editmodal && (
-        <EditCustomerDetailsModal
-          visible={editmodal}
-          seteditmodal={seteditmodal}
-          SelectedEditItem={SelectedEditItem}
-          setCustomerData= {setCustomerData}
+      {searchmodal && (
+        <OpenmiqModal
+          modalVisible={searchmodal}
+          setModalVisible={setsearchmodal}
+          transcript={transcript}
         />
-      )} */}
+      )}
     </View>
   );
 };

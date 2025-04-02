@@ -30,6 +30,8 @@ const AllVenderScreen = () => {
   const [searchedData, setSearchedData] = useState([]);
   const [searchCalled, setSearchCalled] = useState(false);
 
+  console.log("Data of user", userData)
+
 
     useEffect(() => {
       if (searchQuery?.length <= 0) {
@@ -38,21 +40,22 @@ const AllVenderScreen = () => {
       }
     }, [searchQuery]);
 
-    
+
   useEffect(() => {
     getAllVenderData();
   }, [page]);
 
   const getAllVenderData = async () => {
-    let api = `vendors/?page=${page}&limit=${PAGE_SIZE}`;
+    let api = `vendors/getVendorsByUserId/${userData?.user?.id}page=${page}&limit=${PAGE_SIZE}`;
     try {
       setloader(true);
       const response = await readApi(api);
+      console.log("DATA OF CONSOLE",response)
       if (page === 1) {
-        setVenderData(response?.vendors);
+        setVenderData(response);
         SetTotalpage(response?.totalPages || 1);
-      } else if (response?.vendors?.length > 0) {
-        setVenderData((pre) => [...pre, ...response?.vendors]);
+      } else if (response?.length > 0) {
+        setVenderData((pre) => [...pre, ...response]);
       } else {
         setHasmore(false);
       }
@@ -79,6 +82,12 @@ const AllVenderScreen = () => {
     setDeleteItemId(item?.id);
     setDeleteModal(true);
   };
+
+  const onRole = (item) =>{
+    console.log("ITEM in a data ", item)
+    console.log("click on the role screen")
+    navigation.navigate("EditRoleScreen",{isAdmin : true, AdminRoleData : item});
+  }
 
   const handleEditDetails = (item) => {
     console.log("item is edit 123, ", item);
@@ -115,8 +124,8 @@ const AllVenderScreen = () => {
 
       console.log("RESPONSE DATA IS ", response);
 
-      if (response?.vendors?.length > 0) {
-        setSearchedData(response?.vendors);
+      if (response?.length > 0) {
+        setSearchedData(response);
       } else {
         setSearchedData([]);
       }
@@ -139,8 +148,7 @@ const AllVenderScreen = () => {
     );
   };
 
-
-  console.log("DATA IS SEARCH DATA , ", searchedData)
+  console.log("DATA OF ALL VENDER",VenderData)
 
   return (
     <View style={styles.container}>
@@ -153,7 +161,6 @@ const AllVenderScreen = () => {
             setsearchmodal={setsearchmodal}
             setTranscript={setTranscript}
             placeholderText="Search User by name ..."
-            //    refuser={searchBarRef}
             searchData={fetchSearchedData}
           />
         </View>
@@ -169,6 +176,7 @@ const AllVenderScreen = () => {
             onDelete={onDelete}
             onEditDetails={handleEditDetails}
             onEditItems={handleProductItems}
+            onRole = {onRole}
           />
         )}
         keyExtractor={(item, index) => `${item.id}-${index}`}

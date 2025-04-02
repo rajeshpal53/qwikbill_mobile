@@ -107,9 +107,12 @@ const TransactionCard = ({ item }) => {
     return <Text>No Data Available</Text>;
   }
 
+
+  console.log("DATA OF ITEM IS ", item)
+
   const navigation = useNavigation();
   const { amount, createdAt, transactionStatus } = item;
-  const userName = item.user?.name ?? "Unknown "; 
+  const userName = item.user?.name ?? "Unknown ";
 
   // Providing fallback values
   const formattedDate = createdAt
@@ -129,7 +132,7 @@ const TransactionCard = ({ item }) => {
     <Pressable onPress={() => navigation.navigate("TransactionDetailScreen", { item })}>
       <View style={styles.card}>
         <View style={styles.avatarContainer}>
-        
+
             <Feather name="arrow-down-right" size={20} color={"white"}/>
         </View>
         <View style={styles.infoContainer}>
@@ -141,10 +144,10 @@ const TransactionCard = ({ item }) => {
             <Text style={styles.name}> {userName}</Text>
             <Text style={styles.date}>{formattedDate}</Text>
           </View>
-          <Text 
+          <Text
           style={[styles.status,
             //  { color: transactionStatus === "complete" ? "green" : "red" }
-            ]}> 
+            ]}>
             {transactionStatus ?? "N/A"}</Text>
         </View>
       </View>
@@ -200,7 +203,7 @@ const styles = StyleSheet.create({
     fontFamily:fontFamily.medium,
     marginLeft:5,
     color:"rgba(0,0,0,0.6)",
-    
+
   },
   date: {
     fontSize: fontSize.labelMedium,

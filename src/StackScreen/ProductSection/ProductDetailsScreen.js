@@ -82,7 +82,7 @@ const ProductDetailsScreen = ({ navigation }) => {
         setSearchCalled(false);
       }
     }, [searchQuery]);
-    
+
 
   const Apistore = (page) => {
     // Start building the base API URL
@@ -298,7 +298,7 @@ const ProductDetailsScreen = ({ navigation }) => {
           {
             icon: "plus",
             label: "Add Product",
-            onPress: () => navigation.navigate("AddProduct"),
+            onPress: () => navigation.navigate("AddProduct", { EditData: null, isUpdated: false }),
             style: { backgroundColor: "#2196F3" },
           },
           {

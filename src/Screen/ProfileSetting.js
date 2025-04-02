@@ -168,6 +168,7 @@ import {
   SafeAreaView,
   Image,
   RefreshControl,
+  Pressable,
 } from "react-native";
 import { Text, Card, Avatar, Button } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -175,7 +176,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
 import ConfirmModal from "../Modal/ConfirmModal";
 import UserDataContext from "../Store/UserDataContext";
-import { createApi, NORM_URL } from "../Util/UtilApi";
+import { createApi, fontSize, NORM_URL } from "../Util/UtilApi";
 import { useIsFocused } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
 // import { WalletContext } from "../Store/WalletContext";
@@ -184,6 +185,9 @@ import auth from "@react-native-firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSnackbar } from "../Store/SnackbarContext";
 import ChangeLanguageModal from "../Modal/ChangeLanguageModal";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { ShopContext } from "../Store/ShopContext";
+
 
 const ProfileSetting = ({
   navigation,
@@ -204,7 +208,9 @@ const ProfileSetting = ({
   // const { setCreateuser } = useContext(WalletContext);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+const{updateSelectedShop}=useContext(
+  ShopContext
+)
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchServiceProvider(userData);
@@ -233,6 +239,7 @@ const ProfileSetting = ({
             label: "Change Language",
             value: "changeLanguage",
           },
+
           ...(userData?.user?.roles === null ? AdminOption : []),
           { icon: "policy", label: "Policies", value: "Policies" },
 
@@ -246,9 +253,12 @@ const ProfileSetting = ({
                 // { icon: "logout", label: "Logout1", value: "Logout1" },
               ]
             : []),
+
           ...(userData
             ? [{ icon: "logout", label: "Logout", value: "Logout" }]
             : []),
+
+            { label: "Need more help?", value: "needMoreHelp" },
         ];
 
         setMenuItems(baseItem);
@@ -393,9 +403,14 @@ const ProfileSetting = ({
     } else if (value === "Assign New Role") {
       navigation.navigate("AddroleScreen");
     } else if (value === "Edit Role") {
-      navigation.navigate("EditRoleScreen");
+      navigation.navigate("EditRoleScreen", {isAdmin : false, AdminRoleData : null});
     } else if (value == "Logout1") {
       navigation.navigate("login");
+    } else if (value === "needMoreHelp") {
+      navigation.navigate("Policies", {
+        webUri: `${NORM_URL}/helpandsupport?view=mobile`,
+        headerTitle: "Help & Support",
+      });
     }
   };
   const logoutHandler = async () => {
@@ -413,11 +428,12 @@ const ProfileSetting = ({
       if (response) {
         // Handle success, show Snackbar message, and log out
         showSnackbar("Logged out successfully", "success");
-
+        
         // Perform all the logout actions
         // await auth().signOut();
         await clearUserData();
         await AsyncStorage.clear(); // Clear all AsyncStorage
+        updateSelectedShop(null)
         await AsyncStorage.removeItem("allShops");
         await AsyncStorage.removeItem("selectedShop");
 
@@ -551,27 +567,59 @@ const ProfileSetting = ({
                 )}
               </View>
               <Card.Content style={{ backgroundColor: "#fff" }}>
-                {menuItems?.map((item, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => handlePress(item.value)}
-                    style={styles.item}
-                  >
-                    <Icon
-                      name={item.icon}
-                      size={24}
-                      color="#26a0df"
-                      style={styles.icon}
-                    />
-                    <Text style={styles.label}>{t(item.label)}</Text>
-                    <Icon
-                      name="chevron-right"
-                      size={24}
-                      color="#000"
-                      style={styles.chevron}
-                    />
-                  </TouchableOpacity>
-                ))}
+                {menuItems?.map((item, index) =>
+                  item?.value === "needMoreHelp" ? (
+                    <Pressable onPress={()=>{handlePress("needMoreHelp")}} key={index}>
+                    <View>
+                      <Text style={{ fontFamily: "Poppins-Medium" }}>
+                        {t(item?.label)}
+                      </Text>
+                      <View style={styles.helpItem}>
+                        <View style={{
+                          flexDirection:"row",
+                          alignItems:"center",
+                          gap:5
+                          }}>
+                          {/* <MaterialCommunityIcons
+                            name="message-reply"
+                            size={24}
+                            color="black"
+                          /> */}
+                          <MaterialIcons name="support-agent" size={24} color="black" />
+                          <View style={{flex:1}}>
+                            <Text style={{fontFamily:"Poppins-Medium"}}>{t("24x7 support")}</Text>
+                            <Text style={{fontFamily:"Poppins-Regular", color:"rgba(0, 0, 0, 0.5)", fontSize:fontSize.label}}>{t("Talk to us in your language")}</Text>
+                          </View>
+
+                            <Text style={{fontFamily:"Poppins-Medium", color:"#007BFF"}}>{t("Support")}</Text>
+
+                        </View>
+                      </View>
+                    </View>
+                    </Pressable>
+                  )
+                  : (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => handlePress(item.value)}
+                      style={styles.item}
+                    >
+                      <Icon
+                        name={item.icon}
+                        size={24}
+                        color="#27ae60"
+                        style={styles.icon}
+                      />
+                      <Text style={styles.label}>{t(item.label)}</Text>
+                      <Icon
+                        name="chevron-right"
+                        size={24}
+                        color="#000"
+                        style={styles.chevron}
+                      />
+                    </TouchableOpacity>
+                  )
+                )}
               </Card.Content>
             </Card>
           </View>
@@ -682,6 +730,15 @@ const styles = StyleSheet.create({
     justifySelf: "center",
     width: "70%",
     borderRadius: 10,
+  },
+  helpItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f0f0f0",
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginVertical: 10,
   },
   modalBackground: {
     flex: 1,

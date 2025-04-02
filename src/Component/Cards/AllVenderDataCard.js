@@ -1,6 +1,6 @@
 import { Text, View, StyleSheet, ActivityIndicator  } from "react-native";
 import { fontSize, getRandomImage, NORM_URL } from "../../Util/UtilApi";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Card, Avatar, Divider } from "react-native-paper";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -11,13 +11,19 @@ import { useWindowDimensions } from "react-native"; // Import the hook
 import { useNavigation } from "@react-navigation/native";
 import { debounce } from "lodash";
 import AllVendorDataScreen from "../../Screen/StackScreen/AllVendorDataScreen";
+import { ShopContext } from "../../Store/ShopContext";
 
-const AllVenderDataCard = ({ item, onDelete, onEditDetails, onEditItems }) => {
+const AllVenderDataCard = ({ item, onDelete, onEditDetails, onEditItems, onRole }) => {
   const { height, width } = useWindowDimensions(); // Use hook to get dimensions
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const { allShops, selectedShop } = useContext(ShopContext);
 
   const navigation = useNavigation();
   const [imageurl, setImageUrl] = useState("");
+
+
+  console.log("Data of item 1234", selectedShop)
+  console.log("Data of item 1234", selectedShop)
 
   // useEffect(() => {
   //   if (item?.shopImage) {
@@ -72,6 +78,7 @@ const AllVenderDataCard = ({ item, onDelete, onEditDetails, onEditItems }) => {
             onDelete: onDelete,
             onEditDetails: onEditDetails,
             onEditItems: onEditItems,
+            onRole : onRole
           });
         }}
       >

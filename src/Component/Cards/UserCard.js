@@ -19,12 +19,19 @@ import { MaterialIcons } from "@expo/vector-icons";
 const screenWidth = Dimensions.get("window").width;
 
 
-const UserCard = ({ item, index, HandleDeleteUser, handleEditProfile }) => {
+const UserCard = ({ item, index, handleEditProfile, HandleDeleteUser }) => {
 
   const [profileUrl, setProfileUrl] = useState("");
   const [fallbackText, setFallbackText] = useState("E");
 
+
   console.log("jayesh selected user data is ", item)
+  // const handleDelete = (item) => {
+  //   console.log("Button pressed");
+  //   setShopDeleteId(item?.id);
+  //   // setSelectedModal(null);
+  // };
+
 
   // useEffect(() => {
   //   const setUrl = () => {
@@ -79,7 +86,6 @@ const UserCard = ({ item, index, HandleDeleteUser, handleEditProfile }) => {
             gap: 10,
           }}
         >
-
 
           <TouchableOpacity
             style={{ position: "absolute", right: 0, zIndex: 1 }}
