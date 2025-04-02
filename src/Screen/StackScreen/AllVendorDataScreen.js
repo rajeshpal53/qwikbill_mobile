@@ -7,12 +7,13 @@ import {
   ScrollView,
 } from "react-native";
 import { useContext, useEffect, useState } from "react";
-import { ButtonColor, fontSize } from "../../Util/UtilApi";
+import { ButtonColor, fontSize,NORM_URL } from "../../Util/UtilApi";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useWindowDimensions } from "react-native"; // Import the hook
 import { Avatar, Card, Icon } from "react-native-paper";
 import UserDataContext from "../../Store/UserDataContext";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { debounce } from "lodash";
 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
@@ -32,6 +33,8 @@ const AllVendorDataScreen = () => {
   const [imageUrl, setImageUrl] = useState(null);
   const [profilePicurl, setProfilePicurl] = useState(null);
   const { userData } = useContext(UserDataContext);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+
 
   const [ManuButton, SetManuButton] = useState([
     {
@@ -97,6 +100,24 @@ const AllVendorDataScreen = () => {
       });
     }
   }, [navigation, item?.shopname]);
+
+
+   useEffect(() => {
+      if (item?.shopImage) {
+        const tempUrl = `${NORM_URL}/${item?.shopImage}?${new Date().getTime()}`;
+        updateImageUrl(tempUrl);
+      } else {
+        const tempUrl = getRandomImage();
+        updateImageUrl(tempUrl);
+      }
+    }, []);
+
+    const updateImageUrl = debounce((imageurl) => {
+      setImageUrl(imageurl);
+      setIsImageLoaded(true); // Set image loaded state to true once the image URL is set
+    }, 100);
+
+
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
