@@ -36,7 +36,7 @@ const{showSnackbar}=useSnackbar()
               console.log(response,"of Transaction")
               showSnackbar("transaction create successfully","success")
     //   Alert.alert("Success", "Transaction saved successfully!");
- 
+
     }
     }catch(err){
       console.log(err.data.message,"error response")
@@ -45,7 +45,7 @@ const{showSnackbar}=useSnackbar()
     }finally{
         onClose();
     }
-    
+
   };
 
   return (
@@ -87,6 +87,7 @@ const{showSnackbar}=useSnackbar()
             value={amount}
             onChangeText={setAmount}
           />
+
 
           {/* Buttons */}
           <View style={styles.buttonContainer}>

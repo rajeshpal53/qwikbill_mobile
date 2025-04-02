@@ -49,7 +49,7 @@ const AllInvoiceScreen = () => {
   // }, [page]);
 
   const buildApiUrl = (pageNum) => {
-    let api = `invoice/getInvoices?vendorfk=${selectedShop?.id}&page=${pageNum}&size=10`;
+    let api = `invoice/getInvoices?&page=${pageNum}&size=10`;
     if (sortBy && sortBy != "datewise") api += `&dateWise=${sortBy}`;
     if (sortBy && sortBy == "datewise")
       api += `&startDate=${formatDate(date.startDate)}&endDate=${formatDate(
