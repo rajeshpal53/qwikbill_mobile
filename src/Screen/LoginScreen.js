@@ -188,12 +188,12 @@ const LoginScreen = ({ navigation }) => {
         onSubmit={async(value, {resetForm})=>{
           try{
             await handleLogin(value,navigation)
-            if (isPasskey) {
-              navigation.navigate("Passcode"); 
-            } else {
-              navigation.navigate("CreateNewPasscode"); 
-            }
-            resetForm()
+            // if (isPasskey) {
+            //   navigation.navigate("Passcode"); 
+            // } else {
+            //   navigation.navigate("CreateNewPasscode"); 
+            // }
+      
           }catch(error){
             console.log("Unable to login ", error)
           }finally{

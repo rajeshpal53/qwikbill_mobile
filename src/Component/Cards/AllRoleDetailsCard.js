@@ -169,6 +169,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     // marginBottom: 5,
     alignItems: "center",
+    marginTop:2
   },
   iconContainer: {
     marginRight: 5,

@@ -24,6 +24,8 @@ const UserCard = ({ item, index, handleEditProfile, HandleDeleteUser }) => {
   const [profileUrl, setProfileUrl] = useState("");
   const [fallbackText, setFallbackText] = useState("E");
 
+
+  console.log("jayesh selected user data is ", item)
   // const handleDelete = (item) => {
   //   console.log("Button pressed");
   //   setShopDeleteId(item?.id);
@@ -87,9 +89,12 @@ const UserCard = ({ item, index, handleEditProfile, HandleDeleteUser }) => {
 
           <TouchableOpacity
             style={{ position: "absolute", right: 0, zIndex: 1 }}
-            onPress={() => HandleDeleteUser(item)}
+            onPress={() => {
+              console.log("item select for delete is ", item.id);
+              HandleDeleteUser(item)
+            }}
           >
-            <MaterialIcons name="delete" size={18} color="#1E88E5" />
+            <MaterialIcons name="delete" size={20} color="#1E88E5" />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -100,7 +105,7 @@ const UserCard = ({ item, index, handleEditProfile, HandleDeleteUser }) => {
               handleEditProfile(item, index)
             }}
           >
-            <MaterialIcons name="edit" size={18} color="#1E88E5" />
+            <MaterialIcons name="edit" size={20} color="#1E88E5" />
           </TouchableOpacity>
 
 
@@ -137,7 +142,7 @@ const UserCard = ({ item, index, handleEditProfile, HandleDeleteUser }) => {
                   fontFamily: "Poppins-SemiBold",
                   marginRight: 22,
                   fontSize: fontSize.labelMedium,
-                  maxWidth:"80%"
+                  maxWidth: "80%"
                 }}
               >
                 {item?.name ? item.name : "no name"}

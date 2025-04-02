@@ -26,6 +26,8 @@ const EditRole = () => {
   const { userData } = useContext(UserDataContext);
   const { allShops, selectedShop } = useContext(ShopContext);
   const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("")
+  const [filteredData, setFilteredData] = useState([])
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState("");
   const { showSnackbar } = useSnackbar();
@@ -92,16 +94,38 @@ const EditRole = () => {
     console.log("Data of item is 345", roleId);
     try {
       setLoading(true);
-      if (roleId) {
-        const deleteResponse = await deleteApi(`roles/${roleId}`);
-        if (deleteResponse) {
-          showSnackbar("Role deleted successfully!", "success");
-          setRoleData((prev) => prev.filter((role) => role.id != roleId));
+      const headers = {
+        Authorization: `Bearer ${userData?.token}`,
+      };
+      try {
+        const response = await readApi(`userRoles/getUserRoleByVendorfk/${selectedShop?.id}`, headers);
+        console.log("GET ALL DATA IS125 ", response?.data);
+        if (response?.data) {
+          setRoleData(response.data);
+          setFilteredData(response.data)
+          console.log("GET ALL DATA IS response", response.data);
         } else {
-          console.log("Failed to delete the offer. Response: ", deleteResponse);
+          setRoleData([]); // If no data is found
+          setFilteredData([])
         }
-      } else {
-        console.log("Unable to get Id");
+      } catch (error) {
+        console.log("Unable to fetch Role data", error);
+        setRoleData([]); // On error, clear the list
+        setFilteredData([])
+      } finally {
+        setLoading(false);
+// =======
+//       if (roleId) {
+//         const deleteResponse = await deleteApi(`roles/${roleId}`);
+//         if (deleteResponse) {
+//           showSnackbar("Role deleted successfully!", "success");
+//           setRoleData((prev) => prev.filter((role) => role.id != roleId));
+//         } else {
+//           console.log("Failed to delete the offer. Response: ", deleteResponse);
+//         }
+//       } else {
+//         console.log("Unable to get Id");
+// >>>>>>> faizan
       }
     } catch (error) {
       console.log("Unable to fetch Delete API : ", error);
@@ -124,6 +148,7 @@ const EditRole = () => {
     }
   };
 
+
   const Loader = () => {
     if (!loading) return null;
     return (
@@ -133,37 +158,62 @@ const EditRole = () => {
     );
   };
 
+
+  const searchData = (query) => {
+    setSearchQuery(query);
+
+    if (query.trim() === "") {
+      setFilteredData([...RoleData]);  // Reset to full list when search is empty
+      return;
+    }
+
+    const filtered = RoleData.filter((role) =>
+      // role?.name?.toLowerCase()?.includes(query.toLowerCase())
+    role?.user?.name?.toLowerCase()?.includes(query.toLowerCase())
+    );
+
+    setFilteredData(filtered);
+  };
+
+
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setFilteredData([...RoleData]);
+    }
+  }, [searchQuery, RoleData]);
+  
+
+
+
   return (
     <View style={styles.Main}>
       <View style={styles.container}>
         {/* Search Bar */}
-        <View style={styles.searchContainer}>
-          <Searchbarwithmic
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            setsearchmodal={setsearchmodal}
-            setTranscript={setTranscript}
-            placeholderText="Search Vender ..."
-            searchData={searchdata}
-          />
-        </View>
-
-        {/* Dropdown List */}
-        {!isAdmin && (
-          <View style={styles.dropdownContainer}>
-            <DropDownList options={allShops} />
-          </View>
-        )}
-
         <FlatList
-          data={searchCalled ? searchedData : RoleData}
-          renderItem={({ item }) => (
-            <AllRoleDetailsCard
-              item={item}
-              getRoleData={getRoleData}
-              setRoleId={setRoleId}
-              setVisible={setVisible}
-            />
+          ListHeaderComponent={
+            <>
+              <View style={styles.searchContainer}>
+                <Searchbarwithmic
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  placeholderText="Search User by name ..."
+                  searchData={searchData}  // Pass searchData function
+                />
+              </View>
+
+              <View style={styles.dropdownContainer}>
+                <DropDownList options={allShops} />
+              </View>
+            </>
+          }
+          data={filteredData} // Use filteredData instead of RoleData
+          keyboardShouldPersistTaps="handled"
+          renderItem={({ item }) => <AllRoleDetailsCard item={item} />}
+          keyExtractor={(item) => (item.id ? item.id.toString() : Math.random().toString())}
+          ListEmptyComponent={() => (
+            <View style={{ alignItems: "center", marginTop: 20 }}>
+              <Text style={{ fontSize: 16, color: "gray" }}>No roles found.</Text>
+            </View>
           )}
           keyExtractor={(item) =>
             item.id ? item.id.toString() : Math.random().toString()
@@ -196,7 +246,9 @@ const EditRole = () => {
         <FAB
           icon="plus"
           style={styles.fab}
-          onPress={() => navigation.navigate("AddroleScreen")}
+          onPress={() =>
+            navigation.navigate("AddroleScreen", { isUpdateEditdata: false, })
+          }
         />
 
         {searchmodal && (
@@ -229,10 +281,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchContainer: {
-    marginBottom: 20,
+    marginBottom: 10,
+  
   },
   dropdownContainer: {
-    marginBottom: 20,
+    marginBottom: 8,
+    paddingVertical:3,
+    
   },
   flatListContainer: {
     paddingBottom: 70, // Add padding to the bottom of the FlatList content
@@ -248,9 +303,3 @@ const styles = StyleSheet.create({
 
 export default EditRole;
 
-// Loading Indicator
-//         {loading && (
-//           <View style={{ flex: 1, justifyContent: "center" }}>
-//             <ActivityIndicator size={"large"} />
-//           </View>
-//         )}
