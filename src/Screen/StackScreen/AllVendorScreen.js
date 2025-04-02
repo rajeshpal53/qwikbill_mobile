@@ -38,7 +38,7 @@ const AllVenderScreen = () => {
       }
     }, [searchQuery]);
 
-    
+
   useEffect(() => {
     getAllVenderData();
   }, [page]);
@@ -79,6 +79,12 @@ const AllVenderScreen = () => {
     setDeleteItemId(item?.id);
     setDeleteModal(true);
   };
+
+  const onRole = (item) =>{
+    console.log("ITEM in a data ", item)
+    console.log("click on the role screen")
+    navigation.navigate("EditRoleScreen",{isAdmin : true, AdminRoleData : item});
+  }
 
   const handleEditDetails = (item) => {
     console.log("item is edit 123, ", item);
@@ -169,6 +175,7 @@ const AllVenderScreen = () => {
             onDelete={onDelete}
             onEditDetails={handleEditDetails}
             onEditItems={handleProductItems}
+            onRole = {onRole}
           />
         )}
         keyExtractor={(item, index) => `${item.id}-${index}`}

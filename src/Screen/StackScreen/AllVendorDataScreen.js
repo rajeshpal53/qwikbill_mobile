@@ -20,7 +20,7 @@ const AllVendorDataScreen = () => {
   const route = useRoute();
   const [imageFullScreenModalVisible, setImageFullScreenModalVisible] =
     useState(false);
-  const { item, onDelete, onEditDetails, onEditItems, onAddOffer } =
+  const { item, onDelete, onEditDetails, onEditItems, onAddOffer, onRole } =
     route.params;
   const [fullScreenImageUri, setFullScreenImageUri] = useState([]);
   const { height, width } = useWindowDimensions(); // Use hook to get dimensions
@@ -49,6 +49,11 @@ const AllVendorDataScreen = () => {
       label: "Delete",
       value: "Delete",
     },
+    {
+      icon: "person",
+      label: "Role",
+      value: "Role",
+    },
   ]);
 
   const handlePress = (btn) => {
@@ -61,7 +66,11 @@ const AllVendorDataScreen = () => {
         onEditItems(item);
       } else if (btn?.value == "Delete") {
         onDelete(item);
-      } else {
+      }
+      else if (btn?.value == "Role") {
+        onRole(item);
+      }
+      else {
         console.log("No matching value found.");
       }
     } catch (error) {
