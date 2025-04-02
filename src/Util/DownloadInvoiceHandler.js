@@ -227,9 +227,26 @@ export const useDownloadInvoice = () => {
           encoding: FileSystem.EncodingType.Base64,
         });
 
-        // Save file URI to store if needed
-        await setSaveFileUri(fileUri);
 
+        // Save file URI to store if needed
+       // content://com.android.externalstorage.documents/tree/primary%3AAlarms%2Ffront%20page/document/primary%3AAlarms%2Ffront%20page%2FSampleFile%20(6).xlsx
+        await setSaveFileUri(fileUri);
+      console.log(fileUri,"12341234")
+      
+      const fileName = decodeURIComponent(fileUri.split("/").pop());
+      if (fileName.endsWith(".xlsx")) {
+        console.log("This is an Excel file.");
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "Download Complete",
+            body: "Your sample.xlsx has been downloaded successfully.",
+            categoryIdentifier: "DOWNLOAD_CATEGORY", // Use the category with the action button
+          },
+          trigger: null, // Show immediately
+        });
+
+    } else {
+        console.log("This is a PDF file.");
         await Notifications.scheduleNotificationAsync({
           content: {
             title: "Download Complete",
@@ -239,6 +256,7 @@ export const useDownloadInvoice = () => {
           trigger: null, // Show immediately
         });
 
+    }
         console.log("notifications complete");
         console.log(saveFileUri, "file urrirririrriririrrir")
       } catch (error) {
