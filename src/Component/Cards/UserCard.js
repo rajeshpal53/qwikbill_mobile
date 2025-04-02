@@ -19,10 +19,17 @@ import { MaterialIcons } from "@expo/vector-icons";
 const screenWidth = Dimensions.get("window").width;
 
 
-const UserCard = ({ item, index, HandleDeleteUser, handleEditProfile }) => {
+const UserCard = ({ item, index, handleEditProfile, HandleDeleteUser }) => {
 
   const [profileUrl, setProfileUrl] = useState("");
   const [fallbackText, setFallbackText] = useState("E");
+
+  // const handleDelete = (item) => {
+  //   console.log("Button pressed");
+  //   setShopDeleteId(item?.id);
+  //   // setSelectedModal(null);
+  // };
+
 
   // useEffect(() => {
   //   const setUrl = () => {
@@ -78,7 +85,6 @@ const UserCard = ({ item, index, HandleDeleteUser, handleEditProfile }) => {
           }}
         >
 
-
           <TouchableOpacity
             style={{ position: "absolute", right: 0, zIndex: 1 }}
             onPress={() => HandleDeleteUser(item)}
@@ -91,7 +97,7 @@ const UserCard = ({ item, index, HandleDeleteUser, handleEditProfile }) => {
             onPress={() => {
               console.log("Editing User:", item); // Log the user data before opening modal
               // handleEditUser(item);
-              handleEditProfile(item, index) 
+              handleEditProfile(item, index)
             }}
           >
             <MaterialIcons name="edit" size={18} color="#1E88E5" />
