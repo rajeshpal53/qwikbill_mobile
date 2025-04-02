@@ -7,7 +7,7 @@ import { updateApi } from "../Util/UtilApi";
 import { useSnackbar } from "../Store/SnackbarContext";
 import { ScrollView } from "react-native-gesture-handler";
 const validationSchema = Yup.object().shape({
-    name: Yup.string().required("firstname is required"),
+    // name: Yup.string().required("firstname is required"),
     surname: Yup.string().required("surname is required"),
     email: Yup.string().required("email is required"),
     cPassword: Yup.string()
@@ -20,7 +20,7 @@ function EditProfile({ navigation, route }) {
   const { login } = route.params;
   const { showSnackbar } = useSnackbar();
   const initialValues = {
-    name: login.name || "",
+    name: login.name || null,
     surname: login.surname || "",
     email: login.email || "",
     password: "",
