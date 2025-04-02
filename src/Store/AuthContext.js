@@ -80,41 +80,61 @@ export const AuthProvider = ({ children }) => {
   };
 
   
-  const handleLogin = async (values,navigation) => {
-
+  const handleLogin = async (values, navigation) => {
     try {
+
       console.log("login screen",values);
 
       setIsLoading(true);
-
+  
       const payload = {
         mobile: values.mobile,
         password: values?.password,
       };
-          
-      const storedPassword = await AsyncStorage.getItem("updatedPassword");
-
-      if (storedPassword && storedPassword !== values.password) {
-        alert("Incorrect password. Please enter the updated password.");
+  
+  
+      const response = await createApi("users/loginUser", payload);
+      console.log("Full API Response:", response);
+  
+    
+      if (!response || response?.error || !response?.token) {
+        console.log("Login failed: Invalid credentials"); 
+        showSnackbar("Invalid mobile number or password", "error");
+        await AsyncStorage.removeItem("loginDetail"); 
+        await saveUserData(null); 
+        setIsLoading(false);
         return;
       }
-
-      const response = await createApi("users/loginUser", payload);
+  
+    
       await storeData("loginDetail", response);
+      await AsyncStorage.setItem("firstTimeLogin", "true");  // ✅ Mark first login
+
       setLoginDetail(response);
-      console.log("response of Login is , ", response);
+      console.log("Saving user data:", response);
+
       await saveUserData(response);
       
       if (navigation) {
-        navigation.navigate("passcode"); // Change "HomeScreen" to your actual screen name
+        if (isPasskey) {
+          //navigation.navigate("Passcode");
+          navigation.reset({ index: 0, routes: [{ name: "Passcode" }] });  
+
+        } else {
+          //navigation.navigate("CreateNewPasscode");
+          navigation.reset({ index: 0, routes: [{ name: "CreateNewPasscode" }] });
+
+        }
       }
-      
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      //console.error("Login error:", error);
+      showSnackbar("Wrong phone number or password .", "error");
     } finally {
       setIsLoading(false);
     }
   };
+  
+  
 
   const logout = async () => {
     try {

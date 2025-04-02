@@ -7,13 +7,17 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { ButtonColor, readApi } from "../../Util/UtilApi";
+import { ButtonColor, deleteApi, readApi } from "../../Util/UtilApi";
 import { ShopContext } from "../../Store/ShopContext";
 import DropDownList from "../../UI/DropDownList";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
 import AllRoleDetailsCard from "../../Component/Cards/AllRoleDetailsCard";
 import { FlatList } from "react-native-gesture-handler";
 import { FAB } from "react-native-paper";
+import NoDataFound from "../../Components/NoDataFound";
+import OpenmiqModal from "../../Modal/Openmicmodal";
+import DeleteModal from "../../UI/DeleteModal";
+import { useSnackbar } from "../../Store/SnackbarContext";
 
 const EditRole = () => {
   const route = useRoute();
@@ -22,20 +26,19 @@ const EditRole = () => {
   const { userData } = useContext(UserDataContext);
   const { allShops, selectedShop } = useContext(ShopContext);
   const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("")
+  const [filteredData, setFilteredData] = useState([])
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState("");
-
+  const { showSnackbar } = useSnackbar();
   const isFocused = useIsFocused();
 
   const [searchmodal, setsearchmodal] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [searchedData, setSearchedData] = useState([]);
   const [searchCalled, setSearchCalled] = useState(false);
-
-  console.log("DATA OF SELECTED SHOP ", selectedShop?.id);
-
-  console.log("IS ADMIN DATA IS ", isAdmin);
-  console.log("IS AdminRoleData DATA IS ", AdminRoleData?.id);
+  const [visible, setVisible] = useState(false);
+  const [roleId, setRoleId] = useState("");
 
   useEffect(() => {
     searchdata();
@@ -85,6 +88,52 @@ const EditRole = () => {
   useEffect(() => {
     getRoleData();
   }, [isFocused, selectedShop]);
+  
+
+  const HandleDeleteRole = async (roleId) => {
+    console.log("Data of item is 345", roleId);
+    try {
+      setLoading(true);
+      const headers = {
+        Authorization: `Bearer ${userData?.token}`,
+      };
+      try {
+        const response = await readApi(`userRoles/getUserRoleByVendorfk/${selectedShop?.id}`, headers);
+        console.log("GET ALL DATA IS125 ", response?.data);
+        if (response?.data) {
+          setRoleData(response.data);
+          setFilteredData(response.data)
+          console.log("GET ALL DATA IS response", response.data);
+        } else {
+          setRoleData([]); // If no data is found
+          setFilteredData([])
+        }
+      } catch (error) {
+        console.log("Unable to fetch Role data", error);
+        setRoleData([]); // On error, clear the list
+        setFilteredData([])
+      } finally {
+        setLoading(false);
+// =======
+//       if (roleId) {
+//         const deleteResponse = await deleteApi(`roles/${roleId}`);
+//         if (deleteResponse) {
+//           showSnackbar("Role deleted successfully!", "success");
+//           setRoleData((prev) => prev.filter((role) => role.id != roleId));
+//         } else {
+//           console.log("Failed to delete the offer. Response: ", deleteResponse);
+//         }
+//       } else {
+//         console.log("Unable to get Id");
+// >>>>>>> faizan
+      }
+    } catch (error) {
+      console.log("Unable to fetch Delete API : ", error);
+    } finally {
+      setLoading(false);
+      setVisible(false);
+    }
+  };
 
   const searchdata = () => {
     if (searchQuery?.length > 0) {
@@ -99,6 +148,7 @@ const EditRole = () => {
     }
   };
 
+
   const Loader = () => {
     if (!loading) return null;
     return (
@@ -108,43 +158,86 @@ const EditRole = () => {
     );
   };
 
+
+  const searchData = (query) => {
+    setSearchQuery(query);
+
+    if (query.trim() === "") {
+      setFilteredData([...RoleData]);  // Reset to full list when search is empty
+      return;
+    }
+
+    const filtered = RoleData.filter((role) =>
+      // role?.name?.toLowerCase()?.includes(query.toLowerCase())
+    role?.user?.name?.toLowerCase()?.includes(query.toLowerCase())
+    );
+
+    setFilteredData(filtered);
+  };
+
+
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setFilteredData([...RoleData]);
+    }
+  }, [searchQuery, RoleData]);
+  
+
+
+
   return (
     <View style={styles.Main}>
       <View style={styles.container}>
         {/* Search Bar */}
-        <View style={styles.searchContainer}>
-          <Searchbarwithmic
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            setsearchmodal={setsearchmodal}
-            setTranscript={setTranscript}
-            placeholderText="Search Vender ..."
-            searchData={searchdata}
-          />
-        </View>
-
-        {/* Dropdown List */}
-        {!isAdmin && (
-          <View style={styles.dropdownContainer}>
-            <DropDownList options={allShops} />
-          </View>
-        )}
-
         <FlatList
-          data={searchCalled ? searchedData : RoleData}
-          renderItem={({ item }) => (
-            <AllRoleDetailsCard item={item} getRoleData={getRoleData} />
+          ListHeaderComponent={
+            <>
+              <View style={styles.searchContainer}>
+                <Searchbarwithmic
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  placeholderText="Search User by name ..."
+                  searchData={searchData}  // Pass searchData function
+                />
+              </View>
+
+              <View style={styles.dropdownContainer}>
+                <DropDownList options={allShops} />
+              </View>
+            </>
+          }
+          data={filteredData} // Use filteredData instead of RoleData
+          keyboardShouldPersistTaps="handled"
+          renderItem={({ item }) => <AllRoleDetailsCard item={item} />}
+          keyExtractor={(item) => (item.id ? item.id.toString() : Math.random().toString())}
+          ListEmptyComponent={() => (
+            <View style={{ alignItems: "center", marginTop: 20 }}>
+              <Text style={{ fontSize: 16, color: "gray" }}>No roles found.</Text>
+            </View>
           )}
           keyExtractor={(item) =>
             item.id ? item.id.toString() : Math.random().toString()
           }
-          ListEmptyComponent={() => (
-            <View style={{ alignItems: "center", marginTop: 20 }}>
-              <Text style={{ fontSize: 16, color: "gray" }}>
-                No roles found.
-              </Text>
-            </View>
-          )}
+          ListEmptyComponent={() =>
+            !loading && RoleData.length <= 0 ? (
+              <View
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginTop: "40%",
+                }}
+              >
+                <NoDataFound textString={"No Users Found"} />
+              </View>
+            ) : null
+          }
+          // ListEmptyComponent={() => (
+          //   <View style={{ alignItems: "center", marginTop: 20 }}>
+          //     <Text style={{ fontSize: 16, color: "gray" }}>
+          //       No roles found.
+          //     </Text>
+          //   </View>
+          // )}
           contentContainerStyle={styles.flatListContainer}
           ListFooterComponent={Loader}
           showsVerticalScrollIndicator={false}
@@ -153,8 +246,26 @@ const EditRole = () => {
         <FAB
           icon="plus"
           style={styles.fab}
-          onPress={() => navigation.navigate("AddroleScreen")}
+          onPress={() =>
+            navigation.navigate("AddroleScreen", { isUpdateEditdata: false, })
+          }
         />
+
+        {searchmodal && (
+          <OpenmiqModal
+            modalVisible={searchmodal}
+            setModalVisible={setsearchmodal}
+            transcript={transcript}
+          />
+        )}
+
+        {visible && (
+          <DeleteModal
+            visible={visible}
+            setVisible={setVisible}
+            handleDelete={() => HandleDeleteRole(roleId)}
+          />
+        )}
       </View>
     </View>
   );
@@ -170,10 +281,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchContainer: {
-    marginBottom: 20,
+    marginBottom: 10,
+  
   },
   dropdownContainer: {
-    marginBottom: 20,
+    marginBottom: 8,
+    paddingVertical:3,
+    
   },
   flatListContainer: {
     paddingBottom: 70, // Add padding to the bottom of the FlatList content
@@ -189,9 +303,3 @@ const styles = StyleSheet.create({
 
 export default EditRole;
 
-// Loading Indicator
-//         {loading && (
-//           <View style={{ flex: 1, justifyContent: "center" }}>
-//             <ActivityIndicator size={"large"} />
-//           </View>
-//         )}

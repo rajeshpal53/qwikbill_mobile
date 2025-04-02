@@ -6,18 +6,28 @@ import * as Yup from "yup";
 import { createApi, readApi } from "../Util/UtilApi";
 import CategoryDropDown from "../UI/DropDown/CategoryDropdown";
 import { ShopContext } from "../Store/ShopContext";
+import { useSnackbar } from "../Store/SnackbarContext";
+import { useRoute } from "@react-navigation/native";
 
 const AddProduct = ({ navigation }) => {
   // const [options, setOptions] = useState([]);
   // const [showOptions, setShowOptions] = useState(false);
   // const [showHsnOptions, setShowHsnOptions] = useState(false);
+  const route = useRoute()
+  const { EditData, isUpdated } = route.params;
+
   const [HSNCode, SetHSNCode] = useState();
   const { selectedShop } = useContext(ShopContext);
+    const { showSnackbar } = useSnackbar();
 
   const timeoutId = useRef(null); // useRef to persist timeoutId
 
-
   console.log("DATA OF HSNCODE IS ", HSNCode);
+
+  useEffect(()=>{
+    console.log("Edit data is ",EditData )
+    console.log("Isupdated Data is ", isUpdated)
+  },[EditData, isUpdated])
 
   const validationSchema = Yup.object().shape({
     ProductCategory: Yup.string().required("Product category is required"),
@@ -90,13 +100,13 @@ const AddProduct = ({ navigation }) => {
       <Formik
         enableReinitialize={true}
         initialValues={{
-          ProductCategory: "",
-          ProductName: "",
-          PurchasePrice: "",
-          SellingPrice: "",
-          TaxRate: "",
-          HSNCode: "",
-          IsStockData: null,
+          ProductCategory: EditData?.productcategoryfk || "",
+          ProductName: EditData?.name || "",
+          PurchasePrice: EditData?.costPrice || "",
+          SellingPrice: EditData?.sellPrice || "",
+          TaxRate: EditData?.taxRate ||  "",
+          HSNCode: EditData?.hsncode || "",
+          IsStockData:EditData?.isStock || null,
         }}
         validationSchema={validationSchema}
         onSubmit={async (values, { resetForm }) => {
@@ -116,7 +126,9 @@ const AddProduct = ({ navigation }) => {
             await createApi(`products/`, ProductData);
             resetForm();
             navigation.goBack();
+            showSnackbar("Product Add Successfully", "success");
           } catch (error) {
+            showSnackbar(error, "error");
             console.log("Unable to Upload data ", error);
           }
         }}
