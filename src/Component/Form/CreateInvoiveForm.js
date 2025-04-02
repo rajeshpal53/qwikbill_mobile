@@ -46,7 +46,8 @@ const CreateInvoiceForm = ({ selectedButton }) => {
     address: Yup.string().required("Address is required"),
     gstNumber: Yup.string().matches(
       /^[A-Z]{2}[0-9]{1}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z0-9]{1}[Z]{1}[0-9]{1}$/,
-      "Invalid GSTIN format"
+      "Invalid GSTIN format. Example: AB1234567890Z1"
+
     ),
     // gstNumber: Yup.string().when([], {
     //   is: () => selectedButton === "gst",
@@ -168,7 +169,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
               quantity: item?.quantity,
             };
           });
-  
+
           const newPayload = {
             ...payloadData,
             products: newProducts,
@@ -177,18 +178,18 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           console.log("after removing someData, payloadData is , ", newPayload);
           console.log("userData is , ", userData);
           console.log("userData token is , ", userData?.token);
-  
+
           const response = await createApi(api, newPayload, {
             Authorization: `Bearer ${userData?.token}`,
           });
-  
+
           console.log("response of create invoice is, ", response);
           showSnackbar("Invoice Created Successfully", "success");
           // setCreatedInvoice(response?.customer);
           dispatch(clearCart());
           resetForm()
           // invoiceCreated.current = true;
-  
+
           if (button == "download") {
             console.log("Inside a if condition",response.customer);
             return response;
@@ -206,9 +207,9 @@ const CreateInvoiceForm = ({ selectedButton }) => {
         console.log("This is from GST PDf ");
         try {
           let api = "invoice/invoices";
-  
+
           const { customerData, serviceProviderData, ...payloadData } = formData;
-  
+
           const newProducts = payloadData?.products?.map((item) => {
             return {
               id: item?.id,
@@ -217,7 +218,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
               quantity: item?.quantity,
             };
           });
-  
+
           const newPayload = {
             ...payloadData,
             products: newProducts,
@@ -226,11 +227,11 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           console.log("after removing someData, payloadData is , ", newPayload);
           console.log("userData is , ", userData);
           console.log("userData token is , ", userData?.token);
-  
+
           const response = await createApi(api, newPayload, {
             Authorization: `Bearer ${userData?.token}`,
           });
-  
+
           console.log("response of create invoice is, ", response);
           showSnackbar("Invoice Created Successfully", "success");
           // setCreatedInvoice(response?.customer);

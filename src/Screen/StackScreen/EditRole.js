@@ -1,16 +1,27 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
 import UserDataContext from "../../Store/UserDataContext";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
-import { ButtonColor, readApi } from "../../Util/UtilApi";
+import {
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
+import { ButtonColor, deleteApi, readApi } from "../../Util/UtilApi";
 import { ShopContext } from "../../Store/ShopContext";
 import DropDownList from "../../UI/DropDownList";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
 import AllRoleDetailsCard from "../../Component/Cards/AllRoleDetailsCard";
 import { FlatList } from "react-native-gesture-handler";
 import { FAB } from "react-native-paper";
+import NoDataFound from "../../Components/NoDataFound";
+import OpenmiqModal from "../../Modal/Openmicmodal";
+import DeleteModal from "../../UI/DeleteModal";
+import { useSnackbar } from "../../Store/SnackbarContext";
 
 const EditRole = () => {
+  const route = useRoute();
+  const { isAdmin, AdminRoleData } = route.params;
   const [RoleData, setRoleData] = useState([]);
   const { userData } = useContext(UserDataContext);
   const { allShops, selectedShop } = useContext(ShopContext);
@@ -18,14 +29,70 @@ const EditRole = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const [filteredData, setFilteredData] = useState([])
   const navigation = useNavigation();
-
+  const [searchQuery, setSearchQuery] = useState("");
+  const { showSnackbar } = useSnackbar();
   const isFocused = useIsFocused();
 
-  console.log("DATA OF SELECTED SHOP ", selectedShop?.id)
-
+  const [searchmodal, setsearchmodal] = useState(false);
+  const [transcript, setTranscript] = useState("");
+  const [searchedData, setSearchedData] = useState([]);
+  const [searchCalled, setSearchCalled] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [roleId, setRoleId] = useState("");
 
   useEffect(() => {
-    const getRoleData = async () => {
+    searchdata();
+  }, [searchQuery]);
+
+  const getRoleData = async () => {
+    setLoading(true);
+    const headers = {
+      Authorization: `Bearer ${userData?.token}`,
+    };
+    let api = ``;
+
+    if (isAdmin) {
+      if (AdminRoleData?.id) {
+        api = `userRoles/getUserRoleByVendorfk/${AdminRoleData.id}`;
+      } else {
+        console.log("AdminRoleData.id is missing");
+        setLoading(false);
+        return;
+      }
+    } else {
+      if (selectedShop?.id) {
+        api = `userRoles/getUserRoleByVendorfk/${selectedShop.id}`;
+      } else {
+        console.log("selectedShop.id is missing");
+        setLoading(false);
+        return;
+      }
+    }
+    try {
+      const response = await readApi(api, headers);
+      console.log("GET ALL DATA IS125 ", response?.data);
+      if (response?.data) {
+        setRoleData(response.data);
+        console.log("GET ALL DATA IS response", response.data);
+      } else {
+        setRoleData([]); // If no data is found
+      }
+    } catch (error) {
+      console.log("Unable to fetch Role data", error);
+      setRoleData([]); // On error, clear the list
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getRoleData();
+  }, [isFocused, selectedShop]);
+  
+
+  const HandleDeleteRole = async (roleId) => {
+    console.log("Data of item is 345", roleId);
+    try {
       setLoading(true);
       const headers = {
         Authorization: `Bearer ${userData?.token}`,
@@ -47,10 +114,39 @@ const EditRole = () => {
         setFilteredData([])
       } finally {
         setLoading(false);
+// =======
+//       if (roleId) {
+//         const deleteResponse = await deleteApi(`roles/${roleId}`);
+//         if (deleteResponse) {
+//           showSnackbar("Role deleted successfully!", "success");
+//           setRoleData((prev) => prev.filter((role) => role.id != roleId));
+//         } else {
+//           console.log("Failed to delete the offer. Response: ", deleteResponse);
+//         }
+//       } else {
+//         console.log("Unable to get Id");
+// >>>>>>> faizan
       }
-    };
-    getRoleData();
-  }, [isFocused, selectedShop]);
+    } catch (error) {
+      console.log("Unable to fetch Delete API : ", error);
+    } finally {
+      setLoading(false);
+      setVisible(false);
+    }
+  };
+
+  const searchdata = () => {
+    if (searchQuery?.length > 0) {
+      const found = RoleData.filter((item) =>
+        item?.user?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSearchedData(found);
+      setSearchCalled(true);
+    } else {
+      setSearchedData([]);
+      setSearchCalled(false);
+    }
+  };
 
 
   const Loader = () => {
@@ -93,7 +189,6 @@ const EditRole = () => {
     <View style={styles.Main}>
       <View style={styles.container}>
         {/* Search Bar */}
-
         <FlatList
           ListHeaderComponent={
             <>
@@ -120,8 +215,32 @@ const EditRole = () => {
               <Text style={{ fontSize: 16, color: "gray" }}>No roles found.</Text>
             </View>
           )}
+          keyExtractor={(item) =>
+            item.id ? item.id.toString() : Math.random().toString()
+          }
+          ListEmptyComponent={() =>
+            !loading && RoleData.length <= 0 ? (
+              <View
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginTop: "40%",
+                }}
+              >
+                <NoDataFound textString={"No Users Found"} />
+              </View>
+            ) : null
+          }
+          // ListEmptyComponent={() => (
+          //   <View style={{ alignItems: "center", marginTop: 20 }}>
+          //     <Text style={{ fontSize: 16, color: "gray" }}>
+          //       No roles found.
+          //     </Text>
+          //   </View>
+          // )}
           contentContainerStyle={styles.flatListContainer}
           ListFooterComponent={Loader}
+          showsVerticalScrollIndicator={false}
         />
 
         <FAB
@@ -131,6 +250,22 @@ const EditRole = () => {
             navigation.navigate("AddroleScreen", { isUpdateEditdata: false, })
           }
         />
+
+        {searchmodal && (
+          <OpenmiqModal
+            modalVisible={searchmodal}
+            setModalVisible={setsearchmodal}
+            transcript={transcript}
+          />
+        )}
+
+        {visible && (
+          <DeleteModal
+            visible={visible}
+            setVisible={setVisible}
+            handleDelete={() => HandleDeleteRole(roleId)}
+          />
+        )}
       </View>
     </View>
   );

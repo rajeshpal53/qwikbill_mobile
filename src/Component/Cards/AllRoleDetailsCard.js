@@ -1,23 +1,41 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Card } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; // for using icons
 import { useNavigation } from "@react-navigation/native"; // Import useNavigation hook
-import { ButtonColor, fontFamily, fontSize } from "../../Util/UtilApi";
+import { ButtonColor, deleteApi, fontFamily, fontSize } from "../../Util/UtilApi";
+import EditRoleModal from "../../Components/Modal/EditRoleModal";
+import UserDataContext from "../../Store/UserDataContext";
 
-const AllRoleDetailsCard = ({ item }) => {
-  const navigation = useNavigation();
+
+const AllRoleDetailsCard = ({ item, getRoleData , setRoleId, setVisible}) => {
+  const [isEditModalVisible, setEditModalVisible] = useState(false);
+  const [selectedRole, setselectedRole] = useState(null);
+
+
+  const {userData} = useContext(UserDataContext)
 
   useEffect(() => {
     console.log("DATA OF ITEM IS123 ", item);
   }, [item]);
 
-  const HandleEditRole = () => {
-    navigation.navigate("AddroleScreen", {editData: item, isUpdateEditdata: true, });
+  const HandleEditRole = (item) => {
+    setEditModalVisible(true);
+    console.log("Edit item is ", item);
+    setselectedRole(item);
   };
 
-  const HandleDeleteRole = () => {
-    console.log("Delete user is");
+  const HandleRole = (item) =>{
+    console.log("Data of is is ", item)
+    setRoleId(item?.id)
+    setVisible(true);
+
+  }
+
+  const closeEditModal = () => {
+    setEditModalVisible(false);
+    setselectedRole(null);
+    getRoleData();
   };
 
   return (
@@ -30,10 +48,37 @@ const AllRoleDetailsCard = ({ item }) => {
                 {item?.user?.name || "No Name Provided"}
               </Text>
             </View>
-            <View style={{paddingHorizontal:5, borderRadius:10, alignItems:"center",backgroundColor:"#EFF6FF"}}>
-              <Text style={{color:"#2563EB"}}>{item?.role?.name || "No Role Provided"}</Text>
+            <View
+              style={{
+                paddingHorizontal: 5,
+                borderRadius: 10,
+                alignItems: "center",
+                backgroundColor: "#EFF6FF",
+              }}
+            >
+              <Text style={{ color: "#2563EB" }}>
+                {item?.role?.name
+                  ? item.role.name.charAt(0).toUpperCase() +
+                    item.role.name.slice(1)
+                  : "No Role Provided"}
+              </Text>
             </View>
           </View>
+          <View style={styles.row}>
+            <View style={styles.iconContainer}>
+              <MaterialCommunityIcons
+                name="phone"
+                size={18}
+                color="#4B5563"
+              />
+            </View>
+            <View>
+              <Text style={styles.label}>
+                {item?.user?.mobile || "No Role Provided"}
+              </Text>
+            </View>
+          </View>
+
           <View style={styles.row}>
             <View style={styles.iconContainer}>
               <MaterialCommunityIcons
@@ -63,9 +108,14 @@ const AllRoleDetailsCard = ({ item }) => {
             </View>
           </View>
 
+
+
           {/* Buttons with Icons */}
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={HandleEditRole}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => HandleEditRole(item)}
+            >
               <MaterialCommunityIcons
                 name="pencil"
                 size={18}
@@ -74,9 +124,10 @@ const AllRoleDetailsCard = ({ item }) => {
               />
               <Text style={styles.buttonText}>Edit</Text>
             </TouchableOpacity>
+
             <TouchableOpacity
               style={[styles.button, styles.deleteButton]}
-              onPress={HandleDeleteRole}
+              onPress={() => HandleRole(item) }
             >
               <MaterialCommunityIcons
                 name="trash-can"
@@ -87,6 +138,14 @@ const AllRoleDetailsCard = ({ item }) => {
               <Text style={styles.buttonText}>Delete</Text>
             </TouchableOpacity>
           </View>
+
+          {isEditModalVisible && (
+            <EditRoleModal
+              visible={isEditModalVisible}
+              onClose={closeEditModal}
+              selectedRole={selectedRole}
+            />
+          )}
         </View>
       </Card>
     </View>
@@ -114,7 +173,6 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     marginRight: 5,
-
   },
   usernameText: {
     fontSize: fontSize.labelLarge,
@@ -124,7 +182,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: fontSize.labelMedium,
     fontFamily: "Poppins-Regular",
-    color:"#4B5563"
+    color: "#4B5563",
   },
   buttonContainer: {
     flexDirection: "row",
@@ -136,11 +194,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: ButtonColor.SubmitBtn,
     paddingVertical: 7,
-    paddingHorizontal: 30,
+    paddingHorizontal: 15,
     borderRadius: 5,
   },
   deleteButton: {
-    backgroundColor: "#e53946",
+    backgroundColor: "rgba(0, 0, 6, 0.5)",
   },
   buttonText: {
     color: "#fff",

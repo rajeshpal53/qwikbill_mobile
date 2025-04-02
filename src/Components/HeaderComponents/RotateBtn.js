@@ -21,14 +21,14 @@ export default function RotateBtn({isLandscape, setIsLandscape}){
         }
         setIsLandscape(!isLandscape); // Toggle the state
       };
-      
+
 
     return (
         <View style={{marginRight:20}}>
-            <MaterialCommunityIcons 
-            name="phone-rotate-landscape" 
-            size={24} 
-            color="white" 
+            <MaterialCommunityIcons
+            name="phone-rotate-landscape"
+            size={24}
+            color="black"
             onPress={() => handleRotate()}
             />
         </View>

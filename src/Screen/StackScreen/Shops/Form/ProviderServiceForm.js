@@ -58,7 +58,6 @@ const ProviderServiceForm = ({
       setFieldValue("latitude", String(data?.latitude));
       setFieldValue("longitude", String(data?.longitude));
       setFieldValue("location", data?.showAddress);
-
       showSnackbar("Location Selected Successfully", "success");
     }
   };
@@ -85,7 +84,7 @@ const ProviderServiceForm = ({
         </View>
         <View>
           <TextInput
-            label={t("Shop Name")}
+            label={t("Shop Name") +" *"}
             mode={textInputMode}
             style={{ backgroundColor: "transparent" }}
             onChangeText={handleChange("shopName")}
@@ -107,7 +106,7 @@ const ProviderServiceForm = ({
         }}
         > */}
           <TextInput
-            label={t("Shop Address")}
+            label={t("Shop Address") +" *"}
             // disabled = { (!values?.latitude || values?.latitude === "") ? true : false}
             mode={textInputMode}
             style={{ backgroundColor: "transparent" }}
@@ -175,7 +174,7 @@ const ProviderServiceForm = ({
       />
     </ScrollView>
   </View> */}
-   <View>
+   <View style={{marginTop:20}}>
       <RichToolbar
         editor={richText}
         actions={[

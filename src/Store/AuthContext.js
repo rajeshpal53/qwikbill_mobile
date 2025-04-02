@@ -82,11 +82,13 @@ export const AuthProvider = ({ children }) => {
   
   const handleLogin = async (values, navigation) => {
     try {
-      console.log("Attempting login...");
+
+      console.log("login screen",values);
+
       setIsLoading(true);
   
       const payload = {
-        mobile: values?.mobile,
+        mobile: values.mobile,
         password: values?.password,
       };
   
@@ -112,7 +114,7 @@ export const AuthProvider = ({ children }) => {
       console.log("Saving user data:", response);
 
       await saveUserData(response);
-
+      
       if (navigation) {
         if (isPasskey) {
           //navigation.navigate("Passcode");

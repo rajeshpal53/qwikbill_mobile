@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import {  Button, Dialog, Portal, Paragraph } from 'react-native-paper';
-const DeleteModal = ({visible,setVisible,handleDelete}) => {
-    const hideDialog = () => setVisible(false); 
+const DeleteModal = ({visible,setVisible, handleDelete}) => {
+    const hideDialog = () => setVisible(false);
   return (
     <View style={styles.container}>
     <Portal>
@@ -29,5 +29,5 @@ const styles = StyleSheet.create({
       padding: 16,
     },
   });
-  
+
 export default DeleteModal

@@ -82,12 +82,19 @@ const uploadImagesSchema = Yup.object().shape({
 });
 
 const ShopValidataionSchema = Yup.object().shape({
-  shopName: Yup.string().required("Shop Name is required"),
-  shopAddress: Yup.string().required("Shop Address is required"),
-  // gstNumber: Yup.string().matches(
-  //   /^[A-Z]{2}[0-9]{1}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z0-9]{1}[Z]{1}[0-9]{1}$/,
-  //   "Invalid GSTIN format. GSTIN should be 15 characters: State Code (2 letters) + 1 digit + PAN (5 letters + 4 digits + 1 letter) + 1 digit + 1 letter (usually Z) + 1 digit."
-  // )  
+  shopName: Yup.string()
+  .required("Shop Name is required")
+  .max(50, "Shop Name cannot be more than 50 characters"),
+
+shopAddress: Yup.string()
+  .required("Shop Address is required")
+  .max(50, "Shop Address cannot be more than 50 characters"),
+   gstNumber: Yup.string().matches(
+        /^[A-Z]{2}[0-9]{1}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z0-9]{1}[Z]{1}[0-9]{1}$/,
+        "Invalid GSTIN format. Example: AB1234567890Z1"
+
+      ),
+
   // location: Yup.string().required("Location is required"),
   // kilometerRadius: Yup.number()
   //   .min(1, "Kilometer radius must be greater than 0")
@@ -96,7 +103,8 @@ const ShopValidataionSchema = Yup.object().shape({
 
 const ProfileValidationSchema = Yup.object().shape({
   profileImage: Yup.mixed().required("profile image is required"),
-  name: Yup.string().required("name is required"),
+  name: Yup.string().required("Name is required")
+  .max(50, "Name cannot be more than 50 characters"),
   whatsappNumber: Yup.string()
     .required("WhatsApp number is required")
     .matches(/^[6-9]\d{9}$/, "Invalid WhatsApp number"),
@@ -105,8 +113,10 @@ const ProfileValidationSchema = Yup.object().shape({
 
   mobile: Yup.string().required("mobile number is required"),
   // .matches(/^[6-9]\d{9}$/, "Invalid Mobile Number")
-  // email: Yup.string().email("Invalid email"),
-  // .required("Email is required"),
+  email: Yup.string()
+  .email("Invalid email format")
+  .required("Email is required"),
+  
   gender: Yup.string().required("Gender is required"),
   dob: Yup.string()
     .required("DOB is required")
@@ -788,8 +798,8 @@ const CreateShopScreen = ({ navigation }) => {
           }
 
           if (routeData) {
-            console.log("DATA OF USER ", routeData)
-            console.log(
+            console.log("DATA OF USER", routeData)
+            console.error(
               "Something went Wrong Updating Service Provider route data",
               error
             );
