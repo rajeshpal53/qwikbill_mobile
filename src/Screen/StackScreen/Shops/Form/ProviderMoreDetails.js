@@ -33,7 +33,7 @@ const ProviderMoreDetails = ({
 
       <View>
         <TextInput
-          label={t("Aadhaar Card Number")}
+          label={t("Aadhaar Card Number")+" *"}
           mode={textInputMode}
           style={{ backgroundColor: "transparent" }}
           keyboardType="numeric"
@@ -62,8 +62,8 @@ const ProviderMoreDetails = ({
         >
           {errors.aadharFrontImage}
         </HelperText>
- 
-    
+
+
         <ServiceImagePicker
           image={values?.aadharBackImage}
           label="Upload Aadhar Card Back Image"
@@ -76,12 +76,12 @@ const ProviderMoreDetails = ({
         >
           {errors.aadharBackImage}
         </HelperText>
-        
+
 
         </View>
 
 
-     
+
     </View>
   );
 };

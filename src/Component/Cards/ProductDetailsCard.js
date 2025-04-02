@@ -42,7 +42,8 @@ const ProductDetailsCard = ({ item }) => {
             <View style={styles.ButtonView}>
               <View>
                 <TouchableOpacity
-                  onPress={() => console.log("Edit button clicked")}
+                  onPress={() => navigation.navigate("AddProduct", { EditData: item, isUpdated: true })
+                }
                   style={styles.iconButton}
                 >
                   <MaterialIcons name="edit" size={24} color="#1E88E5" />

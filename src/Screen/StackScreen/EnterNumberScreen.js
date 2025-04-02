@@ -89,7 +89,6 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       //   }
       // ),
   });
-
   useEffect(() => {
     const fetchToken = async () => {
       try {
@@ -244,20 +243,64 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
   };
 
 
-  const postData = async (password, isForgetPassword,navigation) => {
+  // const postData = async (password, isForgetPassword,navigation) => {
+  //   setIsLoading(true);
+  //   console.log("FCMToken:", FCMToken);
+
+  //   const payload = {
+  //     mobile: phoneNumber,
+  //     password,
+  //   };
+
+  //   console.log("Payload:", payload);
+
+  //   try {
+  //     if (payload?.mobile) {
+  //       let apiEndpoint = isForgetPassword ? `users/forgetPassword` : `users/signUp`;
+  //       let apiFunction = isForgetPassword ? updateApi : createApi;
+
+  //       const response = await apiFunction(apiEndpoint, payload);
+  //       console.log(`${isForgetPassword ? "Forgot Password" : "Sign-Up"} Response:`, response);
+
+  //       await saveUserData(response);
+  //       await handleLogin(response,navigation);
+        
+  //       await AsyncStorage.setItem("updatedPassword", password);
+
+
+  //       if (isForgetPassword) {
+  //         setIsForgetPasswordState(true);
+  //       }
+
+  //       return true;
+  //     }
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     return false;
+  //   } finally {
+  //     setIsLoading(false);
+  //     alert("Password reset successfully!");
+  //   }
+  // };
+
+
+
+  const postData = async (password, isForgetPassword, navigation) => {
     setIsLoading(true);
     console.log("FCMToken:", FCMToken);
+
     const payload = {
       mobile: phoneNumber,
       password,
       idToken:idToken,
       FCMToken:[FCMToken]
     };
-
+  
     console.log("Payload:", payload);
-
+  
     try {
       if (payload?.mobile) {
+
         let apiEndpoint =`users/signUp`;
 
         const response = await createApi(apiEndpoint, payload);
@@ -269,10 +312,23 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
         await AsyncStorage.setItem("updatedPassword", password);
 
 
+        await AsyncStorage.setItem("updatedPassword", password);
+  
         if (isForgetPassword) {
-          setIsForgetPasswordState(true);
-        }
 
+          await AsyncStorage.removeItem("loginDetail");
+          await saveUserData(null);
+          setIsForgetPasswordState(false); // Reset state
+  
+  
+          navigation.reset({ index: 0, routes: [{ name: "login" }] });
+  
+          alert("Password reset successfully! Please log in with your new password.");
+        } else {
+          await saveUserData(response);
+          await handleLogin(payload, navigation);
+        }
+  
         return true;
       }
     } catch (error) {
@@ -280,9 +336,9 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       return false;
     } finally {
       setIsLoading(false);
-      alert("Password reset successfully!");
     }
   };
+  
 
 
 

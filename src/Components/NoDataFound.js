@@ -13,7 +13,7 @@ function NoDataFound({textString,home,}) {
     }}
     >
     <Image
-      source={require("../../assets/noDataFound.png")}
+      source={require("../../assets/noDataFoundImage2.jpg")}
       style={{ width: 300, height: 230 }}
     />
     <Text
@@ -38,7 +38,7 @@ function NoDataFound({textString,home,}) {
       </Button>)
 
     }
-    
+
     </View>
   )
 }
