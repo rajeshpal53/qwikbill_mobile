@@ -576,7 +576,6 @@ import {
   useTourGuideController,
 } from "rn-tourguide";
 import { ShopContext } from "../Store/ShopContext";
-import { PieChart } from "react-native-svg-charts";
 import { useSharedValue, withTiming, useAnimatedStyle } from "react-native-reanimated";
 import PieChartComponent from "../Components/PieChartComponent ";
 import { Dimensions } from "react-native";
