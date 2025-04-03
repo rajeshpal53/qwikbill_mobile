@@ -39,10 +39,6 @@ const PdfScreen = ({ navigation }) => {
   const resetForm = useRoute()?.params?.resetForm
   const viewInvoiceData = useRoute()?.params?.viewInvoiceData || null;
   const customerResponse=useRoute()?.params?.customerResponse||null
-  const dispatch = useDispatch();
-  const [isGenerated, setIsGenerated] = useState(false); // State to track PDF generation
-  const { userData } = useContext(UserDataContext);
-  const invoiceCreated = useRef(false);
   const [createdInvoice, setCreatedInvoice] = useState(null);
   const { showSnackbar } = useSnackbar();
   const [isLoading,setIsLoading]=useState(true)
@@ -73,7 +69,7 @@ const PdfScreen = ({ navigation }) => {
   }, [formData]);
 
   const pdfSource = {
-    uri: `${API_BASE_URL}invoice/downloadInvoice/${createdInvoice?.id}`, // Change to your PDF URL
+    uri: `${API_BASE_URL}invoice/downloadInvoice/${viewInvoiceData?.id}`, // Change to your PDF URL
     cache: true,
   };
 
@@ -179,7 +175,6 @@ const PdfScreen = ({ navigation }) => {
         vendorfk:formData?.vendorfk ,
         invoicefk:formData?.id ,
         userfk:formData?.usersfk||formData?.userfk,
-      
       }
     }else{
       params={
@@ -207,10 +202,12 @@ const PdfScreen = ({ navigation }) => {
           trustAllCerts={false}
           onLoadComplete={(numberOfPages) => {
             console.log(`PDF loaded with ${numberOfPages} pages`);
+
             setIsLoading(false)
           }}
           onError={(error) => {
             console.log(error,"flflflfllf");
+            showSnackbar(error,"error")
             setIsLoading(false)
           }}
          
@@ -225,6 +222,7 @@ const PdfScreen = ({ navigation }) => {
            }}
            onError={(error) => {
              console.log(error);
+             showSnackbar(error,"error")
              setIsLoading(false)
 
            }}
