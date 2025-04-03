@@ -96,6 +96,8 @@ export default function StackNavigator() {
     useContext(UserDataContext);
   const [isForgetPasswordState, setIsForgetPasswordState] = useState(false);
   const [roleDetails, setroleDetails] = useState(false);
+  const[noItemModal ,setNoItemModal] = useState(false);
+  const [noItemData , setNoItemData] = useState ({})
 
   // const { shopDetails } = useContext(ShopDetailContext);
 
@@ -118,6 +120,12 @@ export default function StackNavigator() {
         } else {
           setroleDetails(false);
         }
+
+        console.log("shopname isss",response?.data?.vendor?.shopname)
+        if (response?.data?.vendor?.shopname) {
+            setNoItemModal(true);
+        }
+        
       } else {
         console.log("service Provider Not Found , ", userData);
         setroleDetails(false);
@@ -209,6 +217,9 @@ export default function StackNavigator() {
               roleDetails={roleDetails}
               setroleDetails={setroleDetails}
               fetchServiceProvider={fetchServiceProvider}
+            noItemModal={noItemModal}
+            setNoItemModal={setNoItemModal}
+              noItemData={noItemData}
             />
           )}
         </Stack.Screen>
