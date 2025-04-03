@@ -316,12 +316,12 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           console.log("Form Submitted Data:123", payload);
           submit.current = true;
           const customerResponse=  await handleGenerate("download",payload,resetForm)
+          console.log("customerResponse is , ", customerResponse);  
           if(customerResponse){
             navigation.navigate("PDFScreen", {
               viewInvoiceData: customerResponse,
               selectedButton: selectedButton,
               resetForm: resetForm,
-              customerResponse:customerResponse
               // viewInvoiceData:payload
             });
             resetForm();
