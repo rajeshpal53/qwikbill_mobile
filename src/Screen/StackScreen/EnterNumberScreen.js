@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from "react";
 import auth from "@react-native-firebase/auth";
 // import { useSnackbar } from "../../Store/SnackbarContext";
 import {
-  API_BASE_URL,
+  NORM_URL,
   fontFamily,
   log,
   fontSize,
@@ -119,24 +119,31 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
     // return true;
   };
 
-  const carouselItems = [
-    {
-      id: "1",
-      image: require("../../../assets/images/carousel-slides/square1.jpg"),
-    },
-    {
-      id: "2",
-      image: require("../../../assets/images/carousel-slides/square2.jpg"),
-    },
-    {
-      id: "3",
-      image: require("../../../assets/images/carousel-slides/square3.jpg"),
-    },
-    {
-      id: "4",
-      image: require("../../../assets/images/carousel-slides/square4.jpg"),
-    },
-  ];
+  useEffect(() => {
+    let interval;
+    if (isTimerRunning && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prevTimer) => {
+          if (prevTimer > 1) {
+            return prevTimer - 1;
+          } else {
+            clearInterval(interval);
+            // Clear the interval when timer reaches 0
+            setIsTimerRunning(false); // Stop the timer
+
+            // if (threeTimer) {
+            //   resetCount();
+            // }
+            return 0; // Ensure timer is set to 0
+          }
+        });
+      }, 1000);
+    }
+
+    return () => {
+      clearInterval(interval); // Clear interval on unmount or when dependencies change
+    };
+  }, [isTimerRunning, timer]);
 
   useEffect(() => {
     async function checkNotificationPermission() {
@@ -352,6 +359,10 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
     const secs = seconds % 60;
     return `${minutes}:${secs < 10 ? `0${secs}` : secs}`; // Adds leading zero to seconds if < 10
   };
+  const startTimer = (timer) => {
+    setTimer(timer); // Set timer to 2:30 (150 seconds)
+    setIsTimerRunning(true); // Start the timer
+  };
 
   // Step 1: Send OTP
   const sendOtp = async (phoneNumber) => {
@@ -360,7 +371,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       console.log("debugg22222");
       // log.info("debugg22222");
 
-      // startTimer(90); // Start the timer
+      startTimer(90); // Start the timer
       const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
       console.log("confirmation", JSON.stringify(confirmation));
       setConfirm(confirmation);
@@ -473,7 +484,6 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
               </Text>
             ) : confirm ? (
               <View style={styles.container1}>
-                {console.log("hello 2")}
                 <ScrollView
                   contentContainerStyle={{ flexGrow: 1 }}
                   scrollEnabled={true}
@@ -813,7 +823,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
                             onPress={() =>
                               navigation.navigate("Policies", {
                                 // webUri: "https://rajeshpal.online/privacy-policy",
-                                webUri: `https://dailysabji.com/privacy-policy?view=mobile`,
+                                webUri: `${NORM_URL}/privacy-policy?view=mobile`,
                                 headerTitle: "Privacy and Policies",
                               })
                             }
