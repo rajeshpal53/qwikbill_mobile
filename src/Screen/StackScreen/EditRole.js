@@ -209,7 +209,7 @@ const EditRole = () => {
           }
           data={filteredData} // Use filteredData instead of RoleData
           keyboardShouldPersistTaps="handled"
-          renderItem={({ item }) => <AllRoleDetailsCard item={item} />}
+          renderItem={({ item }) => <AllRoleDetailsCard item={item} getRoleData={getRoleData}setRoleId={setRoleId}  />}
           keyExtractor={(item) =>
             item.id ? item.id.toString() : Math.random().toString()
           }
