@@ -35,6 +35,7 @@ export const useDownloadInvoice = () => {
         buttonTitle: "Open File",
         options: { opensAppToForeground: true },
       },
+
     ]);
 
     // Event listener for notification action
@@ -80,20 +81,20 @@ export const useDownloadInvoice = () => {
     }
   };
 
-  const openFile = () => {
-    // console.log("Open File button clicked , ", saveFileUri);
-    try {
-      console.log("Open File button clicked , ", saveFileUri);
-      // Open the file using the content URI
-      IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
-        data: saveFileUri, // Use the content URI from the folder
-        flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
-        type: "application/pdf" || "application/xlsx", // MIME type (optional but helpful)
-      });
-    } catch (error) {
-      console.error("Error , ", error);
-    }
-  };
+    const openFile = () => {
+      // console.log("Open File button clicked , ", saveFileUri);
+      try {
+        console.log("Open File button clicked , ", saveFileUri);
+        // Open the file using the content URI
+        IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
+          data: saveFileUri, // Use the content URI from the folder
+          flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
+          type: "application/pdf" || "application/xlsx", // MIME type (optional but helpful)
+        });
+      } catch (error) {
+        console.error("Error , ", error);
+      }
+    };
 
   async function checkNotificationPermission() {
     // Check current notification permissions
@@ -211,7 +212,6 @@ export const useDownloadInvoice = () => {
         const base64 = await FileSystem.readAsStringAsync(uri, {
           encoding: FileSystem.EncodingType.Base64,
         });
-
         if (saveFolderUri) {
           console.log("save folder type , ", typeof saveFolderUri);
           directoryUri = saveFolderUri;
@@ -239,7 +239,7 @@ export const useDownloadInvoice = () => {
         await Notifications.scheduleNotificationAsync({
           content: {
             title: "Download Complete",
-            body: "Your sample.xlsx has been downloaded successfully.",
+            body: "Your sample Excel file has been downloaded successfully.",
             categoryIdentifier: "DOWNLOAD_CATEGORY", // Use the category with the action button
           },
           trigger: null, // Show immediately
