@@ -110,7 +110,6 @@
 //     }
 //   }, [currentStep]);
 
-
 //   useEffect(() => {
 //     const getItem = async () => {
 //       try {
@@ -125,7 +124,6 @@
 
 //     getItem();
 //   }, []);
-
 
 //   const goToHandler = (Screen) => {
 //     // navigation.navigate("wertone", {screen:'CreateInvoice'});
@@ -230,7 +228,6 @@
 //                         marginLeft: 30,
 //                       }}
 //                     />
-
 
 //                     <DropDownList options={allShops} />
 //                   </View>
@@ -526,17 +523,6 @@
 //   },
 // });
 
-
-
-
-
-
-
-
-
-
-
-
 import React, { useState, useContext, useEffect, useRef } from "react";
 import {
   View,
@@ -554,7 +540,11 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { MaterialCommunityIcons, FontAwesome5, Ionicons, } from "@expo/vector-icons";
+import {
+  MaterialCommunityIcons,
+  FontAwesome5,
+  Ionicons,
+} from "@expo/vector-icons";
 import { Button, Card, TextInput, ActivityIndicator } from "react-native-paper";
 import { AuthContext } from "../Store/AuthContext";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
@@ -565,7 +555,11 @@ import { ButtonColor, fontFamily, fontSize, readApi } from "../Util/UtilApi";
 import DropDownList from "../UI/DropDownList";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LoginTimeContext } from "../Store/LoginTimeContext";
-import { responsiveHeight, responsiveWidth, responsiveFontSize, } from "react-native-responsive-dimensions";
+import {
+  responsiveHeight,
+  responsiveWidth,
+  responsiveFontSize,
+} from "react-native-responsive-dimensions";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { useFonts } from "expo-font";
 import UserDataContext from "../Store/UserDataContext";
@@ -576,13 +570,22 @@ import {
   useTourGuideController,
 } from "rn-tourguide";
 import { ShopContext } from "../Store/ShopContext";
-import { useSharedValue, withTiming, useAnimatedStyle } from "react-native-reanimated";
+import {
+  useSharedValue,
+  withTiming,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 import PieChartComponent from "../Components/PieChartComponent ";
 import { Dimensions } from "react-native";
 import ConfirmModal from "../Modal/ConfirmModal";
+import FileUploadModal from "../Components/BulkUpload/FileUploadModal";
 
-export default function HomeScreen({ navigation, noItemModal,  setNoItemModal, noItemData }) {
-
+export default function HomeScreen({
+  navigation,
+  noItemModal,
+  setNoItemModal,
+  noItemData,
+}) {
   const { currentLoginTime, lastLoginTime, storeTime } =
     useContext(LoginTimeContext);
   // const [lastLoginTime, setLastLoginTime] = useState(route.params.previousLoginTime);
@@ -599,26 +602,24 @@ export default function HomeScreen({ navigation, noItemModal,  setNoItemModal, n
   // const overlayHeight = (0.20*windowHeight);
   // console.log(responsiveHeight(80), "    --- responsiveHeight");
   // console.log(verticalScale(700), "    --- verticalscale");
-  const [vendorStatus, setVendorStatus] = useState(null)
+  const [vendorStatus, setVendorStatus] = useState(null);
   const { userData } = useContext(UserDataContext);
   const { allShops, selectedShop } = useContext(ShopContext);
   const isFocused = useIsFocused();
   const [currentStep, setCurrentStep] = useState(0);
   const [isTourGuideActive, setIsTourGuideActive] = useState(false);
   const { canStart, start, stop, eventEmitter } = useTourGuideController();
- // const [noItemModal ,setNoItemModal] = useState (false)
+  const [bulkUploadModalVisible,setBulkUploadModalVisible]=useState(false)
+  // const [noItemModal ,setNoItemModal] = useState (false)
 
   useEffect(() => {
     console.log("allshops in homescreen 1, ", allShops);
-    console.log("all services ,", services)
+    console.log("all services ,", services);
   }, [allShops]);
 
   // useEffect(() => {
   //      setNoItemModal(true)
   // }, [allShops]);
-
- 
-
 
   // useEffect(() => {
   //   const checkIfTourSeen = async () => {
@@ -635,7 +636,6 @@ export default function HomeScreen({ navigation, noItemModal,  setNoItemModal, n
   //   checkIfTourSeen();
   // }, [canStart]);
 
-
   useEffect(() => {
     // Start tour guide when entering the Home screen
     setIsTourGuideActive(true);
@@ -645,10 +645,9 @@ export default function HomeScreen({ navigation, noItemModal,  setNoItemModal, n
     };
   }, []);
 
-  console.log("noItemModal  is ",noItemModal)  
-  console.log("set no item moal in tab",setNoItemModal)
+  console.log("noItemModal  is ", noItemModal);
+  console.log("set no item moal in tab", setNoItemModal);
   //console.log("set role detais",setroleDetails)
-
 
   useEffect(() => {
     if (currentStep === 13) {
@@ -656,7 +655,6 @@ export default function HomeScreen({ navigation, noItemModal,  setNoItemModal, n
       AsyncStorage.setItem("hasSeenTour", "true");
     }
   }, [currentStep]);
-
 
   useEffect(() => {
     const getItem = async () => {
@@ -673,26 +671,24 @@ export default function HomeScreen({ navigation, noItemModal,  setNoItemModal, n
     getItem();
   }, []);
 
-
   useEffect(() => {
     const venderStatus = async () => {
       try {
         setIsLoading(true);
         setVendorStatus(null);
 
-        const response = await readApi(`invoice/getVendorStats/${selectedShop.id}`);
+        const response = await readApi(
+          `invoice/getVendorStats/${selectedShop.id}`
+        );
 
         if (response && response.success) {
-
           console.log("Dashboard Vendor Status Response:", response);
-          setVendorStatus({ ...response })
+          setVendorStatus({ ...response });
           await AsyncStorage.setItem("vendorStatus", JSON.stringify(response));
-
         } else {
           console.log("Something went wrong, please try again!");
           setVendorStatus({});
           await AsyncStorage.removeItem("vendorStatus"); // Clear AsyncStorage on error
-
         }
       } catch (error) {
         console.log("Unable to get vendor dashboard data", error);
@@ -705,9 +701,7 @@ export default function HomeScreen({ navigation, noItemModal,  setNoItemModal, n
     if (selectedShop?.id && userData?.user?.mobile) {
       venderStatus();
     }
-
   }, [userData?.user?.mobile, selectedShop?.id, isFocused]);
-
 
   const total =
     (vendorStatus?.totalSales || 0) +
@@ -715,18 +709,20 @@ export default function HomeScreen({ navigation, noItemModal,  setNoItemModal, n
     (vendorStatus?.newCustomers || 0) +
     (vendorStatus?.totalInvoices || 0);
 
-
   const goToHandler = (Screen) => {
     // navigation.navigate("wertone", {screen:'CreateInvoice'});
     // console.log("Pra ", item)
     if (Screen === "CreateShopScreen") {
       navigation.navigate(Screen, { isHome: false });
+    }else if(Screen==="bulkUpload"){
+      setBulkUploadModalVisible(true)
     }
-
-    console.log("hi");
-
+    else{
+      console.log("hi");
     // navigation.navigate("StackNavigator", { screen: Screen });
     navigation.navigate(Screen, { startTour: true });
+    }
+    
   };
 
   if (isLoading) {
@@ -741,13 +737,12 @@ export default function HomeScreen({ navigation, noItemModal,  setNoItemModal, n
     );
   }
 
-
   return (
     <SafeAreaView style={styles.safeContainer}>
-      <ScrollView contentContainerStyle={styles.scrollView}
-        scrollEnabled={(allShops && allShops.length > 0)} // Disable scroll if allShops exists
+      <ScrollView
+        contentContainerStyle={styles.scrollView}
+        scrollEnabled={allShops && allShops.length > 0} // Disable scroll if allShops exists
       >
-
         <View style={styles.overlay}></View>
         <View style={styles.scrollView}>
           <TourGuideZoneByPosition
@@ -762,7 +757,13 @@ export default function HomeScreen({ navigation, noItemModal,  setNoItemModal, n
           />
 
           <View style={styles.container}>
-            <View style={allShops && allShops.length > 0 ? styles.header : styles.userHeader}>
+            <View
+              style={
+                allShops && allShops.length > 0
+                  ? styles.header
+                  : styles.userHeader
+              }
+            >
               <>
                 <TourGuideZone
                   zone={1}
@@ -808,16 +809,19 @@ export default function HomeScreen({ navigation, noItemModal,  setNoItemModal, n
               />
             </View>
 
-
-            <View style={{
-              flex: allShops && allShops.length > 0 ? 1 : 0.6,
-              marginTop: allShops && allShops.length > 0 ? 5 : 1,
-
-            }}>
-
-
-
-              <View style={allShops && allShops.length > 0 ? styles.dropDownContainer : styles.userDropdown}>
+            <View
+              style={{
+                flex: allShops && allShops.length > 0 ? 1 : 0.6,
+                marginTop: allShops && allShops.length > 0 ? 5 : 1,
+              }}
+            >
+              <View
+                style={
+                  allShops && allShops.length > 0
+                    ? styles.dropDownContainer
+                    : styles.userDropdown
+                }
+              >
                 <TourGuideZone
                   zone={3}
                   text={"See all the vender in dropdown"}
@@ -839,40 +843,56 @@ export default function HomeScreen({ navigation, noItemModal,  setNoItemModal, n
                   <DropDownList options={allShops} />
                 </View>
               </View>
-
             </View>
-
-
             {allShops && allShops.length > 0 && (
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{
                   paddingHorizontal: 7,
-
+                  // backgroundColor:"lightblue"
                 }}
               >
-                <View style={{ flexDirection: "row", gap: 7, height: 100, marginTop: 15, }}>
-                  <StatCard title="Total Sales" value={`$${vendorStatus?.totalSales ?? "N/A"}`} />
-                  <StatCard title="Active Invoices" value={vendorStatus?.activeInvoices ?? "N/A"} />
-                  <StatCard title="New Customers" value={vendorStatus?.newCustomers ?? "N/A"} />
-                  <StatCard title="Total Invoices" value={vendorStatus?.totalInvoices ?? "N/A"} />
+                <View
+                  style={{
+                    flexDirection: "row",
+                    gap: 7,
+                    height: 100,
+
+                    // backgroundColor:"lightgreen"
+                  }}
+                >
+                  <StatCard
+                    title="Total Sales"
+                    value={`$${vendorStatus?.totalSales ?? "N/A"}`}
+                  />
+                  <StatCard
+                    title="Active Invoices"
+                    value={vendorStatus?.activeInvoices ?? "N/A"}
+                  />
+                  <StatCard
+                    title="New Customers"
+                    value={vendorStatus?.newCustomers ?? "N/A"}
+                  />
+                  <StatCard
+                    title="Total Invoices"
+                    value={vendorStatus?.totalInvoices ?? "N/A"}
+                  />
                 </View>
               </ScrollView>
             )}
 
-            {allShops && allShops.length > 0 && vendorStatus != null && total > 0 ? (
-              <PieChartComponent key={userData?.user?.mobile} vendorStatus={vendorStatus} />
-            ) : (
-              <View style={{ justifyContent: "center", alignItems: "center", marginTop: -25 }}>
-                <Image source={require("../../assets/noDataFound.png")} style={{ height: 250, width: 250 }} />
-                <Text style={{ textAlign: "center", color: "gray" }}>No vendor data is available </Text>
-              </View>
-            )}
+            {allShops &&
+              allShops.length > 0 &&
+              vendorStatus != null &&
+              total > 0 && (
+                <PieChartComponent
+                  key={userData?.user?.mobile}
+                  vendorStatus={vendorStatus}
+                />
+              )}
 
-
-
-            <View style={{ flex: 2.7 }}>
+            <View style={{ flex: 3 }}>
               {allShops?.length > 0 ? (
                 <FlatList
                   style={styles.flatList}
@@ -918,7 +938,6 @@ export default function HomeScreen({ navigation, noItemModal,  setNoItemModal, n
                     // flex: 1.5,
                     justifyContent: "flex-start",
                     alignItems: "center",
-
                   }}
                 >
                   <Image
@@ -937,22 +956,31 @@ export default function HomeScreen({ navigation, noItemModal,  setNoItemModal, n
               )}
             </View>
 
-
+            {noItemModal && (
+              <ConfirmModal
+                visible={noItemModal}
+                setVisible={setNoItemModal}
+                handlePress={() => {
+                  navigation.navigate("AddProduct", { editItem: noItemData });
+                  setNoItemModal(false);
+                }}
+                message="Hey Provider Please Add Products in your Shop"
+                heading="Add Products"
+                buttonTitle="Add Products"
+              />
+            )}
+            <View>
             {
-              noItemModal && (
-                <ConfirmModal
-                  visible={noItemModal}
-                  setVisible={setNoItemModal}
-                  handlePress={() => { navigation.navigate("AddProduct", { editItem: noItemData, }); setNoItemModal(false) }}
-                  message="Hey Provider Please Add Products in your Shop"
-                  heading="Add Products"
-                  buttonTitle="Add Products"
-                />
+              bulkUploadModalVisible&&(
+             <FileUploadModal visible={bulkUploadModalVisible} setBulkUploadModalVisible={setBulkUploadModalVisible}/>
               )
             }
+            </View>
+           
           </View>
         </View>
       </ScrollView>
+      
     </SafeAreaView>
   );
 }
@@ -960,14 +988,29 @@ export default function HomeScreen({ navigation, noItemModal,  setNoItemModal, n
 const StatCard = ({ title, value, change }) => {
   return (
     <Card style={styles.statCard}>
-      <View style={{ flexDirection: "row", }}>
-        <Text style={{ marginRight: 15, fontSize: fontSize.label, fontFamily: fontFamily.medium }}>{title}</Text>
+      <View style={{ flexDirection: "row" }}>
+        <Text
+          style={{
+            marginRight: 15,
+            fontSize: fontSize.label,
+            fontFamily: fontFamily.medium,
+          }}
+        >
+          {title}
+        </Text>
         {/* <Text style={[styles.statChange, { color: change.includes("-") ? "red" : "green" }]}>
           {change}
         </Text> */}
       </View>
-      <Text style={{ fontSize: fontSize.label, fontFamily: fontFamily.bold, marginLeft: 5 }}>{value ?? "N/A"}</Text>
-
+      <Text
+        style={{
+          fontSize: fontSize.label,
+          fontFamily: fontFamily.bold,
+          marginLeft: 5,
+        }}
+      >
+        {value ?? "N/A"}
+      </Text>
     </Card>
   );
 };
@@ -1000,7 +1043,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     // paddingBottom:0,
     gap: responsiveHeight(1),
-
   },
   userHeader: {
     flex: 0.3,
@@ -1027,7 +1069,7 @@ const styles = StyleSheet.create({
   subHeaderText: {
     color: "#fff",
     fontSize: 13,
-    marginTop: 5
+    marginTop: 5,
   },
   dropDownContainer: {
     paddingVertical: 6,
@@ -1035,14 +1077,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#f6f2f7",
     borderRadius: 10,
     marginTop: 25,
-
   },
   userDropdown: {
     paddingVertical: 5,
     paddingHorizontal: 20,
     backgroundColor: "#f6f2f7",
     borderRadius: 10,
-
   },
 
   dropdownRow: {
@@ -1058,7 +1098,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
     paddingHorizontal: 10,
-    backgroundColor: "green"
+    backgroundColor: "green",
   },
   allThreeViews: {
     flex: 1,
@@ -1072,23 +1112,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginVertical: 8,
-    backgroundColor: "red"
+    backgroundColor: "red",
   },
   statCard: {
-    height: "65%",
+    height: "70%",
     marginHorizontal: 3,
     paddingVertical: 15,
     paddingHorizontal: 10,
     borderRadius: 10,
     backgroundColor: "#fff",
-    shadowColor: "#000",  // Use black for a soft shadow
+    shadowColor: "#000", // Use black for a soft shadow
     shadowOffset: { width: 0, height: 2 }, // Adds depth
-    shadowOpacity: 0.3,  // Light shadow effect
+    shadowOpacity: 0.3, // Light shadow effect
     shadowRadius: 3, // Soft shadow edges
     elevation: 4, // More depth on Android
     justifyContent: "flex-end",
     alignSelf: "flex-end",
-    width: 140
+    width: 140,
   },
 
   flatList: {
@@ -1161,7 +1201,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     // backgroundColor:"#fff",
-
   },
   chartTitle: {
     fontSize: 18,
@@ -1189,6 +1228,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#000",
   },
-
 });
-
