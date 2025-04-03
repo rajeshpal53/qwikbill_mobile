@@ -3,7 +3,7 @@ import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { RadioButton, Text, TextInput } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { createApi, readApi } from "../Util/UtilApi";
+import { createApi, readApi, updateApi } from "../Util/UtilApi";
 import CategoryDropDown from "../UI/DropDown/CategoryDropdown";
 import { ShopContext } from "../Store/ShopContext";
 import { useSnackbar } from "../Store/SnackbarContext";
@@ -13,21 +13,21 @@ const AddProduct = ({ navigation }) => {
   // const [options, setOptions] = useState([]);
   // const [showOptions, setShowOptions] = useState(false);
   // const [showHsnOptions, setShowHsnOptions] = useState(false);
-  const route = useRoute()
-  const { EditData, isUpdated } = route.params;
+  const route = useRoute();
+  const { EditData, isUpdated, setRefresh } = route.params;
 
   const [HSNCode, SetHSNCode] = useState();
   const { selectedShop } = useContext(ShopContext);
-    const { showSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   const timeoutId = useRef(null); // useRef to persist timeoutId
 
   console.log("DATA OF HSNCODE IS ", HSNCode);
 
-  useEffect(()=>{
-    console.log("Edit data is ",EditData )
-    console.log("Isupdated Data is ", isUpdated)
-  },[EditData, isUpdated])
+  useEffect(() => {
+    console.log("Edit data is ", EditData);
+    console.log("Isupdated Data is ", isUpdated);
+  }, [EditData, isUpdated]);
 
   const validationSchema = Yup.object().shape({
     ProductCategory: Yup.string().required("Product category is required"),
@@ -47,7 +47,6 @@ const AddProduct = ({ navigation }) => {
       clearTimeout(timeoutId.current);
     }
     timeoutId.current = setTimeout(async () => {
-      console.log("Value of HSN code is -----------", hsncode);
       try {
         const api = `hsn-codes`;
         const response = await readApi(api);
@@ -72,29 +71,6 @@ const AddProduct = ({ navigation }) => {
     }, 300);
   };
 
-  // const HandleHsnCode = async (hsncode, setFieldValue) => {
-  //   console.log("Value of HSN code is -----------", hsncode);
-  //   try {
-  //     const api = `hsn-codes`;
-  //     const response = await readApi(api);
-  //     if (response) {
-  //       const matchedHsnCode = response.find((item) => item?.code === hsncode);
-  //       console.log("Matched HSN code is", matchedHsnCode);
-  //       if (matchedHsnCode) {
-  //         setFieldValue("HSNCode", matchedHsnCode?.code);
-  //         setFieldValue("TaxRate", matchedHsnCode?.taxrate);
-  //         SetHSNCode(matchedHsnCode);
-  //       } else {
-  //         console.log("No matching HSN code found");
-  //         setFieldValue("TaxRate", "");
-  //         setFieldValue("HSNCode", hsncode);
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching HSN code data:", error);
-  //   }
-  // };
-
   return (
     <ScrollView contentContainerStyle={{}}>
       <Formik
@@ -104,9 +80,9 @@ const AddProduct = ({ navigation }) => {
           ProductName: EditData?.name || "",
           PurchasePrice: EditData?.costPrice || "",
           SellingPrice: EditData?.sellPrice || "",
-          TaxRate: EditData?.taxRate ||  "",
+          TaxRate: EditData?.taxRate || "",
           HSNCode: EditData?.hsncode || "",
-          IsStockData:EditData?.isStock || null,
+          IsStockData: EditData?.isStock || null,
         }}
         validationSchema={validationSchema}
         onSubmit={async (values, { resetForm }) => {
@@ -122,14 +98,41 @@ const AddProduct = ({ navigation }) => {
             hsncode: parseInt(values.HSNCode),
           };
           console.log("Data is 15863", ProductData);
-          try {
-            await createApi(`products/`, ProductData);
-            resetForm();
-            navigation.goBack();
-            showSnackbar("Product Add Successfully", "success");
-          } catch (error) {
-            showSnackbar(error, "error");
-            console.log("Unable to Upload data ", error);
+          if (isUpdated) {
+            console.log("Edit field is ", ProductData);
+            try {
+              // Pass ProductData to the update API request
+              const response = await updateApi(
+                `products/${EditData?.id}`,
+                ProductData
+              );
+              console.log("Updated data is ", response)
+              if (response) {
+                showSnackbar("Product Updated Successfully", "success");
+                setRefresh((prev) => !prev);
+                navigation.goBack();
+              } else {
+                showSnackbar("Failed to update the product", "error");
+              }
+            } catch (error) {
+              console.log("Unable to edit data ", error);
+              showSnackbar("Error updating product", "error");
+            }
+          } else {
+            try {
+              // Create a new product
+              const response = await createApi(`products/`, ProductData);
+              if (response?.data) {
+                showSnackbar("Product Added Successfully", "success");
+                resetForm();
+                navigation.goBack();
+              } else {
+                showSnackbar("Failed to add product", "error");
+              }
+            } catch (error) {
+              showSnackbar("Error creating product", "error");
+              console.log("Unable to Upload data ", error);
+            }
           }
         }}
       >

@@ -13,6 +13,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+  RefreshControl,
 } from "react-native";
 import { Avatar, Searchbar, FAB } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -49,6 +50,7 @@ const AllUsersScreen = ({ navigation }) => {
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const { showSnackbar } = useSnackbar()
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     if (searchQuery?.length <= 0) {
@@ -235,6 +237,13 @@ const AllUsersScreen = ({ navigation }) => {
     }
   };
 
+  const onRefresh = async () => {
+    setRefreshing(true);  // Set refreshing state to true
+    await getalldata(); // Fetch new data
+    setRefreshing(false); // Set refreshing state to false once done
+  };
+
+
   const Loader = () => {
     if (!isLoading) return null;
     return (
@@ -286,6 +295,14 @@ const AllUsersScreen = ({ navigation }) => {
             handleEditProfile={handleEditProfile}
           />
         )}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}  // Control the refreshing state
+            onRefresh={onRefresh}    // Trigger the onRefresh function when pulled down
+            colors={["#0a6846"]}     // Color of the refresh spinner
+            progressBackgroundColor={"#fff"} // Background color of the spinner
+          />
+        }
         // renderItem={renderItem}
         keyExtractor={(item, index) => `${item.id}-${index}`}
         // onScrollBeginDrag={handleSearchBar}

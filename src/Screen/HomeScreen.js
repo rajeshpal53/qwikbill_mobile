@@ -722,7 +722,7 @@ export default function HomeScreen({
     // navigation.navigate("StackNavigator", { screen: Screen });
     navigation.navigate(Screen, { startTour: true });
     }
-    
+
   };
 
   if (isLoading) {
@@ -976,11 +976,11 @@ export default function HomeScreen({
               )
             }
             </View>
-           
+
           </View>
         </View>
       </ScrollView>
-      
+
     </SafeAreaView>
   );
 }
