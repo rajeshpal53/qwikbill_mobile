@@ -18,6 +18,8 @@ export default function BottomNavigator({
   roleDetails,
   setroleDetails,
   fetchServiceProvider,
+  noItemModal,
+  setNoItemModal
 }) {
   const [searchQuery, setSearchQuery] = useState("");
   // const { searchMode } = useContext(AuthContext);
@@ -27,6 +29,9 @@ export default function BottomNavigator({
   //   // Handle search logic here
   //   console.log(query);
   // };
+
+  // console.log("set no item moal in tab",setNoItemModal)
+  // console.log("set role detais",setroleDetails)
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -69,7 +74,7 @@ export default function BottomNavigator({
     >
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        //component={HomeScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Icon name="home-outline" color={color} size={size} />
@@ -91,7 +96,18 @@ export default function BottomNavigator({
           // tabBarVisible:false,
           // tabBarButton: () => null
         }}
-      />
+      >
+        {({ navigation }) => (
+          <HomeScreen
+            navigation={navigation}
+            //noItemData={noItemData}
+            setNoItemModal={setNoItemModal}
+            noItemModal={noItemModal}
+          />
+        )}
+       
+       </Tab.Screen>
+      
       <Tab.Screen
         name="Invoice"
         component={ViewInvoiceScreen1}
@@ -163,6 +179,7 @@ export default function BottomNavigator({
             roleDetails={roleDetails}
             setroleDetails={setroleDetails}
             fetchServiceProvider={fetchServiceProvider}
+
           />
         )}
       </Tab.Screen>
