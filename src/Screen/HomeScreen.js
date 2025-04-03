@@ -579,8 +579,9 @@ import { ShopContext } from "../Store/ShopContext";
 import { useSharedValue, withTiming, useAnimatedStyle } from "react-native-reanimated";
 import PieChartComponent from "../Components/PieChartComponent ";
 import { Dimensions } from "react-native";
+import ConfirmModal from "../Modal/ConfirmModal";
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({ navigation, noItemModal,  setNoItemModal, noItemData }) {
 
   const { currentLoginTime, lastLoginTime, storeTime } =
     useContext(LoginTimeContext);
@@ -605,12 +606,18 @@ export default function HomeScreen({ navigation }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [isTourGuideActive, setIsTourGuideActive] = useState(false);
   const { canStart, start, stop, eventEmitter } = useTourGuideController();
+ // const [noItemModal ,setNoItemModal] = useState (false)
 
   useEffect(() => {
     console.log("allshops in homescreen 1, ", allShops);
     console.log("all services ,", services)
   }, [allShops]);
 
+  // useEffect(() => {
+  //      setNoItemModal(true)
+  // }, [allShops]);
+
+ 
 
 
   useEffect(() => {
@@ -638,6 +645,9 @@ export default function HomeScreen({ navigation }) {
     };
   }, []);
 
+  console.log("noItemModal  is ",noItemModal)  
+  console.log("set no item moal in tab",setNoItemModal)
+  //console.log("set role detais",setroleDetails)
 
 
   useEffect(() => {
@@ -698,7 +708,7 @@ export default function HomeScreen({ navigation }) {
 
   }, [userData?.user?.mobile, selectedShop?.id, isFocused]);
 
-  
+
   const total =
     (vendorStatus?.totalSales || 0) +
     (vendorStatus?.activeInvoices || 0) +
@@ -842,21 +852,21 @@ export default function HomeScreen({ navigation }) {
 
                 }}
               >
-                <View style={{ flexDirection: "row", gap: 7, height: 100, marginTop: 15,}}>
+                <View style={{ flexDirection: "row", gap: 7, height: 100, marginTop: 15, }}>
                   <StatCard title="Total Sales" value={`$${vendorStatus?.totalSales ?? "N/A"}`} />
-                  <StatCard title="Active Invoices" value={vendorStatus?.activeInvoices ?? "N/A"}  />
-                  <StatCard title="New Customers" value={vendorStatus?.newCustomers ?? "N/A"}  />
-                  <StatCard title="Total Invoices" value={vendorStatus?.totalInvoices ?? "N/A"}  />
+                  <StatCard title="Active Invoices" value={vendorStatus?.activeInvoices ?? "N/A"} />
+                  <StatCard title="New Customers" value={vendorStatus?.newCustomers ?? "N/A"} />
+                  <StatCard title="Total Invoices" value={vendorStatus?.totalInvoices ?? "N/A"} />
                 </View>
               </ScrollView>
             )}
 
-           {allShops && allShops.length > 0 && vendorStatus != null && total > 0 ? (
+            {allShops && allShops.length > 0 && vendorStatus != null && total > 0 ? (
               <PieChartComponent key={userData?.user?.mobile} vendorStatus={vendorStatus} />
             ) : (
-              <View style={{justifyContent:"center",alignItems:"center",marginTop:-25}}>
-                <Image source={require("../../assets/noDataFound.png")} style={{height:250,width:250}}/>
-              <Text style={{ textAlign: "center", color: "gray" }}>No vendor data is available </Text>
+              <View style={{ justifyContent: "center", alignItems: "center", marginTop: -25 }}>
+                <Image source={require("../../assets/noDataFound.png")} style={{ height: 250, width: 250 }} />
+                <Text style={{ textAlign: "center", color: "gray" }}>No vendor data is available </Text>
               </View>
             )}
 
@@ -926,6 +936,20 @@ export default function HomeScreen({ navigation }) {
                 </View>
               )}
             </View>
+
+
+            {
+              noItemModal && (
+                <ConfirmModal
+                  visible={noItemModal}
+                  setVisible={setNoItemModal}
+                  handlePress={() => { navigation.navigate("AddProduct", { editItem: noItemData, }); setNoItemModal(false) }}
+                  message="Hey Provider Please Add Products in your Shop"
+                  heading="Add Products"
+                  buttonTitle="Add Products"
+                />
+              )
+            }
           </View>
         </View>
       </ScrollView>
@@ -1064,7 +1088,7 @@ const styles = StyleSheet.create({
     elevation: 4, // More depth on Android
     justifyContent: "flex-end",
     alignSelf: "flex-end",
-    width:140
+    width: 140
   },
 
   flatList: {
