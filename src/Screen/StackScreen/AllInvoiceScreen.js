@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
 import OpenmiqModal from "../../Modal/Openmicmodal";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -34,6 +34,7 @@ const AllInvoiceScreen = () => {
   });
   const { allShops, selectedShop } = useContext(ShopContext);
   const [mainLoading, setMainLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     setPage(1);
@@ -47,6 +48,12 @@ const AllInvoiceScreen = () => {
   // useEffect(() => {
   //   GetallInvoiceData();
   // }, [page]);
+
+  const onRefresh = async () => {
+    setRefreshing(true); // Set refreshing state to true
+    await fetchInvoices(); // Fetch new data
+    setRefreshing(false); // Set refreshing state to false once done
+  };
 
   const buildApiUrl = (pageNum) => {
     let api = `invoice/getInvoices?&page=${pageNum}&size=10`;
@@ -166,6 +173,14 @@ const AllInvoiceScreen = () => {
         }
         renderItem={({ item, index }) => <AllInvoiceCard item={item} />}
         keyExtractor={(item, index) => `${item.id}-${index}`}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing} // Control the refreshing state
+            onRefresh={onRefresh} // Trigger the onRefresh function when pulled down
+            colors={["#0a6846"]} // Color of the refresh spinner
+            progressBackgroundColor={"#fff"} // Background color of the spinner
+          />
+        }
         // onScrollBeginDrag={handleSearchBar}
         showsVerticalScrollIndicator={false}
         onEndReached={loadMoreData}

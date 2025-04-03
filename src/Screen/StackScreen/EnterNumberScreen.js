@@ -89,6 +89,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       //   }
       // ),
   });
+
   useEffect(() => {
     const fetchToken = async () => {
       try {
@@ -216,7 +217,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
         // const response= await postData(pNumber,fToken,idToken);
         showSnackbar("Login successfully!", "success");
         setPasswordModalVisible(true);
-     
+
       }
     });
 
@@ -250,92 +251,35 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
   };
 
 
-  // const postData = async (password, isForgetPassword,navigation) => {
-  //   setIsLoading(true);
-  //   console.log("FCMToken:", FCMToken);
-
-  //   const payload = {
-  //     mobile: phoneNumber,
-  //     password,
-  //   };
-
-  //   console.log("Payload:", payload);
-
-  //   try {
-  //     if (payload?.mobile) {
-  //       let apiEndpoint = isForgetPassword ? `users/forgetPassword` : `users/signUp`;
-  //       let apiFunction = isForgetPassword ? updateApi : createApi;
-
-  //       const response = await apiFunction(apiEndpoint, payload);
-  //       console.log(`${isForgetPassword ? "Forgot Password" : "Sign-Up"} Response:`, response);
-
-  //       await saveUserData(response);
-  //       await handleLogin(response,navigation);
-        
-  //       await AsyncStorage.setItem("updatedPassword", password);
-
-
-  //       if (isForgetPassword) {
-  //         setIsForgetPasswordState(true);
-  //       }
-
-  //       return true;
-  //     }
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //     return false;
-  //   } finally {
-  //     setIsLoading(false);
-  //     alert("Password reset successfully!");
-  //   }
-  // };
-
-
-
-  const postData = async (password, isForgetPassword, navigation) => {
+  const postData = async (password, isForgetPassword,navigation) => {
     setIsLoading(true);
     console.log("FCMToken:", FCMToken);
-
     const payload = {
       mobile: phoneNumber,
       password,
       idToken:idToken,
-      FCMToken:[FCMToken]
+      fcmtokens:[FCMToken]
     };
-  
+
     console.log("Payload:", payload);
-  
+
     try {
       if (payload?.mobile) {
-
         let apiEndpoint =`users/signUp`;
 
         const response = await createApi(apiEndpoint, payload);
         console.log(`${isForgetPassword ? "Forgot Password" : "Sign-Up"} Response:`, response);
-      
+
         await saveUserData(response);
         await handleLogin({mobile:response?.user?.mobile,password:payload?.password},navigation);
 
         await AsyncStorage.setItem("updatedPassword", password);
 
 
-        await AsyncStorage.setItem("updatedPassword", password);
-  
         if (isForgetPassword) {
-
-          await AsyncStorage.removeItem("loginDetail");
-          await saveUserData(null);
-          setIsForgetPasswordState(false); // Reset state
-  
-  
-          navigation.reset({ index: 0, routes: [{ name: "login" }] });
-  
-          alert("Password reset successfully! Please log in with your new password.");
-        } else {
-          await saveUserData(response);
-          await handleLogin(payload, navigation);
+          setIsForgetPasswordState(true);
         }
-  
+
         return true;
       }
     } catch (error) {
@@ -343,9 +287,9 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       return false;
     } finally {
       setIsLoading(false);
+      alert("Password reset successfully!");
     }
   };
-  
 
 
 
@@ -599,8 +543,8 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
                     />
                   </View>
                 )} */}
-                
-              
+
+
 
                   <View style={styles.container}>
 
@@ -611,7 +555,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
                     </View>
 
                   </View>
-                
+
                 {/* <View style={styles.loginSection}> */}
                <View style={[styles.loginSection, { height: isForgetPassword ? "70%" : "65%" }]}>
 
@@ -708,7 +652,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
                                   style={{
                                     height: "60%", // Adjust height as needed
                                     width: 1,
-                                
+
                                     backgroundColor: "#ddd",
                                     marginHorizontal: 6,
                                   }}
@@ -729,7 +673,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
                                   mode={"flat"}
                                   cursorColor={"#1e90ff"}
                                 />
-                                
+
                               </View>
                               <View style={{ alignSelf: "center" }}>
                                 {touched && errors.phone && (
@@ -908,7 +852,7 @@ const styles = StyleSheet.create({
   flagText: {
     fontSize: 23,
     marginTop:-5,
-    
+
   },
   countryCodeText: {
     fontSize: 16,

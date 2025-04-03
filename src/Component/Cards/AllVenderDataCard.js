@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, ActivityIndicator  } from "react-native";
+import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
 import { fontSize, getRandomImage, NORM_URL } from "../../Util/UtilApi";
 import { useContext, useEffect, useState } from "react";
 import { Card, Avatar, Divider } from "react-native-paper";
@@ -13,7 +13,13 @@ import { debounce } from "lodash";
 import AllVendorDataScreen from "../../Screen/StackScreen/AllVendorDataScreen";
 import { ShopContext } from "../../Store/ShopContext";
 
-const AllVenderDataCard = ({ item, onDelete, onEditDetails, onEditItems, onRole }) => {
+const AllVenderDataCard = ({
+  item,
+  onDelete,
+  onEditDetails,
+  onEditItems,
+  onRole,
+}) => {
   const { height, width } = useWindowDimensions(); // Use hook to get dimensions
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const { allShops, selectedShop } = useContext(ShopContext);
@@ -21,9 +27,8 @@ const AllVenderDataCard = ({ item, onDelete, onEditDetails, onEditItems, onRole 
   const navigation = useNavigation();
   const [imageurl, setImageUrl] = useState("");
 
-
-  console.log("Data of item 1234", selectedShop)
-  console.log("Data of item 1234", selectedShop)
+  console.log("Data of item 12341458", item);
+  console.log("Data of item 1234", selectedShop);
 
   // useEffect(() => {
   //   if (item?.shopImage) {
@@ -54,7 +59,6 @@ const AllVenderDataCard = ({ item, onDelete, onEditDetails, onEditItems, onRole 
     setIsImageLoaded(true); // Set image loaded state to true once the image URL is set
   }, 100);
 
-
   return (
     // <View>
     //     <Text>{item?.shopname}</Text>
@@ -78,7 +82,7 @@ const AllVenderDataCard = ({ item, onDelete, onEditDetails, onEditItems, onRole 
             onDelete: onDelete,
             onEditDetails: onEditDetails,
             onEditItems: onEditItems,
-            onRole : onRole
+            onRole: onRole,
           });
         }}
       >
@@ -97,7 +101,7 @@ const AllVenderDataCard = ({ item, onDelete, onEditDetails, onEditItems, onRole 
               />
             )}
           </View> */}
-          {isImageLoaded ? (  // Conditionally render the image after it has loaded
+            {isImageLoaded ? ( // Conditionally render the image after it has loaded
               <Avatar.Image
                 size={60}
                 source={{ uri: imageurl }}

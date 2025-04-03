@@ -11,8 +11,8 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
   const { userData } = useContext(UserDataContext);
   const navigation = useNavigation();
 
-  const handleDelete = () => {
-    console.log("Button pressed");
+  const handleDelete = (item) => {
+    console.log("Button pressed", item);
     setConfirmModalVisible(true);
     setShopDeleteId(item?.id);
     // setSelectedModal(null);
@@ -23,7 +23,7 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
     navigation.navigate("CreateShopScreen", {
       editItem: item,
       isUpdateAddress: true,
-      
+
     });
   };
 
@@ -130,7 +130,7 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
         <View style={styles.ButtonView}>
           <TouchableOpacity
             style={styles.downloadButton}
-            onPress={handleDelete}
+            onPress={() => handleDelete(item) }
           >
              <Text style={{color:"#fff"}}>Delete</Text>
           </TouchableOpacity>

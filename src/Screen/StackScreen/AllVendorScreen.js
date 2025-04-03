@@ -1,4 +1,4 @@
-import { FlatList, ScrollView, StyleSheet, Text } from "react-native";
+import { FlatList, RefreshControl, ScrollView, StyleSheet, Text } from "react-native";
 import { View } from "react-native";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
 import OpenmiqModal from "../../Modal/Openmicmodal";
@@ -29,28 +29,33 @@ const AllVenderScreen = () => {
   const searchbarRef = useRef(null);
   const [searchedData, setSearchedData] = useState([]);
   const [searchCalled, setSearchCalled] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-  console.log("Data of user", userData)
+  console.log("Data of user", userData);
 
-
-    useEffect(() => {
-      if (searchQuery?.length <= 0) {
-        setSearchedData([]);
-        setSearchCalled(false);
-      }
-    }, [searchQuery]);
-
+  useEffect(() => {
+    if (searchQuery?.length <= 0) {
+      setSearchedData([]);
+      setSearchCalled(false);
+    }
+  }, [searchQuery]);
 
   useEffect(() => {
     getAllVenderData();
   }, [page]);
+
+  const onRefresh = async () => {
+    setRefreshing(true); // Set refreshing state to true
+    await getAllVenderData(); // Fetch new data
+    setRefreshing(false); // Set refreshing state to false once done
+  };
 
   const getAllVenderData = async () => {
     let api = `vendors/getVendorsByUserId/${userData?.user?.id}page=${page}&limit=${PAGE_SIZE}`;
     try {
       setloader(true);
       const response = await readApi(api);
-      console.log("DATA OF CONSOLE",response)
+      console.log("DATA OF CONSOLE", response);
       if (page === 1) {
         setVenderData(response);
         SetTotalpage(response?.totalPages || 1);
@@ -83,11 +88,14 @@ const AllVenderScreen = () => {
     setDeleteModal(true);
   };
 
-  const onRole = (item) =>{
-    console.log("ITEM in a data ", item)
-    console.log("click on the role screen")
-    navigation.navigate("EditRoleScreen",{isAdmin : true, AdminRoleData : item});
-  }
+  const onRole = (item) => {
+    console.log("ITEM in a data ", item);
+    console.log("click on the role screen");
+    navigation.navigate("EditRoleScreen", {
+      isAdmin: true,
+      AdminRoleData: item,
+    });
+  };
 
   const handleEditDetails = (item) => {
     console.log("item is edit 123, ", item);
@@ -148,7 +156,7 @@ const AllVenderScreen = () => {
     );
   };
 
-  console.log("DATA OF ALL VENDER",VenderData)
+  console.log("DATA OF ALL VENDER", VenderData);
 
   return (
     <View style={styles.container}>
@@ -176,11 +184,19 @@ const AllVenderScreen = () => {
             onDelete={onDelete}
             onEditDetails={handleEditDetails}
             onEditItems={handleProductItems}
-            onRole = {onRole}
+            onRole={onRole}
           />
         )}
         keyExtractor={(item, index) => `${item.id}-${index}`}
         // onScrollBeginDrag={handleSearchBar}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing} // Control the refreshing state
+            onRefresh={onRefresh} // Trigger the onRefresh function when pulled down
+            colors={["#0a6846"]} // Color of the refresh spinner
+            progressBackgroundColor={"#fff"} // Background color of the spinner
+          />
+        }
         showsVerticalScrollIndicator={false}
         onEndReached={loadMoreData}
         onEndReachedThreshold={0.8}

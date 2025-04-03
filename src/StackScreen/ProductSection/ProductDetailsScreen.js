@@ -5,6 +5,7 @@ import {
   FlatList,
   TouchableOpacity,
   ScrollView,
+  RefreshControl,
 } from "react-native";
 import React, {
   useEffect,
@@ -29,7 +30,7 @@ import ProductDetailsCard from "../../Component/Cards/ProductDetailsCard";
 import { setProductitem } from "../../Redux/slices/ProductSlice";
 import { useDispatch, useSelector } from "react-redux";
 // import { ProductItems } from "../../../ProductItems";
-import { fontSize, readApi } from "../../Util/UtilApi";
+import { deleteApi, fontSize, readApi } from "../../Util/UtilApi";
 import { useIsFocused } from "@react-navigation/native";
 import FileUploadModal from "../../Components/BulkUpload/FileUploadModal";
 import { ShopContext } from "../../Store/ShopContext";
@@ -39,6 +40,7 @@ import OpenmiqModal from "../../Modal/Openmicmodal";
 import CustomeFilterDropDown from "../../Component/CustomFilterDropDown";
 import { useFocusEffect } from "@react-navigation/native";
 import NoDataFound from "../../Components/NoDataFound";
+import DeleteModal from "../../UI/DeleteModal";
 
 const ProductDetailsScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -66,6 +68,10 @@ const ProductDetailsScreen = ({ navigation }) => {
   const [totalPages, setTotalPages] = useState(1);
   const [mainLoading, setMainLoading] = useState(false);
   const showSearchedData = useRef(false);
+  const [refresh, setRefresh] = useState(false);
+  const [ProductId, setProductId] = useState("");
+  const [visible, setVisible] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -76,16 +82,12 @@ const ProductDetailsScreen = ({ navigation }) => {
     }, [])
   );
 
-
-    useEffect(() => {
-      if (searchQuery?.length <= 0) {
-        setSearchedData([]);
-        setSearchCalled(false);
-      }
-    }, [searchQuery]);
-
-
-  
+  useEffect(() => {
+    if (searchQuery?.length <= 0) {
+      setSearchedData([]);
+      setSearchCalled(false);
+    }
+  }, [searchQuery]);
 
   const handleFilterChange = (filterOption) => {
     setloader(true);
@@ -95,56 +97,70 @@ const ProductDetailsScreen = ({ navigation }) => {
 
   useEffect(() => {
     getproductdata(page);
-}, [page, filterOptionSelect, bulkUploadModalVisible, selectedShop?.id]); // Ensure it re-fetches when shop changes
+  }, [
+    page,
+    filterOptionSelect,
+    bulkUploadModalVisible,
+    selectedShop?.id,
+    refresh,
+  ]);
 
-const getproductdata = async (page) => {
+  const onRefresh = async () => {
+    setRefreshing(true);  // Set refreshing state to true
+    await getproductdata(); // Fetch new data
+    setRefreshing(false); // Set refreshing state to false once done
+  };
+
+  const Apistore = (page) => {
+    let api = `products/getProducts?vendorfk=${selectedShop?.id}&page=${page}&limit=${PAGE_SIZE}`;
+
+    if (filterOptionSelect === "Sort By Name") {
+      api += "&sortBy=alphabetical";
+    } else if (filterOptionSelect === "Low to High Price") {
+      api += "&sortBy=lowToHigh";
+    } else if (filterOptionSelect === "High to Low Price") {
+      api += "&sortBy=highToLow";
+    }
+    return api;
+  };
+
+  const getproductdata = async (page) => {
     if (page === 1) {
-        setHasMore(true);
-        setMainLoading(true);
+      setHasMore(true);
+      setMainLoading(true);
     }
     setloader(true);
     try {
-        const api = Apistore(page);
-        console.log("API URL:", api);
+      const api = Apistore(page);
+      console.log("API URL:", api);
 
-        if (api) {
-            const response = await readApi(api);
-            console.log("API Response:", response);
+      if (api) {
+        const response = await readApi(api);
+        console.log("API Response:", response);
 
-            SetProductData((prevData) => {
-                if (page === 1) {
-                    return response?.products || []; // Reset data for first page
-                } 
-                return response?.products?.length > 0 ? [...prevData, ...response?.products] : prevData;
-            });
+        SetProductData((prevData) => {
+          if (page === 1) {
+            return response?.products || []; // Reset data for first page
+          }
+          return response?.products?.length > 0
+            ? [...prevData, ...response?.products]
+            : prevData;
+        });
 
-            setTotalPages(response?.totalPages || 1);
-            setHasMore(response?.products?.length > 0);
-        }
+        setTotalPages(response?.totalPages || 1);
+        setHasMore(response?.products?.length > 0);
+      }
     } catch (error) {
-        if (page === 1) {
-            SetProductData([]);
-        }
-        console.error("Unable to fetch data", error);
+      if (page === 1) {
+        SetProductData([]);
+      }
+      console.error("Unable to fetch data", error);
     } finally {
-        setloader(false);
-        setMainLoading(false);
+      setloader(false);
+      setMainLoading(false);
     }
-};
+  };
 
-const Apistore = (page) => {
-    let api = `products/getProducts?vendorfk=${selectedShop?.id}&page=${page}&limit=${PAGE_SIZE}`;
-    
-    if (filterOptionSelect === "Sort By Name") {
-        api += "&sortBy=alphabetical";
-    } else if (filterOptionSelect === "Low to High Price") {
-        api += "&sortBy=lowToHigh";
-    } else if (filterOptionSelect === "High to Low Price") {
-        api += "&sortBy=highToLow";
-    }
-    
-    return api;
-};
 
 
   const loadMoreData = () => {
@@ -157,6 +173,28 @@ const Apistore = (page) => {
     setSelectedEditItem(item);
   };
 
+  const HandleDeleteProduct = async (ProductId) => {
+    console.log("Data of item is 345", ProductId);
+    try {
+      setloader(true);
+      const response = await deleteApi(`products/${ProductId}`);
+      console.log("GET ALL DATA IS125 ", response?.data);
+      if (response?.data) {
+        SetProductData((prevData) =>
+          prevData.filter((role) => role.id !== ProductId)
+        );
+        console.log("GET ALL DATA IS response", response.data);
+      } else {
+        console.log("No data returned from delete API");
+      }
+    } catch (error) {
+      console.log("Unable to delete role data", error);
+    } finally {
+      setloader(false);
+      setVisible(false);
+    }
+  };
+
   useEffect(() => {
     if (SelectedEditItem) {
       seteditmodal(true);
@@ -167,10 +205,6 @@ const Apistore = (page) => {
     setBulkUploadModalVisible(true);
     // <FileUploadModal />;
   };
-
-
-
-
 
   //Search Function
   const fetchSearchedData = async () => {
@@ -204,9 +238,6 @@ const Apistore = (page) => {
     }
   };
 
-
-
-
   const Loader = () => {
     if (!loader) return null;
     return (
@@ -239,7 +270,6 @@ const Apistore = (page) => {
             placeholderText="Search User by name ..."
             searchData={fetchSearchedData}
             // showSearchedData={showSearchedData}
-
           />
         </View>
       </View>
@@ -270,27 +300,39 @@ const Apistore = (page) => {
             </View>
           </>
         )}
-        data={ searchQuery?.length > 0 && searchCalled ? searchedData : Productdata}
+        data={
+          searchQuery?.length > 0 && searchCalled ? searchedData : Productdata
+        }
         renderItem={({ item, index }) => (
           <ProductDetailsCard
             item={item}
             index={index}
             navigation={navigation}
             onEdit={() => openEditModal(item)}
-            setloader
+            setRefresh={setRefresh}
+            setProductId={setProductId}
+            setVisible={setVisible}
           />
         )}
         // keyExtractor={(item, index) =>
         //   item.id ? item.id.toString() : index.toString()
         // }
         keyExtractor={(item, index) => index}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing} // Control the refreshing state
+            onRefresh={onRefresh} // Trigger the onRefresh function when pulled down
+            colors={["#0a6846"]} // Color of the refresh spinner
+            progressBackgroundColor={"#fff"} // Background color of the spinner
+          />
+        }
         onEndReached={loadMoreData}
         onEndReachedThreshold={0.8}
         ListFooterComponent={Loader}
         contentContainerStyle={styles.flatListContainer}
         ListEmptyComponent={() => (
-          <View style={{flex:1,marginTop: "40%",}}>
-           <NoDataFound textString={"No Products Found"}/>
+          <View style={{ flex: 1, marginTop: "40%" }}>
+            <NoDataFound textString={"No Products Found"} />
           </View>
         )}
       />
@@ -303,7 +345,12 @@ const Apistore = (page) => {
           {
             icon: "plus",
             label: "Add Product",
-            onPress: () => navigation.navigate("AddProduct", { EditData: null, isUpdated: false }),
+            onPress: () =>
+              navigation.navigate("AddProduct", {
+                EditData: null,
+                isUpdated: false,
+                setRefresh: setRefresh,
+              }),
             style: { backgroundColor: "#2196F3" },
           },
           {
@@ -348,6 +395,13 @@ const Apistore = (page) => {
           modalVisible={searchmodal}
           setModalVisible={setsearchmodal}
           transcript={transcript}
+        />
+      )}
+      {visible && (
+        <DeleteModal
+          visible={visible}
+          setVisible={setVisible}
+          handleDelete={() => HandleDeleteProduct(ProductId)}
         />
       )}
 

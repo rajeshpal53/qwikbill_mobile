@@ -1,9 +1,6 @@
 import { View, Text, StyleSheet, TextInput } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  applyDiscount,
-  applyPartiallyAmount,
-} from "../Redux/slices/CartSlice";
+import { applyDiscount, applyPartiallyAmount } from "../Redux/slices/CartSlice";
 import { useEffect, useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import CustomDropdown from "./CustomeDropdown";
@@ -13,26 +10,26 @@ const PriceDetails = ({ setPaymentStatus }) => {
   const dispatch = useDispatch();
   const totalPrice = useSelector((state) => state.cart.totalPrice);
   const afterdiscount = useSelector((state) => state.cart.afterdiscount);
+  const error = useSelector((state) => state.cart.error);
+
   const [discountValue, setDiscountValue] = useState("");
   const [PartiallyAmount, setPartiallyAmount] = useState("");
   const carts = useSelector((state) => state.cart.Carts);
   const [selectedStatus, setSelectedStatus] = useState("Paid");
   const paymentStatuses = ["Unpaid", "Paid", "Partially Paid"];
 
-  console.log("totalPrice of redux - ", totalPrice)
+  console.log("Error is ", error)
+  console.log("totalPrice of redux - ", totalPrice);
   useEffect(() => {
     setPaymentStatus(selectedStatus);
   }, [selectedStatus]);
 
   useEffect(() => {
-
-    if(selectedStatus !== "Partially Paid"){
+    if (selectedStatus !== "Partially Paid") {
       dispatch(applyPartiallyAmount(0));
       setPartiallyAmount(0);
     }
-  }, [selectedStatus])
-
-
+  }, [selectedStatus]);
 
   const handleDiscountChange = (value) => {
     const parsedDiscount =
@@ -61,7 +58,9 @@ const PriceDetails = ({ setPaymentStatus }) => {
       {/* Price  */}
       <View style={styles.priceView}>
         <Text style={styles.label}>Price ({carts.length})</Text>
-        <Text style={styles.value}>{`₹ ${totalPrice?.toFixed(2) || "total"}`}</Text>
+        <Text style={styles.value}>{`₹ ${
+          totalPrice?.toFixed(2) || "total"
+        }`}</Text>
       </View>
 
       {/* Discount  */}
@@ -76,7 +75,16 @@ const PriceDetails = ({ setPaymentStatus }) => {
             onChangeText={handleDiscountChange} // Update discount state
           />
         </View>
+        {/* Display error message */}
       </View>
+
+      {error && (
+        <View style={styles.priceView}>
+          <View style={styles.discountInputWrapper}>
+            <Text style={styles.errorText}>Discount amount must be between 0 and total price.</Text>
+          </View>
+        </View>
+      )}
 
       {/* Payment Status with Border Style */}
       <View style={[styles.priceView]}>
@@ -108,7 +116,9 @@ const PriceDetails = ({ setPaymentStatus }) => {
       <View style={styles.priceView}>
         <Text style={styles.Totallabel}>Total Amount</Text>
         {}
-        <Text style={[styles.value,{ fontSize: fontSize.labelLarge }]}>{`₹ ${afterdiscount.toFixed(2)}`}</Text>
+        <Text
+          style={[styles.value, { fontSize: fontSize.labelLarge }]}
+        >{`₹ ${afterdiscount.toFixed(2)}`}</Text>
       </View>
     </View>
   );
@@ -124,7 +134,7 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   headerText: {
-    fontWeight:"bold",
+    fontWeight: "bold",
     marginBottom: 10,
     textAlign: "center",
     fontFamily: "Poppins-Medium",
@@ -180,6 +190,9 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.labelMedium,
   },
+  errorText:{
+    color:"red"
+  }
 });
 
 export default PriceDetails;

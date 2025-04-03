@@ -7,7 +7,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useContext, useEffect, useState } from "react";
-import { ButtonColor, fontSize,NORM_URL } from "../../Util/UtilApi";
+import { ButtonColor, fontSize,getRandomImage,NORM_URL } from "../../Util/UtilApi";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useWindowDimensions } from "react-native"; // Import the hook
 import { Avatar, Card, Icon } from "react-native-paper";
@@ -61,9 +61,7 @@ const AllVendorDataScreen = () => {
 
   const handlePress = (btn) => {
     try {
-      if (btn?.value == "Offer") {
-        onAddOffer(item);
-      } else if (btn?.value == "Details") {
+      if (btn?.value == "Details") {
         onEditDetails(item);
       } else if (btn?.value == "Items") {
         onEditItems(item);
@@ -81,7 +79,7 @@ const AllVendorDataScreen = () => {
     }
   };
 
-  console.log("DATA OF ITEM IS ------------", userData);
+  console.log("DATA OF ITEM IS ------------", item);
 
   // Set the shop name in the header dynamically when the component loads
   useEffect(() => {
@@ -117,6 +115,26 @@ const AllVendorDataScreen = () => {
       setIsImageLoaded(true); // Set image loaded state to true once the image URL is set
     }, 100);
 
+
+    useEffect(() => {
+
+      const setImages = () => {
+        let tempImage = item.imageurl?.trim()
+        ? `${NORM_URL}${item.imageurl}?${new Date()?.getTime()}`
+        : getRandomImage();
+
+        setImageUrl(tempImage);
+
+        tempImage = item?.user?.profilePicurl?.trim()
+        ? `${NORM_URL}${item?.user?.profilePicurl}?${new Date()?.getTime()}`
+        : getRandomImage();
+
+        setProfilePicurl(tempImage);
+
+
+      }
+      setImages()
+    }, [])
 
 
   return (
