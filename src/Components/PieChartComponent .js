@@ -29,11 +29,12 @@ const PieChartComponent = ({ vendorStatus }) => {
         total === 0
             ? []
             : [
-                  { name: "Total Sales", population: vendorStatus.totalSales, color: "#2ecc71", legendFontColor: "#333", legendFontSize: 12 },
-                  { name: "Active Invoices", population: vendorStatus.activeInvoices, color: "#f39c12", legendFontColor: "#333", legendFontSize: 12 },
-                  { name: "New Customers", population: vendorStatus.newCustomers, color: "#3498db", legendFontColor: "#333", legendFontSize: 12 },
-                  { name: "Total Invoices", population: vendorStatus.totalInvoices, color: "#9b59b6", legendFontColor: "#333", legendFontSize: 12 },
-              ];
+                  { name: "Total Sales", population: vendorStatus.totalSales, color: "#2ecc71", legendFontColor: "transparent", legendFontSize: 0},
+                  { name: "Active Invoices", population: vendorStatus.activeInvoices, color: "#f39c12", legendFontColor: "#333", legendFontSize: 0 },
+                  { name: "New Customers", population: vendorStatus.newCustomers, color: "#3498db", legendFontColor: "#333", legendFontSize: 0 },
+                  { name: "Total Invoices", population: vendorStatus.totalInvoices, color: "#9b59b6", legendFontColor: "#333", legendFontSize: 0},
+             
+                ];
 
     const animatedStyle = useAnimatedStyle(() => ({
         transform: [{ rotate: `${rotation.value}deg` }],
@@ -59,11 +60,11 @@ const PieChartComponent = ({ vendorStatus }) => {
 
                 {/* Pie Chart with Rotation */}
                 <View style={styles.chartWrapper}>
-                    <Animated.View style={[styles.chartContainer, animatedStyle]}>
+                    <Animated.View style={[styles.chartContainer ,animatedStyle ]}>
                         <PieChart
                             data={chartData}
                             width={screenWidth * 0.6}
-                            height={200}
+                            height={210}
                             chartConfig={{
                                 backgroundColor: "#fff",
                                 backgroundGradientFrom: "#fff",
@@ -72,9 +73,9 @@ const PieChartComponent = ({ vendorStatus }) => {
                             }}
                             accessor={"population"}
                             backgroundColor={"transparent"}
-                            paddingLeft={"15"}
-                            center={[10, 5]}
-                            absolute
+                            paddingLeft={"20"}
+                            center={[10, 4]}
+                           hasLegend={false}
                         />
                     </Animated.View>
 
@@ -83,6 +84,7 @@ const PieChartComponent = ({ vendorStatus }) => {
                         <Text style={styles.chartText}>Total</Text>
                         <Text style={styles.chartValue}>${vendorStatus?.totalSales ?? 0}</Text>
                     </View>
+                    
                 </View>
             </View>
         </View>
@@ -93,6 +95,7 @@ const styles = StyleSheet.create({
     container: {
         alignItems: "center",
         justifyContent: "center",
+        marginTop:-20
     },
     chartTitle: {
         fontSize: fontSize.headingSmall,
@@ -106,20 +109,28 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     chartWrapper: {
-        justifyContent: "center",
+       justifyContent: "center",
         alignItems: "center",
-        position: "relative",
+       // position: "relative",
+        //backgroundColor:"orange",
+        height:180,
+        width:180,
+        alignSelf:"center",
+        alignContent:"center",
+        marginTop:-10
+
     },
     chartContainer: {
         justifyContent: "flex-start",
         alignItems: "flex-start",
+        
     },
     centerText: {
         position: "absolute",
         alignItems: "center",
-        top: "50%",
-        left: "50%",
-        transform: [{ translateX: -30 }, { translateY: -10 }],
+        top: "45%",
+        //left: "50%",
+        transform: [{ translateX: -28 }, { translateY: -12 }],
     },
     chartText: {
         fontSize: fontSize.labelMedium,
@@ -137,6 +148,7 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
         marginLeft: 12,
         marginTop: 5,
+        
     },
     legendItem: {
         flexDirection: "row",
@@ -163,6 +175,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         width: "110%",
         marginBottom: 20,
+        
     },
 });
 

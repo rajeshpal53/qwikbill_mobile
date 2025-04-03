@@ -13,6 +13,7 @@ const ConfirmModal = ({
   heading,
   buttonTitle,
 }) => {
+  console.log("confirm modalllll")
   const hideDialog = () => setVisible(false);
   const { t } = useTranslation();
   return (

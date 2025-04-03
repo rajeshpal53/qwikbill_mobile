@@ -18,6 +18,7 @@ const TransactionDetailScreen = ({ item }) => {
   const transaction = route.params;
   const navigation = useNavigation();
   const { createdAt, transactionStatus, id, invoice, vendor, user, amount, invoicefk, name } = route.params.item || null;
+  
 
   console.log("Invoice Data:", invoice);
   console.log("Vendor Data:", vendor);
@@ -31,6 +32,7 @@ const TransactionDetailScreen = ({ item }) => {
         setIsLoading(true)
         const response = await readApi(`invoice/invoices/${invoicefk}`)
         console.log("response isss ", response)
+      //  console.log(`${API_BASE_URL}invoice/invoices/${invoicefk}`)
 
         if (response) {
           setDetailData(Array.isArray(response) ? response : [response]);  // Ensure it's always an array
@@ -208,7 +210,7 @@ const TransactionDetailScreen = ({ item }) => {
                   <FontAwesome name="id-card" size={16} color="gray" />
                   <Text style={styles.label}>Shop Name:</Text>
                 </View>
-                <Text style={styles.label}>{name || "N/A"}</Text>
+                <Text style={styles.label}>{vendor.shopname || "N/A"}</Text>
               </View>
               <View style={styles.row}>
                 <View style={styles.preRow}>
