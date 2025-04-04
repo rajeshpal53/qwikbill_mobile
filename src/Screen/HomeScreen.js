@@ -617,33 +617,33 @@ export default function HomeScreen({
     console.log("all services ,", services);
   }, [allShops]);
 
-  // useEffect(() => {
-  //      setNoItemModal(true)
-  // }, [allShops]);
-
-  // useEffect(() => {
-  //   const checkIfTourSeen = async () => {
-  //     try {
-  //       const hasSeenTour = await AsyncStorage.getItem("hasSeenTour");
-  //       if (!hasSeenTour && canStart) {
-  //         start();
-  //       }
-  //     } catch (error) {
-  //       console.log("Error checking tour guide status", error);
-  //     }
-  //   };
-
-  //   checkIfTourSeen();
-  // }, [canStart]);
+  useEffect(() => {
+       setNoItemModal(true)
+  }, [allShops]);
 
   useEffect(() => {
-    // Start tour guide when entering the Home screen
-    setIsTourGuideActive(true);
-
-    return () => {
-      setIsTourGuideActive(false);
+    const checkIfTourSeen = async () => {
+      try {
+        const hasSeenTour = await AsyncStorage.getItem("hasSeenTour");
+        if (!hasSeenTour && canStart) {
+          start();
+        }
+      } catch (error) {
+        console.log("Error checking tour guide status", error);
+      }
     };
-  }, []);
+
+    checkIfTourSeen();
+  }, [canStart]);
+
+  // useEffect(() => {
+  //   // Start tour guide when entering the Home screen
+  //   setIsTourGuideActive(true);
+
+  //   return () => {
+  //     setIsTourGuideActive(false);
+  //   };
+  // }, []);
 
   console.log("noItemModal  is ", noItemModal);
   console.log("set no item moal in tab", setNoItemModal);
@@ -775,7 +775,7 @@ export default function HomeScreen({
                   style={{
                     position: "absolute",
                     width: width * 0.8, // Adjust width based on screen size
-                    top: height * 0.08, // Adjust top position based on screen height
+                    top: height * 0.04, // Adjust top position based on screen height
                     height: 32,
                   }}
                 />
@@ -803,7 +803,7 @@ export default function HomeScreen({
                 style={{
                   position: "absolute",
                   width: width * 0.7, // Adjust width
-                  top: height * 0.095, // Adjust vertical position
+                  top: height * 0.082, // Adjust vertical position
                   height: 20,
                 }}
               />
@@ -831,10 +831,10 @@ export default function HomeScreen({
                   // keepTooltipPosition={true} // Keeps the tooltip in place
                   style={{
                     position: "absolute",
-                    width: width * 0.6, // Adjust width based on screen width
-                    top: height * 0.07, // Adjust top position
-                    height: 30,
-                    marginLeft: 30,
+                    width: width * 0.8, // Adjust width based on screen width
+                    top: height * 0.04, // Adjust top position
+                    height: 45,
+                    marginLeft: 20,
                   }}
                 />
 
@@ -911,7 +911,7 @@ export default function HomeScreen({
                       </TouchableOpacity>
                       <TourGuideZone
                         key={index}
-                        zone={6 + index}
+                        zone={4 + index}
                         text={item.name ? `Go to ${item.name}` : "Finished"}
                         shape={"circle"}
                         style={{
