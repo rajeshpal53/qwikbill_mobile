@@ -1,6 +1,5 @@
-
 import React, { useContext, useState, useEffect } from "react";
-import { Platform, Alert, StatusBar } from "react-native";
+import { Platform, Alert, StatusBar, } from "react-native";
 import * as FileSystem from "expo-file-system";
 import * as Notifications from "expo-notifications";
 import * as Sharing from "expo-sharing";
@@ -35,14 +34,13 @@ export const useDownloadInvoice = () => {
         buttonTitle: "Open File",
         options: { opensAppToForeground: true },
       },
-
     ]);
 
     // Event listener for notification action
     const subscription = Notifications.addNotificationResponseReceivedListener(
       (response) => {
         openFile();
-        console.log("response of notification", response)
+        console.log("response of notification", response);
         if (response.actionIdentifier === "OPEN_FOLDER") {
           openFolder();
 
@@ -81,35 +79,52 @@ export const useDownloadInvoice = () => {
     }
   };
 
-    const openFile = () => {
-      // console.log("Open File button clicked , ", saveFileUri);
-      try {
-        console.log("Open File button clicked , ", saveFileUri);
-        // Open the file using the content URI
-        IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
-          data: saveFileUri, // Use the content URI from the folder
-          flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
-          type: "application/pdf" || "application/xlsx", // MIME type (optional but helpful)
-        });
-      } catch (error) {
-        console.error("Error , ", error);
-      }
-    };
+  // const openFile = () => {
+  //   // console.log("Open File button clicked , ", saveFileUri);
+  //   try {
+  //     console.log("Open File button clicked , ", saveFileUri);
+  //     // Open the file using the content URI
+  //     IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
+  //       data: saveFileUri, // Use the content URI from the folder
+  //       flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
+  //       type: "application/pdf" || "application/xlsx", // MIME type (optional but helpful)
+  //     });
+  //   } catch (error) {
+  //     console.error("Error , ", error);
+  //   }
+  // };
+
+
+const openFile = async (fileUri, fileType) => {
+  try {
+    if (fileType === 'xlsx') {
+      console.log("Attempting to open Excel file:", fileUri);
+      await Linking.openURL(fileUri);  // Opens file based on URI
+    } else if (fileType === 'pdf') {
+      console.log("Attempting to open PDF file:", fileUri);
+      await Linking.openURL(fileUri); // Opens PDF file
+    } else {
+      console.log("Unsupported file type.");
+    }
+  } catch (error) {
+    console.error("Error opening file: ", error);
+  }
+};
 
   async function checkNotificationPermission() {
     // Check current notification permissions
-    console.log("checking notification permission")
+    console.log("checking notification permission");
     const { status } = await Notifications.getPermissionsAsync();
 
     console.log("notification permission status , ", status);
     if (status !== "granted") {
       // Permission is not granted, request it
-      console.log("asking notification permission")
+      console.log("asking notification permission");
       try {
+        const { status: newStatus } =
+          await Notifications.requestPermissionsAsync();
 
-        const { status: newStatus } = await Notifications.requestPermissionsAsync();
-
-        console.log("asked notification permission status is , ", newStatus)
+        console.log("asked notification permission status is , ", newStatus);
 
         if (newStatus === "granted") {
           console.log("Notification permission granted.");
@@ -119,9 +134,8 @@ export const useDownloadInvoice = () => {
           return false;
         }
       } catch (error) {
-        console.log("error getting notification permission is , ", error)
+        console.log("error getting notification permission is , ", error);
       }
-
     } else {
       console.log("Notification permission already granted.");
       return true;
@@ -156,9 +170,7 @@ export const useDownloadInvoice = () => {
         );
       }
 
-
       console.log(result, "- result");
-
 
       if (name === "SampleFile") {
         await saveFile(
@@ -173,7 +185,6 @@ export const useDownloadInvoice = () => {
           result.headers["Content-Type"]
         );
       }
-
     } catch (error) {
       console.error("Error downloading or saving invoice:", error);
       Alert.alert("Download Failed", "Unable to download the invoice.");
@@ -227,38 +238,39 @@ export const useDownloadInvoice = () => {
           encoding: FileSystem.EncodingType.Base64,
         });
 
-
         // Save file URI to store if needed
-       // content://com.android.externalstorage.documents/tree/primary%3AAlarms%2Ffront%20page/document/primary%3AAlarms%2Ffront%20page%2FSampleFile%20(6).xlsx
+        // content://com.android.externalstorage.documents/tree/primary%3AAlarms%2Ffront%20page/document/primary%3AAlarms%2Ffront%20page%2FSampleFile%20(6).xlsx
         await setSaveFileUri(fileUri);
-      console.log(fileUri,"12341234")
-      
-      const fileName = decodeURIComponent(fileUri.split("/").pop());
-      if (fileName.endsWith(".xlsx")) {
-        console.log("This is an Excel file.");
-        await Notifications.scheduleNotificationAsync({
-          content: {
-            title: "Download Complete",
-            body: "Your sample Excel file has been downloaded successfully.",
-            categoryIdentifier: "DOWNLOAD_CATEGORY", // Use the category with the action button
-          },
-          trigger: null, // Show immediately
-        });
+        console.log(fileUri, "12341234");
 
-    } else {
-        console.log("This is a PDF file.");
-        await Notifications.scheduleNotificationAsync({
-          content: {
-            title: "Download Complete",
-            body: "Your invoice has been downloaded successfully.",
-            categoryIdentifier: "DOWNLOAD_CATEGORY", // Use the category with the action button
-          },
-          trigger: null, // Show immediately
-        });
+        const fileName = decodeURIComponent(fileUri.split("/").pop());
+        if (fileName.endsWith(".xlsx")) {
+          console.log("This is an Excel file.");
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title: "Download Complete",
+              body: "Your sample Excel file has been downloaded successfully.",
+              categoryIdentifier: "DOWNLOAD_CATEGORY", // Use the category with the action button
+            },
+            trigger: null, // Show immediately
+          });
 
-    }
+        await openFile(fileUri, "xlsx");
+        } else {
+          console.log("This is a PDF file.");
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title: "Download Complete",
+              body: "Your invoice has been downloaded successfully.",
+              categoryIdentifier: "DOWNLOAD_CATEGORY", // Use the category with the action button
+            },
+            trigger: null, // Show immediately
+          });
+          await openFile(fileUri, 'pdf');
+
+        }
         console.log("notifications complete");
-        console.log(saveFileUri, "file urrirririrriririrrir")
+        console.log(saveFileUri, "file urrirririrriririrrir");
       } catch (error) {
         console.error("Error saving file:", error);
         Alert.alert("Save Failed", "There was an error saving the file.");
@@ -322,6 +334,6 @@ export const useDownloadInvoice = () => {
     downloadInvoicePressHandler,
     shareInvoicePressHandler,
     shareInvoiceOnWhatsApp,
-    isLoading
+    isLoading,
   };
 };

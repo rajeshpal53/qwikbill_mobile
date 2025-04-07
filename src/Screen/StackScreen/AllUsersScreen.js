@@ -297,10 +297,10 @@ const AllUsersScreen = ({ navigation }) => {
         )}
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}  // Control the refreshing state
-            onRefresh={onRefresh}    // Trigger the onRefresh function when pulled down
-            colors={["#0a6846"]}     // Color of the refresh spinner
-            progressBackgroundColor={"#fff"} // Background color of the spinner
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#0a6846"]}
+            progressBackgroundColor={"#fff"} 
           />
         }
         // renderItem={renderItem}
