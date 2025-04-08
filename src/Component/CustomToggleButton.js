@@ -4,7 +4,7 @@ import * as React from 'react';
 import { ToggleButton } from 'react-native-paper';
 import { View, Text, TouchableOpacity } from 'react-native';
 
-const CustomToggleButton = ({ options, value, onChange }) => {
+const CustomToggleButton = ({ options, value, onChange,t }) => {
   return (
     <View style={{ flexDirection: 'row' }}>
       {options.map((option) => (
@@ -24,7 +24,7 @@ const CustomToggleButton = ({ options, value, onChange }) => {
           }}
         >
           <Text style={{ color: value === option.value ? '#fff' : '#000', fontFamily:"Poppins-Regular" }}>
-            {option.label}
+            {t(option.label)}
           </Text>
         </TouchableOpacity>
       ))}

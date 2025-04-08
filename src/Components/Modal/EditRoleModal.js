@@ -29,10 +29,10 @@ const EditRoleModal = ({ visible, onClose, selectedRole }) => {
   const [User, setUser] = useState("");
   const [loading, setLoading] = useState(false);
   const [AddRode, SetAddRole] = useState("");
-  const pickerRef = useRef(); 
+  const pickerRef = useRef();
   const [isDisabled, setIsDisabled] = useState(true);
-  const {showSnackbar} = useSnackbar();
-  console.log("DATA OF SELECTED ", selectedRole?.role?.name );
+  const { showSnackbar } = useSnackbar();
+  console.log("DATA OF SELECTED ", selectedRole?.role?.name);
   const roleOptions = [
     { label: "Owner", value: "owner" },
     { label: "Manager", value: "manager" },
@@ -111,14 +111,13 @@ const EditRoleModal = ({ visible, onClose, selectedRole }) => {
                 headers
               );
               console.log("DATA OF RESPONSE IS ", respons);
-              showSnackbar("role update Successfully","success")
-              resetForm()
+              showSnackbar("role update Successfully", "success");
+              resetForm();
               // getRoleData();
               onClose();
             } catch (error) {
               console.log("Unable to update role", error);
-              showSnackbar("Failed to update Role","error")
-
+              showSnackbar("Failed to update Role", "error");
             } finally {
               setLoading(false);
             }
@@ -187,27 +186,31 @@ const EditRoleModal = ({ visible, onClose, selectedRole }) => {
 
                 {/* User Role Dropdown */}
                 <View style={{ marginBottom: 10 }}>
-  <Text style={styles.label}>User Role</Text>
-  <Picker
-    selectedValue={values.userRole || selectedRole?.role?.value} // Ensure it matches Picker.Item value
-    onValueChange={(itemValue) => {
-      setFieldValue("userRole", itemValue);
-      SetAddRole(itemValue);
-    }}
-    ref={pickerRef}
-    style={{ width: "100%", height: 60 }}
-  >
-    <Picker.Item label="Select Role" value="" /> 
-    {roleOptions && roleOptions.length > 0
-      ? roleOptions.map((role, index) => (
-          <Picker.Item key={index} label={role?.label || "Unknown Role"} value={role?.value || ""} />
-        ))
-      : null}
-  </Picker>
-  {touched.userRole && errors.userRole && (
-    <Text style={styles.errorText}>{errors.userRole}</Text>
-  )}
-</View>
+                  <Text style={styles.label}>User Role</Text>
+                  <Picker
+                    selectedValue={values.userRole || selectedRole?.role?.value} // Ensure it matches Picker.Item value
+                    onValueChange={(itemValue) => {
+                      setFieldValue("userRole", itemValue);
+                      SetAddRole(itemValue);
+                    }}
+                    ref={pickerRef}
+                    style={{ width: "100%", height: 60 }}
+                  >
+                    <Picker.Item label="Select Role" value="" />
+                    {roleOptions && roleOptions.length > 0
+                      ? roleOptions.map((role, index) => (
+                          <Picker.Item
+                            key={index}
+                            label={role?.label || "Unknown Role"}
+                            value={role?.value || ""}
+                          />
+                        ))
+                      : null}
+                  </Picker>
+                  {touched.userRole && errors.userRole && (
+                    <Text style={styles.errorText}>{errors.userRole}</Text>
+                  )}
+                </View>
 
                 <View style={styles.buttonContainer}>
                   <TouchableOpacity
