@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import CustomDropdown from "./CustomeDropdown";
 import { fontSize } from "../Util/UtilApi";
+import { useTranslation } from "react-i18next";
+
 
 const PriceDetails = ({ setPaymentStatus }) => {
   const dispatch = useDispatch();
@@ -12,11 +14,14 @@ const PriceDetails = ({ setPaymentStatus }) => {
   const afterdiscount = useSelector((state) => state.cart.afterdiscount);
   const error = useSelector((state) => state.cart.error);
 
+
   const [discountValue, setDiscountValue] = useState("");
   const [PartiallyAmount, setPartiallyAmount] = useState("");
   const carts = useSelector((state) => state.cart.Carts);
   const [selectedStatus, setSelectedStatus] = useState("Paid");
   const paymentStatuses = ["Unpaid", "Paid", "Partially Paid"];
+  const { t } = useTranslation();
+
 
   console.log("Error is ", error)
   console.log("totalPrice of redux - ", totalPrice);
@@ -52,12 +57,12 @@ const PriceDetails = ({ setPaymentStatus }) => {
   return (
     <View style={styles.Main}>
       <View>
-        <Text style={styles.headerText}>Price Details</Text>
+        <Text style={styles.headerText}>{t("Price Details")}</Text>
       </View>
 
       {/* Price  */}
       <View style={styles.priceView}>
-        <Text style={styles.label}>Price ({carts.length})</Text>
+        <Text style={styles.label}>{t("Price")} ({carts.length})</Text>
         <Text style={styles.value}>{`₹ ${
           totalPrice?.toFixed(2) || "total"
         }`}</Text>
@@ -65,7 +70,7 @@ const PriceDetails = ({ setPaymentStatus }) => {
 
       {/* Discount  */}
       <View style={styles.priceView}>
-        <Text style={styles.label}>Discount</Text>
+        <Text style={styles.label}>{t("Discount")}</Text>
         <View style={styles.discountInputWrapper}>
           <TextInput
             style={styles.input}
@@ -81,25 +86,26 @@ const PriceDetails = ({ setPaymentStatus }) => {
       {error && (
         <View style={styles.priceView}>
           <View style={styles.discountInputWrapper}>
-            <Text style={styles.errorText}>Discount amount must be between 0 and total price.</Text>
+            <Text style={styles.errorText}>{t("Discount amount must be between 0 and total price.")}</Text>
           </View>
         </View>
       )}
 
       {/* Payment Status with Border Style */}
       <View style={[styles.priceView]}>
-        <Text style={styles.label}>Status</Text>
+        <Text style={styles.label}>{t("Status")}</Text>
         <CustomDropdown
           paymentStatuses={paymentStatuses}
           setSelectedStatus={setSelectedStatus}
           selectedStatus={selectedStatus}
+          t={t}
         />
       </View>
 
       {/* Partially Paid  */}
       {selectedStatus == "Partially Paid" && (
         <View style={styles.priceView}>
-          <Text style={styles.label}>Partially Paid</Text>
+          <Text style={styles.label}>{t("Partially Paid")}</Text>
           <View style={styles.discountInputWrapper}>
             <TextInput
               style={styles.input}
@@ -114,7 +120,7 @@ const PriceDetails = ({ setPaymentStatus }) => {
 
       {/* Total Amount  */}
       <View style={styles.priceView}>
-        <Text style={styles.Totallabel}>Total Amount</Text>
+        <Text style={styles.Totallabel}>{t("Total Amount")}</Text>
         {}
         <Text
           style={[styles.value, { fontSize: fontSize.labelLarge }]}
@@ -152,6 +158,8 @@ const styles = StyleSheet.create({
     color: "#333",
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.labelMedium,
+    // width:"60%"
+
   },
   value: {
     // fontSize: 16,
@@ -171,6 +179,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "flex-end",
+
   },
   pickerWrapper: {
     flex: 1,

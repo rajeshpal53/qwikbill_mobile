@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
+import { useTranslation } from "react-i18next";
 
 const FilterButtons = ({selected,setSelected}) => {
+  const { t } = useTranslation();
 
   const filters = ["All", "Unpaid", "Paid", "Partially Paid"];
   return (
@@ -28,7 +30,7 @@ const FilterButtons = ({selected,setSelected}) => {
                 fontWeight: "bold",
               }}
             >
-              {item}
+             {t(item)}
             </Text>
           </TouchableOpacity>
         )}

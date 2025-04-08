@@ -73,14 +73,14 @@
 //     try {
 //       // Get token from AsyncStorage (in case it's not in userData)
 //       const token = userData?.token || (await AsyncStorage.getItem("userToken"));
-  
+
 //       if (!token) {
 //         console.error("Error: No token found for logout!");
 //         showSnackbar("Session expired. Please log in again.", "error");
 //         navigation.replace("login"); // Redirect to login if token is missing
 //         return;
 //       }
-  
+
 //       const response = await createApi(
 //         "users/logout",
 //         { mobile: userData?.user?.mobile },
@@ -89,20 +89,20 @@
 //           Authorization: `Bearer ${token}`,
 //         }
 //       );
-  
+
 //       console.log("Logout Response:", response);
-  
+
 //       if (response?.success) {
 //         showSnackbar("Logged out successfully", "success");
-  
+
 //         // Perform logout actions
 //         await clearUserData();
 //         await AsyncStorage.clear();
 //         await AsyncStorage.removeItem("allShops");
 //         await AsyncStorage.removeItem("selectedShop");
-  
+
 //         console.log("Successfully logged out");
-  
+
 //         setVisible(false);
 //         navigation.dispatch(
 //           CommonActions.reset({
@@ -119,7 +119,7 @@
 //       showSnackbar("Error logging out", "error");
 //     }
 //   };
-  
+
 //   useEffect(() => {
 //     if (userData) {
 //       if (userData?.user?.profilePicurl) {
@@ -318,6 +318,7 @@ const AdminSectionScreen = ({ navigation }) => {
   const [imageUrl, setImageUrl] = useState("");
   const [visible, setVisible] = useState(false);
   const {showSnackbar}=useSnackbar();
+
   const [menuItems, setMenuItems] = useState([
     {
       isDisabled: false,
@@ -336,7 +337,7 @@ const AdminSectionScreen = ({ navigation }) => {
     {
       isDisabled: false,
       icon: "local-shipping",
-      label: "All Vendor ",
+      label: "All Vendor",
       value: "AllVendor",
     },
     {
@@ -371,14 +372,14 @@ const AdminSectionScreen = ({ navigation }) => {
   const logoutHandler = async () => {
     try {
       console.log("Attempting logout...");
-  
+
       // 🔹 Clear all user data immediately (before API call)
       await AsyncStorage.clear();
       await clearUserData();
-  
+
       // 🔹 Get token (if still available)
       const token = userData?.token || (await AsyncStorage.getItem("userToken"));
-  
+
       // 🔹 If token is missing or expired, force logout without API call
       if (!token) {
         console.warn("No token found or already expired. Redirecting to login.");
@@ -386,7 +387,7 @@ const AdminSectionScreen = ({ navigation }) => {
         navigation.replace("login"); // Force login screen
         return;
       }
-  
+
       // 🔹 Attempt API call (just in case backend still accepts it)
       const response = await createApi(
         "users/logout",
@@ -396,15 +397,15 @@ const AdminSectionScreen = ({ navigation }) => {
           Authorization: `Bearer ${token}`,
         }
       );
-  
+
       console.log("Logout Response:", response);
-  
+
       if (response?.success) {
         showSnackbar("Logged out successfully", "success");
       } else {
         console.warn("Logout request failed, likely due to expired token.");
       }
-  
+
       // 🔹 Force user to login screen after clearing storage
       navigation.dispatch(
         CommonActions.reset({
@@ -415,14 +416,14 @@ const AdminSectionScreen = ({ navigation }) => {
     } catch (error) {
       console.error("Error during logout - ", error);
       showSnackbar("Session expired. Please log in again.", "error");
-  
+
       // 🔹 Ensure user data is cleared and user is redirected to login
       await AsyncStorage.clear();
       await clearUserData();
       navigation.replace("login");
     }
   };
-  
+
 
   useEffect(() => {
     if (userData) {
@@ -499,7 +500,7 @@ const AdminSectionScreen = ({ navigation }) => {
                       color="#26a0df"
                       style={styles.icon}
                     />
-                    <Text style={styles.label}>{item.label}</Text>
+                    <Text style={styles.label}>{t(item.label)}</Text>
                     <Icon
                       name="chevron-right"
                       size={24}

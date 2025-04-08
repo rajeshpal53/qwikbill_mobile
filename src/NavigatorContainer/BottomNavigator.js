@@ -105,9 +105,9 @@ export default function BottomNavigator({
             noItemModal={noItemModal}
           />
         )}
-       
+
        </Tab.Screen>
-      
+
       <Tab.Screen
         name="Invoice"
         component={ViewInvoiceScreen1}

@@ -36,6 +36,8 @@ import {
   useTourGuideController,
 } from "rn-tourguide";
 import UserDataContext from "../Store/UserDataContext";
+import { useTranslation } from "react-i18next";
+
 
 export default function CreateInvoice({ navigation, route }) {
   const startTour = route.params;
@@ -48,6 +50,8 @@ export default function CreateInvoice({ navigation, route }) {
   const [isTourGuideActive, setIsTourGuideActive] = useState(false);
   const { canStart, start, stop, eventEmitter } = useTourGuideController();
   const [invoiceNumber,setInvoiceNumber]=useState("");
+  const { t } = useTranslation();
+
   // const { shopDetails } = useContext(ShopDetailContext);
   // const invoiceNumber = 1000 + shopDetails.count + 1;
   // const [buttonsModes, setButtonsModes] = useState({
@@ -219,13 +223,14 @@ export default function CreateInvoice({ navigation, route }) {
             options={toggleOptions}
             value={selectedValue}
             onChange={setSelectedValue}
+            t={t}
           />
 
           <View style={styles.MainContainer}>
             <View style={styles.TextView}>
 
                 <Text style={styles.headerText}>
-                  Invoice No: - {invoiceNumber}
+                  {t("Invoice No:")} - {invoiceNumber}
                 </Text>
 
               <CreateInvoiveForm selectedButton={selectedValue} />
