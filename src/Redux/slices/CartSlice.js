@@ -18,12 +18,14 @@ const initialState = {
 
   PartiallyAmount: 0,
   PartiallyAmountValue: 0,
+
+  error : false
 };
 
 const CartSlice = createSlice({
   name: "cart",
   initialState,
-  
+
   reducers: {
     addToCart: addToCartReducer,
     removeFromCart: removeFromCartReducer,
