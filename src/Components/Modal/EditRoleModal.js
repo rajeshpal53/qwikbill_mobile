@@ -22,7 +22,7 @@ import { ShopContext } from "../../Store/ShopContext";
 import { ButtonColor, fontSize, updateApi } from "../../Util/UtilApi";
 import DropDownList from "../../UI/DropDownList";
 import { Picker } from "@react-native-picker/picker";
-
+import { useSnackbar } from "../../Store/SnackbarContext";
 const EditRoleModal = ({ visible, onClose, selectedRole }) => {
   const { userData } = useContext(UserDataContext);
   const { allShops, selectedShop } = useContext(ShopContext);
@@ -31,13 +31,13 @@ const EditRoleModal = ({ visible, onClose, selectedRole }) => {
   const [AddRode, SetAddRole] = useState("");
   const pickerRef = useRef();
   const [isDisabled, setIsDisabled] = useState(true);
-
-  console.log("DATA OF SELECTED ", selectedRole?.role?.name );
+  const { showSnackbar } = useSnackbar();
+  console.log("DATA OF SELECTED ", selectedRole?.role?.name);
   const roleOptions = [
-    { label: "Owner", value: "Owner" },
-    { label: "Manager", value: "Manager" },
-    { label: "Employee", value: "Employee" },
-    { label: "Viewer", value: "Viewer" },
+    { label: "Owner", value: "owner" },
+    { label: "Manager", value: "manager" },
+    { label: "Employee", value: "employee" },
+    { label: "Viewer", value: "viewer" },
   ];
 
   const validationSchema = Yup.object().shape({
@@ -111,10 +111,13 @@ const EditRoleModal = ({ visible, onClose, selectedRole }) => {
                 headers
               );
               console.log("DATA OF RESPONSE IS ", respons);
+              showSnackbar("role update Successfully", "success");
               resetForm();
+              // getRoleData();
               onClose();
             } catch (error) {
               console.log("Unable to update role", error);
+              showSnackbar("Failed to update Role", "error");
             } finally {
               setLoading(false);
             }
@@ -185,7 +188,7 @@ const EditRoleModal = ({ visible, onClose, selectedRole }) => {
                 <View style={{ marginBottom: 10 }}>
                   <Text style={styles.label}>User Role</Text>
                   <Picker
-                    selectedValue={values.userRole}
+                    selectedValue={values.userRole || selectedRole?.role?.value} // Ensure it matches Picker.Item value
                     onValueChange={(itemValue) => {
                       setFieldValue("userRole", itemValue);
                       SetAddRole(itemValue);
@@ -193,12 +196,7 @@ const EditRoleModal = ({ visible, onClose, selectedRole }) => {
                     ref={pickerRef}
                     style={{ width: "100%", height: 60 }}
                   >
-                    {/* <Picker.Item
-                      label={
-                        selectedRole ? selectedRole.role?.name : "Select Role"
-                      }
-                      // enabled={false}
-                    /> */}
+                    <Picker.Item label="Select Role" value="" />
                     {roleOptions && roleOptions.length > 0
                       ? roleOptions.map((role, index) => (
                           <Picker.Item

@@ -14,7 +14,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import ItemDataTable from "../Cards/ItemDataTable";
-import {  useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { ButtonColor, createApi, fontSize, readApi } from "../../Util/UtilApi";
 import { clearCart } from "../../Redux/slices/CartSlice";
 import PriceDetails from "../PriceDetails";
@@ -22,7 +22,6 @@ import UserDataContext from "../../Store/UserDataContext";
 import { ShopContext } from "../../Store/ShopContext";
 import { useSnackbar } from "../../Store/SnackbarContext";
 import { useDispatch } from "react-redux";
-
 
 const CreateInvoiceForm = ({ selectedButton }) => {
   const dispatch = useDispatch();
@@ -36,7 +35,11 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const { selectedShop } = useContext(ShopContext);
   const [loading, setLoading] = useState(false);
   const timeoutId = useRef(null); // useRef to persist timeoutId
-  const {showSnackbar}=useSnackbar()
+  const { showSnackbar } = useSnackbar();
+  const error = useSelector((state) => state.cart.error);
+
+  console.log("DATA OF ERROR ", error);
+
   useEffect(() => {
     console.log("selected shop isuser , ", selectedShop);
   }, [userData]);
@@ -47,7 +50,6 @@ const CreateInvoiceForm = ({ selectedButton }) => {
     gstNumber: Yup.string().matches(
       /^[A-Z]{2}[0-9]{1}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z0-9]{1}[Z]{1}[0-9]{1}$/,
       "Invalid GSTIN format. Example: AB1234567890Z1"
-
     ),
     // gstNumber: Yup.string().when([], {
     //   is: () => selectedButton === "gst",
@@ -155,104 +157,115 @@ const CreateInvoiceForm = ({ selectedButton }) => {
     }
   };
 
-    const handleGenerate = async (button = "download",formData,resetForm) => {
-      // setIsGenerated(true); // Trigger PDF generation when the button is pressed
-      if (selectedButton === "gst") {
-        try {
-          let api = "invoice/invoices";
-          const { customerData, serviceProviderData, ...payloadData } = formData;
-          const newProducts = payloadData?.products?.map((item) => {
-            return {
-              id: item?.id,
-              productname: item?.name,
-              price: item?.sellPrice,
-              quantity: item?.quantity,
-            };
-          });
-
-          const newPayload = {
-            ...payloadData,
-            products: newProducts,
-            type: "gst",
+  const handleGenerate = async (button = "download", formData, resetForm) => {
+    // setIsGenerated(true); // Trigger PDF generation when the button is pressed
+    if (selectedButton === "gst") {
+      try {
+        let api = "invoice/invoices";
+        const { customerData, serviceProviderData, ...payloadData } = formData;
+        const newProducts = payloadData?.products?.map((item) => {
+          return {
+            id: item?.id,
+            productname: item?.name,
+            price: item?.sellPrice,
+            quantity: item?.quantity,
           };
-          console.log("after removing someData, payloadData is , ", newPayload);
+        });
+
+        const newPayload = {
+          ...payloadData,
+          products: newProducts,
+          type: "gst",
+        };
+        console.log("after removing someData, payloadData is , ", newPayload);
+        console.log("userData is , ", userData);
+        console.log("userData token is , ", userData?.token);
+
+        const response = await createApi(api, newPayload, {
+          Authorization: `Bearer ${userData?.token}`,
+        });
+
+        console.log("response of create invoice is, ", response);
+        showSnackbar("Invoice Created Successfully", "success");
+        // setCreatedInvoice(response?.customer);
+        dispatch(clearCart());
+        resetForm();
+        // invoiceCreated.current = true;
+
+        if (button == "download") {
+          console.log("Inside a if condition", response.customer);
+          return response;
+        } else if (button == "generate") {
+          console.log("Inside a else if condition ");
+          console.log("after removing someData, payloadData is debug 1, ", newPayload);
           console.log("userData is , ", userData);
-          console.log("userData token is , ", userData?.token);
+          console.log("userData token is , ", userData?.token);``
 
           const response = await createApi(api, newPayload, {
             Authorization: `Bearer ${userData?.token}`,
           });
 
-          console.log("response of create invoice is, ", response);
+          console.log("response of create invoice is, debug 2 ", response);
           showSnackbar("Invoice Created Successfully", "success");
           // setCreatedInvoice(response?.customer);
           dispatch(clearCart());
-          resetForm()
-          // invoiceCreated.current = true;
-
-          if (button == "download") {
-            console.log("Inside a if condition",response.customer);
-            return response;
-          } else if (button == "generate") {
-            console.log("Inside a else if condition ");
-            dispatch(clearCart());
-            navigation.pop(2);
-          }
-        } catch (error) {
-          console.log("error creating invoice is , ", error);
-          showSnackbar("Something went wrong creating Invoice is", "error");
+          navigation.pop(2);
         }
-        console.log("Button pressed");
-      } else {
-        console.log("This is from GST PDf ");
-        try {
-          let api = "invoice/invoices";
-
-          const { customerData, serviceProviderData, ...payloadData } = formData;
-
-          const newProducts = payloadData?.products?.map((item) => {
-            return {
-              id: item?.id,
-              productname: item?.name,
-              price: item?.sellPrice,
-              quantity: item?.quantity,
-            };
-          });
-
-          const newPayload = {
-            ...payloadData,
-            products: newProducts,
-            type: "provisional",
-          };
-          console.log("after removing someData, payloadData is , ", newPayload);
-          console.log("userData is , ", userData);
-          console.log("userData token is , ", userData?.token);
-
-          const response = await createApi(api, newPayload, {
-            Authorization: `Bearer ${userData?.token}`,
-          });
-
-          console.log("response of create invoice is, ", response);
-          showSnackbar("Invoice Created Successfully", "success");
-          // setCreatedInvoice(response?.customer);
-          dispatch(clearCart());
-          resetForm()
-          // invoiceCreated.current = true;
-          if (button == "download") {
-            console.log("Inside a if condition", response.customer);
-            return response;
-          } else if (button == "generate") {
-            console.log("Inside a else if condition ");
-            dispatch(clearCart());
-            navigation.pop(2);
-          }
-        } catch (error) {
-          console.log("error creating invoice is , ", error);
-          showSnackbar("Something went wrong creating Invoice is", "error");
-        }
-        console.log("Button pressed");
+      } catch (error) {
+        console.log("error creating invoice is , ", error);
+        showSnackbar("Something went wrong creating Invoice is", "error");
       }
-    };
+      console.log("Button pressed");
+    } else {
+      console.log("This is from GST PDf ");
+      try {
+        let api = "invoice/invoices";
+
+        const { customerData, serviceProviderData, ...payloadData } = formData;
+
+        const newProducts = payloadData?.products?.map((item) => {
+          return {
+            id: item?.id,
+            productname: item?.name,
+            price: item?.sellPrice,
+            quantity: item?.quantity,
+          };
+        });
+
+        const newPayload = {
+          ...payloadData,
+          products: newProducts,
+          type: "provisional",
+        };
+        console.log("after removing someData, payloadData is , ", newPayload);
+        console.log("userData is , ", userData);
+        console.log("userData token is , ", userData?.token);
+
+        const response = await createApi(api, newPayload, {
+          Authorization: `Bearer ${userData?.token}`,
+        });
+
+        console.log("response of create invoice is, ", response);
+        showSnackbar("Invoice Created Successfully", "success");
+        // setCreatedInvoice(response?.customer);
+        dispatch(clearCart());
+        resetForm();
+        // invoiceCreated.current = true;
+        if (button == "download") {
+          console.log("Inside a if condition", response.customer);
+          return response;
+        } else if (button == "generate") {
+          console.log("Inside a else if condition ");
+          dispatch(clearCart());
+          navigation.pop(2);
+        }
+      } catch (error) {
+        console.log("error creating invoice is , ", error);
+        showSnackbar("Something went wrong creating Invoice is", "error");
+      }
+      console.log("Button pressed");
+    }
+  };
 
   return (
     <ScrollView>
@@ -265,9 +278,9 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           phone: "",
         }}
         validationSchema={validationSchema}
-        onSubmit={ async (values, { resetForm }) => {
+        onSubmit={async (values, { resetForm }) => {
           console.log("values are , ", values);
-
+          console.log("selected cartvalue is , ", cartsValue);
           const DataCustomer = {
             name: values?.name,
             address: values?.address,
@@ -275,7 +288,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
             phone: User?.getNumber || values?.phone,
             userId: User?.id || undefined,
           };
-
+          const finalTotal = (parseInt(cartsValue?.totalPrice) || 0) - (parseInt(cartsValue?.discount) || 0);
           const extraData = {
             usersfk: User?.id,
             vendorfk: selectedShop?.id,
@@ -283,7 +296,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
             subtotal: cartsValue?.totalPrice,
             // address: "123 Main Street, City, Country",
             discount: cartsValue?.discount,
-            finaltotal: cartsValue?.afterdiscount,
+            finaltotal: finalTotal,
             // vendorprofit: 100,
             paymentMode: "COD",
             ...(PaymentStatus == "Unpaid" || PaymentStatus == "Partially Paid"
@@ -315,13 +328,17 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           console.log("Form Submitted Data:", payload?.products);
           console.log("Form Submitted Data:123", payload);
           submit.current = true;
-          const customerResponse=  await handleGenerate("download",payload,resetForm)
-          if(customerResponse){
+          const customerResponse = await handleGenerate(
+            "download",
+            payload,
+            resetForm
+          );
+          console.log("customerResponse is , ", customerResponse);
+          if (customerResponse) {
             navigation.navigate("PDFScreen", {
               viewInvoiceData: customerResponse,
               selectedButton: selectedButton,
               resetForm: resetForm,
-              customerResponse:customerResponse
               // viewInvoiceData:payload
             });
             resetForm();
@@ -338,7 +355,13 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           values,
           errors,
           touched,
-        }) => (
+          isValid,
+          dirty,
+        }) => {
+          console.log("DATA VALID",isValid)
+          console.log("DATA Dirty", dirty)
+
+          return (
           <View>
             {/* Phone Field */}
             <TextInput
@@ -483,26 +506,31 @@ const CreateInvoiceForm = ({ selectedButton }) => {
                 >
                   <Text style={{ color: "#007BFF" }}>Clear Cart</Text>
                 </TouchableOpacity>
-
                 <ItemDataTable carts={carts} />
-
                 <PriceDetails setPaymentStatus={setPaymentStatus} />
               </View>
             )}
 
             {/* Submit Button */}
             <TouchableOpacity
-              disabled={carts?.length <= 0}
+              disabled={error || isValid || !dirty || carts?.length <= 0}
               style={[
                 styles.submitButton,
-                { opacity: carts?.length <= 0 ? 0.5 : 1 },
+                {
+                  opacity: carts?.length <= 0 ? 0.5 : 1,
+                  backgroundColor:
+                    error || isValid || !dirty || carts?.length <= 0
+                      ? "rgba(0, 0, 6, 0.5)"
+                      : "#007bff",
+                },
               ]}
               onPress={handleSubmit}
             >
               <Text style={styles.submitButtonText}>Submit</Text>
             </TouchableOpacity>
           </View>
-        )}
+          )
+        }}
       </Formik>
     </ScrollView>
   );
@@ -546,7 +574,7 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     marginTop: 20,
-    backgroundColor: ButtonColor.SubmitBtn,
+    // backgroundColor: ButtonColor.SubmitBtn,
     padding: 10,
     borderRadius: 8,
     alignItems: "center",

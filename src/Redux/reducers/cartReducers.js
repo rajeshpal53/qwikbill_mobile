@@ -57,9 +57,13 @@ export const removeFromCart = (state, action) => {
 export const applyDiscount = (state, action) => {
   const discountAmount = action.payload;
   state.discount = discountAmount;
-  if (discountAmount > 0 && discountAmount <= state.totalPrice) {
+  if (discountAmount >= 0 && discountAmount <= state.totalPrice) {
     state.afterdiscount = state.totalPrice - discountAmount;
+    state.error = false
   } else {
+    console.log("Inside else condition")
+    state.discount = 0;
+    state.error = true;
     state.afterdiscount = state.totalPrice;
   }
   if (state.PartiallyAmount > 0 && state.PartiallyAmount <= state.totalPrice) {

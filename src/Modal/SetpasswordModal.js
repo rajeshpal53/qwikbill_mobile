@@ -11,10 +11,6 @@ const SetpasswordModal = ({ visible, closeModal, navigation, postData, isForgetP
   const [PassisSecure, setPassIsSecure] = useState(true);
   const [ConfirmPassisSecure, setConfirmPassIsSecure] = useState(true);
   const [strength, setStrength] = useState(0);
-
-  console.log("Navigation object:", navigation);
-
-
   const ValidationSchema = Yup.object().shape({
     password: Yup.string()
       .min(8, "Password must be at least 8 characters")

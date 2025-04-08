@@ -12,7 +12,7 @@ const LoginTimeProvider = ({ children }) => {
   const storeCurrentTime = async () => {
     try {
       // const previousLoginTime = await AsyncStorage.getItem('currentLoginTime');
-      const currentLoginTime = moment().format('D MM YYYY, h:mm A');
+      const currentLoginTime = moment().format('DD MM YYYY, h:mm A');
 
       if (setCurrentAsLastTime.current) {
         setLastLoginTime(currentLoginTime);

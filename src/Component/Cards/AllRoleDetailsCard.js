@@ -20,9 +20,10 @@ const AllRoleDetailsCard = ({ item, getRoleData , setRoleId, setVisible}) => {
   }, [item]);
 
   const HandleEditRole = (item) => {
-    setEditModalVisible(true);
+     setselectedRole(item);
     console.log("Edit item is ", item);
-    setselectedRole(item);
+    setEditModalVisible(true);
+   
   };
 
   const HandleRole = (item) =>{

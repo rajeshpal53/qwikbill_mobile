@@ -3,6 +3,7 @@ import { Text,Card} from "react-native-paper";
 import {fontSize, statusName} from "../Util/UtilApi";
 
 const ViewInvoiceCard = ({ invoice,navigation }) => {
+  console.log(invoice,"in ViewScreen")
     return (
         <Pressable onPress={()=>{navigation.navigate("PDFScreen",{viewInvoiceData:invoice})}}>
       <Card style={styles.card}>

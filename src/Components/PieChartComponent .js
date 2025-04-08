@@ -6,7 +6,7 @@ import { fontFamily, fontSize } from "../Util/UtilApi";
 
 const screenWidth = Dimensions.get("window").width;
 
-const PieChartComponent = ({ vendorStatus }) => {
+const PieChartComponent = ({ vendorStatus, t }) => {
     const rotation = useSharedValue(0);
     const { width, height } = Dimensions.get("window");
 
@@ -36,7 +36,7 @@ const PieChartComponent = ({ vendorStatus }) => {
                   { name: "Active Invoices", population: vendorStatus.activeInvoices, color: "#f39c12", legendFontColor: "#333", legendFontSize: 0 },
                   { name: "New Customers", population: vendorStatus.newCustomers, color: "#3498db", legendFontColor: "#333", legendFontSize: 0 },
                   { name: "Total Invoices", population: vendorStatus.totalInvoices, color: "#9b59b6", legendFontColor: "#333", legendFontSize: 0},
-             
+
                 ];
 
     const animatedStyle = useAnimatedStyle(() => ({
@@ -45,7 +45,7 @@ const PieChartComponent = ({ vendorStatus }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.chartTitle}>Sales Overview</Text>
+            <Text style={styles.chartTitle}>{t("Sales Overview")}</Text>
 
             <View style={styles.rowContainer}>
                 {/* Legend */}
@@ -54,7 +54,7 @@ const PieChartComponent = ({ vendorStatus }) => {
                         <View key={index} style={styles.legendItem}>
                             <View style={[styles.colorBox, { backgroundColor: item.color }]} />
                             <View>
-                                <Text style={styles.legendText}>{item.name}</Text>
+                                <Text style={styles.legendText}>{t(item.name)}</Text>
                                 <Text style={styles.legendValue}>{item.population}</Text>
                             </View>
                         </View>
@@ -86,8 +86,10 @@ const PieChartComponent = ({ vendorStatus }) => {
 
                     {/* Center Text */}
                     <View style={styles.centerText}>
+
                         <Text style={styles.chartText}>Products</Text>
                         <Text style={styles.chartValue}>${vendorStatus?.numberOfProducts ?? 0}</Text>
+
                     </View>
 
                 </View>
@@ -129,7 +131,7 @@ const styles = StyleSheet.create({
     chartContainer: {
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        
+
     },
     centerText: {
         position: "absolute",
@@ -152,6 +154,7 @@ const styles = StyleSheet.create({
     legendContainer: {
         width: "25%",
         alignItems: "flex-start",
+
         marginLeft: "4%",
         marginTop: "2%",
         
@@ -180,8 +183,9 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         width: "110%",
+
         marginBottom: "6%",
-        
+
     },
     pieChartWrapper: {
         position: "absolute", // Prevents shifting during animation

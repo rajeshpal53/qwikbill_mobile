@@ -60,7 +60,7 @@ const ChangeLanguageModal = ({
                 style={{
                   flexDirection: "row",
                   justifyContent: "space-between",
-                  backgroundColor: "#0a6846",
+                  backgroundColor: "#0c3b73",
                   paddingHorizontal: 10,
                   paddingVertical: 15,
                   borderTopRightRadius: 10,
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     marginTop: 20,
-    backgroundColor: "#0a6846",
+    backgroundColor: "#0c3b73",
     borderRadius: 10,
   },
   closeButton: {

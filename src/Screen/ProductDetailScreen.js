@@ -3,6 +3,7 @@ import { useState,useEffect } from "react"
 import { View } from "react-native"
 import ProductDetail from "../Components/ProductDetail"
 import { readApi } from "../Util/UtilApi"
+import { useIsFocused } from "@react-navigation/native"
 function ProductDetailScreen({route}) {
     const productId= route.params.productId
     const[detail,setDetail]= useState([])
