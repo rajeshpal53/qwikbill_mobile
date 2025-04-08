@@ -10,7 +10,7 @@ import {
 } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useIsFocused } from "@react-navigation/native";
-import { readApi, createApi } from "../Util/UtilApi";
+import { readApi, createApi, API_BASE_URL } from "../Util/UtilApi";
 import { AuthContext } from "../Store/AuthContext";
 import ItemList from "../Components/Lists/ItemList";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -65,6 +65,9 @@ export default function Products({ navigation }) {
           `api/product/list?shop=${shopDetails._id}`
         );
         setProducts(response.result);
+        console.log("jayesh all products ",response.result)
+
+        console.log(`${API_BASE_URL}api/product/list?shop=${shopDetails._id}`)
       } catch (Error) {
         console.error("Error fetching products", Error);
       } finally {

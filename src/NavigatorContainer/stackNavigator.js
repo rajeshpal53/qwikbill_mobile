@@ -74,7 +74,7 @@ import InvoicePreviewScreen from "../Screen/Invoices/InvoicePreviewScreen.js";
 import TransactionScreen from "../Screen/Transactions/TransactionScreen.js";
 import TransactionDetailScreen from "../Screen/Transactions/TransactionDetailScreen.js";
 import AdminSectionScreen from "../Screen/StackScreen/AdminSectionScreen.js";
-import { fontSize, readApi } from "../Util/UtilApi.js";
+import { API_BASE_URL, fontSize, readApi } from "../Util/UtilApi.js";
 import AllUsersScreen from "../Screen/StackScreen/AllUsersScreen.js";
 import AllInvoiceScreen from "../Screen/StackScreen/AllInvoiceScreen.js";
 import AllVendorScreen from "../Screen/StackScreen/AllVendorScreen.js";
@@ -104,6 +104,7 @@ export default function StackNavigator() {
   // const ViewCustomerWithTour  = withCopilot(AddCustomerScreen)
   // console.log("DATA OF USER IS ", userData);
 
+
   const fetchServiceProvider = async (userData) => {
     try {
       if (userData) {
@@ -113,7 +114,7 @@ export default function StackNavigator() {
           Authorization: `Bearer ${userData?.token}`,
         });
 
-        console.log(response, "aaaaaaaa");
+        console.log( "full response isss ",response);
 
         if (Object.keys(response?.data).length > 0) {
           setroleDetails(true);
@@ -121,10 +122,10 @@ export default function StackNavigator() {
           setroleDetails(false);
         }
 
-        console.log("shopname isss",response?.data?.vendor?.shopname)
-        if (response?.data?.vendor?.shopname) {
-            setNoItemModal(true);
-        }
+        // console.log("shopname isss",response?.data?.vendor?.shopname)
+        // if (response?.data?.vendor?.shopname) {
+        //     setNoItemModal(true);
+        // }
         
       } else {
         console.log("service Provider Not Found , ", userData);
