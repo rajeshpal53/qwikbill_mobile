@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { readApi } from "../Util/UtilApi";
+import { API_BASE_URL, readApi } from "../Util/UtilApi";
 import UserDataContext from "./UserDataContext";
 // import { ActivityIndicator } from "react-native-paper";
 
@@ -9,6 +9,8 @@ export const ShopContext = createContext();
 export const ShopProvider = ({ children }) => {
   const [allShops, setAllShops] = useState([]);
   const [selectedShop, setSelectedShop] = useState(null);
+  const [noItemModal, setNoItemModal] = useState(false);
+
   const { userData } = useContext(UserDataContext);
   const [loader, setloader] = useState(false);
 
@@ -16,43 +18,55 @@ export const ShopProvider = ({ children }) => {
 
   console.log("USER DATA IS 1578", userData);
 
-  console.log("DATA OF ALL SHOP ",allShops)
-  // useEffect(() => {
-  //   const loadAllShops = async () => {
-  //     try {
-  //       // Get stored shops from AsyncStorage
-  //       const storedShops = await AsyncStorage.getItem("allShops");
+  console.log("DATA OF ALL SHOP ", allShops)
 
-  //       console.log("DATA OF ALL SHOP _________", storedShops)
 
-  //       if (storedShops && JSON.parse(storedShops).length > 0) {
-  //         const parsedShops = JSON.parse(storedShops);
-  //         setAllShops(parsedShops);
+  useEffect(() => {
+    const getProductsBYShops = async () => {
+      const id = userData?.user?.id;
+      if (!id) return; // early return if id is undefined
 
-  //         // Load selected shop if exists
-  //         const storedSelectedShop = await AsyncStorage.getItem("selectedShop");
+      try {
+        let response = await readApi(`vendors/getVendorsByUserId/${id}`);
+        console.log("response of products in shop context is ", response);
+        console.log(`${API_BASE_URL}vendors/getVendorsByUserId/${id}`);
 
-  //         // console.log("json parsed storedSelectedShop is , ", JSON.parse(storedSelectedShop));
-  //         if (storedSelectedShop) {
-  //           // console.log("storedSelectedShop is , ", storedSelectedShop)
-  //           setSelectedShop(JSON.parse(storedSelectedShop));
-  //         } else {
-  //           setSelectedShop(parsedShops[0]); // Default to first shop
-  //           await AsyncStorage.setItem("selectedShop", JSON.stringify(parsedShops[0]));
-  //         }
-  //       } else {
-  //        await fetchShopsFromServer();
-  //       }
-  //     } catch (error) {
-  //       console.error("Error loading shops:", error);
-  //     }
-  //   };
 
-  //   if(userData?.token){
-  //     loadAllShops();
-  //   }
+        const hasProducts = response.some((shop) => shop.product?.length > 0);
 
-  // }, [userData]);
+        if (hasProducts) {
+          setNoItemModal(false);
+        } else {
+          setNoItemModal(true);
+        }
+
+      } catch (err) {
+        console.log("unable to get products of shops ", err);
+      }
+    };
+
+    if (userData?.user?.id) {
+      getProductsBYShops();
+    }
+  }, [userData]);
+
+  
+
+  const checkSelectedShopProducts = async (id) => {
+    try {
+      const response = await readApi(`vendors/getVendorsByUserId/${id}`);
+      console.log("Fetched selected shop data:", response);
+  
+      const hasProducts = response?.product?.length > 0;
+      setNoItemModal(!hasProducts); // if no products, show modal
+    } catch (err) {
+      console.log("Error checking products for selected shop:", err);
+      setNoItemModal(true); // fallback: show modal
+    }
+  };
+  
+
+
 
   useEffect(() => {
     loadData();
@@ -81,10 +95,10 @@ export const ShopProvider = ({ children }) => {
       if (userData?.token) {
         await fetchShopsFromServer();
 
-         const storedSelectedShop = await AsyncStorage.getItem("selectedShop");
+        const storedSelectedShop = await AsyncStorage.getItem("selectedShop");
 
         if (storedSelectedShop) {
-          console.log("Render this data ",storedSelectedShop)
+          console.log("Render this data ", storedSelectedShop)
           setSelectedShop(JSON.parse(storedSelectedShop));
         } else if (allShops.length > 0) {
           // If no selected shop exists in AsyncStorage, select the first shop by default
@@ -103,38 +117,6 @@ export const ShopProvider = ({ children }) => {
     }
   };
 
-  // const loadAllShops = async () => {
-  //   try {
-  //     // Get stored shops from AsyncStorage
-  //     const storedShops = await AsyncStorage.getItem("allShops");
-
-  //     console.log("DATA OF ALL SHOP _________", storedShops);
-
-  //     if (storedShops && JSON.parse(storedShops).length > 0) {
-  //       const parsedShops = JSON.parse(storedShops);
-  //       setAllShops(parsedShops);
-
-  //       // Load selected shop if exists
-  //       const storedSelectedShop = await AsyncStorage.getItem("selectedShop");
-
-  //       // console.log("json parsed storedSelectedShop is , ", JSON.parse(storedSelectedShop));
-  //       if (storedSelectedShop) {
-  //         // console.log("storedSelectedShop is , ", storedSelectedShop)
-  //         setSelectedShop(JSON.parse(storedSelectedShop));
-  //       } else {
-  //         setSelectedShop(parsedShops[0]); // Default to first shop
-  //         await AsyncStorage.setItem(
-  //           "selectedShop",
-  //           JSON.stringify(parsedShops[0])
-  //         );
-  //       }
-  //     } else {
-  //       console.log("Else condition work ");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error loading shops:", error);
-  //   }
-  // };
 
   const fetchShopsFromServer = async () => {
     try {
@@ -182,9 +164,10 @@ export const ShopProvider = ({ children }) => {
   const updateSelectedShop = async (shop) => {
     setSelectedShop(shop);
     console.log("shop to update is:", shop);
-  
+
     if (shop) {
       await AsyncStorage.setItem("selectedShop", JSON.stringify(shop));
+      await checkSelectedShopProducts(userData?.user?.id)
     } else {
       await AsyncStorage.removeItem("selectedShop");
     }
@@ -199,6 +182,8 @@ export const ShopProvider = ({ children }) => {
   return (
     <ShopContext.Provider
       value={{
+        noItemModal,
+        setNoItemModal,
         allShops,
         selectedShop,
         updateSelectedShop,
