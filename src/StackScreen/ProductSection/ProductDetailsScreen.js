@@ -272,7 +272,7 @@ const ProductDetailsScreen = ({ navigation }) => {
             setSearchQuery={setSearchQuery}
             setsearchmodal={setsearchmodal}
             setTranscript={setTranscript}
-            placeholderText="Search User by name ..."
+            placeholderText="Search User by name..."
             searchData={fetchSearchedData}
             // showSearchedData={showSearchedData}
           />
