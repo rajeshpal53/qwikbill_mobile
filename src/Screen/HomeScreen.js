@@ -579,6 +579,8 @@ import PieChartComponent from "../Components/PieChartComponent ";
 import { Dimensions } from "react-native";
 import ConfirmModal from "../Modal/ConfirmModal";
 import FileUploadModal from "../Components/BulkUpload/FileUploadModal";
+import { useTranslation } from "react-i18next";
+
 
 export default function HomeScreen({
   navigation,
@@ -611,6 +613,7 @@ export default function HomeScreen({
   const { canStart, start, stop, eventEmitter } = useTourGuideController();
   const [bulkUploadModalVisible,setBulkUploadModalVisible]=useState(false)
   // const [noItemModal ,setNoItemModal] = useState (false)
+  const { t } = useTranslation();
 
   useEffect(() => {
     console.log("allshops in homescreen 1, ", allShops);
@@ -863,19 +866,19 @@ export default function HomeScreen({
                   }}
                 >
                   <StatCard
-                    title="Total Sales"
+                    title= {t("Total Sales")}
                     value={`$${vendorStatus?.totalSales ?? "N/A"}`}
                   />
                   <StatCard
-                    title="Active Invoices"
+                    title= {t("Active Invoices")}
                     value={vendorStatus?.activeInvoices ?? "N/A"}
                   />
                   <StatCard
-                    title="New Customers"
+                    title= {t("New Customers")}
                     value={vendorStatus?.newCustomers ?? "N/A"}
                   />
                   <StatCard
-                    title="Total Invoices"
+                    title= {t("Total Invoices")}
                     value={vendorStatus?.totalInvoices ?? "N/A"}
                   />
                 </View>
@@ -889,6 +892,7 @@ export default function HomeScreen({
                 <PieChartComponent
                   key={userData?.user?.mobile}
                   vendorStatus={vendorStatus}
+                  t={t}
                 />
               )}
 
@@ -906,7 +910,7 @@ export default function HomeScreen({
                       >
                         <View style={{ alignItems: "center" }}>
                           <Text>{item.icon}</Text>
-                          <Text style={styles.itemText}>{item.name}</Text>
+                          <Text style={styles.itemText}>{t(item.name)}</Text>
                         </View>
                       </TouchableOpacity>
                       <TourGuideZone
@@ -967,6 +971,7 @@ export default function HomeScreen({
                 message="Hey Provider Please Add Products in your Shop"
                 heading="Add Products"
                 buttonTitle="Add Products"
+               
               />
             )}
             <View>

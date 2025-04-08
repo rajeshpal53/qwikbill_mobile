@@ -12,6 +12,7 @@ const ConfirmModal = ({
   message,
   heading,
   buttonTitle,
+  
 }) => {
   console.log("confirm modalllll")
   const hideDialog = () => setVisible(false);

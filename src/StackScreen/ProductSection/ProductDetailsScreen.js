@@ -41,6 +41,9 @@ import CustomeFilterDropDown from "../../Component/CustomFilterDropDown";
 import { useFocusEffect } from "@react-navigation/native";
 import NoDataFound from "../../Components/NoDataFound";
 import DeleteModal from "../../UI/DeleteModal";
+import { useTranslation } from "react-i18next";
+
+
 
 const ProductDetailsScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -72,6 +75,8 @@ const ProductDetailsScreen = ({ navigation }) => {
   const [ProductId, setProductId] = useState("");
   const [visible, setVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const { t } = useTranslation();
+
 
   useFocusEffect(
     useCallback(() => {
@@ -293,7 +298,7 @@ const ProductDetailsScreen = ({ navigation }) => {
                     ]}
                     onPress={() => handleFilterChange(suggestbtn)}
                   >
-                    <Text style={styles.suggestbtnText}>{suggestbtn}</Text>
+                    <Text style={styles.suggestbtnText}>{t(suggestbtn)}</Text>
                   </TouchableOpacity>
                 ))}
               </ScrollView>
@@ -344,7 +349,7 @@ const ProductDetailsScreen = ({ navigation }) => {
         actions={[
           {
             icon: "plus",
-            label: "Add Product",
+            label: t("Add Product"),
             onPress: () =>
               navigation.navigate("AddProduct", {
                 EditData: null,
@@ -355,7 +360,7 @@ const ProductDetailsScreen = ({ navigation }) => {
           },
           {
             icon: "archive",
-            label: "Bulk Product",
+            label: t("Bulk Product"),
             onPress: handleBulkproduct,
             style: { backgroundColor: "#2196F3" },
           },
@@ -370,7 +375,7 @@ const ProductDetailsScreen = ({ navigation }) => {
           }
         }
         fabStyle={{
-          backgroundColor: "#0c3b73", //
+          backgroundColor: "#007bff", //
         }}
       />
 

@@ -13,11 +13,14 @@ const CustomDropdown = ({
   paymentStatuses,
   setSelectedStatus,
   selectedStatus,
-  userRole
+  userRole,
+  t
 }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   // const [selectedStatus, setSelectedStatus] = useState('Select payment');
   // const paymentStatuses = ['Unpaid', 'Paid', 'Partially Paid'];
+
+  console.log("SELECTED PAYMENT ", paymentStatuses)
 
   // Toggle the visibility of the modal
   const toggleModal = () => {
@@ -37,7 +40,7 @@ const CustomDropdown = ({
     <View style={styles.container}>
       {/* Custom Dropdown Button */}
       <TouchableOpacity style={styles.dropdownButton} onPress={toggleModal}>
-        <Text style={styles.dropdownText}>{selectedStatus}</Text>
+        <Text style={styles.dropdownText}>{t(selectedStatus)}</Text>
       </TouchableOpacity>
 
       {/* Modal for Dropdown */}
@@ -57,7 +60,7 @@ const CustomDropdown = ({
                   style={[styles.modalItem, {backgroundColor: selectedStatus == item ? "rgba(0, 0, 0, 0.2)" : "#fff"}]}
                   onPress={() => selectStatus(item)} // Set selected item and close modal
                 >
-                  <Text style={styles.modalItemText}>{item}</Text>
+                  <Text style={styles.modalItemText}>{t(item)}</Text>
                 </TouchableOpacity>
               )}
             />
