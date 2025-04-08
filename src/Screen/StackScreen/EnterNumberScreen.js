@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from "react";
 import auth from "@react-native-firebase/auth";
 // import { useSnackbar } from "../../Store/SnackbarContext";
 import {
-  API_BASE_URL,
+  NORM_URL,
   fontFamily,
   log,
   fontSize,
@@ -89,6 +89,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       //   }
       // ),
   });
+
   useEffect(() => {
     const fetchToken = async () => {
       try {
@@ -119,24 +120,31 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
     // return true;
   };
 
-  const carouselItems = [
-    {
-      id: "1",
-      image: require("../../../assets/images/carousel-slides/square1.jpg"),
-    },
-    {
-      id: "2",
-      image: require("../../../assets/images/carousel-slides/square2.jpg"),
-    },
-    {
-      id: "3",
-      image: require("../../../assets/images/carousel-slides/square3.jpg"),
-    },
-    {
-      id: "4",
-      image: require("../../../assets/images/carousel-slides/square4.jpg"),
-    },
-  ];
+  useEffect(() => {
+    let interval;
+    if (isTimerRunning && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prevTimer) => {
+          if (prevTimer > 1) {
+            return prevTimer - 1;
+          } else {
+            clearInterval(interval);
+            // Clear the interval when timer reaches 0
+            setIsTimerRunning(false); // Stop the timer
+
+            // if (threeTimer) {
+            //   resetCount();
+            // }
+            return 0; // Ensure timer is set to 0
+          }
+        });
+      }, 1000);
+    }
+
+    return () => {
+      clearInterval(interval); // Clear interval on unmount or when dependencies change
+    };
+  }, [isTimerRunning, timer]);
 
   useEffect(() => {
     async function checkNotificationPermission() {
@@ -209,7 +217,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
         // const response= await postData(pNumber,fToken,idToken);
         showSnackbar("Login successfully!", "success");
         setPasswordModalVisible(true);
-     
+
       }
     });
 
@@ -243,92 +251,35 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
   };
 
 
-  // const postData = async (password, isForgetPassword,navigation) => {
-  //   setIsLoading(true);
-  //   console.log("FCMToken:", FCMToken);
-
-  //   const payload = {
-  //     mobile: phoneNumber,
-  //     password,
-  //   };
-
-  //   console.log("Payload:", payload);
-
-  //   try {
-  //     if (payload?.mobile) {
-  //       let apiEndpoint = isForgetPassword ? `users/forgetPassword` : `users/signUp`;
-  //       let apiFunction = isForgetPassword ? updateApi : createApi;
-
-  //       const response = await apiFunction(apiEndpoint, payload);
-  //       console.log(`${isForgetPassword ? "Forgot Password" : "Sign-Up"} Response:`, response);
-
-  //       await saveUserData(response);
-  //       await handleLogin(response,navigation);
-        
-  //       await AsyncStorage.setItem("updatedPassword", password);
-
-
-  //       if (isForgetPassword) {
-  //         setIsForgetPasswordState(true);
-  //       }
-
-  //       return true;
-  //     }
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //     return false;
-  //   } finally {
-  //     setIsLoading(false);
-  //     alert("Password reset successfully!");
-  //   }
-  // };
-
-
-
-  const postData = async (password, isForgetPassword, navigation) => {
+  const postData = async (password, isForgetPassword,navigation) => {
     setIsLoading(true);
     console.log("FCMToken:", FCMToken);
-
     const payload = {
       mobile: phoneNumber,
       password,
       idToken:idToken,
-      FCMToken:[FCMToken]
+      fcmtokens:[FCMToken]
     };
-  
+
     console.log("Payload:", payload);
-  
+
     try {
       if (payload?.mobile) {
-
         let apiEndpoint =`users/signUp`;
 
         const response = await createApi(apiEndpoint, payload);
         console.log(`${isForgetPassword ? "Forgot Password" : "Sign-Up"} Response:`, response);
-      
+
         await saveUserData(response);
         await handleLogin({mobile:response?.user?.mobile,password:payload?.password},navigation);
 
         await AsyncStorage.setItem("updatedPassword", password);
 
 
-        await AsyncStorage.setItem("updatedPassword", password);
-  
         if (isForgetPassword) {
-
-          await AsyncStorage.removeItem("loginDetail");
-          await saveUserData(null);
-          setIsForgetPasswordState(false); // Reset state
-  
-  
-          navigation.reset({ index: 0, routes: [{ name: "login" }] });
-  
-          alert("Password reset successfully! Please log in with your new password.");
-        } else {
-          await saveUserData(response);
-          await handleLogin(payload, navigation);
+          setIsForgetPasswordState(true);
         }
-  
+
         return true;
       }
     } catch (error) {
@@ -336,9 +287,9 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       return false;
     } finally {
       setIsLoading(false);
+      alert("Password reset successfully!");
     }
   };
-  
 
 
 
@@ -352,6 +303,10 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
     const secs = seconds % 60;
     return `${minutes}:${secs < 10 ? `0${secs}` : secs}`; // Adds leading zero to seconds if < 10
   };
+  const startTimer = (timer) => {
+    setTimer(timer); // Set timer to 2:30 (150 seconds)
+    setIsTimerRunning(true); // Start the timer
+  };
 
   // Step 1: Send OTP
   const sendOtp = async (phoneNumber) => {
@@ -360,7 +315,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       console.log("debugg22222");
       // log.info("debugg22222");
 
-      // startTimer(90); // Start the timer
+      startTimer(90); // Start the timer
       const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
       console.log("confirmation", JSON.stringify(confirmation));
       setConfirm(confirmation);
@@ -473,7 +428,6 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
               </Text>
             ) : confirm ? (
               <View style={styles.container1}>
-                {console.log("hello 2")}
                 <ScrollView
                   contentContainerStyle={{ flexGrow: 1 }}
                   scrollEnabled={true}
@@ -589,8 +543,8 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
                     />
                   </View>
                 )} */}
-                
-              
+
+
 
                   <View style={styles.container}>
 
@@ -601,7 +555,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
                     </View>
 
                   </View>
-                
+
                 {/* <View style={styles.loginSection}> */}
                <View style={[styles.loginSection, { height: isForgetPassword ? "70%" : "65%" }]}>
 
@@ -698,7 +652,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
                                   style={{
                                     height: "60%", // Adjust height as needed
                                     width: 1,
-                                
+
                                     backgroundColor: "#ddd",
                                     marginHorizontal: 6,
                                   }}
@@ -719,7 +673,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
                                   mode={"flat"}
                                   cursorColor={"#1e90ff"}
                                 />
-                                
+
                               </View>
                               <View style={{ alignSelf: "center" }}>
                                 {touched && errors.phone && (
@@ -813,7 +767,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
                             onPress={() =>
                               navigation.navigate("Policies", {
                                 // webUri: "https://rajeshpal.online/privacy-policy",
-                                webUri: `https://dailysabji.com/privacy-policy?view=mobile`,
+                                webUri: `${NORM_URL}/privacy-policy?view=mobile`,
                                 headerTitle: "Privacy and Policies",
                               })
                             }
@@ -898,7 +852,7 @@ const styles = StyleSheet.create({
   flagText: {
     fontSize: 23,
     marginTop:-5,
-    
+
   },
   countryCodeText: {
     fontSize: 16,

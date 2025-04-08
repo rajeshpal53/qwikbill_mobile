@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -8,13 +8,21 @@ import {
 } from "react-native";
 import { Card, Avatar } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { fontSize } from "../../Util/UtilApi";
 
-const ProductDetailsCard = ({ item }) => {
 
+const ProductDetailsCard = ({ item, setRefresh, setProductId, setVisible }) => {
   const [Opendetails, setOpendetails] = useState(false);
   const navigation = useNavigation();
+
+  const HandleProductDelete = () =>{
+    console.log("ITEM ID IS ",item?.id)
+    setProductId(item?.id)
+    setVisible(true);
+  }
+
+
   return (
     <ScrollView>
       <Card style={styles.card}>
@@ -42,7 +50,7 @@ const ProductDetailsCard = ({ item }) => {
             <View style={styles.ButtonView}>
               <View>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate("AddProduct", { EditData: item, isUpdated: true })
+                  onPress={() => navigation.navigate("AddProduct", { EditData: item, isUpdated: true, setRefresh:setRefresh })
                 }
                   style={styles.iconButton}
                 >
@@ -51,7 +59,7 @@ const ProductDetailsCard = ({ item }) => {
               </View>
               <View>
                 <TouchableOpacity
-                  onPress={() => console.log("Delete button clicked")}
+                  onPress={() => HandleProductDelete(item)}
                   style={styles.iconButton}
                 >
                   <MaterialIcons name="delete" size={24} color="#E53935" />

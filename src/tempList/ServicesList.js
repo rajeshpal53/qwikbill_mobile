@@ -67,9 +67,39 @@ export const services = [
     navigateTo: "TransactionScreen",
   },
   {
+    name: "Product Upload",
+    icon: (
+      <MaterialCommunityIcons
+        name="upload"
+        size={30}
+        color="#26a0df"
+      />
+    ),
+    key: "8",
+    navigateTo: "bulkUpload",
+  },
+  {
+    name: "View Customer",
+    icon: (
+      <Ionicons
+        name="people-outline"
+        size={30}
+        color="#26a0df"
+      />
+    ),
+    key: "8",
+    navigateTo: "Customer",
+  },
+  {
     name: "",
     icon: "",
     key: "9",
+    navigateTo: "",
+  },
+  {
+    name: "",
+    icon: "",
+    key: "10",
     navigateTo: "",
   },
   // {

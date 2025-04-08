@@ -26,7 +26,7 @@ const EditRole = () => {
   const { userData } = useContext(UserDataContext);
   const { allShops, selectedShop } = useContext(ShopContext);
   const [loading, setLoading] = useState(false);
-  const [filteredData, setFilteredData] = useState([])
+  const [filteredData, setFilteredData] = useState([]);
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState("");
   const { showSnackbar } = useSnackbar();
@@ -49,7 +49,6 @@ const EditRole = () => {
       Authorization: `Bearer ${userData?.token}`,
     };
     let api = ``;
-
     if (isAdmin) {
       if (AdminRoleData?.id) {
         api = `userRoles/getUserRoleByVendorfk/${AdminRoleData.id}`;
@@ -87,57 +86,46 @@ const EditRole = () => {
   useEffect(() => {
     getRoleData();
   }, [isFocused, selectedShop]);
-  
 
   const HandleDeleteRole = async (roleId) => {
     console.log("Data of item is 345", roleId);
-    try {
-      setLoading(true);
-      const headers = {
-        Authorization: `Bearer ${userData?.token}`,
-      };
       try {
-        const response = await readApi(`userRoles/getUserRoleByVendorfk/${selectedShop?.id}`, headers);
+        setLoading(true);
+        const response = await deleteApi(`userRoles/${roleId}`);
         console.log("GET ALL DATA IS125 ", response?.data);
         if (response?.data) {
-          setRoleData(response.data);
-          setFilteredData(response.data)
+          setRoleData((prevData) =>
+            prevData.filter((role) => role.id !== roleId)
+          );
           console.log("GET ALL DATA IS response", response.data);
         } else {
-          setRoleData([]); // If no data is found
-          setFilteredData([])
+          console.log("No data returned from delete API");
         }
       } catch (error) {
         console.log("Unable to fetch Role data", error);
-        setRoleData([]); // On error, clear the list
-        setFilteredData([])
       } finally {
         setLoading(false);
-// =======
-//       if (roleId) {
-//         const deleteResponse = await deleteApi(`roles/${roleId}`);
-//         if (deleteResponse) {
-//           showSnackbar("Role deleted successfully!", "success");
-//           setRoleData((prev) => prev.filter((role) => role.id != roleId));
-//         } else {
-//           console.log("Failed to delete the offer. Response: ", deleteResponse);
-//         }
-//       } else {
-//         console.log("Unable to get Id");
-// >>>>>>> faizan
+        setVisible(false)
+        // =======
+        //       if (roleId) {
+        //         const deleteResponse = await deleteApi(`roles/${roleId}`);
+        //         if (deleteResponse) {
+        //           showSnackbar("Role deleted successfully!", "success");
+        //           setRoleData((prev) => prev.filter((role) => role.id != roleId));
+        //         } else {
+        //           console.log("Failed to delete the offer. Response: ", deleteResponse);
+        //         }
+        //       } else {
+        //         console.log("Unable to get Id");
+        // >>>>>>> faizan
       }
-    } catch (error) {
-      console.log("Unable to fetch Delete API : ", error);
-    } finally {
-      setLoading(false);
-      setVisible(false);
-    }
   };
 
   const searchdata = () => {
     if (searchQuery?.length > 0) {
+      const trimmedQuery = searchQuery.trim();
       const found = RoleData.filter((item) =>
-        item?.user?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+        item?.user?.name?.toLowerCase().includes(trimmedQuery.toLowerCase())
       );
       setSearchedData(found);
       setSearchCalled(true);
@@ -146,7 +134,6 @@ const EditRole = () => {
       setSearchCalled(false);
     }
   };
-
 
   const Loader = () => {
     if (!loading) return null;
@@ -157,32 +144,27 @@ const EditRole = () => {
     );
   };
 
-
   const searchData = (query) => {
     setSearchQuery(query);
 
     if (query.trim() === "") {
-      setFilteredData([...RoleData]);  // Reset to full list when search is empty
+      setFilteredData([...RoleData]); // Reset to full list when search is empty
       return;
     }
 
     const filtered = RoleData.filter((role) =>
       // role?.name?.toLowerCase()?.includes(query.toLowerCase())
-    role?.user?.name?.toLowerCase()?.includes(query.toLowerCase())
+      role?.user?.name?.toLowerCase()?.includes(query.toLowerCase())
     );
 
     setFilteredData(filtered);
   };
-
 
   useEffect(() => {
     if (searchQuery.trim() === "") {
       setFilteredData([...RoleData]);
     }
   }, [searchQuery, RoleData]);
-  
-
-
 
   return (
     <View style={styles.Main}>
@@ -196,7 +178,7 @@ const EditRole = () => {
                   searchQuery={searchQuery}
                   setSearchQuery={setSearchQuery}
                   placeholderText="Search User by name ..."
-                  searchData={searchData}  // Pass searchData function
+                  searchData={searchData} // Pass searchData function
                 />
               </View>
 
@@ -207,7 +189,14 @@ const EditRole = () => {
           }
           data={filteredData} // Use filteredData instead of RoleData
           keyboardShouldPersistTaps="handled"
-          renderItem={({ item }) => <AllRoleDetailsCard item={item} />}
+          renderItem={({ item }) => (
+            <AllRoleDetailsCard
+              item={item}
+              getRoleData={getRoleData}
+              setRoleId={setRoleId}
+              setVisible={setVisible}
+            />
+          )}
           keyExtractor={(item) =>
             item.id ? item.id.toString() : Math.random().toString()
           }
@@ -240,7 +229,7 @@ const EditRole = () => {
           icon="plus"
           style={styles.fab}
           onPress={() =>
-            navigation.navigate("AddroleScreen", { isUpdateEditdata: false, })
+            navigation.navigate("AddroleScreen", { isUpdateEditdata: false })
           }
         />
 
@@ -275,12 +264,10 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     marginBottom: 10,
-  
   },
   dropdownContainer: {
     marginBottom: 8,
-    paddingVertical:3,
-    
+    paddingVertical: 3,
   },
   flatListContainer: {
     paddingBottom: 70, // Add padding to the bottom of the FlatList content
@@ -295,4 +282,3 @@ const styles = StyleSheet.create({
 });
 
 export default EditRole;
-

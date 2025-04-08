@@ -221,7 +221,7 @@ const{updateSelectedShop}=useContext(
   const AdminOption = [
     {
       icon: "person",
-      label: " Admin Section ",
+      label: "Admin Section",
       value: "AdminSection",
     },
   ];
@@ -248,7 +248,7 @@ const{updateSelectedShop}=useContext(
                 {
                   icon: "person-add",
                   label: roleDetails ? "Edit Role" : "Assign New Role",
-                  value: roleDetails ? "Edit Role" : "Assign New Role",
+                  value: roleDetails ? "EditRole" : "AssignNewRole",
                 },
                 // { icon: "logout", label: "Logout1", value: "Logout1" },
               ]
@@ -400,9 +400,9 @@ const{updateSelectedShop}=useContext(
       setVisible(true);
     } else if (value === "AdminSection") {
       navigation.navigate("AdminSection");
-    } else if (value === "Assign New Role") {
+    } else if (value === "AssignNewRole") {
       navigation.navigate("AddroleScreen");
-    } else if (value === "Edit Role") {
+    } else if (value === "EditRole") {
       navigation.navigate("EditRoleScreen", {isAdmin : false, AdminRoleData : null});
     } else if (value == "Logout1") {
       navigation.navigate("login");
@@ -428,7 +428,7 @@ const{updateSelectedShop}=useContext(
       if (response) {
         // Handle success, show Snackbar message, and log out
         showSnackbar("Logged out successfully", "success");
-        
+
         // Perform all the logout actions
         // await auth().signOut();
         await clearUserData();

@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { useTranslation } from "react-i18next";
+
 
 const FilterModal = ({
   isModalVisible,
@@ -22,6 +24,8 @@ const FilterModal = ({
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
   const [showDateWise, setShowDateWise] = useState(false);
+  const { t } = useTranslation();
+
 
   const filterOptions = [
     { label: "1 Month", value: "1months" },
@@ -82,7 +86,7 @@ const FilterModal = ({
                 <AntDesign name="close" size={24} color="black" />
               </TouchableOpacity>
 
-              <Text style={styles.modalTitle}>Select Filter</Text>
+              <Text style={styles.modalTitle}>{t("Select Filter")}</Text>
 
               {filterOptions.map((item, index) => (
                 <TouchableOpacity
@@ -99,7 +103,7 @@ const FilterModal = ({
                       sortBy === item.value && styles.selectedText,
                     ]}
                   >
-                    {item.label}
+                   {t(item.label)}
                   </Text>
                 </TouchableOpacity>
               ))}

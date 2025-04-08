@@ -74,12 +74,15 @@ const AddRole = () => {
             };
             const response = await readApi(api, headers);
             if (response) {
+              console.log("Data of response ", response)
               setUser(response);
               setFieldValue("userName", response?.name);
+              setFieldValue("email", response?.email);
               setFieldValue("userMobile", phoneNumber);
             }
           } catch (error) {
             setFieldValue("userName", "");
+            setFieldValue("email", "");
             setFieldValue("userMobile", phoneNumber);
             setUser("");
             console.error("Error fetching User data:", error);
@@ -166,7 +169,7 @@ const AddRole = () => {
       };
       const response = await createApi(`userRoles`, data, headers);
       console.log("DATA OF SUBMIT ", response)
-      showSnackbar("Profile updated successfully", "success");
+      showSnackbar("Role Create successfully", "success");
     } catch (error) {
       console.log("Unable to create data", error);
       setLoading(false);
@@ -182,7 +185,7 @@ const AddRole = () => {
           userMobile: "",
           userName:  "",
           userRole:  "",
-          email:   User?.email || "",
+          email: "",
           selectShop: selectedShop?.shopname || "default",
         }}
         validationSchema={validationSchema}
@@ -278,7 +281,7 @@ const AddRole = () => {
               <TextInput
                 mode="flat"
                 label="Enter User Email"
-                style={[styles.input, { color: "#fff" }]}
+                style={!User ? styles.input : { ...styles.input, backgroundColor: "#f3f3f3" }}
                 onChangeText={handleChange("email")}
                 onBlur={handleBlur("email")}
                 value={values.email}

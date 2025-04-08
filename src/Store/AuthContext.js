@@ -128,7 +128,8 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       //console.error("Login error:", error);
-      showSnackbar("Wrong phone number or password .", "error");
+      showSnackbar(`${error.data.message}`, "error");
+      // showSnackbar("Wrong phone number or password .", "error");
     } finally {
       setIsLoading(false);
     }

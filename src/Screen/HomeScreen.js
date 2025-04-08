@@ -86,6 +86,7 @@ export default function HomeScreen({ navigation, noItemData }) {
 
 
 
+
   useEffect(() => {
     const checkIfTourSeen = async () => {
       try {
@@ -98,13 +99,21 @@ export default function HomeScreen({ navigation, noItemData }) {
       }
     };
 
+
     checkIfTourSeen();
   }, [canStart]);
+
 
 
   useEffect(() => {
     // Start tour guide when entering the Home screen
     setIsTourGuideActive(true);
+//   const goToHandler = (Screen) => {
+//     // navigation.navigate("wertone", {screen:'CreateInvoice'});
+//     // console.log("Pra ", item)
+//     if (Screen === "CreateShopScreen") {
+//       navigation.navigate(Screen, { isHome: false });
+//     }
 
     return () => {
       setIsTourGuideActive(false);
@@ -116,14 +125,12 @@ export default function HomeScreen({ navigation, noItemData }) {
   console.log("all shops areee", allShops)
   console.log("selected shop  isssss", selectedShop)
 
-
   useEffect(() => {
     if (currentStep === 13) {
       console.log("Tour completed");
       AsyncStorage.setItem("hasSeenTour", "true");
     }
   }, [currentStep]);
-
 
   useEffect(() => {
     const getItem = async () => {
@@ -140,26 +147,24 @@ export default function HomeScreen({ navigation, noItemData }) {
     getItem();
   }, []);
 
-
   useEffect(() => {
     const venderStatus = async () => {
       try {
         setIsLoading(true);
         setVendorStatus(null);
 
-        const response = await readApi(`invoice/getVendorStats/${selectedShop.id}`);
+        const response = await readApi(
+          `invoice/getVendorStats/${selectedShop.id}`
+        );
 
         if (response && response.success) {
-
           console.log("Dashboard Vendor Status Response:", response);
-          setVendorStatus({ ...response })
+          setVendorStatus({ ...response });
           await AsyncStorage.setItem("vendorStatus", JSON.stringify(response));
-
         } else {
           console.log("Something went wrong, please try again!");
           setVendorStatus({});
           await AsyncStorage.removeItem("vendorStatus"); // Clear AsyncStorage on error
-
         }
       } catch (error) {
         console.log("Unable to get vendor dashboard data", error);
@@ -172,9 +177,7 @@ export default function HomeScreen({ navigation, noItemData }) {
     if (selectedShop?.id && userData?.user?.mobile) {
       venderStatus();
     }
-
   }, [userData?.user?.mobile, selectedShop?.id, isFocused]);
-
 
   const total =
     (vendorStatus?.totalSales || 0) +
@@ -183,18 +186,20 @@ export default function HomeScreen({ navigation, noItemData }) {
     (vendorStatus?.newCustomers || 0) +
     (vendorStatus?.totalInvoices || 0);
 
-
   const goToHandler = (Screen) => {
     // navigation.navigate("wertone", {screen:'CreateInvoice'});
     // console.log("Pra ", item)
     if (Screen === "CreateShopScreen") {
       navigation.navigate(Screen, { isHome: false });
+    }else if(Screen==="bulkUpload"){
+      setBulkUploadModalVisible(true)
     }
-
-    console.log("hi");
-
+    else{
+      console.log("hi");
     // navigation.navigate("StackNavigator", { screen: Screen });
     navigation.navigate(Screen, { startTour: true });
+    }
+
   };
 
   if (isLoading) {
@@ -209,13 +214,12 @@ export default function HomeScreen({ navigation, noItemData }) {
     );
   }
 
-
   return (
     <SafeAreaView style={styles.safeContainer}>
-      <ScrollView contentContainerStyle={styles.scrollView}
-        scrollEnabled={(allShops && allShops.length > 0)} // Disable scroll if allShops exists
+      <ScrollView
+        contentContainerStyle={styles.scrollView}
+        scrollEnabled={allShops && allShops.length > 0} // Disable scroll if allShops exists
       >
-
         <View style={styles.overlay}></View>
         <View style={styles.scrollView}>
           <TourGuideZoneByPosition
@@ -228,9 +232,14 @@ export default function HomeScreen({ navigation, noItemData }) {
             // height={64}
             text={"Welcome to the QwikBill"}
           />
-
           <View style={styles.container}>
-            <View style={allShops && allShops.length > 0 ? styles.header : styles.userHeader}>
+            <View
+              style={
+                allShops && allShops.length > 0
+                  ? styles.header
+                  : styles.userHeader
+              }
+            >
               <>
                 <TourGuideZone
                   zone={1}
@@ -242,7 +251,7 @@ export default function HomeScreen({ navigation, noItemData }) {
                   style={{
                     position: "absolute",
                     width: width * 0.8, // Adjust width based on screen size
-                    top: height * 0.08, // Adjust top position based on screen height
+                    top: height * 0.04, // Adjust top position based on screen height
                     height: 32,
                   }}
                 />
@@ -270,22 +279,26 @@ export default function HomeScreen({ navigation, noItemData }) {
                 style={{
                   position: "absolute",
                   width: width * 0.7, // Adjust width
-                  top: height * 0.095, // Adjust vertical position
+                  top: height * 0.082, // Adjust vertical position
                   height: 20,
                 }}
               />
             </View>
 
 
-            <View style={{
-              flex: allShops && allShops.length > 0 ? 1 : 0.6,
-              // marginTop: allShops && allShops.length > 0 ? 5 : 1,
-
-            }}>
-
-
-
-              <View style={allShops && allShops.length > 0 ? styles.dropDownContainer : styles.userDropdown}>
+            <View
+              style={{
+                flex: allShops && allShops.length > 0 ? 1 : 0.6,
+                marginTop: allShops && allShops.length > 0 ? 5 : 1,
+              }}
+            >
+              <View
+                style={
+                  allShops && allShops.length > 0
+                    ? styles.dropDownContainer
+                    : styles.userDropdown
+                }
+              >
                 <TourGuideZone
                   zone={3}
                   text={"See all the vender in dropdown"}
@@ -295,10 +308,10 @@ export default function HomeScreen({ navigation, noItemData }) {
                   // keepTooltipPosition={true} // Keeps the tooltip in place
                   style={{
                     position: "absolute",
-                    width: width * 0.6, // Adjust width based on screen width
-                    top: height * 0.07, // Adjust top position
-                    height: 30,
-                    marginLeft: 30,
+                    width: width * 0.8, // Adjust width based on screen width
+                    top: height * 0.04, // Adjust top position
+                    height: 45,
+                    marginLeft: 20,
                   }}
                 />
 
@@ -307,15 +320,13 @@ export default function HomeScreen({ navigation, noItemData }) {
                   <DropDownList options={allShops} />
                 </View>
               </View>
-
             </View>
-
-
             {allShops && allShops.length > 0 && (
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{
+
                   // paddingHorizontal: "5%",
 
                 }}
@@ -328,23 +339,23 @@ export default function HomeScreen({ navigation, noItemData }) {
                   <StatCard title="New Customers" value={vendorStatus?.newCustomers ?? "N/A"} />
                   <StatCard title="Total Invoices" value={vendorStatus?.totalInvoices ?? "N/A"} />
                   
+
                 </View>
               </ScrollView>
             )}
 
+            {allShops &&
+              allShops.length > 0 &&
+              vendorStatus != null &&
+              total > 0 && (
+                <PieChartComponent
+                  key={userData?.user?.mobile}
+                  vendorStatus={vendorStatus}
+                  t={t}
+                />
+              )}
 
-            {allShops && allShops.length > 0 && vendorStatus != null && total > 0 ? (
-              <PieChartComponent key={userData?.user?.mobile} vendorStatus={vendorStatus} />
-            ) : (
-              <View style={{ justifyContent: "center", alignItems: "center", marginTop: -25 }}>
-                <Image source={require("../../assets/noDataFound.png")} style={{ height: 250, width: 250 }} />
-                <Text style={{ textAlign: "center", color: "gray" }}>No vendor data is available </Text>
-              </View>
-            )}
-
-
-
-            <View style={{ flex: 2.8 }}>
+            <View style={{ flex: 3 }}>
               {allShops?.length > 0 ? (
                 <FlatList
                   style={styles.flatList}
@@ -358,12 +369,12 @@ export default function HomeScreen({ navigation, noItemData }) {
                       >
                         <View style={{ alignItems: "center" }}>
                           <Text>{item.icon}</Text>
-                          <Text style={styles.itemText}>{item.name}</Text>
+                          <Text style={styles.itemText}>{t(item.name)}</Text>
                         </View>
                       </TouchableOpacity>
                       <TourGuideZone
                         key={index}
-                        zone={6 + index}
+                        zone={4 + index}
                         text={item.name ? `Go to ${item.name}` : "Finished"}
                         shape={"circle"}
                         style={{
@@ -409,22 +420,32 @@ export default function HomeScreen({ navigation, noItemData }) {
               )}
             </View>
 
-
+            {noItemModal && (
+              <ConfirmModal
+                visible={noItemModal}
+                setVisible={setNoItemModal}
+                handlePress={() => {
+                  navigation.navigate("AddProduct", { editItem: noItemData });
+                  setNoItemModal(false);
+                }}
+                message="Hey Provider Please Add Products in your Shop"
+                heading="Add Products"
+                buttonTitle="Add Products"
+               
+              />
+            )}
+            <View>
             {
-              noItemModal && (
-                <ConfirmModal
-                  visible={noItemModal}
-                  setVisible={setNoItemModal}
-                  handlePress={() => { navigation.navigate("AddProduct", { editItem: noItemData, }); setNoItemModal(false) }}
-                  message="Hey Provider Please Add Products in your Shop"
-                  heading="Add Products"
-                  buttonTitle="Add Products"
-                />
+              bulkUploadModalVisible&&(
+             <FileUploadModal visible={bulkUploadModalVisible} setBulkUploadModalVisible={setBulkUploadModalVisible}/>
               )
             }
+            </View>
+
           </View>
         </View>
       </ScrollView>
+
     </SafeAreaView>
   );
 }
@@ -432,14 +453,29 @@ export default function HomeScreen({ navigation, noItemData }) {
 const StatCard = ({ title, value, change }) => {
   return (
     <Card style={styles.statCard}>
-      <View style={{ flexDirection: "row", }}>
-        <Text style={{ marginRight: 15, fontSize: fontSize.label, fontFamily: fontFamily.medium }}>{title}</Text>
+      <View style={{ flexDirection: "row" }}>
+        <Text
+          style={{
+            marginRight: 15,
+            fontSize: fontSize.label,
+            fontFamily: fontFamily.medium,
+          }}
+        >
+          {title}
+        </Text>
         {/* <Text style={[styles.statChange, { color: change.includes("-") ? "red" : "green" }]}>
           {change}
         </Text> */}
       </View>
-      <Text style={{ fontSize: fontSize.label, fontFamily: fontFamily.bold, marginLeft: 5 }}>{value ?? "N/A"}</Text>
-
+      <Text
+        style={{
+          fontSize: fontSize.label,
+          fontFamily: fontFamily.bold,
+          marginLeft: 5,
+        }}
+      >
+        {value ?? "N/A"}
+      </Text>
     </Card>
   );
 };
@@ -474,7 +510,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     // paddingBottom:0,
     gap: responsiveHeight(1),
-
   },
   userHeader: {
     flex: 0.3,
@@ -501,9 +536,11 @@ const styles = StyleSheet.create({
 
   subHeaderText: {
     color: "#fff",
+
     fontSize: fontSize.labelSmall,
     fontFamily: fontFamily.medium,
     marginTop: 7
+
   },
   dropDownContainer: {
     paddingVertical: "2.5%",
@@ -511,14 +548,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#f6f2f7",
     borderRadius: 10,
     marginTop: "10%",
-
   },
   userDropdown: {
     paddingVertical: 5,
     paddingHorizontal: 20,
     backgroundColor: "#f6f2f7",
     borderRadius: 10,
-
   },
 
   dropdownRow: {
@@ -527,27 +562,44 @@ const styles = StyleSheet.create({
     gap: "5%", // Space between icon and dropdown
   },
 
+  viewsContainer: {
+    height: 50,
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    backgroundColor: "green",
+  },
+  allThreeViews: {
+    flex: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
   statusContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginVertical: 8,
-    backgroundColor: "red"
+    backgroundColor: "red",
   },
   statCard: {
     height: "100%",
+
     marginHorizontal: 3,
     paddingVertical: 16,
     paddingHorizontal: 10,
     borderRadius: 10,
     backgroundColor: "#fff",
-    shadowColor: "#000",  // Use black for a soft shadow
+    shadowColor: "#000", // Use black for a soft shadow
     shadowOffset: { width: 0, height: 2 }, // Adds depth
-    shadowOpacity: 0.3,  // Light shadow effect
+    shadowOpacity: 0.3, // Light shadow effect
     shadowRadius: 3, // Soft shadow edges
     elevation: 4, // More depth on Android
     justifyContent: "flex-end",
     alignSelf: "flex-end",
-    width: 140
+    width: 140,
   },
 
   flatList: {
@@ -620,7 +672,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     // backgroundColor:"#fff",
-
   },
   chartTitle: {
     fontSize: 18,
@@ -645,21 +696,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#000",
   },
-
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // import React, { useState, useContext, useEffect, useRef } from "react";
@@ -1310,4 +1346,5 @@ const styles = StyleSheet.create({
 //   },
 
 // });
+
 
