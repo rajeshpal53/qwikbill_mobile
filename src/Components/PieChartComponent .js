@@ -8,6 +8,7 @@ const screenWidth = Dimensions.get("window").width;
 
 const PieChartComponent = ({ vendorStatus, t }) => {
     const rotation = useSharedValue(0);
+    const { width, height } = Dimensions.get("window");
 
     useEffect(() => {
         if (vendorStatus) {
@@ -20,7 +21,9 @@ const PieChartComponent = ({ vendorStatus, t }) => {
     }
 
     const total =
+    
         (vendorStatus?.totalSales || 0) +
+        (vendorStatus?.numberOfProducts || 0) +
         (vendorStatus?.activeInvoices || 0) +
         (vendorStatus?.newCustomers || 0) +
         (vendorStatus?.totalInvoices || 0);
@@ -29,7 +32,7 @@ const PieChartComponent = ({ vendorStatus, t }) => {
         total === 0
             ? []
             : [
-                  { name: "Total Sales", population: vendorStatus.totalSales, color: "#2ecc71", legendFontColor: "transparent", legendFontSize: 0},
+                  { name: "Total Products", population: vendorStatus.numberOfProducts, color: "#2ecc71", legendFontColor: "#333", legendFontSize: 0},
                   { name: "Active Invoices", population: vendorStatus.activeInvoices, color: "#f39c12", legendFontColor: "#333", legendFontSize: 0 },
                   { name: "New Customers", population: vendorStatus.newCustomers, color: "#3498db", legendFontColor: "#333", legendFontSize: 0 },
                   { name: "Total Invoices", population: vendorStatus.totalInvoices, color: "#9b59b6", legendFontColor: "#333", legendFontSize: 0},
@@ -60,7 +63,8 @@ const PieChartComponent = ({ vendorStatus, t }) => {
 
                 {/* Pie Chart with Rotation */}
                 <View style={styles.chartWrapper}>
-                    <Animated.View style={[styles.chartContainer ,animatedStyle ]}>
+                    <View style={styles.chartContainer}>
+                    <Animated.View style={[styles.pieChartWrapper ,animatedStyle ]}>
                         <PieChart
                             data={chartData}
                             width={screenWidth * 0.6}
@@ -73,16 +77,19 @@ const PieChartComponent = ({ vendorStatus, t }) => {
                             }}
                             accessor={"population"}
                             backgroundColor={"transparent"}
-                            paddingLeft={"20"}
+                            paddingLeft={"25"}
                             center={[10, 4]}
                            hasLegend={false}
                         />
                     </Animated.View>
+                    </View>
 
                     {/* Center Text */}
                     <View style={styles.centerText}>
-                        <Text style={styles.chartText}>{t("Total")}</Text>
-                        <Text style={styles.chartValue}>${vendorStatus?.totalSales ?? 0}</Text>
+
+                        <Text style={styles.chartText}>Products</Text>
+                        <Text style={styles.chartValue}>${vendorStatus?.numberOfProducts ?? 0}</Text>
+
                     </View>
 
                 </View>
@@ -95,30 +102,31 @@ const styles = StyleSheet.create({
     container: {
         alignItems: "center",
         justifyContent: "center",
-        marginTop:-20
+        marginTop:"-2%",
+
     },
     chartTitle: {
         fontSize: fontSize.headingSmall,
         fontFamily: fontFamily.medium,
-        marginBottom: 10,
+        marginBottom: "5%",
     },
     loadingText: {
         fontFamily: fontFamily.medium,
         fontSize: fontSize.label,
         textAlign: "center",
-        marginTop: 20,
+        marginTop: "2%",
     },
     chartWrapper: {
        justifyContent: "center",
         alignItems: "center",
        // position: "relative",
-        //backgroundColor:"orange",
-        height:180,
-        width:180,
+    
+        height:"20%",
+        width:"45%",
         alignSelf:"center",
         alignContent:"center",
-        marginTop:-10
-
+        marginTop:"-5%",
+      marginLeft:"-5%",
     },
     chartContainer: {
         justifyContent: "flex-start",
@@ -128,14 +136,14 @@ const styles = StyleSheet.create({
     centerText: {
         position: "absolute",
         alignItems: "center",
-        top: "45%",
+       // top: "50%",
         //left: "50%",
-        transform: [{ translateX: -28 }, { translateY: -12 }],
+        transform: [{ translateX: -20 }, { translateY: 12 }],
     },
     chartText: {
-        fontSize: fontSize.labelMedium,
+        fontSize: fontSize.labelLarge,
         fontFamily: fontFamily.medium,
-        color: "#555",
+        color: "#444",
         textAlign: "center",
     },
     chartValue: {
@@ -146,20 +154,21 @@ const styles = StyleSheet.create({
     legendContainer: {
         width: "25%",
         alignItems: "flex-start",
-        marginLeft: 12,
-        marginTop: 5,
 
+        marginLeft: "4%",
+        marginTop: "2%",
+        
     },
     legendItem: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 10,
+        marginBottom: "6%",
     },
     colorBox: {
         width: 15,
         height: 15,
         borderRadius: 3,
-        marginRight: 10,
+        marginRight: "15%",
     },
     legendText: {
         fontSize: fontSize.label,
@@ -167,16 +176,237 @@ const styles = StyleSheet.create({
         color: "#333",
     },
     legendValue: {
-        fontSize: 12,
+        fontSize: fontSize.label,
         color: "#555",
     },
     rowContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
         width: "110%",
-        marginBottom: 20,
+
+        marginBottom: "6%",
+
+    },
+    pieChartWrapper: {
+        position: "absolute", // Prevents shifting during animation
+        top: -100,
+        left: -110,
+     // backgroundColor:"pink",
+        width:"110%"
+        
 
     },
 });
 
 export default PieChartComponent;
+
+
+
+
+
+
+
+
+// import React, { useEffect } from "react";
+// import { View, Text, Dimensions, StyleSheet } from "react-native";
+// import { PieChart } from "react-native-chart-kit";
+// import Animated, { useSharedValue, withTiming, useAnimatedStyle } from "react-native-reanimated";
+// import { fontFamily, fontSize } from "../Util/UtilApi";
+
+// const screenWidth = Dimensions.get("window").width;
+
+// const PieChartComponent = ({ vendorStatus }) => {
+//     const rotation = useSharedValue(0);
+
+//     useEffect(() => {
+//         if (vendorStatus) {
+//             rotation.value = withTiming(360, { duration: 3000 }); // Smooth rotation effect
+//         }
+//     }, [vendorStatus]);
+
+//     if (!vendorStatus) {
+//         return <Text style={styles.loadingText}>Loading Chart...</Text>;
+//     }
+
+//     const dummyData = {
+//         totalSales: 10000,
+//         activeInvoices: 50,
+//         newCustomers: 100,
+//         totalInvoices: 50,
+//     };
+
+//     const dataToUse = vendorStatus?.success ? vendorStatus : dummyData;
+
+//     const total =
+//         (dataToUse?.totalSales || 0) +
+//         (dataToUse?.activeInvoices || 0) +
+//         (dataToUse?.newCustomers || 0) +
+//         (dataToUse?.totalInvoices || 0);
+
+//     const chartData =
+//         total === 0
+//             ? []
+//             : [
+//                   { name: "Total Sales", population: dataToUse.totalSales, color: "#2ecc71", legendFontColor: "#333", legendFontSize: 0},
+//                   { name: "Active Invoices", population: dataToUse.activeInvoices, color: "#f39c12", legendFontColor: "#333", legendFontSize: 0 },
+//                   { name: "New Customers", population: dataToUse.newCustomers, color: "#3498db", legendFontColor: "#333", legendFontSize: 0 },
+//                   { name: "Total Invoices", population: dataToUse.totalInvoices, color: "#9b59b6", legendFontColor: "#333", legendFontSize: 0},
+             
+//                 ];
+
+//     const animatedStyle = useAnimatedStyle(() => ({
+//         transform: [{ rotate: `${rotation.value}deg` }],
+//     }));
+
+//     return (
+//         <View style={styles.container}>
+//             <Text style={styles.chartTitle}>Sales Overview - April 2025 </Text>
+
+//             <View style={styles.rowContainer}>
+//                 {/* Legend */}
+//                 <View style={styles.legendContainer}>
+//                     {chartData.map((item, index) => (
+//                         <View key={index} style={styles.legendItem}>
+//                             <View style={[styles.colorBox, { backgroundColor: item.color }]} />
+//                             <View>
+//                                 <Text style={styles.legendText}>{item.name}</Text>
+//                                 <Text style={styles.legendValue}>{item.population}</Text>
+//                             </View>
+//                         </View>
+//                     ))}
+//                 </View>
+
+//                 {/* Pie Chart with Rotation */}
+//                 <View style={styles.chartWrapper}>
+//                     <View style={styles.chartContainer}>
+//                     <Animated.View style={[animatedStyle,styles.pieChartWrapper ]}>
+//                         <PieChart
+//                             data={chartData}
+//                             width={232}
+//                             height={220}
+//                             chartConfig={{
+//                                 backgroundColor: "#fff",
+//                                 backgroundGradientFrom: "#fff",
+//                                 backgroundGradientTo: "#fff",
+//                                 color: () => `rgba(0, 0, 0, 1)`,
+//                             }}
+//                             accessor={"population"}
+//                             backgroundColor={"transparent"}
+//                             paddingLeft={"20"}
+//                             center={[10, 4]}
+//                            hasLegend={false}
+//                            style={{alignItems:"center",justifyContent:"center",marginLeft:"2%"}}
+//                         />
+//                     </Animated.View>
+//                     </View>
+
+//                     {/* Center Text */}
+//                     <View style={styles.centerText}>
+//                         <Text style={styles.chartText}>Total</Text>
+//                         <Text style={styles.chartValue}>${dataToUse?.totalSales ?? 0}</Text>
+//                     </View>
+                    
+//                 </View>
+//             </View>
+//         </View>
+//     );
+// };
+
+// const styles = StyleSheet.create({
+//     container: {
+//         alignItems: "center",
+//         justifyContent: "center",
+//         marginTop:-20,
+
+//     },
+//     chartTitle: {
+//         fontSize: fontSize.headingSmall,
+//         fontFamily: fontFamily.medium,
+//         marginBottom: "5%",
+//     },
+//     loadingText: {
+//         fontFamily: fontFamily.medium,
+//         fontSize: fontSize.label,
+//         textAlign: "center",
+//         marginTop: 20,
+//     },
+//     chartWrapper: {
+//        justifyContent: "center",
+//         alignItems: "center",
+//        // position: "relative",
+    
+//         height:160,
+//         width:180,
+//         alignSelf:"center",
+//         alignContent:"center",
+//         marginTop:"-5%",
+//       marginLeft:"-5%"
+//     },
+//     chartContainer: {
+//         justifyContent: "flex-start",
+//         alignItems: "flex-start",
+        
+//     },
+//     centerText: {
+//         position: "absolute",
+//         alignItems: "center",
+//        // top: "50%",
+//         //left: "50%",
+//         transform: [{ translateX: -25 }, { translateY: 15 }],
+//     },
+//     chartText: {
+//         fontSize: fontSize.labelMedium,
+//         fontFamily: fontFamily.medium,
+//         color: "#555",
+//         textAlign: "center",
+//     },
+//     chartValue: {
+//         fontSize: fontSize.labelLarge,
+//         fontFamily: fontFamily.medium,
+//         color: "rgba(0,0,0,0.8)",
+//     },
+//     legendContainer: {
+//         width: "25%",
+//         alignItems: "flex-start",
+//         marginLeft: 12,
+//         marginTop: 5,
+        
+//     },
+//     legendItem: {
+//         flexDirection: "row",
+//         alignItems: "center",
+//         marginBottom: 10,
+//     },
+//     colorBox: {
+//         width: 15,
+//         height: 15,
+//         borderRadius: 3,
+//         marginRight: 10,
+//     },
+//     legendText: {
+//         fontSize: fontSize.label,
+//         fontFamily: fontFamily.bold,
+//         color: "#333",
+//     },
+//     legendValue: {
+//         fontSize: 12,
+//         color: "#555",
+//     },
+//     rowContainer: {
+//         flexDirection: "row",
+//         justifyContent: "space-between",
+//         width: "110%",
+//         marginBottom: 20,
+        
+//     },
+//     pieChartWrapper: {
+//         position: "absolute", // Prevents shifting during animation
+//         top: -100,
+//         left: -110,
+//        backgroundColor:"pink",
+//         width:"100%"
+
+//     },
+// });
+
+// export default PieChartComponent;
