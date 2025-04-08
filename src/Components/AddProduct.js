@@ -36,9 +36,13 @@ const AddProduct = ({ navigation }) => {
       .required("Selling price is required")
       .typeError("Selling price must be a number"),
     TaxRate: Yup.number().typeError("Tax value must be a number"),
+    HSNCode:Yup.string().matches(/^\d{4}(\d{2})?(\d{2})?$/, 'Enter a valid 4, 6, or 8-digit HSN code'),
     PurchasePrice: Yup.number()
-      .required("Purchase price is required")
-      .typeError("Purchase price must be a number"),
+    .required("Purchase price is required")
+    .typeError("Purchase price must be a number")
+    .when("SellingPrice", (sellingPrice, schema) =>
+      schema.max(sellingPrice - 0.01, "Purchase price must be less than selling price")
+    ),
     IsStockData: Yup.boolean().nullable().required("Stock status is required"),
   });
 
@@ -123,10 +127,13 @@ const AddProduct = ({ navigation }) => {
           };
           console.log("Data is 15863", ProductData);
           try {
-            await createApi(`products/`, ProductData);
-            resetForm();
-            navigation.goBack();
-            showSnackbar("Product Add Successfully", "success");
+             const response =await createApi(`products/`, ProductData);
+             console.log("Response is Add Product", response);
+              if (response){
+                resetForm();
+                navigation.goBack();
+                showSnackbar("Product Add Successfully", "success");
+              }
           } catch (error) {
             showSnackbar(error, "error");
             console.log("Unable to Upload data ", error);
