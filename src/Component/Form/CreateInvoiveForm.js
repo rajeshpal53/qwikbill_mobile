@@ -197,6 +197,17 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           return response;
         } else if (button == "generate") {
           console.log("Inside a else if condition ");
+          console.log("after removing someData, payloadData is debug 1, ", newPayload);
+          console.log("userData is , ", userData);
+          console.log("userData token is , ", userData?.token);``
+
+          const response = await createApi(api, newPayload, {
+            Authorization: `Bearer ${userData?.token}`,
+          });
+
+          console.log("response of create invoice is, debug 2 ", response);
+          showSnackbar("Invoice Created Successfully", "success");
+          // setCreatedInvoice(response?.customer);
           dispatch(clearCart());
           navigation.pop(2);
         }
@@ -269,7 +280,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
         validationSchema={validationSchema}
         onSubmit={async (values, { resetForm }) => {
           console.log("values are , ", values);
-
+          console.log("selected cartvalue is , ", cartsValue);
           const DataCustomer = {
             name: values?.name,
             address: values?.address,
@@ -277,7 +288,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
             phone: User?.getNumber || values?.phone,
             userId: User?.id || undefined,
           };
-
+          const finalTotal = (parseInt(cartsValue?.totalPrice) || 0) - (parseInt(cartsValue?.discount) || 0);
           const extraData = {
             usersfk: User?.id,
             vendorfk: selectedShop?.id,
@@ -285,7 +296,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
             subtotal: cartsValue?.totalPrice,
             // address: "123 Main Street, City, Country",
             discount: cartsValue?.discount,
-            finaltotal: cartsValue?.afterdiscount,
+            finaltotal: finalTotal,
             // vendorprofit: 100,
             paymentMode: "COD",
             ...(PaymentStatus == "Unpaid" || PaymentStatus == "Partially Paid"
@@ -495,9 +506,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
                 >
                   <Text style={{ color: "#007BFF" }}>Clear Cart</Text>
                 </TouchableOpacity>
-
                 <ItemDataTable carts={carts} />
-
                 <PriceDetails setPaymentStatus={setPaymentStatus} />
               </View>
             )}

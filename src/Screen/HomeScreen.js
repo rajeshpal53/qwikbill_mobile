@@ -758,7 +758,6 @@ export default function HomeScreen({
             // height={64}
             text={"Welcome to the QwikBill"}
           />
-
           <View style={styles.container}>
             <View
               style={
