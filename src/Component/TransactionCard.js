@@ -138,7 +138,7 @@ const TransactionCard = ({ item }) => {
         <View style={styles.infoContainer}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between',alignItems:"flex-end" }}>
             <Text style={styles.billText}>Bill to</Text>
-            <Text style={[styles.amount, { color: transactionStatus === "complete" ? "green" : "red" }]}> ₹{amount ?? "N/A"}</Text>
+            <Text style={[styles.amount, { color: "green"}]}> ₹{amount ?? "N/A"}</Text>
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems:"flex-end" }}>
             <Text style={styles.name}> {userName}</Text>
@@ -148,7 +148,7 @@ const TransactionCard = ({ item }) => {
           style={[styles.status,
             //  { color: transactionStatus === "complete" ? "green" : "red" }
             ]}>
-            {transactionStatus ?? "N/A"}</Text>
+            {"paid" ?? "Paid"}</Text>
         </View>
       </View>
     </Pressable>

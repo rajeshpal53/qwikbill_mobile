@@ -5,7 +5,7 @@ export default function wertoneLogoTitle({title}) {
     <View style={{ flexDirection: "row",}}>
       <View style={{alignItems:"center"}}>
         <Image
-          style={{ width: 140, height: 70, paddingTop:10 }}
+          style={{ width: 200, height: 130, paddingTop:10 }}
           source={require("../../../assets/aaaa_transparent.png")}
         />
         {/* <Text style={styles.whiteColor}>WERTONE</Text> */}

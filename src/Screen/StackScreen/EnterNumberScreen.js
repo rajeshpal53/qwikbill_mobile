@@ -300,7 +300,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       mobile: phoneNumber,
       password,
       idToken:idToken,
-      FCMToken:[FCMToken]
+      fcmtokens:[FCMToken]
     };
   
     console.log("Payload:", payload);
