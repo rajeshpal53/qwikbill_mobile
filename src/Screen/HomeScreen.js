@@ -88,38 +88,38 @@ export default function HomeScreen({ navigation, noItemData }) {
 
 
 
-  useEffect(() => {
-    const checkIfTourSeen = async () => {
-      try {
-        const hasSeenTour = await AsyncStorage.getItem("hasSeenTour");
-        if (!hasSeenTour && canStart) {
-          start();
-        }
-      } catch (error) {
-        console.log("Error checking tour guide status", error);
-      }
-    };
+  // useEffect(() => {
+  //   const checkIfTourSeen = async () => {
+  //     try {
+  //       const hasSeenTour = await AsyncStorage.getItem("hasSeenTour");
+  //       if (!hasSeenTour && canStart) {
+  //         start();
+  //       }
+  //     } catch (error) {
+  //       console.log("Error checking tour guide status", error);
+  //     }
+  //   };
 
 
-    checkIfTourSeen();
-  }, [canStart]);
+  //   checkIfTourSeen();
+  // }, [canStart]);
 
 
 
-  useEffect(() => {
-    // Start tour guide when entering the Home screen
-    setIsTourGuideActive(true);
-//   const goToHandler = (Screen) => {
-//     // navigation.navigate("wertone", {screen:'CreateInvoice'});
-//     // console.log("Pra ", item)
-//     if (Screen === "CreateShopScreen") {
-//       navigation.navigate(Screen, { isHome: false });
-//     }
+//   useEffect(() => {
+//     // Start tour guide when entering the Home screen
+//     setIsTourGuideActive(true);
+// //   const goToHandler = (Screen) => {
+// //     // navigation.navigate("wertone", {screen:'CreateInvoice'});
+// //     // console.log("Pra ", item)
+// //     if (Screen === "CreateShopScreen") {
+// //       navigation.navigate(Screen, { isHome: false });
+// //     }
 
-    return () => {
-      setIsTourGuideActive(false);
-    };
-  }, []);
+//     return () => {
+//       setIsTourGuideActive(false);
+//     };
+//   }, []);
 
   // console.log("noItemModal  is ",noItemModal)  
   // console.log("set no item moal in tab",setNoItemModal)
