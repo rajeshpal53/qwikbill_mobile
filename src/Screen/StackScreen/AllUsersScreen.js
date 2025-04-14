@@ -253,7 +253,11 @@ const AllUsersScreen = ({ navigation }) => {
     );
   };
 
-  return (
+  return isLoading ? (
+    <View style={{ flex: 1, justifyContent: "center" }}>
+      <ActivityIndicator size={"large"} />
+    </View>
+  ) : (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <View style={styles.container}>
         {/* <View style={{ flex: 1 }}>
@@ -277,6 +281,7 @@ const AllUsersScreen = ({ navigation }) => {
               setSearchQuery={setSearchQuery}
               setsearchmodal={setsearchmodal}
               setTranscript={setTranscript}
+              refuser={searchBarRef}
               placeholderText="Search User by name ..."
               searchData={fetchSearchedData}
             />
@@ -300,7 +305,7 @@ const AllUsersScreen = ({ navigation }) => {
             refreshing={refreshing}
             onRefresh={onRefresh}
             colors={["#0a6846"]}
-            progressBackgroundColor={"#fff"} 
+            progressBackgroundColor={"#fff"}
           />
         }
         // renderItem={renderItem}

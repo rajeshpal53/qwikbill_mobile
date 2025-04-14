@@ -14,6 +14,8 @@ import { AuthContext } from "../Store/AuthContext.js";
 import HomeHeaderRight from "../Components/HeaderComponents/HomeHeaderRight.js";
 import { fontSize } from "../Util/UtilApi.js";
 import ViewInvoiceScreen1 from "../Screen/Invoices/ViewInvoiceScreen1.js";
+import { useTranslation } from "react-i18next";
+
 export default function BottomNavigator({
   roleDetails,
   setroleDetails,
@@ -24,6 +26,8 @@ export default function BottomNavigator({
   const [searchQuery, setSearchQuery] = useState("");
   // const { searchMode } = useContext(AuthContext);
   const Tab = createBottomTabNavigator();
+  const{t}=useTranslation()
+
   // const handleSearch = (query) => {
   //   setSearchQuery(query);
   //   // Handle search logic here
@@ -73,7 +77,7 @@ export default function BottomNavigator({
       }}
     >
       <Tab.Screen
-        name="Home"
+        name= "Home"
         //component={HomeScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -91,7 +95,7 @@ export default function BottomNavigator({
           // },
           // headerTitle:"",
           // headerTitleAlign: !searchMode ? "center" : "left",
-          tabBarLabel: "Home",
+          tabBarLabel: t("Home"),
           headerRight: () => null,
           // tabBarVisible:false,
           // tabBarButton: () => null
@@ -109,7 +113,7 @@ export default function BottomNavigator({
        </Tab.Screen>
 
       <Tab.Screen
-        name="Invoice"
+        name= {t("Invoice")}
         component={ViewInvoiceScreen1}
         // component={Invoice}
         options={{
@@ -118,7 +122,7 @@ export default function BottomNavigator({
             <Icon name="file-tray-full-outline" color={color} size={size} />
           ),
           headerTitle: () => (
-            <Text style={styles.headerTitle}>{"Invoices"}</Text>
+            <Text style={styles.headerTitle}>{t("Invoices")}</Text>
           ),
           headerTitleAlign: "center",
 
@@ -136,7 +140,7 @@ export default function BottomNavigator({
       />
 
       <Tab.Screen
-        name="Products"
+        name=  {t("Products")}
         component={ProductDetailsScreen}
         options={{
           headerShown: true,
@@ -145,7 +149,7 @@ export default function BottomNavigator({
             <Icon name="people-outline" color={color} size={size} />
           ),
           headerTitle: () => (
-            <Text style={styles.headerTitle}>{"Products Details"}</Text>
+            <Text style={styles.headerTitle}>{t("Products Details")}</Text>
           ),
 
           headerTitleAlign: "center",
@@ -162,13 +166,13 @@ export default function BottomNavigator({
         // component={ProfileSetting}
         options={{
           headerShown: true,
-          tabBarLabel: "Profile",
+          tabBarLabel: t("Profile") ,
           tabBarIcon: ({ color, size }) => (
             <Icon name="person-outline" color={color} size={size} />
           ),
 
           headerTitle: () => (
-            <Text style={styles.headerTitle}>{"Profile Setting"}</Text>
+            <Text style={styles.headerTitle}>{t("Profile Setting")}</Text>
           ),
           headerTitleAlign: "center",
         }}

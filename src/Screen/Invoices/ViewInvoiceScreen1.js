@@ -1,4 +1,3 @@
-
 // import React, { useEffect, useContext, useState, useRef } from "react";
 // import { View, Text, FlatList } from "react-native";
 // import { readApi } from "../../Util/UtilApi";
@@ -178,10 +177,8 @@
 
 // export default ViewInvoiceScreen1;
 
-
-
 import React, { useEffect, useContext, useState, useRef } from "react";
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList, RefreshControl } from "react-native";
 import { readApi } from "../../Util/UtilApi";
 import { ShopContext } from "../../Store/ShopContext";
 import { ActivityIndicator, FAB } from "react-native-paper";
@@ -215,11 +212,18 @@ function ViewInvoiceScreen1({ navigation }) {
   const { userData } = useContext(UserDataContext);
   const { allShops, selectedShop } = useContext(ShopContext);
   const [transcript, setTranscript] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     setPage(1);
     fetchInvoices(1);
   }, [selected, sortBy]);
+
+  const onRefresh = async () => {
+    setRefreshing(true); // Set refreshing state to true
+    await fetchInvoices(); // Fetch new data
+    setRefreshing(false); // Set refreshing state to false once done
+  };
 
   const buildApiUrl = (pageNum) => {
     let api = `invoice/getInvoices?vendorfk=${selectedShop?.id}&page=${pageNum}&size=10`;
@@ -292,15 +296,14 @@ function ViewInvoiceScreen1({ navigation }) {
     return date ? date.toISOString().split("T")[0] : "";
   }
 
-    const Loader = () => {
-      if (!isLoading) return null;
-      return (
-        <View style={{ flex: 1, justifyContent: "center" }}>
-          <ActivityIndicator size={"large"}></ActivityIndicator>
-        </View>
-      );
-    };
-
+  const Loader = () => {
+    if (!isLoading) return null;
+    return (
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <ActivityIndicator size={"large"}></ActivityIndicator>
+      </View>
+    );
+  };
 
   // return isLoading ? (
   //   <View style={{ flex: 1, justifyContent: "center" }}>
@@ -324,6 +327,14 @@ function ViewInvoiceScreen1({ navigation }) {
             />
             <FilterButtons setSelected={setSelected} selected={selected} />
           </View>
+        }
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#0a6846"]}
+            progressBackgroundColor={"#fff"}
+          />
         }
         contentContainerStyle={{ paddingBottom: 140 }}
         data={searchQuery?.length > 0 && searchCalled ? searchedData : invoices}

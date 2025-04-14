@@ -68,9 +68,9 @@ const UserloginScreen = ({ navigation }) => {
         </View>
 
         {/* Welcome Text */}
-        <Text style={styles.TextHead}>Qwickbill Login</Text>
+        <Text style={styles.TextHead}>QwikBill Login</Text>
         <Text style={styles.InnerText}>
-          Welcome to Qwickbill, your trusted billing and shopping companion.
+          Welcome to QwikBill, your trusted billing and shopping companion.
           Please log in to continue.
         </Text>
 
