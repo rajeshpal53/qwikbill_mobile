@@ -40,7 +40,7 @@ const AddRole = () => {
   //   console.log("SELECTED SHOP IS ", editData);
   // }, [editData]);
 
-  console.log("DATA OF USER IS ", User?.id)
+  console.log("DATA OF USER IS ", userData)
 
   const roleOptions = [
     { label: "Owner", value: "Owner" },
@@ -51,13 +51,16 @@ const AddRole = () => {
 
   // const roleOptions = ["Owner", "Manager", "Employee", "Viewer"];
 
-  const validationSchema = Yup.object({
-    userRole: Yup.string().required("User Role is required"),
-    userMobile: Yup.string()
-      .required("Phone is required")
-      .matches(/^\d{10}$/, "Phone must be 10 digits"),
-    userName: Yup.string().required("User Name is required"),
-  });
+  const getValidationSchema = (currentUserMobile) =>
+    Yup.object({
+      userRole: Yup.string().required("User Role is required"),
+      userMobile: Yup.string()
+        .required("Phone is required")
+        .matches(/^\d{10}$/, "Phone must be 10 digits")
+        .notOneOf([currentUserMobile], "You cannot use your own mobile number"),
+      userName: Yup.string().required("User Name is required"),
+    });
+
 
   const fetchUserData = async (phoneNumber, setFieldValue) => {
     if (timeoutId.current) {
@@ -98,6 +101,10 @@ const AddRole = () => {
       }
     }, 300);
   };
+
+
+
+  
 
   useEffect(() => {
     const handleBackPress = navigation.addListener("beforeRemove", (e) => {
@@ -188,7 +195,7 @@ const AddRole = () => {
           email: "",
           selectShop: selectedShop?.shopname || "default",
         }}
-        validationSchema={validationSchema}
+        validationSchema={getValidationSchema(userData?.user?.mobile)}
         onSubmit={async (values, { resetForm }) => {
           const { userMobile, userName, userRole, email, selectShop } = values;
           const dataToSend = {

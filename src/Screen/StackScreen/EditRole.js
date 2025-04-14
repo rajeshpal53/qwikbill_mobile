@@ -1,5 +1,11 @@
-import { useCallback, useContext, useEffect, useState } from "react";
-import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  RefreshControl,
+} from "react-native";
 import UserDataContext from "../../Store/UserDataContext";
 import {
   useFocusEffect,
@@ -7,7 +13,12 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { ButtonColor, deleteApi, readApi } from "../../Util/UtilApi";
+import {
+  ButtonColor,
+  deleteApi,
+  formatDate,
+  readApi,
+} from "../../Util/UtilApi";
 import { ShopContext } from "../../Store/ShopContext";
 import DropDownList from "../../UI/DropDownList";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
@@ -31,17 +42,24 @@ const EditRole = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { showSnackbar } = useSnackbar();
   const isFocused = useIsFocused();
-
+  const searchBarRef = useRef();
   const [searchmodal, setsearchmodal] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [searchedData, setSearchedData] = useState([]);
   const [searchCalled, setSearchCalled] = useState(false);
   const [visible, setVisible] = useState(false);
   const [roleId, setRoleId] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     searchdata();
   }, [searchQuery]);
+
+  const onRefresh = async () => {
+    setRefreshing(true); // Set refreshing state to true
+    await getRoleData(); // Fetch new data
+    setRefreshing(false); // Set refreshing state to false once done
+  };
 
   const getRoleData = async () => {
     setLoading(true);
@@ -89,36 +107,36 @@ const EditRole = () => {
 
   const HandleDeleteRole = async (roleId) => {
     console.log("Data of item is 345", roleId);
-      try {
-        setLoading(true);
-        const response = await deleteApi(`userRoles/${roleId}`);
-        console.log("GET ALL DATA IS125 ", response?.data);
-        if (response?.data) {
-          setRoleData((prevData) =>
-            prevData.filter((role) => role.id !== roleId)
-          );
-          console.log("GET ALL DATA IS response", response.data);
-        } else {
-          console.log("No data returned from delete API");
-        }
-      } catch (error) {
-        console.log("Unable to fetch Role data", error);
-      } finally {
-        setLoading(false);
-        setVisible(false)
-        // =======
-        //       if (roleId) {
-        //         const deleteResponse = await deleteApi(`roles/${roleId}`);
-        //         if (deleteResponse) {
-        //           showSnackbar("Role deleted successfully!", "success");
-        //           setRoleData((prev) => prev.filter((role) => role.id != roleId));
-        //         } else {
-        //           console.log("Failed to delete the offer. Response: ", deleteResponse);
-        //         }
-        //       } else {
-        //         console.log("Unable to get Id");
-        // >>>>>>> faizan
+    try {
+      setLoading(true);
+      const response = await deleteApi(`userRoles/${roleId}`);
+      console.log("GET ALL DATA IS125 ", response?.data);
+      if (response?.data) {
+        setRoleData((prevData) =>
+          prevData.filter((role) => role.id !== roleId)
+        );
+        console.log("GET ALL DATA IS response", response.data);
+      } else {
+        console.log("No data returned from delete API");
       }
+    } catch (error) {
+      console.log("Unable to fetch Role data", error);
+    } finally {
+      setLoading(false);
+      setVisible(false);
+      // =======
+      //       if (roleId) {
+      //         const deleteResponse = await deleteApi(`roles/${roleId}`);
+      //         if (deleteResponse) {
+      //           showSnackbar("Role deleted successfully!", "success");
+      //           setRoleData((prev) => prev.filter((role) => role.id != roleId));
+      //         } else {
+      //           console.log("Failed to delete the offer. Response: ", deleteResponse);
+      //         }
+      //       } else {
+      //         console.log("Unable to get Id");
+      // >>>>>>> faizan
+    }
   };
 
   const searchdata = () => {
@@ -166,7 +184,11 @@ const EditRole = () => {
     }
   }, [searchQuery, RoleData]);
 
-  return (
+  return loading ? (
+    <View style={{ flex: 1, justifyContent: "center" }}>
+      <ActivityIndicator size={"large"} />
+    </View>
+  ) : (
     <View style={styles.Main}>
       <View style={styles.container}>
         {/* Search Bar */}
@@ -177,7 +199,10 @@ const EditRole = () => {
                 <Searchbarwithmic
                   searchQuery={searchQuery}
                   setSearchQuery={setSearchQuery}
-                  placeholderText="Search User by name ..."
+                  setsearchmodal={setsearchmodal}
+                  setTranscript={setTranscript}
+                  placeholderText="Search User Role ..."
+                  refuser={searchBarRef}
                   searchData={searchData} // Pass searchData function
                 />
               </View>
@@ -188,7 +213,7 @@ const EditRole = () => {
             </>
           }
           data={filteredData} // Use filteredData instead of RoleData
-          keyboardShouldPersistTaps="handled"
+          // keyboardShouldPersistTaps="handled"
           renderItem={({ item }) => (
             <AllRoleDetailsCard
               item={item}
@@ -200,6 +225,14 @@ const EditRole = () => {
           keyExtractor={(item) =>
             item.id ? item.id.toString() : Math.random().toString()
           }
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#0a6846"]}
+              progressBackgroundColor={"#fff"}
+            />
+          }
           ListEmptyComponent={() =>
             !loading && RoleData.length <= 0 ? (
               <View
@@ -209,7 +242,7 @@ const EditRole = () => {
                   marginTop: "40%",
                 }}
               >
-                <NoDataFound textString={"No Users Found"} />
+                <NoDataFound textString={"No roles assigned "} />
               </View>
             ) : null
           }
@@ -263,10 +296,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchContainer: {
-    marginBottom: 10,
+    marginBottom: 2,
   },
   dropdownContainer: {
-    marginBottom: 8,
+    marginBottom: 5,
     paddingVertical: 3,
   },
   flatListContainer: {

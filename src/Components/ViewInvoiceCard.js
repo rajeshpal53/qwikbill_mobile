@@ -15,7 +15,7 @@ const ViewInvoiceCard = ({ invoice,navigation }) => {
         <Text style={styles.date}>{new Date(invoice.createdAt).toDateString()}</Text>
         <Text style={styles.date}>{invoice.address}</Text>
         <View style={styles.row}>
-          <Text style={styles.allText}>Subtotal:</Text>
+          <Text style={styles.allText}>Total Amount:</Text>
           <Text style={styles.allText}>₹{invoice.subtotal}</Text>
         </View>
         <View style={styles.row}>
@@ -23,7 +23,7 @@ const ViewInvoiceCard = ({ invoice,navigation }) => {
           <Text style={styles.allText}>₹{invoice.discount}</Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.allText}>Final Total:</Text>
+          <Text style={styles.allText}>Final Amount:</Text>
           <Text style={styles.finalTotal}>₹{invoice.finaltotal}</Text>
         </View>
         <View style={styles.row}>

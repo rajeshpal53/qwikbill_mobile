@@ -251,18 +251,21 @@ const Searchbarwithmic = ({
           value={searchQuery}
           right={() => (
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <TouchableOpacity
-                style={{ marginRight: 10 }}
-                onPress={() => {
-                  if (searchQuery.trim() !== "") {
-                    searchData(searchQuery);
-                  } else {
-                    refuser.current?.focus();
-                  }
-                }}
-              >
-                <MaterialIcons name="search" size={24} color="black" />
-              </TouchableOpacity>
+              {searchQuery.length > 0 && (
+                <TouchableOpacity
+                  style={{ marginRight: 10 }}
+                  onPress={() => {
+                    if (searchQuery.trim() !== "") {
+                      searchData(searchQuery);
+                    } else {
+                      refuser.current?.focus();
+                    }
+                  }}
+                >
+                  <MaterialIcons name="search" size={24} color="#007bff" />
+                </TouchableOpacity>
+              )}
+
               {searchQuery === "" ? (
                 <TouchableOpacity
                   style={{ marginRight: 10 }}
@@ -292,11 +295,7 @@ const Searchbarwithmic = ({
 // Styles for the search bar and mic button
 const styles = StyleSheet.create({
   wrapper: {
-    // flex: 1, // Ensure the wrapper takes the full screen height
-    // backgroundColor: "#fff",
-    // justifyContent: "center",
-    // alignItems: "center",
-    // paddingHorizontal: 10,
+    paddingHorizontal: 10,
   },
   container: {
     alignItems: "center",
@@ -304,43 +303,15 @@ const styles = StyleSheet.create({
     width: "100%",
     // borderWidth:2
   },
-  // searchBarContainer: {
-  //   flexDirection: "row",
-  //   alignItems: "center",
-  //   backgroundColor: "#f0f0f0",
-  //   borderRadius: 10,
-  //   width: "95%",
-  //   height: 48,
-  //   borderWidth: 1,
-  // },
-  // searchInput: {
-  //   flex: 1,
-  //   height: "100%",
-  //   paddingVertical: 0,
-  //   fontSize: 14,
-  //   borderWidth:2
-  // },
-  // iconContainer: {
-  //   paddingRight: 10,
-  //   marginLeft: 8,
-  // },
-  // languageButton: {
-  //   marginTop: 10,
-  //   justifyContent: "flex-end",
-  //   alignItems: "center",
-  // },
-  // languageButtonText: {
-  //   fontSize: 16,
-  // },
+
   searchbar: {
     height: 45, // Increase height to make sure the placeholder can be vertically centered
     borderRadius: 10,
-    backgroundColor: "#fff",
+    backgroundColor: "#EDEDED",
     // justifyContent: "center", // Vertically center the content
     // paddingVertical: 0, // Remove extra padding for centering
     marginVertical: 2,
-    // textAlignVertical: "center", // For Android: Vertically centers text
-    // paddingBottom:10,
+
     marginBottom: 10,
   },
   inputStyle: {
@@ -357,39 +328,69 @@ const styles = StyleSheet.create({
 export default Searchbarwithmic;
 
 {
-  /* <View style={styles.searchBarContainer}>
-<TouchableOpacity style={styles.iconContainer}>
-  <MaterialIcons name="search" size={24} color="black" />
-</TouchableOpacity>
-<TextInput
-  style={styles.searchInput}
-  placeholder="Search"
+  /* <Searchbar
+  ref={refuser || null}
+  style={styles.searchbar}
+  numberOfLines={1}
+  placeholder={SelectedPlaceholderText || "Search for ....."}
+  onFocus={() => {
+    setStopPlaceHolder(true);
+  }}
+  returnKeyType="search"
+  onSubmitEditing={() => {
+    if (showSearchedData) {
+      showSearchedData.current = true;
+    }
+    searchData(searchQuery);
+  }}
+  onIconPress={() => {
+    if (searchQuery.length > 0) {
+      searchData(searchQuery);
+    } else {
+      refuser.current?.focus(); // Focus input if search is empty
+    }
+  }}
+  inputStyle={styles.inputStyle}
+  onChangeText={(query) => {
+    setSearchQuery(query);
+    setCancelVisible(true);
+    if (query === "") {
+      setSelectedPlaceholderText(""); // Reset placeholder if search is cleared
+      setCharIndex(0);
+      fetchData?.();
+    }
+  }}
   value={searchQuery}
-  onChangeText={setSearchQuery}
-/>
-
-{searchQuery.length > 0 ? (
-  <TouchableOpacity
-    style={{ marginRight: 10 }}
-    onPress={() => setSearchQuery("")}
-  >
-    <MaterialIcons name="close" size={24} color="black" />
-  </TouchableOpacity>
-) : (
-  <TouchableOpacity
-    onPress={handleMicPress}
-    style={styles.iconContainer}
-  >
-    <MaterialIcons name="mic" size={24} color="black" />
-  </TouchableOpacity>
-)}
-</View> */
-}
-
-{
-  /* <TouchableOpacity onPress={toggleLanguage} style={styles.languageButton}>
-          <Text style={styles.languageButtonText}>
-            {language === "en-US" ? "Switch to Hindi" : "Switch to English"}
-          </Text>
-        </TouchableOpacity> */
+  right={() => (
+    <View style={{ flexDirection: "row", alignItems: "center" }}>
+      <TouchableOpacity
+        style={{ marginRight: 10 }}
+        onPress={() => {
+          if (searchQuery.trim() !== "") {
+            searchData(searchQuery);
+          } else {
+            refuser.current?.focus();
+          }
+        }}
+      >
+        <MaterialIcons name="search" size={24} color="black" />
+      </TouchableOpacity>
+      {searchQuery === "" ? (
+        <TouchableOpacity style={{ marginRight: 10 }} onPress={handleMicPress}>
+          <MaterialIcons name="mic" size={24} color="black" />
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          style={{ marginRight: 10 }}
+          onPress={() => {
+            setSearchQuery("");
+            fetchData?.();
+          }}
+        >
+          <MaterialIcons name="close" size={24} color="black" />
+        </TouchableOpacity>
+      )}
+    </View>
+  )}
+/> */
 }

@@ -3,35 +3,37 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Card } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; // for using icons
 import { useNavigation } from "@react-navigation/native"; // Import useNavigation hook
-import { ButtonColor, deleteApi, fontFamily, fontSize } from "../../Util/UtilApi";
+import {
+  ButtonColor,
+  deleteApi,
+  fontFamily,
+  fontSize,
+  formatDate,
+} from "../../Util/UtilApi";
 import EditRoleModal from "../../Components/Modal/EditRoleModal";
 import UserDataContext from "../../Store/UserDataContext";
 
-
-const AllRoleDetailsCard = ({ item, getRoleData , setRoleId, setVisible}) => {
+const AllRoleDetailsCard = ({ item, getRoleData, setRoleId, setVisible }) => {
   const [isEditModalVisible, setEditModalVisible] = useState(false);
   const [selectedRole, setselectedRole] = useState(null);
 
-
-  const {userData} = useContext(UserDataContext)
+  const { userData } = useContext(UserDataContext);
 
   useEffect(() => {
     console.log("DATA OF ITEM IS123 ", item);
   }, [item]);
 
   const HandleEditRole = (item) => {
-     setselectedRole(item);
+    setselectedRole(item);
     console.log("Edit item is ", item);
     setEditModalVisible(true);
-   
   };
 
-  const HandleRole = (item) =>{
-    console.log("Data of is is ", item)
-    setRoleId(item?.id)
+  const HandleRole = (item) => {
+    console.log("Data of is is ", item);
+    setRoleId(item?.id);
     setVisible(true);
-
-  }
+  };
 
   const closeEditModal = () => {
     setEditModalVisible(false);
@@ -67,11 +69,7 @@ const AllRoleDetailsCard = ({ item, getRoleData , setRoleId, setVisible}) => {
           </View>
           <View style={styles.row}>
             <View style={styles.iconContainer}>
-              <MaterialCommunityIcons
-                name="phone"
-                size={18}
-                color="#4B5563"
-              />
+              <MaterialCommunityIcons name="phone" size={18} color="#4B5563" />
             </View>
             <View>
               <Text style={styles.label}>
@@ -109,7 +107,37 @@ const AllRoleDetailsCard = ({ item, getRoleData , setRoleId, setVisible}) => {
             </View>
           </View>
 
+          {/* <View style={styles.row}>
+            <View style={styles.iconContainer}>
+              <MaterialCommunityIcons
+                name="calendar-plus"
+                size={18}
+                color="#4B5563"
+              />
+            </View>
+            <View>
+              <Text style={styles.label}>
+                CreatedAt:{" "}
+                {item?.role?.createdAt
+                  ? formatDate(item.role.createdAt)
+                  : "No Role Provided"}
+              </Text>
+            </View>
+          </View>
 
+          <View style={styles.row}>
+            <View style={styles.iconContainer}>
+              <MaterialCommunityIcons name="update" size={18} color="#4B5563" />
+            </View>
+            <View>
+              <Text style={styles.label}>
+                UpdatedAt:{" "}
+                {item?.role?.updatedAt
+                  ? formatDate(item?.role?.updatedAt)
+                  : "No Role Provided"}
+              </Text>
+            </View>
+          </View> */}
 
           {/* Buttons with Icons */}
           <View style={styles.buttonContainer}>
@@ -128,7 +156,7 @@ const AllRoleDetailsCard = ({ item, getRoleData , setRoleId, setVisible}) => {
 
             <TouchableOpacity
               style={[styles.button, styles.deleteButton]}
-              onPress={() => HandleRole(item) }
+              onPress={() => HandleRole(item)}
             >
               <MaterialCommunityIcons
                 name="trash-can"
@@ -170,7 +198,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     // marginBottom: 5,
     alignItems: "center",
-    marginTop:2
+    marginTop: 2,
   },
   iconContainer: {
     marginRight: 5,
@@ -187,8 +215,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-evenly",
+    justifyContent: "flex-end",
     marginTop: 12,
+    gap:20
   },
   button: {
     flexDirection: "row",
@@ -205,10 +234,10 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: fontSize.labelMedium,
     fontFamily: "Poppins-Regular",
-    marginLeft: 5,
+    marginLeft: 2,
   },
   icon: {
-    marginRight: 5,
+    marginRight: 2,
   },
 });
 

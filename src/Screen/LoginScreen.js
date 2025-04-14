@@ -60,13 +60,17 @@ const LoginScreen = ({ navigation }) => {
     //   .email("Invalid email address")
     //   .required("Email is required"),
     mobile: Yup.string()
-    .required("Phone number is required")
-    .matches(/^[0-9]+$/, "Phone number must be numeric")
-    .min(10, "Phone number must be at least 10 digits")
-    .max(12, "Phone number can be at most 15 digits"),
-    
+      .required("Phone number is required")
+      .matches(/^[0-9]+$/, "Phone number must be numeric")
+      .min(10, "Phone number must be at least 10 digits")
+      .max(12, "Phone number can be at most 15 digits"),
+
     password: Yup.string()
       .min(6, "Password must be at least 6 characters")
+      .max(20, "Password must be at most 20 characters")
+      .matches(/[A-Z]/, "Must include an uppercase letter")
+      .matches(/[0-9]/, "Must include a number")
+      .matches(/[^A-Za-z0-9]/, "Must include a special character")
       .required("Password is required"),
   });
 
@@ -151,7 +155,7 @@ const LoginScreen = ({ navigation }) => {
   //         resetForm();
   //       }
   // }
-  console.log("Testing case")
+  console.log("Testing case");
 
   const togglePasswordVisibility = () => {
     setPassIsSecure((prevState) => !prevState);
@@ -185,19 +189,18 @@ const LoginScreen = ({ navigation }) => {
       <Formik
         initialValues={{ mobile: "", password: "" }}
         validationSchema={validationSchema}
-        onSubmit={async(value, {resetForm})=>{
-          try{
-            await handleLogin(value,navigation)
+        onSubmit={async (value, { resetForm }) => {
+          try {
+            await handleLogin(value, navigation);
             // if (isPasskey) {
-            //   navigation.navigate("Passcode"); 
+            //   navigation.navigate("Passcode");
             // } else {
-            //   navigation.navigate("CreateNewPasscode"); 
+            //   navigation.navigate("CreateNewPasscode");
             // }
-      
-          }catch(error){
-            console.log("Unable to login ", error)
-          }finally{
-            resetForm()
+          } catch (error) {
+            console.log("Unable to login ", error);
+          } finally {
+            resetForm();
           }
         }}
       >
@@ -264,7 +267,7 @@ const LoginScreen = ({ navigation }) => {
                         }}
                       >
                         Manage your bills and payments effortlessly with
-                        Qwickbill. Our app ensures a seamless experience for
+                        QwikBill. Our app ensures a seamless experience for
                         tracking and paying your bills on time.
                       </Text>
                     </View>
@@ -327,11 +330,13 @@ const LoginScreen = ({ navigation }) => {
                     </View>
                     {/* <View style={{flex:1, backgroundColor:"green"}} ></View> */}
 
-
                     <View style={{ alignItems: "flex-end" }}>
                       <TouchableOpacity
-                        onPress={() => navigation.navigate("EnterNumberScreen",{ isForgetPassword: true })
-                      }
+                        onPress={() =>
+                          navigation.navigate("EnterNumberScreen", {
+                            isForgetPassword: true,
+                          })
+                        }
                       >
                         <Text
                           style={{
@@ -382,7 +387,6 @@ const LoginScreen = ({ navigation }) => {
                           Login
                         </Text>
                       </Button>
-                     
                     </View>
 
                     <View
