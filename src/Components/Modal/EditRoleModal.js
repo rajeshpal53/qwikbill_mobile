@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -32,7 +32,9 @@ const EditRoleModal = ({ visible, onClose, selectedRole }) => {
   const pickerRef = useRef();
   const [isDisabled, setIsDisabled] = useState(true);
   const { showSnackbar } = useSnackbar();
-  console.log("DATA OF SELECTED ", selectedRole?.role?.name);
+
+  const [currentUserRole, setcurrentUserRole] = useState("Manager");
+
   const roleOptions = [
     { label: "Owner", value: "owner" },
     { label: "Manager", value: "manager" },
@@ -51,6 +53,8 @@ const EditRoleModal = ({ visible, onClose, selectedRole }) => {
     //   .required("Email is required"),
   });
 
+  console.log("User role data is ", userData?.token);
+
   const getStatusFk = () => {
     if (AddRode == "Owner") {
       return 1;
@@ -64,6 +68,37 @@ const EditRoleModal = ({ visible, onClose, selectedRole }) => {
       return 5;
     }
   };
+
+  const getAssignableRoles = (userRole) => {
+    switch (userRole?.toLowerCase()) {
+      case "owner":
+        return roleOptions.filter((role) => role.value !== "owner");
+      case "manager":
+        return roleOptions.filter(
+          (role) =>
+            role.value === "manager" ||
+            role.value === "employee" ||
+            role.value === "viewer"
+        );
+      case "employee":
+        return roleOptions.filter(
+          (role) => role.value === "employee" || role.value === "viewer"
+        );
+      case "viewer":
+        return roleOptions.filter(
+          (role) => role.value === "viewer"
+        );
+      default:
+        return roleOptions;
+    }
+  };
+
+  console.log("DATA OF ROLE VALUE IS ", roleOptions);
+
+  useEffect(() => {
+    const roleName = selectedRole?.role?.name?.toLowerCase(); // Normalize here
+    setcurrentUserRole(roleName);
+  }, [selectedRole]);
 
   if (loading) {
     <View style={styles.loaderContainer}>
@@ -187,7 +222,7 @@ const EditRoleModal = ({ visible, onClose, selectedRole }) => {
                 {/* User Role Dropdown */}
                 <View style={{ marginBottom: 10 }}>
                   <Text style={styles.label}>User Role</Text>
-                  <Picker
+                  {/* <Picker
                     selectedValue={values.userRole || selectedRole?.role?.value} // Ensure it matches Picker.Item value
                     onValueChange={(itemValue) => {
                       setFieldValue("userRole", itemValue);
@@ -206,6 +241,28 @@ const EditRoleModal = ({ visible, onClose, selectedRole }) => {
                           />
                         ))
                       : null}
+                  </Picker> */}
+                  <Picker
+                    selectedValue={
+                      values.userRole?.toLowerCase() ||
+                      selectedRole?.role?.name?.toLowerCase() ||
+                      ""
+                    }
+                    onValueChange={(itemValue) => {
+                      setFieldValue("userRole", itemValue);
+                      SetAddRole(itemValue);
+                    }}
+                    ref={pickerRef}
+                    style={{ width: "100%", height: 60 }}
+                  >
+                    {/* <Picker.Item label="Select Role" value="" /> */}
+                    {getAssignableRoles(currentUserRole).map((role, index) => (
+                      <Picker.Item
+                        key={index}
+                        label={role?.label || "Unknown Role"}
+                        value={role?.value || ""}
+                      />
+                    ))}
                   </Picker>
                   {touched.userRole && errors.userRole && (
                     <Text style={styles.errorText}>{errors.userRole}</Text>

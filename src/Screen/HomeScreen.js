@@ -131,7 +131,7 @@ export default function HomeScreen({ navigation, noItemData }) {
   //   }
   // }, [currentStep, userSkipped]);
 
-
+console.log("DATA F USER IS ",userData)
 
   useEffect(() => {
     const checkTourStatus = async () => {
