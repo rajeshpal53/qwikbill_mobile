@@ -126,7 +126,10 @@ const AddProduct = ({ navigation }) => {
             try {
               // Create a new product
               const response = await createApi(`products/`, ProductData);
-              if (response?.data) {
+
+              console.log("Full response from createApi:", response);
+
+              if (response) {
                 showSnackbar("Product Added Successfully", "success");
                 resetForm();
                 navigation.goBack();
@@ -271,28 +274,7 @@ const AddProduct = ({ navigation }) => {
                 )}
             </View>
 
-            {/* Suggestions for HSN Code
-            {showHsnOptions && (
-              <View style={styles.suggestionsContainer}>
-                <ScrollView style={styles.suggestionsList}>
-                  {options.map((option, index) => (
-                    <React.Fragment key={index}>
-                      <TouchableOpacity
-                        style={styles.suggestionItem}
-                        onPress={() => {
-                          handleChange("HSNCode")(option.taxName);
-                          handleChange("taxValue")(option.taxValue.toString());
-                          setShowHsnOptions(false);
-                        }}
-                      >
-                        <Text>{option.taxName}</Text>
-                      </TouchableOpacity>
-                    </React.Fragment>
-                  ))}
-                </ScrollView>
-              </View>
-            )} */}
-
+           
             {/* Submit Button */}
             <TouchableOpacity
               style={styles.submitButton}

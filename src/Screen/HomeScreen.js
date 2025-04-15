@@ -39,6 +39,7 @@ import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { useFonts } from "expo-font";
 import UserDataContext from "../Store/UserDataContext";
 import { ShopDetailContext } from "../Store/ShopDetailContext";
+import { RefreshControl } from "react-native-gesture-handler";
 import {
   TourGuideProvider,
   TourGuideZone,
@@ -82,9 +83,11 @@ export default function HomeScreen({ navigation, noItemData }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [isTourGuideActive, setIsTourGuideActive] = useState(false);
   const { canStart, start, stop, eventEmitter } = useTourGuideController();
-  const [bulkUploadModalVisible, setBulkUploadModalVisible] = useState(false);
+  const [bulkUploadModalVisible, setBulkUploadModalVisible] = useState(false)
+  const [refreshing, setRefreshing] = useState(false);
   const [userSkipped, setUserSkipped] = useState(false);
   const [ready, setReady] = useState(false);
+
 
   useEffect(() => {
     console.log("allshops in homescreen 1, ", allShops);
@@ -133,6 +136,7 @@ export default function HomeScreen({ navigation, noItemData }) {
 
 console.log("DATA F USER IS ",userData)
 
+
   useEffect(() => {
     const checkTourStatus = async () => {
       try {
@@ -154,9 +158,9 @@ console.log("DATA F USER IS ",userData)
       }
     };
 
+
     checkTourStatus();
   }, []);
-
 
   useEffect(() => {
     const getItem = async () => {
@@ -173,37 +177,51 @@ console.log("DATA F USER IS ",userData)
     getItem();
   }, []);
 
-  useEffect(() => {
-    const venderStatus = async () => {
-      try {
-        setIsLoading(true);
-        setVendorStatus(null);
+  
+  const fetchVendorStaus = async () => {
+    try {
+      setIsLoading(true);
+      setVendorStatus(null);
 
-        const response = await readApi(
-          `invoice/getVendorStats/${selectedShop.id}`
-        );
+      const response = await readApi(
+        `invoice/getVendorStats/${selectedShop.id}`
+      );
 
-        if (response && response.success) {
-          console.log("Dashboard Vendor Status Response:", response);
-          setVendorStatus({ ...response });
-          await AsyncStorage.setItem("vendorStatus", JSON.stringify(response));
-        } else {
-          console.log("Something went wrong, please try again!");
-          setVendorStatus({});
-          await AsyncStorage.removeItem("vendorStatus"); // Clear AsyncStorage on error
-        }
-      } catch (error) {
-        console.log("Unable to get vendor dashboard data", error);
+      if (response && response.success) {
+        console.log("Dashboard Vendor Status Response:", response);
+        setVendorStatus({ ...response });
+        await AsyncStorage.setItem("vendorStatus", JSON.stringify(response));
+      } else {
+        console.log("Something went wrong, please try again!");
         setVendorStatus({});
-      } finally {
-        setIsLoading(false);
+        await AsyncStorage.removeItem("vendorStatus"); // Clear AsyncStorage on error
       }
-    };
+    } catch (error) {
+      console.log("Unable to get vendor dashboard data", error);
+      setVendorStatus({});
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
 
     if (selectedShop?.id && userData?.user?.mobile) {
-      venderStatus();
+      fetchVendorStaus();
     }
   }, [userData?.user?.mobile, selectedShop?.id, isFocused]);
+
+
+  const onRefresh = async () => {
+    try {
+      setRefreshing(true);
+      await fetchVendorStaus()
+    } catch (error) {
+      console.error('Refresh Error:', error);
+    } finally {
+      setRefreshing(false);  // 🔑 Always stop the loader
+    }
+  };
 
   const total =
     (vendorStatus?.totalSales || 0) +
@@ -218,8 +236,9 @@ console.log("DATA F USER IS ",userData)
     if (Screen === "CreateShopScreen") {
       navigation.navigate(Screen, { isHome: false });
     } else if (Screen === "bulkUpload") {
-      setBulkUploadModalVisible(true);
-    } else {
+      setBulkUploadModalVisible(true)
+    }
+    else {
       console.log("hi");
       // navigation.navigate("StackNavigator", { screen: Screen });
       navigation.navigate(Screen, { startTour: true });
@@ -243,6 +262,10 @@ console.log("DATA F USER IS ",userData)
     <SafeAreaView style={styles.safeContainer}>
       <ScrollView
         contentContainerStyle={styles.scrollView}
+        scrollEnabled={allShops && allShops.length > 0} // Disable scroll if allShops exists
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         showsVerticalScrollIndicator={false}
         // scrollEnabled={allShops && allShops.length > 0} // Disable scroll if allShops exists
       >
@@ -315,7 +338,6 @@ console.log("DATA F USER IS ",userData)
               style={{
                 // flex: allShops && allShops.length > 0 ? 1 : 0.6,
                 marginTop: allShops && allShops.length > 0 ? 5 : 1,
-                // borderWidth: 2,
               }}
             >
               <View
@@ -346,36 +368,31 @@ console.log("DATA F USER IS ",userData)
                   <DropDownList options={allShops} />
                 </View>
               </View>
+            </View>
 
-              <View style={{marginTop:28}}>
-                {allShops.length > 0 && (
-                  <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={
-                      {
-                        // paddingHorizontal: "5%",
-                      }
-                    }
-                  >
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        gap: 7,
-                        height: height * 0.09,
-                        marginTop: "3%",
-                        marginBottom: "4%",
-                      }}
-                    >
-                      <StatCard
-                        title={t("Total Sales")}
-                        value={`$${vendorStatus?.totalSales ?? "N/A"}`}
-                      />
-                      <StatCard
-                        title={t("Total Products")}
-                        value={vendorStatus?.numberOfProducts ?? "N/A"}
-                      />
+            {/* vendorStatus == null */}
+            {allShops && allShops.length > 0 && vendorStatus.numberOfProducts != 0 && (
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{
 
+                  // paddingHorizontal: "5%",
+
+                }}
+              >
+                <View style={{ flexDirection: "row", gap: 7, height: height * 0.09, marginTop: "8%", marginBottom: "-4%" }}>
+                  <StatCard title="Total Sales" value={`$${vendorStatus?.totalSales ?? "N/A"}`} />
+                  <StatCard title="Total Products" value={vendorStatus?.numberOfProducts ?? "N/A"} />
+
+                  <StatCard title="Active Invoices" value={vendorStatus?.activeInvoices ?? "N/A"} />
+                  <StatCard title="New Customers" value={vendorStatus?.newCustomers ?? "N/A"} />
+                  <StatCard title="Total Invoices" value={vendorStatus?.totalInvoices ?? "N/A"} />
+
+
+                </View>
+              </ScrollView>
+            )}
                       <StatCard
                         title={t("Active Invoices")}
                         value={vendorStatus?.activeInvoices ?? "N/A"}
@@ -406,7 +423,10 @@ console.log("DATA F USER IS ",userData)
               </View>
             </View>
 
-            <View style={{ flex: 3 }}>
+            <View style={{
+              // flex: 3
+              flex: total ? 3 : 7
+            }}>
               {allShops?.length > 0 ? (
                 <FlatList
                   style={styles.flatList}
@@ -481,9 +501,12 @@ console.log("DATA F USER IS ",userData)
                 message="Hey Provider Please Add Products in your Shop"
                 heading="Add Products"
                 buttonTitle="Add Products"
+
               />
             )}
+
             <View>
+
               {bulkUploadModalVisible && (
                 <FileUploadModal
                   visible={bulkUploadModalVisible}
@@ -743,4 +766,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#000",
   },
+
 });

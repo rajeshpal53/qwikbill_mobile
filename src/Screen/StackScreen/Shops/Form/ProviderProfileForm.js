@@ -61,7 +61,8 @@ const ProviderProfileForm = ({
           uploadFieldName={profileImageField}
           type={"rounded"}
           camera={true}
-          gallary={isAdmin ? true : false}
+         // gallary={isAdmin ? true : false}
+         gallary={true}
         />
         {touched.profileImage && errors.profileImage && (
           <Text style={{ color: "red", textAlign: "center" }}>

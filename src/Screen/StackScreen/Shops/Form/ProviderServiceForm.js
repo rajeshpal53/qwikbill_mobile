@@ -1,5 +1,5 @@
-import { Pressable, StyleSheet, Text, View,ScrollView  } from "react-native";
-import React, { useRef, useState } from "react";
+import { Pressable, StyleSheet, Text, View, ScrollView } from "react-native";
+import React, { useRef, useState, useEffect } from "react";
 import { Checkbox, Divider, TextInput } from "react-native-paper";
 import { useTranslation } from "react-i18next";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -35,6 +35,9 @@ const ProviderServiceForm = ({
   const { showSnackbar } = useSnackbar();
   const richText = useRef();
   const [editorContent, setEditorContent] = useState("Hello THere");
+  const [isEditorReady, setEditorReady] = useState(false);
+
+
 
   const handleHeightChange = (height) => {
     // if (height > editorHeight) {
@@ -45,6 +48,8 @@ const ProviderServiceForm = ({
   };
 
   console.log("hellow service");
+  console.log(richText.current, "richtext of current ")
+  console.log(editorContent, " editor content is ")
 
   const setLocationFields = async (data, setFieldValue) => {
     if (data?.latitude && data?.longitude) {
@@ -71,9 +76,26 @@ const ProviderServiceForm = ({
     setFieldValue("editorContent", content); // Update Formik state (if needed)
   };
 
+
+
+  useEffect(() => {
+    if (richText.current && editorContent && isEditorReady) {
+      try {
+        richText.current.setContentHTML(editorContent);
+      } catch (err) {
+        console.error("RichEditor Error:", err);
+      }
+    }
+  }, [isEditorReady]);
+
+
+
   return (
     <View style={{ gap: 10 }}>
-      <ScrollView>
+      <ScrollView
+        nestedScrollEnabled={true}
+        ref={scrollViewRef}
+      >
         <View style={{ marginVertical: 20 }}>
           <ServiceImagePicker
             image={values?.shopImage}
@@ -84,12 +106,12 @@ const ProviderServiceForm = ({
         </View>
         <View>
           <TextInput
-            label={t("Shop Name") +" *"}
+            label={t("Shop Name") + " *"}
             mode={textInputMode}
             style={{ backgroundColor: "transparent" }}
             onChangeText={handleChange("shopName")}
             onBlur={handleBlur("shopName")}
-            value={values.shopName}
+            value={values.shopName || ""}
             error={touched.shopName && errors.shopName}
           />
           {touched.shopName && errors.shopName && (
@@ -106,7 +128,7 @@ const ProviderServiceForm = ({
         }}
         > */}
           <TextInput
-            label={t("Shop Address") +" *"}
+            label={t("Shop Address") + " *"}
             // disabled = { (!values?.latitude || values?.latitude === "") ? true : false}
             mode={textInputMode}
             style={{ backgroundColor: "transparent" }}
@@ -135,72 +157,47 @@ const ProviderServiceForm = ({
             <Text style={{ color: "red" }}>{errors.gstNumber}</Text>
           )}
         </View>
-      {/* <View
-    style={{
-      height: 300,
-      backgroundColor: "#fff",
-      elevation: 5,
-    }}
-  >
-    <View>
-      <RichToolbar
-        editor={richText}
-        actions={[
-          actions.setBold,
-          actions.setItalic,
-          actions.setUnderline,
-          actions.insertBulletsList,
-          actions.insertOrderedList,
-          actions.insertLink,
-          actions.undo,
-          actions.redo,
-        ]}
-      />
-    </View>
 
-    <ScrollView
-      ref={scrollViewRef}
-      nestedScrollEnabled={true}
-      contentContainerStyle={{ flexGrow: 1 }}
-      keyboardShouldPersistTaps="handled"
-    >
-      <RichEditor
-        ref={richText}
-        placeholder="Start writing here..."
-        initialContentHTML={editorContent || ""}
-        onChange={(text) => setEditorContent(text)}
-        style={{ minHeight: 200 }} // Add fixed height
-        onHeightChange={handleHeightChange}
-      />
-    </ScrollView>
-  </View> */}
-   <View style={{marginTop:20}}>
-      <RichToolbar
-        editor={richText}
-        actions={[
-          actions.setBold,
-          actions.setItalic,
-          actions.setUnderline,
-          actions.insertBulletsList,
-          actions.insertOrderedList,
-          actions.insertLink,
-          actions.undo,
-          actions.redo,
-        ]}
-      />
-       {/* <RichEditor
-        ref={richText}
-        placeholder="Start writing here..."
-        initialContentHTML={ "heloo there just for check"}
-        // onChange={(text) => setEditorContent(text)}
-        style={{ minHeight: 200 }} // Add fixed height
-        // onHeightChange={handleHeightChange}
-      /> */}
-    </View>
+         
+        <View style={{ height: 300, backgroundColor: "#fff", elevation: 5 }}>
+          
+          <>
+            <RichEditor
+              key="editor"
+              ref={richText}
+              style={{ height: 200 }}
+              placeholder="Start writing here..."
+              useContainer={true}
+
+              initialContentHTML={editorContent}
+              onChange={handleEditorChange}
+              editorInitializedCallback={() => {
+                console.log("Editor Initialized");
+                setEditorReady(true); 
+              }}
+            />
+            <RichToolbar
+              editor={richText}
+              actions={[
+                actions.setBold,
+                actions.setItalic,
+                actions.setUnderline,
+                actions.insertBulletsList,
+                actions.insertOrderedList,
+                actions.insertLink,
+                actions.undo,
+                actions.redo,
+              ]}
+            />
+          </>
+
+
+        </View>
 
 
 
-{/* <View
+
+        {/* <View
       style={{
         height: 300,
         backgroundColor: "#fff",
@@ -264,91 +261,10 @@ const ProviderServiceForm = ({
             <Divider
               style={{ width: "70%", height: 0.2, alignSelf: "center" }}
             />
-            {/* <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <GenericSwitch
-            label="Home Delivery"
-            value={values?.homeDelivery}
-            onValueChange={(newValue) => {
-              setFieldValue("homeDelivery", newValue);
-            }}
-            color="#0a6846"
-            containerStyle={styles.switchComponentStyle}
-            labelStyle={{ fontFamily: "Poppins-Regular" }}
-          />
-
-          {isAdmin && (
-          <GenericSwitch
-            label="Is Verified"
-            value={values?.isVerified}
-            onValueChange={(newValue) => {
-              setFieldValue("isVerified", newValue);
-            }}
-            color="#0a6846"
-            containerStyle={styles.switchComponentStyle}
-            labelStyle={{ fontFamily: "Poppins-Regular" }}
-          />
-          )}
-        </View> */}
-          </View>
+                     </View>
         )}
 
-        {/* <View style={{ padding: 5 }}>
-        <View
-          style={{
-            //  height: 100, width: 100
-            height: 300,
-            backgroundColor: "#fff",
-            elevation: 5,
-          }}
-        >
-          <View style={{ width: "100%" }}>
-            <RichToolbar
-              editor={richText}
-              actions={[
-                actions.setBold,
-                actions.setItalic,
-                actions.setUnderline,
-                actions.insertBulletsList,
-                actions.insertOrderedList,
-                actions.insertLink,
-                actions.undo,
-                actions.redo,
-              ]}
-            />
-          </View>
 
-          <ScrollView
-            ref={scrollViewRef}
-            // scrollEnabled={true}
-            nestedScrollEnabled={true}
-            contentContainerStyle={{ flexGrow: 1 }}
-            // style={{padding:5}}
-          >
-            <RichEditor
-              ref={richText}
-              // style={{ flex: 1 }}
-              placeholder="Start writing here..."
-              initialContentHTML={editorContent || ""}
-              onChange={(text) => {
-                setEditorContent(text);
-                // handleContentChange();
-              }}
-              // scrollEnabled={true}
-              // scrollEnabled={true}
-              onHeightChange={handleHeightChange}
-              // onScroll={() => console.log("scrolling ")}
-            />
-          </ScrollView>
-
-
-        </View>
-      </View> */}
       </ScrollView>
     </View>
   );
