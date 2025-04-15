@@ -251,7 +251,7 @@ const Searchbarwithmic = ({
           value={searchQuery}
           right={() => (
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={{ marginRight: 10 }}
                 onPress={() => {
                   if (searchQuery.trim() !== "") {
@@ -262,7 +262,9 @@ const Searchbarwithmic = ({
                 }}
               >
                 <MaterialIcons name="search" size={24} color="black" />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
+
+
               {searchQuery === "" ? (
                 <TouchableOpacity
                   style={{ marginRight: 10 }}
