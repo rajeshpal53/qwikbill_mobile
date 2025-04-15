@@ -125,6 +125,11 @@ export default function PasscodeScreen({ navigation }) {
   const handleNavigation = async () => {
     // const {previousLoginTime} = await storeTime();
     // storeTime();
+
+    if (enteredPasscode.length !== 4){
+      return Alert.alert("Invalid Passcode", "Passcode must be 4 digits.");
+
+    }
     await storeCurrentTime();
 
     if (enteredPasscode === passkey) {
@@ -146,6 +151,7 @@ export default function PasscodeScreen({ navigation }) {
       return Alert.alert("failed to login use phone lock or retry");
     }
   };
+
   const handleLocalAuthentication = async () => {
     const result = await LocalAuthentication.authenticateAsync({
       promptMessage: "Authenticate",
@@ -233,7 +239,7 @@ export default function PasscodeScreen({ navigation }) {
                   />
                 </View>
 
-                <View
+                {/* <View
                   style={{
                     // backgroundColor:"pink",
                     alignItems: "center",
@@ -249,7 +255,8 @@ export default function PasscodeScreen({ navigation }) {
                   <Text style={{ color: "white", letterSpacing: 3 }}>
                     Billing Software
                   </Text>
-                </View>
+                </View> */}
+                
               </View>
 
               <Card style={styles.card}>
@@ -263,16 +270,16 @@ export default function PasscodeScreen({ navigation }) {
                     </View>
                   )}
 
-                  <View style={{ alignItems: "center", gap: 5 }}>
-                    <Text variant="titleSmall">Welcome</Text>
+                  <View style={{ alignItems: "center", gap: 6 , }}>
+                    <Text variant="titleMedium">Welcome</Text>
                     <Text
                       variant="titleMedium"
                       style={{ color: "#392de0" }}
-                    >{`${loginDetail1?.user?.name} ${loginDetail1?.user?.surname || ""}`}</Text>
+                    >{`${loginDetail1?.user?.name}${loginDetail1?.user?.surname || ""}`}</Text>
                   </View>
 
                   <View style={{ gap: 5 }}>
-                    <View style={styles.buttonContainer}>
+                    {/* <View style={styles.buttonContainer}>
                       <Button
                         style={{
                           width: "50%",
@@ -306,7 +313,7 @@ export default function PasscodeScreen({ navigation }) {
                       >
                         DOMAIN
                       </Button>
-                    </View>
+                    </View> */}
 
                     <View>
                       <Formik
@@ -333,12 +340,13 @@ export default function PasscodeScreen({ navigation }) {
                             <View style={{ width: "72%" }}>
                               <TextInput
                                 style={{ backgroundColor: "#f4f4f9" }}
-                                placeholder="Enter App Passcode"
+                                placeholder="Enter app passcode"
                                 keyboardType="numeric"
                                 secureTextEntry={secureTextEntry}
                                 onChangeText={(value) => {
                                   setenteredPasscode(value);
                                 }}
+                                maxLength={4}
                               />
                             </View>
 
@@ -401,12 +409,14 @@ export default function PasscodeScreen({ navigation }) {
                             <View />
                           </View>
 
-                          <View style={{ width: "100%" }}>
+                          <View style={{ width: "100%",marginTop:5 }}>
                             <Button
                               textColor="white"
-                              buttonColor="grey"
-                              style={{ borderRadius: 0 }}
+                             // buttonColor="grey"
+                            // buttonColor={enteredPasscode.length === 4 ? "grey" : "#26a0df"}
+                             style={[{ backgroundColor:enteredPasscode.length === 4 ? "#26a0df" : "rgba(0,0,0,0.3)",}]}
                               onPress={handleOnLoginPress}
+                              disabled={enteredPasscode.length !== 4}
                             >
                               Login
                             </Button>
@@ -418,8 +428,8 @@ export default function PasscodeScreen({ navigation }) {
                   <TouchableOpacity
                     onPress={() => navigation.navigate("forgetPasscode")}
                   >
-                    <Text variant="titleSmall" style={{ color: "#6dbbc7" }}>
-                      Forgot App Passcode?
+                    <Text variant="titleSmall" style={{ color: "#6dbbc7" ,marginTop:8}}>
+                      Forgot app passcode?
                     </Text>
                   </TouchableOpacity>
                 </Card.Content>
@@ -461,14 +471,14 @@ const styles = StyleSheet.create({
     // zIndex: 1,
     // marginHorizontal: 9,
     // backgroundColor: "yellow",
-    borderRadius: 0,
+    borderRadius: 8,
   },
   img: {
-    height: 75,
-    width: 75,
-    elevation: 2,
-    // alignSelf: "center",
-    // marginVertical: 10,
+    height: 175,
+    width: 200,
+   // elevation: 2,
+    alignSelf: "center",
+   
   },
   tooltip: {
     backgroundColor: "white",
@@ -492,8 +502,8 @@ const styles = StyleSheet.create({
     objectFit: "fill",
   },
   myShopImageContainer: {
-    width: "30%",
-    height: "20%",
+    width: "35%",
+    height: "25%",
     // marginTop: 10,
   },
   scrollViewChild: {

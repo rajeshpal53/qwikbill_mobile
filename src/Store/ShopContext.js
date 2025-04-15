@@ -14,7 +14,7 @@ export const ShopProvider = ({ children }) => {
   const { userData } = useContext(UserDataContext);
   const [loader, setloader] = useState(false);
 
-  console.log("SELECTED SHOP IS ", selectedShop);
+  console.log("SELECTED SHOP IS ", selectedShop?.id);
 
   console.log("USER DATA IS 1578", userData);
 
@@ -31,6 +31,7 @@ export const ShopProvider = ({ children }) => {
         console.log("response of products in shop context is ", response);
         console.log(`${API_BASE_URL}vendors/getVendorsByUserId/${id}`);
 
+       
 
         const hasProducts = response.some((shop) => shop.product?.length > 0);
 
@@ -50,21 +51,45 @@ export const ShopProvider = ({ children }) => {
     }
   }, [userData]);
 
+
+
+  useEffect(() => {
+    const checkSelectedShopProducts = async (id) => {
+      if (!selectedShop) return;
+
+      try {
+        const response = await readApi(`vendors/getVendorsByUserId/${id}`);
+        console.log("Fetched selected shop data:", response);
+
+        // Find the shop that matches the selected shop
+        if (!Array.isArray(response) || response.length === 0) {
+          setNoItemModal(false); // No vendors → don't show modal
+          return;
+        }
   
 
-  const checkSelectedShopProducts = async (id) => {
-    try {
-      const response = await readApi(`vendors/getVendorsByUserId/${id}`);
-      console.log("Fetched selected shop data:", response);
+        const hasShopname = response.some(shop => shop.shopname?.trim());
+        if (!hasShopname) {
+          setNoItemModal(false); // No shopname at all → don't show modal
+          return;
+        }
   
-      const hasProducts = response?.product?.length > 0;
-      setNoItemModal(!hasProducts); // if no products, show modal
-    } catch (err) {
-      console.log("Error checking products for selected shop:", err);
-      setNoItemModal(true); // fallback: show modal
-    }
-  };
-  
+        const matchedShop = response.find(
+          (shop) => shop.shopname === selectedShop.shopname
+        );
+        
+        const hasProducts = matchedShop?.product?.length > 0;
+        setNoItemModal(!hasProducts); // if no products, show modal
+      } catch (err) {
+        console.log("Error checking products for selected shop:", err);
+        setNoItemModal(true); // fallback: show modal
+      }
+    };
+
+    checkSelectedShopProducts(userData?.user?.id)
+  }, [selectedShop])
+
+
 
 
 
@@ -139,14 +164,7 @@ export const ShopProvider = ({ children }) => {
         await AsyncStorage.setItem("selectedShop", JSON.stringify(response[0]));
       }
 
-      // if (response?.length > 0) {
-      //   console.log("Inside if condition")
-      //   setAllShops(response);
-      //   await AsyncStorage.setItem("allShops", JSON.stringify(response));
-      //   setSelectedShop(response[0]); // Set first shop as default
-      //   console.log("selectedShop setting is , ", response[0]);
-      //   await AsyncStorage.setItem("selectedShop", JSON.stringify(response[0]));
-      // }
+
     } catch (error) {
       console.log("error getting shops from server is , ", error);
       setloader(false);
@@ -167,17 +185,12 @@ export const ShopProvider = ({ children }) => {
 
     if (shop) {
       await AsyncStorage.setItem("selectedShop", JSON.stringify(shop));
-      await checkSelectedShopProducts(userData?.user?.id)
     } else {
       await AsyncStorage.removeItem("selectedShop");
     }
   }
 
-  // if (loader) {
-  //   <View style={{ flex: 1, justifyContent: "center" }}>
-  //     <ActivityIndicator size={"large"}></ActivityIndicator>
-  //   </View>;
-  // }
+
 
   return (
     <ShopContext.Provider

@@ -32,6 +32,7 @@ import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { useFonts } from "expo-font";
 import UserDataContext from "../Store/UserDataContext";
 import { ShopDetailContext } from "../Store/ShopDetailContext";
+import { RefreshControl } from "react-native-gesture-handler";
 import {
   TourGuideProvider,
   TourGuideZone,
@@ -46,7 +47,7 @@ import ConfirmModal from "../Modal/ConfirmModal";
 import { useTranslation } from "react-i18next";
 import FileUploadModal from "../Components/BulkUpload/FileUploadModal"
 export default function HomeScreen({ navigation, noItemData }) {
-  const{t}=useTranslation()
+  const { t } = useTranslation()
   const { currentLoginTime, lastLoginTime, storeTime } =
     useContext(LoginTimeContext);
   // const [lastLoginTime, setLastLoginTime] = useState(route.params.previousLoginTime);
@@ -70,7 +71,10 @@ export default function HomeScreen({ navigation, noItemData }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [isTourGuideActive, setIsTourGuideActive] = useState(false);
   const { canStart, start, stop, eventEmitter } = useTourGuideController();
-  const [bulkUploadModalVisible,setBulkUploadModalVisible]=useState(false)
+  const [bulkUploadModalVisible, setBulkUploadModalVisible] = useState(false)
+  const [refreshing, setRefreshing] = useState(false);
+
+
 
   useEffect(() => {
     console.log("allshops in homescreen 1, ", allShops);
@@ -88,38 +92,35 @@ export default function HomeScreen({ navigation, noItemData }) {
 
 
 
-  // useEffect(() => {
-  //   const checkIfTourSeen = async () => {
-  //     try {
-  //       const hasSeenTour = await AsyncStorage.getItem("hasSeenTour");
-  //       if (!hasSeenTour && canStart) {
-  //         start();
-  //       }
-  //     } catch (error) {
-  //       console.log("Error checking tour guide status", error);
-  //     }
-  //   };
+
+  useEffect(() => {
+    const checkIfTourSeen = async () => {
+      try {
+        const hasSeenTour = await AsyncStorage.getItem("hasSeenTour");
+        if (!hasSeenTour && canStart) {
+          start();
+        }
+      } catch (error) {
+        console.log("Error checking tour guide status", error);
+      }
+    };
 
 
-  //   checkIfTourSeen();
-  // }, [canStart]);
+    checkIfTourSeen();
+  }, [canStart]);
 
 
 
-//   useEffect(() => {
-//     // Start tour guide when entering the Home screen
-//     setIsTourGuideActive(true);
-// //   const goToHandler = (Screen) => {
-// //     // navigation.navigate("wertone", {screen:'CreateInvoice'});
-// //     // console.log("Pra ", item)
-// //     if (Screen === "CreateShopScreen") {
-// //       navigation.navigate(Screen, { isHome: false });
-// //     }
+  useEffect(() => {
+    // Start tour guide when entering the Home screen
+    setIsTourGuideActive(true);
 
-//     return () => {
-//       setIsTourGuideActive(false);
-//     };
-//   }, []);
+
+    return () => {
+      setIsTourGuideActive(false);
+    };
+  }, []);
+
 
   // console.log("noItemModal  is ",noItemModal)  
   // console.log("set no item moal in tab",setNoItemModal)
@@ -148,37 +149,51 @@ export default function HomeScreen({ navigation, noItemData }) {
     getItem();
   }, []);
 
-  useEffect(() => {
-    const venderStatus = async () => {
-      try {
-        setIsLoading(true);
-        setVendorStatus(null);
+  
+  const fetchVendorStaus = async () => {
+    try {
+      setIsLoading(true);
+      setVendorStatus(null);
 
-        const response = await readApi(
-          `invoice/getVendorStats/${selectedShop.id}`
-        );
+      const response = await readApi(
+        `invoice/getVendorStats/${selectedShop.id}`
+      );
 
-        if (response && response.success) {
-          console.log("Dashboard Vendor Status Response:", response);
-          setVendorStatus({ ...response });
-          await AsyncStorage.setItem("vendorStatus", JSON.stringify(response));
-        } else {
-          console.log("Something went wrong, please try again!");
-          setVendorStatus({});
-          await AsyncStorage.removeItem("vendorStatus"); // Clear AsyncStorage on error
-        }
-      } catch (error) {
-        console.log("Unable to get vendor dashboard data", error);
+      if (response && response.success) {
+        console.log("Dashboard Vendor Status Response:", response);
+        setVendorStatus({ ...response });
+        await AsyncStorage.setItem("vendorStatus", JSON.stringify(response));
+      } else {
+        console.log("Something went wrong, please try again!");
         setVendorStatus({});
-      } finally {
-        setIsLoading(false);
+        await AsyncStorage.removeItem("vendorStatus"); // Clear AsyncStorage on error
       }
-    };
+    } catch (error) {
+      console.log("Unable to get vendor dashboard data", error);
+      setVendorStatus({});
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
 
     if (selectedShop?.id && userData?.user?.mobile) {
-      venderStatus();
+      fetchVendorStaus();
     }
   }, [userData?.user?.mobile, selectedShop?.id, isFocused]);
+
+
+  const onRefresh = async () => {
+    try {
+      setRefreshing(true);
+      await fetchVendorStaus()
+    } catch (error) {
+      console.error('Refresh Error:', error);
+    } finally {
+      setRefreshing(false);  // 🔑 Always stop the loader
+    }
+  };
 
   const total =
     (vendorStatus?.totalSales || 0) +
@@ -192,13 +207,13 @@ export default function HomeScreen({ navigation, noItemData }) {
     // console.log("Pra ", item)
     if (Screen === "CreateShopScreen") {
       navigation.navigate(Screen, { isHome: false });
-    }else if(Screen==="bulkUpload"){
+    } else if (Screen === "bulkUpload") {
       setBulkUploadModalVisible(true)
     }
-    else{
+    else {
       console.log("hi");
-    // navigation.navigate("StackNavigator", { screen: Screen });
-    navigation.navigate(Screen, { startTour: true });
+      // navigation.navigate("StackNavigator", { screen: Screen });
+      navigation.navigate(Screen, { startTour: true });
     }
 
   };
@@ -220,6 +235,9 @@ export default function HomeScreen({ navigation, noItemData }) {
       <ScrollView
         contentContainerStyle={styles.scrollView}
         scrollEnabled={allShops && allShops.length > 0} // Disable scroll if allShops exists
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
         <View style={styles.overlay}></View>
         <View style={styles.scrollView}>
@@ -291,6 +309,7 @@ export default function HomeScreen({ navigation, noItemData }) {
               style={{
                 flex: allShops && allShops.length > 0 ? 1 : 0.6,
                 marginTop: allShops && allShops.length > 0 ? 5 : 1,
+
               }}
             >
               <View
@@ -322,7 +341,9 @@ export default function HomeScreen({ navigation, noItemData }) {
                 </View>
               </View>
             </View>
-            {allShops && allShops.length > 0 && (
+
+            {/* vendorStatus == null */}
+            {allShops && allShops.length > 0 && vendorStatus.numberOfProducts != 0 && (
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -339,7 +360,7 @@ export default function HomeScreen({ navigation, noItemData }) {
                   <StatCard title="Active Invoices" value={vendorStatus?.activeInvoices ?? "N/A"} />
                   <StatCard title="New Customers" value={vendorStatus?.newCustomers ?? "N/A"} />
                   <StatCard title="Total Invoices" value={vendorStatus?.totalInvoices ?? "N/A"} />
-                  
+
 
                 </View>
               </ScrollView>
@@ -356,7 +377,10 @@ export default function HomeScreen({ navigation, noItemData }) {
                 />
               )}
 
-            <View style={{ flex: 3 }}>
+            <View style={{
+              // flex: 3
+              flex: total ? 3 : 7
+            }}>
               {allShops?.length > 0 ? (
                 <FlatList
                   style={styles.flatList}
@@ -432,15 +456,16 @@ export default function HomeScreen({ navigation, noItemData }) {
                 message="Hey Provider Please Add Products in your Shop"
                 heading="Add Products"
                 buttonTitle="Add Products"
-               
+
               />
             )}
+
             <View>
-            {
-              bulkUploadModalVisible&&(
-             <FileUploadModal visible={bulkUploadModalVisible} setBulkUploadModalVisible={setBulkUploadModalVisible}/>
-              )
-            }
+              {
+                bulkUploadModalVisible && (
+                  <FileUploadModal visible={bulkUploadModalVisible} setBulkUploadModalVisible={setBulkUploadModalVisible} />
+                )
+              }
             </View>
 
           </View>
@@ -680,7 +705,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
   },
-  
+
   centerText: {
     position: "absolute",
     alignItems: "center",
@@ -699,4 +724,3 @@ const styles = StyleSheet.create({
     color: "#000",
   },
 })
-  

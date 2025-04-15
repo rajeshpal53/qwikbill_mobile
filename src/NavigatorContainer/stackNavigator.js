@@ -548,6 +548,8 @@ export default function StackNavigator() {
             headerRight: () => <HomeHeaderRight />,
             // headerTitle: !searchMode ? "My Shops" : "", // Provide a default title
             // headerTitleAlign: searchMode ? "left" : "center",
+            headerTitleAlign: "center",
+
           }}
         />
 

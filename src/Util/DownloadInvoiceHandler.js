@@ -95,22 +95,30 @@ export const useDownloadInvoice = () => {
   // };
 
 
-const openFile = async (fileUri, fileType) => {
-  try {
-    if (fileType === 'xlsx') {
-      console.log("Attempting to open Excel file:", fileUri);
-      await Linking.openURL(fileUri);  // Opens file based on URI
-    } else if (fileType === 'pdf') {
-      console.log("Attempting to open PDF file:", fileUri);
-      await Linking.openURL(fileUri); // Opens PDF file
-    } else {
-      console.log("Unsupported file type.");
+  const openFile = async (fileUri, fileType) => {
+    try {
+      console.log("Attempting to open file:", fileUri, "type:", fileType);
+      if (Platform.OS === "android") {
+        const mimeType =
+          fileType === "xlsx" ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" :
+          fileType === "pdf" ? "application/pdf" :
+          "*/*";
+  
+        await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
+          data: fileUri,
+          flags: 1,
+          type: mimeType,
+        });
+      } else {
+        await Linking.openURL(fileUri); // For iOS
+      }
+    } catch (error) {
+      console.error("Error opening file: ", error);
+      Alert.alert("Open Failed", "Could not open the file.");
     }
-  } catch (error) {
-    console.error("Error opening file: ", error);
-  }
-};
+  };
 
+  
   async function checkNotificationPermission() {
     // Check current notification permissions
     console.log("checking notification permission");

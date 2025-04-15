@@ -347,33 +347,7 @@ export default function EditProfileScreen({ navigation }) {
 
         initialValues={initialData}
         enableReinitialize={true}
-        // initialValues={{
-        //   name: userData?.user?.name || "",
-        //   mobile: userData?.user?.mobile || "",
-        //   email: userData?.user?.email || "",
-        //   gender: userData?.user?.gender || "",
-        //   dob:
-        //     (userData?.user?.dob && parseServerDate(userData?.user?.dob)) ||
-        //     new Date() ||
-        //     null,
-        //   latitude: userData?.user?.latitude || "",
-        //   longitude: userData?.user?.longitude || "",
-        //   address: userData?.user?.address || "",
-        //   aadharFrontImage:
-        //     (userData?.aadharCardFronturl &&
-        //       formatUrl(userData?.aadharCardFronturl, "aadharCardFronturl")) ||
-        //     null,
-        //   aadharBackImage:
-        //     (userData?.aadharCardFronturl &&
-        //       formatUrl(userData?.aadharCardBackurl, "aadharCardBackurl")) ||
-        //     null,
-        //   profileImage:
-        //     (userData?.user?.profilePicurl &&
-        //       formatUrl(userData?.user?.profilePicurl, "profilePicurl")) ||
-        //     null,
-
-        // }}
-
+        
         validationSchema={validationSchema}
         onSubmit={(values) => {
           // Handle form submission
@@ -522,7 +496,7 @@ export default function EditProfileScreen({ navigation }) {
                             borderBottomColor: "rgba(0, 0, 0, 0.3)",
                           }}
 
-                          title={ "Select Gender"} //selectedGender ||
+                          title={selectedGender || "Select Gender"}
                           expanded={dropdownVisible}
                           onPress={handlePress}
                         // left={(props) => <List.Icon {...props} icon="earth" />}
@@ -642,7 +616,7 @@ export default function EditProfileScreen({ navigation }) {
       {modalVisible && (
         <ConfirmModal
           visible={modalVisible}
-          message="are you sure you want to update profile"
+          message="are you sure you want to update profile ?"
           heading={"Confirm update profile"}
           setVisible={setModalVisible}
           handlePress={editHandler}

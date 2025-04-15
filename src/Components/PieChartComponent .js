@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
         position: "absolute", // Prevents shifting during animation
         top: -100,
         left: -110,
-     // backgroundColor:"pink",
+     //backgroundColor:"pink",
         width:"110%"
         
 

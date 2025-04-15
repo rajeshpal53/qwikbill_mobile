@@ -22,8 +22,9 @@ const ProviderMoreDetails = ({
   return (
     <View
       style={{
-        gap: 10,
-        // backgroundColor:"lightblue",
+        marginTop:5,
+        gap:8,
+      
         padding: 1,
       }}
     >
@@ -33,7 +34,7 @@ const ProviderMoreDetails = ({
 
       <View>
         <TextInput
-          label={t("Aadhaar Card Number")+" *"}
+          label={t("Aadhaar Card Number") + " *"}
           mode={textInputMode}
           style={{ backgroundColor: "transparent" }}
           keyboardType="numeric"
@@ -48,15 +49,15 @@ const ProviderMoreDetails = ({
         )}
       </View>
 
-      <View style={{gap:20}}>
+      <View style={{ }}>
 
-      <ServiceImagePicker
+        <ServiceImagePicker
           image={values?.aadharFrontImage}
           label="Upload Aadhar Card Front Image"
           setFieldValue={setFieldValue}
           uploadFieldName={aadharFrontImageField}
         />
-         <HelperText
+        <HelperText
           type="error"
           visible={touched.aadharFrontImage && !!errors.aadharFrontImage}
         >
@@ -70,7 +71,7 @@ const ProviderMoreDetails = ({
           setFieldValue={setFieldValue}
           uploadFieldName={aadharBackImageField}
         />
-         <HelperText
+        <HelperText
           type="error"
           visible={touched.aadharBackImage && !!errors.aadharBackImage}
         >
@@ -78,7 +79,7 @@ const ProviderMoreDetails = ({
         </HelperText>
 
 
-        </View>
+      </View>
 
 
 

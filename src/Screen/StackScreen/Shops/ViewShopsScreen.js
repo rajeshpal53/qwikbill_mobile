@@ -275,6 +275,7 @@ const styles = StyleSheet.create({
   InnerContainer: {
     marginTop: 10,
     flex: 1,
+    
   },
   fab: {
     position: "absolute",

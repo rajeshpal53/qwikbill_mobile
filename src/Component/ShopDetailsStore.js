@@ -7,7 +7,7 @@ import UserDataContext from "../Store/UserDataContext";
 import { useNavigation } from "@react-navigation/native";
 
 const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => {
-  console.log("DATA OF ITEM IS ", item);
+  console.log("DATA OF ITEM  jayesh ssssss ", item);
   const { userData } = useContext(UserDataContext);
   const navigation = useNavigation();
 
@@ -26,6 +26,12 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
 
     });
   };
+
+  const handleAddProduct =() =>{
+    navigation.navigate("AddProduct",{
+       item:item
+    })
+  }
 
   return (
     <View>
@@ -49,7 +55,7 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
                 <Text style={styles.Phonetext}>Registration Number</Text>
               </View>
               <View>
-                <Text style={styles.PhoneNumbertext}>7485759875</Text>
+                <Text style={styles.PhoneNumbertext}>---</Text>
               </View>
             </View>
           </View>
@@ -111,7 +117,7 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
                 </Text>
               </View>
               <View>
-                <Text style={styles.PhoneNumbertext}>JHSJJSKS741587</Text>
+                <Text style={styles.PhoneNumbertext}>--- </Text>
               </View>
             </View>
           </View>
@@ -119,20 +125,34 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
       </Card>
 
       <View style={styles.ButtonView}>
+
+      <View style={styles.ButtonView}>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={handleAddProduct}
+
+          >
+            <Text style={{ color: "#fff" }}>Add Products </Text>
+          </TouchableOpacity>
+        </View>
+
+
+        
         <View style={styles.ButtonView}>
           <TouchableOpacity
             style={styles.closeButton}
             onPress={() => handleEdit(item)}
           >
-            <Text style={{color:"#fff"}}>Edit</Text>
+            <Text style={{ color: "#fff" }}>Edit</Text>
           </TouchableOpacity>
         </View>
+
         <View style={styles.ButtonView}>
           <TouchableOpacity
             style={styles.downloadButton}
-            onPress={() => handleDelete(item) }
+            onPress={() => handleDelete(item)}
           >
-             <Text style={{color:"#fff"}}>Delete</Text>
+            <Text style={{ color: "#fff" }}>Delete</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -143,7 +163,7 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
 const styles = StyleSheet.create({
   UserCard: {
     marginVertical: 2,
-    backgroundColor:"#fff"
+    backgroundColor: "#fff"
   },
   MainContainer: {
     paddingHorizontal: 5,
