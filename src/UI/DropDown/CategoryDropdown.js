@@ -9,7 +9,23 @@ import {
 } from "react-native";
 import { readApi } from "../../Util/UtilApi";
 
-const CategoryDropDown = ({setSelectedCat}) => {
+// Helper function to convert a string to camelCase
+const toCamelCase = (str) => {
+  console.log("camel case str " ,str )
+
+  return str
+    .toLowerCase()
+    .replace(/[^a-zA-Z0-9 ]/g, '') // Remove special characters
+    .replace(/\s(.)/g, (match, group1) => group1.toUpperCase()) // Capitalize after space
+    .replace(/\s+/g, '') // Remove all spaces
+    .replace(/^./, (match) => match.toLowerCase()); // Lowercase first letter
+
+
+};
+
+
+
+const CategoryDropDown = ({ setSelectedCat }) => {
   const [pressed, setPressed] = useState(false);
   const [categoryData, setCategoryData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("Selected Category");
@@ -33,12 +49,14 @@ const CategoryDropDown = ({setSelectedCat}) => {
   }, []);
 
   const handleCategorySelect = (categoryName) => {
-    console.log("Data of cat is ",categoryName)
+    console.log("Data of cat is ", categoryName)
     setSelectedCategory(categoryName?.name);
     setSelectedCat(categoryName?.id)
     setPressed(false); // Collapse the dropdown after selecting a category
   };
 
+
+  
   return (
     <ScrollView>
       <View style={styles.main}>
@@ -60,7 +78,8 @@ const CategoryDropDown = ({setSelectedCat}) => {
                 onPress={() => handleCategorySelect(category)}
                 style={styles.dropdownItem}
               >
-                <Text>{category.name}</Text>
+                <Text>{toCamelCase(category.name)}</Text> 
+
               </TouchableOpacity>
             ))}
           </View>
@@ -77,9 +96,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     borderRadius: 5,
     // marginBottom:10,
-    borderColor:"#A9A9A9",
-    borderBottomWidth:1
-},
+    borderColor: "#A9A9A9",
+    borderBottomWidth: 1
+  },
   button: {
     flexDirection: "row",
     alignItems: "center",
