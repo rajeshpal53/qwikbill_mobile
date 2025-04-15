@@ -35,12 +35,13 @@ const AddRole = () => {
   const [AddRode, SetAddRole] = useState("");
   const { showSnackbar } = useSnackbar();
   const timeoutId = useRef(null);
+  const [currentUserRole, setcurrentUserRole] = useState("Manager")
 
   // useEffect(() => {
   //   console.log("SELECTED SHOP IS ", editData);
   // }, [editData]);
 
-  console.log("DATA OF USER IS ", User?.id)
+  console.log("DATA OF USER IS ", userData);
 
   const roleOptions = [
     { label: "Owner", value: "Owner" },
@@ -49,15 +50,43 @@ const AddRole = () => {
     { label: "Viewer", value: "Viewer" },
   ];
 
+  const getAssignableRoles = (userRole) => {
+    switch (userRole?.toLowerCase()) {
+      case "Owner":
+        return roleOptions.filter((role) => role.value !== "Owner");
+      case "Manager":
+        return roleOptions.filter(
+          (role) =>
+            role.value === "Manager" ||
+            role.value === "Employee" ||
+            role.value === "Viewer"
+        );
+      case "Employee":
+        return roleOptions.filter(
+          (role) => role.value === "Employee" || role.value === "Viewer"
+        );
+      case "Viewer":
+        return roleOptions.filter(
+          (role) => role.value === "Viewer"
+        );
+      default:
+        return roleOptions;
+    }
+  };
+
+
+
   // const roleOptions = ["Owner", "Manager", "Employee", "Viewer"];
 
-  const validationSchema = Yup.object({
-    userRole: Yup.string().required("User Role is required"),
-    userMobile: Yup.string()
-      .required("Phone is required")
-      .matches(/^\d{10}$/, "Phone must be 10 digits"),
-    userName: Yup.string().required("User Name is required"),
-  });
+  const getValidationSchema = (currentUserMobile) =>
+    Yup.object({
+      userRole: Yup.string().required("User Role is required"),
+      userMobile: Yup.string()
+        .required("Phone is required")
+        .matches(/^\d{10}$/, "Phone must be 10 digits")
+        .notOneOf([currentUserMobile], "You cannot use your own mobile number"),
+      userName: Yup.string().required("User Name is required"),
+    });
 
   const fetchUserData = async (phoneNumber, setFieldValue) => {
     if (timeoutId.current) {
@@ -74,7 +103,7 @@ const AddRole = () => {
             };
             const response = await readApi(api, headers);
             if (response) {
-              console.log("Data of response ", response)
+              console.log("Data of response ", response);
               setUser(response);
               setFieldValue("userName", response?.name);
               setFieldValue("email", response?.email);
@@ -149,9 +178,9 @@ const AddRole = () => {
     if (User) {
       data = {
         vendorfk: selectedShop?.id,
-        usersfk:  User?.id,
+        usersfk: User?.id,
         rolesfk: getStatusFk(),
-        email:  User?.email,
+        email: User?.email,
       };
     } else {
       data = {
@@ -168,7 +197,7 @@ const AddRole = () => {
         Authorization: `Bearer ${userData?.token}`,
       };
       const response = await createApi(`userRoles`, data, headers);
-      console.log("DATA OF SUBMIT ", response)
+      console.log("DATA OF SUBMIT ", response);
       showSnackbar("Role Create successfully", "success");
     } catch (error) {
       console.log("Unable to create data", error);
@@ -178,17 +207,19 @@ const AddRole = () => {
     }
   };
 
+
+
   return (
     <ScrollView style={styles.container}>
       <Formik
         initialValues={{
           userMobile: "",
-          userName:  "",
-          userRole:  "",
+          userName: "",
+          userRole: "",
           email: "",
           selectShop: selectedShop?.shopname || "default",
         }}
-        validationSchema={validationSchema}
+        validationSchema={getValidationSchema(userData?.user?.mobile)}
         onSubmit={async (values, { resetForm }) => {
           const { userMobile, userName, userRole, email, selectShop } = values;
           const dataToSend = {
@@ -257,13 +288,17 @@ const AddRole = () => {
               <TextInput
                 mode="flat"
                 label="Enter User Name"
-                style={!User ? styles.input : { ...styles.input, backgroundColor: "#f3f3f3" }}
+                style={
+                  !User
+                    ? styles.input
+                    : { ...styles.input, backgroundColor: "#f3f3f3" }
+                }
                 onChangeText={handleChange("userName")}
                 onBlur={handleBlur("userName")}
                 value={values.userName}
                 editable={!User}
                 right={
-                   values.userName && !User ? (
+                  values.userName && !User ? (
                     <TextInput.Icon
                       icon="close"
                       size={20}
@@ -281,7 +316,11 @@ const AddRole = () => {
               <TextInput
                 mode="flat"
                 label="Enter User Email"
-                style={!User ? styles.input : { ...styles.input, backgroundColor: "#f3f3f3" }}
+                style={
+                  !User
+                    ? styles.input
+                    : { ...styles.input, backgroundColor: "#f3f3f3" }
+                }
                 onChangeText={handleChange("email")}
                 onBlur={handleBlur("email")}
                 value={values.email}
@@ -336,16 +375,14 @@ const AddRole = () => {
                   ref={pickerRef}
                   style={{ width: "100%", height: 60 }}
                 >
-                  <Picker.Item label="Select Role" enabled={false} />
-                  {roleOptions && roleOptions.length > 0
-                    ? roleOptions.map((role, index) => (
-                        <Picker.Item
-                          key={index}
-                          label={role?.label || "Unknown Role"} // Default label if missing
-                          value={role?.value || ""} // Default value if missing
-                        />
-                      ))
-                    : null}
+                  <Picker.Item label="Select Role" enabled={false} value="" />
+                  {getAssignableRoles(currentUserRole).map((role, index) => (
+                    <Picker.Item
+                      key={index}
+                      label={role?.label || "Unknown Role"}
+                      value={role?.value || ""}
+                    />
+                  ))}
                 </Picker>
                 {touched.userRole && errors.userRole && (
                   <Text style={styles.errorText}>{errors.userRole}</Text>

@@ -5,7 +5,14 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const SetpasswordModal = ({ visible, closeModal, navigation, postData, isForgetPassword,setIsForgetPasswordState  }) => {
+const SetpasswordModal = ({
+  visible,
+  closeModal,
+  navigation,
+  postData,
+  isForgetPassword,
+  setIsForgetPasswordState,
+}) => {
   //   const [password, setPassword] = useState("");
   //   const [Confirmpassword, setConfirmPassword] = useState("");
   const [PassisSecure, setPassIsSecure] = useState(true);
@@ -13,7 +20,8 @@ const SetpasswordModal = ({ visible, closeModal, navigation, postData, isForgetP
   const [strength, setStrength] = useState(0);
   const ValidationSchema = Yup.object().shape({
     password: Yup.string()
-      .min(8, "Password must be at least 8 characters")
+      .min(6, "Password must be at least 6 characters")
+      .max(20, "Password must be at most 20 characters")
       .matches(/[A-Z]/, "Must include an uppercase letter")
       .matches(/[0-9]/, "Must include a number")
       .matches(/[^A-Za-z0-9]/, "Must include a special character")
@@ -25,10 +33,10 @@ const SetpasswordModal = ({ visible, closeModal, navigation, postData, isForgetP
 
   const evaluatePasswordStrength = (pass) => {
     let score = 0;
-    if (pass.length >= 6) score++;
-    if (pass.length >= 8) score++;
+    if (pass.length >= 6 && pass.length <= 20) score++;
     if (/[A-Z]/.test(pass) && pass.length >= 4) score++;
-    if (/[0-9]/.test(pass) && /[^A-Za-z0-9]/.test(pass) && pass.length >= 4) score++;
+    if (/[0-9]/.test(pass) && /[^A-Za-z0-9]/.test(pass) && pass.length >= 4)
+      score++;
     setStrength(score);
   };
 
@@ -96,7 +104,12 @@ const SetpasswordModal = ({ visible, closeModal, navigation, postData, isForgetP
             console.log(values);
             // await AsyncStorage.setItem("UserPassword", JSON.stringify(values));
 
-            const signupSuccessfully = await postData(values?.password, isForgetPassword ,navigation,setIsForgetPasswordState);
+            const signupSuccessfully = await postData(
+              values?.password,
+              isForgetPassword,
+              navigation,
+              setIsForgetPasswordState
+            );
 
             if (signupSuccessfully) {
               closeModal();
@@ -104,10 +117,7 @@ const SetpasswordModal = ({ visible, closeModal, navigation, postData, isForgetP
 
               //navigation.navigate("login")
               //  navigation.goBack();
-
-
             }
-
           } catch (error) {
             console.log("Unable to save data", error);
           }
@@ -124,7 +134,9 @@ const SetpasswordModal = ({ visible, closeModal, navigation, postData, isForgetP
           <View style={styles.main}>
             <View style={styles.TextView}>
               <Text style={styles.TextHead}>Set Your Password</Text>
-              <Text style={{ color: "rgba(0, 0, 0, 0.5)", fontSize: 12 }}>Create a strong password to secure your account.</Text>
+              <Text style={{ color: "rgba(0, 0, 0, 0.5)", fontSize: 12 }}>
+                Create a strong password to secure your account.
+              </Text>
             </View>
             <View style={styles.InputTextView}>
               <TextInput
@@ -156,8 +168,20 @@ const SetpasswordModal = ({ visible, closeModal, navigation, postData, isForgetP
                   marginHorizontal: 5,
                 }}
               >
-                <ProgressBar progress={getProgressValue()} color="rgb(35, 167, 35)" style={{ height: 5, borderRadius: 10 }} />
-                <View style={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center", gap: 5, marginTop: 5, }}>
+                <ProgressBar
+                  progress={getProgressValue()}
+                  color="rgb(35, 167, 35)"
+                  style={{ height: 5, borderRadius: 10 }}
+                />
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                    gap: 5,
+                    marginTop: 5,
+                  }}
+                >
                   <Text
                     style={{
                       //  textAlign: "center",
@@ -246,7 +270,7 @@ const styles = StyleSheet.create({
   TextHead: {
     fontSize: 20,
     paddingVertical: 10,
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   InputTextView: {
     paddingVertical: 10,
