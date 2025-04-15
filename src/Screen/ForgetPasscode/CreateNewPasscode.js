@@ -142,7 +142,7 @@ const CreateNewPasscode = ({ navigation }) => {
                               marginBottom: (errors.passcode &&
                                 touched.passcode) ? 0 : 30
                             }}
-                              placeholder="Enter App Passcode"
+                              placeholder="Enter app passcode"
                               secureTextEntry
                               onChangeText={handleChange("passcode")}
                               onBlur={handleBlur("passcode")}
@@ -158,7 +158,7 @@ const CreateNewPasscode = ({ navigation }) => {
                             style={{
                              
                             }}
-                              placeholder="Re-enter App Passcode"
+                              placeholder="Re-enter app passcode"
                               secureTextEntry
                               onChangeText={handleChange("confirmPasscode")}
                               onBlur={handleBlur("confirmPasscode")}

@@ -201,16 +201,17 @@ const ProfileSetting = ({
     useState(false);
   const [languageModalvisible, setLanguageModalVisible] = useState(false);
   const [language, setLanguage] = useState("English"); // Default language
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(false)
   const [imageUrl, setImageUrl] = useState(`${NORM_URL}assets/mobile/male.png`);
+
   const { showSnackbar } = useSnackbar();
   const { userData, clearUserData } = useContext(UserDataContext);
   // const { setCreateuser } = useContext(WalletContext);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-const{updateSelectedShop}=useContext(
-  ShopContext
-)
+  const { updateSelectedShop } = useContext(
+    ShopContext
+  )
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchServiceProvider(userData);
@@ -245,20 +246,20 @@ const{updateSelectedShop}=useContext(
 
           ...(userData
             ? [
-                {
-                  icon: "person-add",
-                  label: roleDetails ? "Edit Role" : "Assign New Role",
-                  value: roleDetails ? "EditRole" : "AssignNewRole",
-                },
-                // { icon: "logout", label: "Logout1", value: "Logout1" },
-              ]
+              {
+                icon: "person-add",
+                label: roleDetails ? "Edit Role" : "Assign New Role",
+                value: roleDetails ? "EditRole" : "AssignNewRole",
+              },
+              // { icon: "logout", label: "Logout1", value: "Logout1" },
+            ]
             : []),
 
           ...(userData
             ? [{ icon: "logout", label: "Logout", value: "Logout" }]
             : []),
 
-            { label: "Need more help?", value: "needMoreHelp" },
+          { label: "Need more help?", value: "needMoreHelp" },
         ];
 
         setMenuItems(baseItem);
@@ -309,31 +310,40 @@ const{updateSelectedShop}=useContext(
   //   ]);
   // }
 
+
   // useEffect(() => {
   //   if (userData) {
-  //     if (userData?.user?.gender == null) {
-  //       setImageUrl();
+  //     console.log("userDataaaa:", userData);
+
+  //     if (userData?.user?.profilePicurl) {
+  //       const nevVar = `${NORM_URL}/${userData?.user?.profilePicurl}`;
+  //       setImageUrl(nevVar);
+  //       console.log("Store image data is ", nevVar);
+  //     } else if (userData?.user?.gender == null) {
+  //       setImageUrl(`${NORM_URL}assets/mobile/neutral.png`);
   //     } else if (userData?.user?.gender === "Female") {
-  //       setImageUrl(`https://servicediary.online/assets/mobile/female.png`);
+  //       setImageUrl(`${NORM_URL}assets/mobile/female.png`);
   //     } else if (
   //       userData?.user?.gender === "Male" ||
   //       userData?.user?.gender === "male"
   //     ) {
-  //       setImageUrl(`https://servicediary.online/assets/mobile/male.png`);
+  //       setImageUrl(`${NORM_URL}assets/mobile/male.png`);
   //     } else {
-  //       setImageUrl(`https://servicediary.online/assets/mobile/neutral.png`);
+  //       setImageUrl(`${NORM_URL}assets/mobile/neutral.png`);
   //     }
   //   } else {
-  //     setImageUrl(`https://servicediary.online/assets/mobile/neutral.png`);
+  //     setImageUrl(`${NORM_URL}assets/mobile/neutral.png`);
   //   }
-  // }, [isFocused, imageUrl, userData]);
+  // }, [isFocused, userData]);
+
+
+
 
   useEffect(() => {
     if (userData) {
       if (userData?.user?.profilePicurl) {
         const nevVar = `${NORM_URL}/${userData?.user?.profilePicurl}`;
         setImageUrl(nevVar);
-        console.log("Store image data is ", nevVar);
       } else if (userData?.user?.gender == null) {
         setImageUrl(`${NORM_URL}assets/mobile/neutral.png`);
       } else if (userData?.user?.gender === "Female") {
@@ -349,7 +359,8 @@ const{updateSelectedShop}=useContext(
     } else {
       setImageUrl(`${NORM_URL}assets/mobile/neutral.png`);
     }
-  }, [isFocused, userData]);
+  }, [isFocused, userData]); // Removed imageUrl from dependency array
+
 
   const languageModalOpen = () => {
     setLanguageModalVisible(true);
@@ -403,7 +414,7 @@ const{updateSelectedShop}=useContext(
     } else if (value === "AssignNewRole") {
       navigation.navigate("AddroleScreen");
     } else if (value === "EditRole") {
-      navigation.navigate("EditRoleScreen", {isAdmin : false, AdminRoleData : null});
+      navigation.navigate("EditRoleScreen", { isAdmin: false, AdminRoleData: null });
     } else if (value == "Logout1") {
       navigation.navigate("login");
     } else if (value === "needMoreHelp") {
@@ -502,8 +513,7 @@ const{updateSelectedShop}=useContext(
                   onPress={() => {
                     if (userData?.user?.profilePicurl) {
                       openImageModal(
-                        `${NORM_URL}/${
-                          userData?.user?.profilePicurl
+                        `${NORM_URL}/${userData?.user?.profilePicurl
                         }?${new Date().getTime()}`
                       );
                     }
@@ -512,9 +522,7 @@ const{updateSelectedShop}=useContext(
                   <FastImage
                     source={{
                       uri: `${imageUrl}?${new Date().getTime()}`,
-                      // headers: { Accept: "*/*" },
-                      // priority: FastImage.priority.high,
-                      // cache: FastImage.cacheControl.web,
+
                     }}
                     style={styles.avatar}
                   />
@@ -569,56 +577,56 @@ const{updateSelectedShop}=useContext(
               <Card.Content style={{ backgroundColor: "#fff" }}>
                 {menuItems?.map((item, index) =>
                   item?.value === "needMoreHelp" ? (
-                    <Pressable onPress={()=>{handlePress("needMoreHelp")}} key={index}>
-                    <View>
-                      <Text style={{ fontFamily: "Poppins-Medium" }}>
-                        {t(item?.label)}
-                      </Text>
-                      <View style={styles.helpItem}>
-                        <View style={{
-                          flexDirection:"row",
-                          alignItems:"center",
-                          gap:5
+                    <Pressable onPress={() => { handlePress("needMoreHelp") }} key={index}>
+                      <View>
+                        <Text style={{ fontFamily: "Poppins-Medium" }}>
+                          {t(item?.label)}
+                        </Text>
+                        <View style={styles.helpItem}>
+                          <View style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 5
                           }}>
-                          {/* <MaterialCommunityIcons
+                            {/* <MaterialCommunityIcons
                             name="message-reply"
                             size={24}
                             color="black"
                           /> */}
-                          <MaterialIcons name="support-agent" size={24} color="black" />
-                          <View style={{flex:1}}>
-                            <Text style={{fontFamily:"Poppins-Medium"}}>{t("24x7 support")}</Text>
-                            <Text style={{fontFamily:"Poppins-Regular", color:"rgba(0, 0, 0, 0.5)", fontSize:fontSize.label}}>{t("Talk to us in your language")}</Text>
+                            <MaterialIcons name="support-agent" size={24} color="black" />
+                            <View style={{ flex: 1 }}>
+                              <Text style={{ fontFamily: "Poppins-Medium" }}>{t("24x7 support")}</Text>
+                              <Text style={{ fontFamily: "Poppins-Regular", color: "rgba(0, 0, 0, 0.5)", fontSize: fontSize.label }}>{t("Talk to us in your language")}</Text>
+                            </View>
+
+                            <Text style={{ fontFamily: "Poppins-Medium", color: "#007BFF" }}>{t("Support")}</Text>
+
                           </View>
-
-                            <Text style={{fontFamily:"Poppins-Medium", color:"#007BFF"}}>{t("Support")}</Text>
-
                         </View>
                       </View>
-                    </View>
                     </Pressable>
                   )
-                  : (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() => handlePress(item.value)}
-                      style={styles.item}
-                    >
-                      <Icon
-                        name={item.icon}
-                        size={24}
-                        color="#27ae60"
-                        style={styles.icon}
-                      />
-                      <Text style={styles.label}>{t(item.label)}</Text>
-                      <Icon
-                        name="chevron-right"
-                        size={24}
-                        color="#000"
-                        style={styles.chevron}
-                      />
-                    </TouchableOpacity>
-                  )
+                    : (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => handlePress(item.value)}
+                        style={styles.item}
+                      >
+                        <Icon
+                          name={item.icon}
+                          size={24}
+                          color="#27ae60"
+                          style={styles.icon}
+                        />
+                        <Text style={styles.label}>{t(item.label)}</Text>
+                        <Icon
+                          name="chevron-right"
+                          size={24}
+                          color="#000"
+                          style={styles.chevron}
+                        />
+                      </TouchableOpacity>
+                    )
                 )}
               </Card.Content>
             </Card>
@@ -670,10 +678,19 @@ const{updateSelectedShop}=useContext(
             >
               <Text style={styles.closeButtonText}>Close</Text>
             </TouchableOpacity>
-            <Image
+            {/* <Image
               source={{ uri: selectedImageUri }}
               style={styles.fullImage}
+            /> */}
+            <Image
+              source={
+                userData?.user?.profilePicurl
+                  ? { uri: `${NORM_URL}/${userData.user.profilePicurl}` }
+                  : require("../../assets/Avatar.png")
+              }
+              style={styles.fullImage}
             />
+
           </View>
         </Modal>
       )}
