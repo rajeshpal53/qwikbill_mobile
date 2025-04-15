@@ -92,6 +92,7 @@ export default function HomeScreen({ navigation, noItemData }) {
 
 
 
+
   useEffect(() => {
     const checkIfTourSeen = async () => {
       try {
@@ -119,6 +120,7 @@ export default function HomeScreen({ navigation, noItemData }) {
       setIsTourGuideActive(false);
     };
   }, []);
+
 
   // console.log("noItemModal  is ",noItemModal)  
   // console.log("set no item moal in tab",setNoItemModal)

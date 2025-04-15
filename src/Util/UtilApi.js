@@ -6,6 +6,10 @@ export const API_BASE_URL = "https://rajeshpal.online/qapi/";
 
 // export const API_BASE_URL = "http://192.168.1.35:2235/";
 
+//for preview:>  eas build --platform android  --profile preview
+// for development:> eas build --platform android  --profile development
+// for production:> eas build --platform android  --profile preview
+
 export const NORM_URL="https://rajeshpal.online/"
 const apiRequest = async (method, url, data = null, headers) => {
     try {
