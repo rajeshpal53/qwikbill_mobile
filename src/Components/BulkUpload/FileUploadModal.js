@@ -102,6 +102,7 @@ const FileUploadModal = ({ visible, setBulkUploadModalVisible, navigation }) => 
     try{
       setBulkUploadModalVisible(false);
       await downloadInvoicePressHandler(`${API_BASE_URL}products/downloadExcel`, "SampleFile")
+     console.log(`${API_BASE_URL}products/downloadExcel`, "file urlll isss")
     }catch(error){
       console.log("Error is ", error )
 

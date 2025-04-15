@@ -27,10 +27,20 @@ const ViewAllVendersCard = ({ item }) => {
     setSelectedModal(null);
   };
 
-  const handleEdit = (item) => {
-    console.log("DATA OF ITEM IS ", item);
+  const handleAddProduct = () => {
+  
+   // setSelectedModal(null);
+    navigation.navigate("AddProduct", {
+      addressDetails: item,
+      isUpdateAddress: true,
+    });
+  };
+
+
+  const handleEditProduct = (item) => {
+    console.log("DATA OF ITEM productt  IS ", item);
     setSelectedModal(null);
-    navigation.navigate("CreateShopScreen", {
+    navigation.navigate("AddProduct", {
       addressDetails: item,
       isUpdateAddress: true,
     });
@@ -51,9 +61,11 @@ const ViewAllVendersCard = ({ item }) => {
               }
             </View>
             <View style={styles.shopnameView}>
+
               <View style={styles.InnershopnameView}>
                 <Text style={styles.shopnameText}>{item?.shopname}</Text>
               </View>
+
               {/* <View style={{ width: "20%" }}>
                 <Menu
                   visible={selectedModal === item?.id}
@@ -80,10 +92,11 @@ const ViewAllVendersCard = ({ item }) => {
 
                   // anchorPosition='bottom'
                 >
-                  <Menu.Item onPress={() => handleEdit(item)} title="Edit" />
-                  <Menu.Item onPress={() => handleDelete()} title="Delete" />
+                  <Menu.Item onPress={() => handleAddProduct()} title="Add Product" />
+                  <Menu.Item onPress={() => handleEditProduct(item)} title="Edit Product" />
                 </Menu>
-              </View> */}
+              </View> 
+               */}
             </View>
           </View>
 
@@ -92,7 +105,7 @@ const ViewAllVendersCard = ({ item }) => {
               <View>
                 <MaterialCommunityIcons
                   name="phone"
-                  size={15}
+                  size={18}
                   color="rgba(0, 0, 0, 0.6)"
                   style={styles.icon} // Custom style
                 />
@@ -101,24 +114,12 @@ const ViewAllVendersCard = ({ item }) => {
                 <Text style={styles.detailsText}>{item?.whatsappnumber}</Text>
               </View>
             </View>
-            <View style={styles.InnerDetailsView}>
-              <View>
-                <MaterialCommunityIcons
-                  name="email"
-                  size={15}
-                  color="rgba(0, 0, 0, 0.6)"
-                  style={styles.icon} // Custom style
-                />
-              </View>
-              <View>
-                <Text style={styles.detailsText}>{item?.shopname}</Text>
-              </View>
-            </View>
+            
             <View style={styles.InnerDetailsView}>
               <View>
                 <MaterialCommunityIcons
                   name="map-marker"
-                  size={15}
+                  size={18}
                   color="rgba(0, 0, 0, 0.6)"
                   style={styles.icon} // Custom style
                 />
@@ -127,19 +128,7 @@ const ViewAllVendersCard = ({ item }) => {
                 <Text style={styles.detailsText}>{item?.shopAddress}</Text>
               </View>
             </View>
-            {/* <View style={styles.InnerDetailsView}>
-              <View>
-                <MaterialCommunityIcons
-                  name="information-outline"
-                  size={15}
-                  color="rgba(0, 0, 0, 0.6)"
-                  style={styles.icon} // Custom style
-                />
-              </View>
-              <View>
-                <Text style={styles.detailsText}>{item?.details || "Good shop"}</Text>
-              </View>
-            </View> */}
+            
           </View>
           <View style={styles.StatusandRatingView}>
             <TouchableOpacity
@@ -183,21 +172,22 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 5,
     marginVertical: 5,
-    // flexDirection: "row",
+  
   },
   ImageView: {
-    paddingHorizontal: 2,
+    paddingHorizontal: 5,
     marginLeft: 5,
     flexDirection: "row",
-    // borderWidth: 1,
+  
   },
   detailscontainerView: {
     // marginVertical: 5,
     marginHorizontal: 10,
-    marginVertical: 5,
+    marginVertical: 8,
     // flexDirection: "column",
     // borderWidth: 1,
     flex: 1,
+
   },
   StatusandRatingView: {
     flexDirection: "row",
@@ -213,16 +203,20 @@ const styles = StyleSheet.create({
   shopnameView: {
     flex: 1,
     // borderWidth:2,
-    paddingHorizontal: 5,
+    paddingHorizontal: 8,
     flexDirection: "row",
   },
   InnershopnameView: {
-    flex: 1,
+    flex: 1,  
+    alignSelf:"center"
   },
   InnerDetailsView: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
+  
+    marginBottom:5,
+    marginLeft:3
   },
   statusView: {},
   shopnameText: {
@@ -236,9 +230,9 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Medium",
   },
   avatarPlaceholder: {
-    // borderRadius: 8,
-    width: 50,
-    height: 50,
+     borderRadius: 15,
+    width: 45,
+    height: 45,
     justifyContent: "center",
     alignItems: "center",
   },

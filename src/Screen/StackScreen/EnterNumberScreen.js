@@ -272,10 +272,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
 
         await saveUserData(response);
         await handleLogin({mobile:response?.user?.mobile,password:payload?.password},navigation);
-
         await AsyncStorage.setItem("updatedPassword", password);
-
-
         if (isForgetPassword) {
           setIsForgetPasswordState(true);
         }

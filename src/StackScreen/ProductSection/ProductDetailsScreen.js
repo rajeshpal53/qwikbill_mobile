@@ -118,6 +118,7 @@ const ProductDetailsScreen = ({ navigation }) => {
 
   const Apistore = (page) => {
     let api = `products/getProducts?vendorfk=${selectedShop?.id}&page=${page}&limit=${PAGE_SIZE}`;
+    console.log(" api for all products",api)
 
     if (filterOptionSelect === "Sort By Name") {
       api += "&sortBy=alphabetical";
@@ -141,7 +142,8 @@ const ProductDetailsScreen = ({ navigation }) => {
 
       if (api) {
         const response = await readApi(api);
-        console.log("API Response:", response);
+      //console.log("API Response ", response);
+      console.log("appi response of all productsss ",response);
 
         SetProductData((prevData) => {
           if (page === 1) {
@@ -166,7 +168,9 @@ const ProductDetailsScreen = ({ navigation }) => {
     }
   };
 
-
+useEffect(()=>{
+      console.log("jayesh produccts data is ",Productdata);
+},[])
 
   const loadMoreData = () => {
     if (!loader && hasMore && page < totalPages) {
@@ -322,7 +326,7 @@ const ProductDetailsScreen = ({ navigation }) => {
         // keyExtractor={(item, index) =>
         //   item.id ? item.id.toString() : index.toString()
         // }
-        keyExtractor={(item, index) => index}
+        keyExtractor={(item) => item.id?.toString()}
         refreshControl={
           <RefreshControl
             refreshing={refreshing} // Control the refreshing state
@@ -410,14 +414,7 @@ const ProductDetailsScreen = ({ navigation }) => {
         />
       )}
 
-      {/* {filtermodal && (
-        <CustomeFilterDropDown
-          filtermodal={filtermodal}
-          filterOptions={FilterOption}
-          setFilterModal={setFilterModal}
-          SetFilterData={SetfilterOptionSelect}
-        />
-      )} */}
+      
     </View>
   );
 };
