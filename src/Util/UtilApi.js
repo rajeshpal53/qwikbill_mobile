@@ -158,6 +158,7 @@ export const formatDate = (dateString) => {
 
   return `${day} ${month} ${year} ${hours}:${minutes}:${seconds}`;
 };
+
 export const generatePDF = (values) => {
   console.log("values of formdata is , ", values);
   console.log("values of formdata is 587, ", values?.products);

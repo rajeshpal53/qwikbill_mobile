@@ -86,6 +86,8 @@ import AllQueryAndSupport from "../../src/Screen/StackScreen/QueriesScreens/AllQ
 import EditRole from "../Screen/StackScreen/EditRole.js";
 import RoleDetailsScreen from "../Screen/StackScreen/RoleDetailsScreen.js";
 import InvoiceTransactionScreen from "../Screen/StackScreen/InvoiceTransactionScreen.js";
+import { useTranslation } from "react-i18next";
+
 
 export default function StackNavigator() {
   const Stack = createStackNavigator();
@@ -96,14 +98,15 @@ export default function StackNavigator() {
     useContext(UserDataContext);
   const [isForgetPasswordState, setIsForgetPasswordState] = useState(false);
   const [roleDetails, setroleDetails] = useState(false);
-  const[noItemModal ,setNoItemModal] = useState(false);
-  const [noItemData , setNoItemData] = useState ({})
+  const [noItemModal, setNoItemModal] = useState(false);
+  const [noItemData, setNoItemData] = useState({});
+    const{t}=useTranslation()
+
 
   // const { shopDetails } = useContext(ShopDetailContext);
 
   // const ViewCustomerWithTour  = withCopilot(AddCustomerScreen)
   // console.log("DATA OF USER IS ", userData);
-
 
   const fetchServiceProvider = async (userData) => {
     try {
@@ -114,7 +117,7 @@ export default function StackNavigator() {
           Authorization: `Bearer ${userData?.token}`,
         });
 
-        console.log( "full response isss ",response);
+        console.log("full response isss ", response);
 
         if (Object.keys(response?.data).length > 0) {
           setroleDetails(true);
@@ -126,7 +129,6 @@ export default function StackNavigator() {
         // if (response?.data?.vendor?.shopname) {
         //     setNoItemModal(true);
         // }
-        
       } else {
         console.log("service Provider Not Found , ", userData);
         setroleDetails(false);
@@ -218,8 +220,8 @@ export default function StackNavigator() {
               roleDetails={roleDetails}
               setroleDetails={setroleDetails}
               fetchServiceProvider={fetchServiceProvider}
-            noItemModal={noItemModal}
-            setNoItemModal={setNoItemModal}
+              noItemModal={noItemModal}
+              setNoItemModal={setNoItemModal}
               noItemData={noItemData}
             />
           )}
@@ -237,7 +239,7 @@ export default function StackNavigator() {
           options={{
             // headerTitle: "Add Customer",
             headerTitle: () => (
-              <Text style={styles.headerTitle}>{"Add Customer"}</Text>
+              <Text style={styles.headerTitle}>{t("Add Customer")}</Text>
             ),
             headerTitleAlign: "center",
           }}
@@ -248,7 +250,7 @@ export default function StackNavigator() {
           options={{
             // headerTitle: "Add Product",
             headerTitle: () => (
-              <Text style={styles.headerTitle}>{"Add Product"}</Text>
+              <Text style={styles.headerTitle}>{t("Add Product")}</Text>
             ),
             headerTitleAlign: "center",
           }}
@@ -296,7 +298,7 @@ export default function StackNavigator() {
           component={EditProfileScreen}
           options={{
             headerTitle: () => (
-              <Text style={styles.headerTitle}>{"EditProfilePage"}</Text>
+              <Text style={styles.headerTitle}>{t("EditProfilePage")}</Text>
             ),
 
             headerTitleAlign: "center",

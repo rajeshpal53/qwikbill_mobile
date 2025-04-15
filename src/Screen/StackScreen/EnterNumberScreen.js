@@ -291,7 +291,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
 
 
   const handleResendOTP = () => {
-    setTimer(90); // Reset the timer
+    setTimer(30); // Reset the timer
     // Logic for resending OTP
     sendOtp("+91" + phoneNumber);
   };
@@ -312,7 +312,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       console.log("debugg22222");
       // log.info("debugg22222");
 
-      startTimer(90); // Start the timer
+      startTimer(30); // Start the timer
       const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
       console.log("confirmation", JSON.stringify(confirmation));
       setConfirm(confirmation);
