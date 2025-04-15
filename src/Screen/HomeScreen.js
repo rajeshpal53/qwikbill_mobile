@@ -393,22 +393,7 @@ console.log("DATA F USER IS ",userData)
                 </View>
               </ScrollView>
             )}
-                      <StatCard
-                        title={t("Active Invoices")}
-                        value={vendorStatus?.activeInvoices ?? "N/A"}
-                      />
-                      <StatCard
-                        title={t("New Customers")}
-                        value={vendorStatus?.newCustomers ?? "N/A"}
-                      />
-                      <StatCard
-                        title={t("Total Invoices")}
-                        value={vendorStatus?.totalInvoices ?? "N/A"}
-                      />
-                    </View>
-                  </ScrollView>
-                )}
-
+              
                 {/* PieChartComponent */}
                 {allShops &&
                   allShops.length > 0 &&
@@ -417,11 +402,10 @@ console.log("DATA F USER IS ",userData)
                     <PieChartComponent
                       key={userData?.user?.mobile}
                       vendorStatus={vendorStatus}
-                      t={t}
+                      t={t}  
                     />
                   )}
-              </View>
-            </View>
+             
 
             <View style={{
               // flex: 3
