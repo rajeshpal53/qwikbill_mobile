@@ -105,6 +105,7 @@ const EditRole = () => {
     getRoleData();
   }, [isFocused, selectedShop]);
 
+
   const HandleDeleteRole = async (roleId) => {
     console.log("Data of item is 345", roleId);
     try {
