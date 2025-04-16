@@ -14,33 +14,35 @@ export const ShopProvider = ({ children }) => {
   const { userData } = useContext(UserDataContext);
   const [loader, setloader] = useState(false);
 
-  console.log("SELECTED SHOP IS ", selectedShop?.id);
+  console.log("SELECTED SHOP IS ", selectedShop);
 
-  console.log("USER DATA IS 1578", userData);
+  console.log("USER DATA IS 1578", userData?.user?.id);
 
-  console.log("DATA OF ALL SHOP ", allShops)
+  console.log("DATA OF ALL SHOP 1000", allShops);
 
-
+  //Open for Add product modal
   useEffect(() => {
     const getProductsBYShops = async () => {
       const id = userData?.user?.id;
       if (!id) return; // early return if id is undefined
 
       try {
-        let response = await readApi(`vendors/getVendorsByUserId/${id}`);
-        console.log("response of products in shop context is ", response);
+        let response = await readApi(
+          `userRoles/getVendorByUserRolesUserId/${id}`,
+          {
+            Authorization: `Bearer ${userData?.token}`,
+          }
+        );
+        console.log("response of products in shop context is ", response?.data);
         console.log(`${API_BASE_URL}vendors/getVendorsByUserId/${id}`);
 
-       
-
-        const hasProducts = response.some((shop) => shop.product?.length > 0);
+        const hasProducts = response?.data.some((shop) => shop.product?.length > 0);
 
         if (hasProducts) {
           setNoItemModal(false);
         } else {
           setNoItemModal(true);
         }
-
       } catch (err) {
         console.log("unable to get products of shops ", err);
       }
@@ -51,33 +53,37 @@ export const ShopProvider = ({ children }) => {
     }
   }, [userData]);
 
-
-
   useEffect(() => {
     const checkSelectedShopProducts = async (id) => {
       if (!selectedShop) return;
 
       try {
-        const response = await readApi(`vendors/getVendorsByUserId/${id}`);
-        console.log("Fetched selected shop data:", response);
+        const response = await readApi(
+          `userRoles/getVendorByUserRolesUserId/${id}`,
+          {
+            Authorization: `Bearer ${userData?.token}`,
+          }
+        );
+        console.log("Fetched selected shop data:", response?.data);
 
         // Find the shop that matches the selected shop
-        if (!Array.isArray(response) || response.length === 0) {
+        if (!Array.isArray(response?.data) || response?.data.length === 0) {
           setNoItemModal(false); // No vendors → don't show modal
+          console.log("This condition")
           return;
         }
-  
 
-        const hasShopname = response.some(shop => shop.shopname?.trim());
+        const hasShopname = response?.data.some((shop) => shop.shopname?.trim());
         if (!hasShopname) {
+          console.log("This condition2")
           setNoItemModal(false); // No shopname at all → don't show modal
           return;
         }
-  
-        const matchedShop = response.find(
+
+        const matchedShop = response?.data.find(
           (shop) => shop.shopname === selectedShop.shopname
         );
-        
+
         const hasProducts = matchedShop?.product?.length > 0;
         setNoItemModal(!hasProducts); // if no products, show modal
       } catch (err) {
@@ -86,12 +92,8 @@ export const ShopProvider = ({ children }) => {
       }
     };
 
-    checkSelectedShopProducts(userData?.user?.id)
-  }, [selectedShop])
-
-
-
-
+    checkSelectedShopProducts(userData?.user?.id);
+  }, [selectedShop]);
 
   useEffect(() => {
     loadData();
@@ -123,60 +125,59 @@ export const ShopProvider = ({ children }) => {
         const storedSelectedShop = await AsyncStorage.getItem("selectedShop");
 
         if (storedSelectedShop) {
-          console.log("Render this data ", storedSelectedShop)
+          console.log("Render this data ", storedSelectedShop);
           setSelectedShop(JSON.parse(storedSelectedShop));
         } else if (allShops.length > 0) {
           // If no selected shop exists in AsyncStorage, select the first shop by default
-          console.log("ALLSHOP IS-------------", allShops[0])
+          console.log("ALLSHOP IS-------------", allShops[0]);
           setSelectedShop(allShops[0]);
-          await AsyncStorage.setItem("selectedShop", JSON.stringify(allShops[0]));
+          await AsyncStorage.setItem(
+            "selectedShop",
+            JSON.stringify(allShops[0])
+          );
         }
       } else {
         console.log("Token is not available.");
       }
     } catch (error) {
       console.log("Error loading data:", error);
-      setloader(false)
+      setloader(false);
     } finally {
       setloader(false);
     }
   };
-
 
   const fetchShopsFromServer = async () => {
     try {
       setloader(true);
       // Fetch from backend
       const response = await readApi(
-        `vendors/getVendorsByUserId/${userData?.user?.id}`,
+        `userRoles/getVendorByUserRolesUserId/${userData?.user?.id}`,
         {
           Authorization: `Bearer ${userData?.token}`,
         }
       );
-      console.log("response of getting all shops are", response);
-      if (response) {
-        setAllShops(response);
-        await AsyncStorage.setItem("allShops", JSON.stringify(response));
+      console.log("response of getting all shops are", response?.data);
+      if (response?.data) {
+        setAllShops(response?.data);
+        await AsyncStorage.setItem("allShops", JSON.stringify(response?.data));
       }
 
-      if (!selectedShop && response.length > 0) {
-        setSelectedShop(response[0]);
-        await AsyncStorage.setItem("selectedShop", JSON.stringify(response[0]));
+      if (!selectedShop && response?.data.length > 0) {
+        setSelectedShop(response?.data[0]);
+        await AsyncStorage.setItem(
+          "selectedShop",
+          JSON.stringify(response?.data[0])
+        );
       }
-
-
     } catch (error) {
       console.log("error getting shops from server is , ", error);
       setloader(false);
     } finally {
+      console.log("Turning off loader12");
       setloader(false);
     }
   };
-
-
-
-
-
 
   // Function to update selected shop
   const updateSelectedShop = async (shop) => {
@@ -188,9 +189,7 @@ export const ShopProvider = ({ children }) => {
     } else {
       await AsyncStorage.removeItem("selectedShop");
     }
-  }
-
-
+  };
 
   return (
     <ShopContext.Provider
