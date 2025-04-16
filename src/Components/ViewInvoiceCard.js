@@ -11,7 +11,9 @@ const ViewInvoiceCard = ({ invoice,navigation }) => {
         <Text style={styles.invoice}>Invoice #{invoice.id}</Text>
         <Text style={{color: invoice?.statusfk === 1 ? "red" : invoice?.statusfk === 2 ? "green" : "orange" }}>{statusName[invoice.statusfk]?.toUpperCase()}</Text>
         </View>
-        <Text style={styles.title}>{invoice?.user?.name?invoice?.user?.name:"User Name" }</Text>
+        <Text style={styles.title}>{invoice?.user?.name?invoice?.user?.name:"User Name" }
+          
+        </Text>
         <Text style={styles.date}>{new Date(invoice.createdAt).toDateString()}</Text>
         <Text style={styles.date}>{invoice.address}</Text>
         <View style={styles.row}>
