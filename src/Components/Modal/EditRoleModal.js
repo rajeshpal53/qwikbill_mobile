@@ -33,7 +33,7 @@ const EditRoleModal = ({ visible, onClose, selectedRole }) => {
   const [isDisabled, setIsDisabled] = useState(true);
   const { showSnackbar } = useSnackbar();
 
-  const [currentUserRole, setcurrentUserRole] = useState("Manager");
+  const [currentUserRole, setcurrentUserRole] = useState("");
 
   const roleOptions = [
     { label: "Owner", value: "owner" },
@@ -53,16 +53,17 @@ const EditRoleModal = ({ visible, onClose, selectedRole }) => {
     //   .required("Email is required"),
   });
 
-  console.log("User role data is ", userData?.token);
+  console.log("User role data is ",selectedRole?.id);
 
   const getStatusFk = () => {
-    if (AddRode == "Owner") {
+    console.log("ADDROLE IS ", AddRode)
+    if (AddRode == "owner") {
       return 1;
-    } else if (AddRode == "Manager") {
+    } else if (AddRode == "manager") {
       return 2;
-    } else if (AddRode == "Employee") {
+    } else if (AddRode == "employee") {
       return 3;
-    } else if (AddRode == "Viewer") {
+    } else if (AddRode == "viewer") {
       return 4;
     } else {
       return 5;
@@ -123,13 +124,13 @@ const EditRoleModal = ({ visible, onClose, selectedRole }) => {
           validateOnBlur={true}
           onSubmit={async (values, { resetForm }) => {
             const updatedData = {
-              ...selectedRole,
               role: {
                 ...selectedRole.role,
                 id: getStatusFk(),
                 name: AddRode,
               },
               rolesfk: getStatusFk(),
+              vendorfk: selectedRole?.vendorfk
             };
             console.log(
               "Updated data with only userRole changed:",

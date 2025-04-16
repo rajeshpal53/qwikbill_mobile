@@ -158,11 +158,11 @@ const ProviderServiceForm = ({
           )}
         </View>
 
-         
+
         <View style={{ height: 300, backgroundColor: "#fff", elevation: 5 }}>
-          
+
           <>
-            <RichEditor
+            {/* <RichEditor
               key="editor"
               ref={richText}
               style={{ height: 200 }}
@@ -173,9 +173,9 @@ const ProviderServiceForm = ({
               onChange={handleEditorChange}
               editorInitializedCallback={() => {
                 console.log("Editor Initialized");
-                setEditorReady(true); 
+                setEditorReady(true);
               }}
-            />
+            /> */}
             <RichToolbar
               editor={richText}
               actions={[

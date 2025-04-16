@@ -68,14 +68,14 @@ export default function HomeScreen({ navigation, noItemData }) {
   const [searchQuery, setSearchQuery] = useState("");
   const { searchMode, setSearchMode } = useContext(AuthContext);
   // const {overlayHeight} = useContext(AuthContext);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const pickerRef = useRef();
   const { width, height } = useWindowDimensions();
   console.log(width, "  ", height);
   // const overlayHeight = (0.20*windowHeight);
   // console.log(responsiveHeight(80), "    --- responsiveHeight");
   // console.log(verticalScale(700), "    --- verticalscale");
-  const [vendorStatus, setVendorStatus] = useState(null);
+  const [vendorStatus, setVendorStatus] = useState({});
   const { userData } = useContext(UserDataContext);
   const { allShops, selectedShop, noItemModal, setNoItemModal } =
     useContext(ShopContext);
@@ -90,8 +90,9 @@ export default function HomeScreen({ navigation, noItemData }) {
 
 
   useEffect(() => {
-    console.log("allshops in homescreen 1, ", allShops);
+    console.log("allshops in homescreen 1, ", selectedShop);
     console.log("all services ,", services);
+    console.log("all services isLoading,", allShops);
   }, [allShops]);
 
   useEffect(() => {
@@ -177,11 +178,11 @@ console.log("DATA F USER IS ",userData)
     getItem();
   }, []);
 
-  
+
   const fetchVendorStaus = async () => {
     try {
       setIsLoading(true);
-      setVendorStatus(null);
+      setVendorStatus({});
 
       const response = await readApi(
         `invoice/getVendorStats/${selectedShop.id}`
@@ -203,6 +204,7 @@ console.log("DATA F USER IS ",userData)
       setIsLoading(false);
     }
   };
+
 
   useEffect(() => {
 
@@ -371,7 +373,7 @@ console.log("DATA F USER IS ",userData)
             </View>
 
             {/* vendorStatus == null */}
-            {allShops && allShops.length > 0 && vendorStatus.numberOfProducts != 0 && (
+            {allShops && allShops.length > 0 && vendorStatus?.numberOfProducts != 0 && (
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -393,7 +395,7 @@ console.log("DATA F USER IS ",userData)
                 </View>
               </ScrollView>
             )}
-              
+
                 {/* PieChartComponent */}
                 {allShops &&
                   allShops.length > 0 &&
@@ -402,10 +404,10 @@ console.log("DATA F USER IS ",userData)
                     <PieChartComponent
                       key={userData?.user?.mobile}
                       vendorStatus={vendorStatus}
-                      t={t}  
+                      t={t}
                     />
                   )}
-             
+
 
             <View style={{
               // flex: 3

@@ -106,9 +106,12 @@ const ProductDetailsScreen = ({ navigation }) => {
     page,
     filterOptionSelect,
     bulkUploadModalVisible,
-    selectedShop?.id,
+    selectedShop?.vendor?.id,
     refresh,
   ]);
+
+
+  console.log("SELECTED SHOP123 ",selectedShop)
 
   const onRefresh = async () => {
     setRefreshing(true);  // Set refreshing state to true
@@ -117,7 +120,7 @@ const ProductDetailsScreen = ({ navigation }) => {
   };
 
   const Apistore = (page) => {
-    let api = `products/getProducts?vendorfk=${selectedShop?.id}&page=${page}&limit=${PAGE_SIZE}`;
+    let api = `products/getProducts?vendorfk=${selectedShop?.vendor?.id}&page=${page}&limit=${PAGE_SIZE}`;
     console.log(" api for all products",api)
 
     if (filterOptionSelect === "Sort By Name") {
@@ -414,7 +417,7 @@ useEffect(()=>{
         />
       )}
 
-      
+
     </View>
   );
 };
