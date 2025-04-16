@@ -17,6 +17,8 @@ const ViewAllVendersCard = ({ item }) => {
   const navigation = useNavigation();
   
 
+  console.log("selected shop item is ",item)
+
   const handleModal = (id) => {
     setSelectedModal(selectedModal === id ? null : id);
   };

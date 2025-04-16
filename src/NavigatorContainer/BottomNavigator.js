@@ -140,7 +140,7 @@ export default function BottomNavigator({
       />
 
       <Tab.Screen
-        name=  {t("Products")}
+        name=  "Products"
         component={ProductDetailsScreen}
         options={{
           headerShown: true,
@@ -153,11 +153,8 @@ export default function BottomNavigator({
           ),
 
           headerTitleAlign: "center",
-          // headerStyle: {
-          //   backgroundColor: "transparent",
-          //   // backgroundColor: "#fff"
-          // },
-          // headerLeft: () => <CustomBackButton />,
+          
+          tabBarLabel:t("Products")
         }}
       />
 

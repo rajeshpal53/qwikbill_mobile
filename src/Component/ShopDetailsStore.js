@@ -5,11 +5,14 @@ import { fontSize } from "../Util/UtilApi";
 import { useContext, useState } from "react";
 import UserDataContext from "../Store/UserDataContext";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next"; // if not already
+
 
 const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => {
   console.log("DATA OF ITEM  jayesh ssssss ", item);
   const { userData } = useContext(UserDataContext);
   const navigation = useNavigation();
+  const {t} =  useTranslation();
 
   const handleDelete = (item) => {
     console.log("Button pressed", item);
@@ -27,11 +30,12 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
     });
   };
 
-  const handleAddProduct =() =>{
-    navigation.navigate("AddProduct",{
-       item:item
-    })
-  }
+  const handleViewProduct =() =>{
+    navigation.navigate("wertone", {
+      screen: "Products",
+      params: { item },
+    });
+      }
 
   return (
     <View>
@@ -129,10 +133,10 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
       <View style={styles.ButtonView}>
           <TouchableOpacity
             style={styles.closeButton}
-            onPress={handleAddProduct}
+            onPress={handleViewProduct}
 
           >
-            <Text style={{ color: "#fff" }}>Add Products </Text>
+            <Text style={{ color: "#fff" }}>View Products </Text>
           </TouchableOpacity>
         </View>
 
