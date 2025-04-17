@@ -135,7 +135,7 @@ export default function HomeScreen({ navigation, noItemData }) {
   //   }
   // }, [currentStep, userSkipped]);
 
-console.log("DATA F USER IS ",userData)
+  console.log("DATA F USER IS ", userData)
 
 
   useEffect(() => {
@@ -221,7 +221,7 @@ console.log("DATA F USER IS ",userData)
     } catch (error) {
       console.error('Refresh Error:', error);
     } finally {
-      setRefreshing(false);  // 🔑 Always stop the loader
+      setRefreshing(false);  
     }
   };
 
@@ -264,12 +264,12 @@ console.log("DATA F USER IS ",userData)
     <SafeAreaView style={styles.safeContainer}>
       <ScrollView
         contentContainerStyle={styles.scrollView}
-        scrollEnabled={allShops && allShops.length > 0} // Disable scroll if allShops exists
+        scrollEnabled={allShops && allShops.length > 0 && Boolean(total)}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         showsVerticalScrollIndicator={false}
-        // scrollEnabled={allShops && allShops.length > 0} // Disable scroll if allShops exists
+      // scrollEnabled={allShops && allShops.length > 0} // Disable scroll if allShops exists
       >
         <View style={styles.overlay}></View>
         <View style={styles.scrollView}>
@@ -383,7 +383,7 @@ console.log("DATA F USER IS ",userData)
 
                 }}
               >
-                <View style={{ flexDirection: "row", gap: 7, height: height * 0.09, marginTop: "8%", marginBottom: "-4%" }}>
+                <View style={{ flexDirection: "row", gap: 7, height: height * 0.09, marginTop: "7%", marginBottom: "-10%", }}>
                   <StatCard title="Total Sales" value={`$${vendorStatus?.totalSales ?? "N/A"}`} />
                   <StatCard title="Total Products" value={vendorStatus?.numberOfProducts ?? "N/A"} />
 
@@ -396,68 +396,79 @@ console.log("DATA F USER IS ",userData)
               </ScrollView>
             )}
 
-                {/* PieChartComponent */}
-                {allShops &&
-                  allShops.length > 0 &&
-                  vendorStatus != null &&
-                  total > 0 && (
-                    <PieChartComponent
-                      key={userData?.user?.mobile}
-                      vendorStatus={vendorStatus}
-                      t={t}
-                    />
-                  )}
 
+            {/* PieChartComponent */}
+            {allShops &&
+              allShops.length > 0 &&
+              vendorStatus != null &&
+              total > 0 && (
+                <PieChartComponent
+                  key={userData?.user?.mobile}
+                  vendorStatus={vendorStatus}
+                  t={t}
 
-            <View style={{
-              // flex: 3
-              flex: total ? 3 : 7
-            }}>
-              {allShops?.length > 0 ? (
-                <FlatList
-                  style={styles.flatList}
-                  data={services}
-                  numColumns={3}
-                  renderItem={({ item, index }) => (
-                    <View style={styles.flatListitem}>
-                      <TouchableOpacity
-                        style={styles.item}
-                        onPress={() => goToHandler(item.navigateTo)}
-                      >
-                        <View style={{ alignItems: "center" }}>
-                          <Text>{item.icon}</Text>
-                          <Text style={styles.itemText}>{t(item.name)}</Text>
-                        </View>
-                      </TouchableOpacity>
-                      <TourGuideZone
-                        key={index}
-                        zone={4 + index}
-                        text={item.name ? `Go to ${item.name}` : "Finished"}
-                        shape={"circle"}
-                        style={{
-                          position: "absolute",
-                          top: height * 0.02,
-                          left: width * 0.1,
-                          // width: 80,
-                          height: height * 0.1,
-                          // borderRadius: 25,
-                          backgroundColor: "transparent",
-                          flex: 1,
-                          margin: width * 0.05,
-                        }}
-                        pointerEvents="box-none"
-                      />
-                    </View>
-                  )}
-                  keyExtractor={(item, index) => index.toString()}
-                  ListEmptyComponent={<Text>No Items Found</Text>}
                 />
+              )}
+
+
+            <View style={{ flex: total ? 3 : 7 }}>
+
+              {allShops?.length > 0 ? (
+                <View style={{
+                  flex: 1,
+                  justifyContent: "center", // Center vertically
+                  marginTop: total ? "2%" : "22%",
+
+                }}>
+
+                  <FlatList
+
+                    style={styles.flatList}
+                    data={services}
+                    numColumns={3}
+
+                    renderItem={({ item, index }) => (
+                      <View style={styles.flatListitem}>
+                        <TouchableOpacity
+                          style={styles.item}
+                          onPress={() => goToHandler(item.navigateTo)}
+                        >
+                          <View style={{ alignItems: "center" }}>
+                            <Text>{item.icon}</Text>
+                            <Text style={styles.itemText}>{t(item.name)}</Text>
+                          </View>
+                        </TouchableOpacity>
+                        <TourGuideZone
+                          key={index}
+                          zone={4 + index}
+                          text={item.name ? `Go to ${item.name}` : "Finished"}
+                          shape={"circle"}
+                          style={{
+                            position: "absolute",
+                            top: height * 0.02,
+                            left: width * 0.1,
+                            // width: 80,
+                            height: height * 0.1,
+                            // borderRadius: 25,
+                            backgroundColor: "transparent",
+                            flex: 1,
+                            margin: width * 0.05,
+                          }}
+                          pointerEvents="box-none"
+                        />
+                      </View>
+                    )}
+                    keyExtractor={(item, index) => index.toString()}
+                    ListEmptyComponent={<Text>No Items Found</Text>}
+                  />
+                </View>
               ) : (
                 <View
                   style={{
-                    // flex: 1.5,
-                    justifyContent: "flex-start",
+                    flex: 0.5,
+                    justifyContent: "flex-end",
                     alignItems: "center",
+
                   }}
                 >
                   <Image
@@ -474,6 +485,7 @@ console.log("DATA F USER IS ",userData)
                   {/* <Button mode="contained"> Please Become a vendor </Button> */}
                 </View>
               )}
+
             </View>
 
             {noItemModal && (
@@ -608,7 +620,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: "#f6f2f7",
     borderRadius: 10,
-    marginTop: "3%",
+    // marginTop: "3%",
   },
 
   dropdownRow: {
@@ -659,9 +671,9 @@ const styles = StyleSheet.create({
   },
 
   flatList: {
-    flex: 1,
+    // flex: 1,
 
-    // height: 50,
+
   },
   item: {
     flex: 1,
@@ -672,12 +684,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
 
-    // borderRadius: 10,
-    // shadowColor: "#000",
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.1,
-    // shadowRadius: 2,
-    // elevation: 2,
+
   },
   itemText: {
     marginTop: 5,
@@ -723,6 +730,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingVertical: 8,
     flex: 1,
+    //  backgroundColor: "pink"
   },
   chartContainer: {
     alignItems: "center",
@@ -754,3 +762,84 @@ const styles = StyleSheet.create({
   },
 
 });
+
+
+
+
+
+
+// =======
+//                 {/* PieChartComponent */}
+//                 {allShops &&
+//                   allShops.length > 0 &&
+//                   vendorStatus != null &&
+//                   total > 0 && (
+//                     <PieChartComponent
+//                       key={userData?.user?.mobile}
+//                       vendorStatus={vendorStatus}
+//                       t={t}
+//                     />
+//                   )}
+
+
+//             <View style={{
+//               // flex: 3
+//               flex: total ? 3 : 7
+//             }}>
+//               {allShops?.length > 0 ? (
+//                 <FlatList
+//                   style={styles.flatList}
+//                   data={services}
+//                   numColumns={3}
+//                   renderItem={({ item, index }) => (
+//                     <View style={styles.flatListitem}>
+//                       <TouchableOpacity
+//                         style={styles.item}
+//                         onPress={() => goToHandler(item.navigateTo)}
+//                       >
+//                         <View style={{ alignItems: "center" }}>
+//                           <Text>{item.icon}</Text>
+//                           <Text style={styles.itemText}>{t(item.name)}</Text>
+//                         </View>
+//                       </TouchableOpacity>
+//                       <TourGuideZone
+//                         key={index}
+//                         zone={4 + index}
+//                         text={item.name ? `Go to ${item.name}` : "Finished"}
+//                         shape={"circle"}
+//                         style={{
+//                           position: "absolute",
+//                           top: height * 0.02,
+//                           left: width * 0.1,
+//                           // width: 80,
+//                           height: height * 0.1,
+//                           // borderRadius: 25,
+//                           backgroundColor: "transparent",
+//                           flex: 1,
+//                           margin: width * 0.05,
+//                         }}
+//                         pointerEvents="box-none"
+//                       />
+//                     </View>
+//                   )}
+//                   keyExtractor={(item, index) => index.toString()}
+//                   ListEmptyComponent={<Text>No Items Found</Text>}
+// >>>>>>> Akash
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

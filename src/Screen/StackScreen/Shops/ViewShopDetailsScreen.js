@@ -1,13 +1,14 @@
 import { Text, View, StyleSheet, ScrollView } from "react-native";
 import { Avatar, Button, Card } from "react-native-paper";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { useContext, useState } from "react";
+import { useContext, useState ,useEffect } from "react";
 import UserDataContext from "../../../Store/UserDataContext";
 import UserDetailsStore from "../../../Component/UserDetailsstore";
 import ShopDetailsStore from "../../../Component/ShopDetailsStore";
 import ConfirmModal from "../../../Modal/ConfirmModal";
 import { NORM_URL,deleteApi } from "../../../Util/UtilApi";
 import { useSnackbar } from "../../../Store/SnackbarContext";
+import { ShopContext } from "../../../Store/ShopContext";
 
 const ViewShopDetailsScreen = ({ route }) => {
   const { item } = route.params;
@@ -15,9 +16,24 @@ const ViewShopDetailsScreen = ({ route }) => {
   const [ShopDeleteId, setShopDeleteId] = useState(null);
   const[isLoading,setIsLoading]=useState(false)
   const {showSnackbar}=useSnackbar();
+  const { updateSelectedShop, allShops } = useContext(ShopContext);
+
   const defaultImage = require("../../../../assets/myShop.jpg");
 
+  console.log("one selected shop item ",item)
+  console.log("one selected shop name  item ",item.shopname)
+
+
+  useEffect(() => {
+    if (item?.shopname && allShops?.length > 0) {
+      const matchedShop = allShops.find(shop => shop.shopname === item.shopname);
+      if (matchedShop) {
+        updateSelectedShop(matchedShop);
+      }
+    }
+  }, [item, allShops]);
   
+
   const DeleteHandler = async () => {
     try {
       setIsLoading(true);
