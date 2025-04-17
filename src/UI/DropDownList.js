@@ -19,7 +19,7 @@ function DropDownList({ options, setSelectedshop, disabled }) {
   const [isLoading, setIsLoading] = useState(false);
   // const [options, setOptions] = useState([]);
 
-  console.log("selectedShop--------------", selectedShop);
+  console.log("selectedShop--------------", options);
 
   // const [selectedShop, setSelectedShop] = useState("");
   // console.log(shopDetails, "newShopDetails");
@@ -46,15 +46,16 @@ function DropDownList({ options, setSelectedshop, disabled }) {
       {isLoading && <ActivityIndicator size="small" />}
       <View style={styles.pickerWrapper}>
         <Picker
-          enabled={options?.length > 0} // Disable the picker if options.length is 0
+          enabled={options?.length > 0}
           mode="dropdown"
-          // style={{ width: "95%" }}
           style={styles.pickerStyle}
           ref={pickerRef}
-          selectedValue={selectedShop}
-          onValueChange={(itemValue) => {
-            console.log("itemVaue is , ", itemValue);
-            updateSelectedShop(itemValue);
+          selectedValue={selectedShop?.vendor?.id} // use a unique primitive value like vendor id
+          onValueChange={(vendorId) => {
+            const selected = options.find(
+              (item) => item.vendor.id === vendorId
+            );
+            updateSelectedShop(selected);
           }}
         >
           {!selectedShop && (
@@ -69,9 +70,8 @@ function DropDownList({ options, setSelectedshop, disabled }) {
           {options?.map((item, index) => (
             <Picker.Item
               key={index}
-              // value={item?.shopname}
-              value={item}
-              label={item?.shopname}
+              value={item.vendor.id} // pass primitive value
+              label={`${item?.vendor?.shopname ?? "Unnamed Shop"} (by ${item?.user?.name ?? "Unknown"})`}
               color="#555555"
             />
           ))}

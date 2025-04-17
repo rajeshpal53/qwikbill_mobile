@@ -51,6 +51,11 @@ const EditRole = () => {
   const [roleId, setRoleId] = useState("");
   const [refreshing, setRefreshing] = useState(false);
 
+
+  console.log("SHOP Id IS ",selectedShop?.vendor?.id)
+  console.log("SHOP Id IS123 ",AdminRoleData?.id)
+
+
   useEffect(() => {
     searchdata();
   }, [searchQuery]);
@@ -76,8 +81,8 @@ const EditRole = () => {
         return;
       }
     } else {
-      if (selectedShop?.id) {
-        api = `userRoles/getUserRoleByVendorfk/${selectedShop.id}`;
+      if (selectedShop?.vendor?.id) {
+        api = `userRoles/getUserRoleByVendorfk/${selectedShop?.vendor?.id}`;
       } else {
         console.log("selectedShop.id is missing");
         setLoading(false);
