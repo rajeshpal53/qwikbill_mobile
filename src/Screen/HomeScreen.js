@@ -68,14 +68,14 @@ export default function HomeScreen({ navigation, noItemData }) {
   const [searchQuery, setSearchQuery] = useState("");
   const { searchMode, setSearchMode } = useContext(AuthContext);
   // const {overlayHeight} = useContext(AuthContext);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const pickerRef = useRef();
   const { width, height } = useWindowDimensions();
   console.log(width, "  ", height);
   // const overlayHeight = (0.20*windowHeight);
   // console.log(responsiveHeight(80), "    --- responsiveHeight");
   // console.log(verticalScale(700), "    --- verticalscale");
-  const [vendorStatus, setVendorStatus] = useState(null);
+  const [vendorStatus, setVendorStatus] = useState({});
   const { userData } = useContext(UserDataContext);
   const { allShops, selectedShop, noItemModal, setNoItemModal } =
     useContext(ShopContext);
@@ -90,8 +90,9 @@ export default function HomeScreen({ navigation, noItemData }) {
 
 
   useEffect(() => {
-    console.log("allshops in homescreen 1, ", allShops);
+    console.log("allshops in homescreen 1, ", selectedShop);
     console.log("all services ,", services);
+    console.log("all services isLoading,", allShops);
   }, [allShops]);
 
   useEffect(() => {
@@ -181,7 +182,7 @@ export default function HomeScreen({ navigation, noItemData }) {
   const fetchVendorStaus = async () => {
     try {
       setIsLoading(true);
-      setVendorStatus(null);
+      setVendorStatus({});
 
       const response = await readApi(
         `invoice/getVendorStats/${selectedShop.id}`
@@ -203,6 +204,7 @@ export default function HomeScreen({ navigation, noItemData }) {
       setIsLoading(false);
     }
   };
+
 
   useEffect(() => {
 
@@ -371,7 +373,7 @@ export default function HomeScreen({ navigation, noItemData }) {
             </View>
 
             {/* vendorStatus == null */}
-            {allShops && allShops.length > 0 && vendorStatus.numberOfProducts != 0 && (
+            {allShops && allShops.length > 0 && vendorStatus?.numberOfProducts != 0 && (
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -394,6 +396,7 @@ export default function HomeScreen({ navigation, noItemData }) {
               </ScrollView>
             )}
 
+
             {/* PieChartComponent */}
             {allShops &&
               allShops.length > 0 &&
@@ -403,6 +406,7 @@ export default function HomeScreen({ navigation, noItemData }) {
                   key={userData?.user?.mobile}
                   vendorStatus={vendorStatus}
                   t={t}
+
                 />
               )}
 
@@ -758,3 +762,84 @@ const styles = StyleSheet.create({
   },
 
 });
+
+
+
+
+
+
+// =======
+//                 {/* PieChartComponent */}
+//                 {allShops &&
+//                   allShops.length > 0 &&
+//                   vendorStatus != null &&
+//                   total > 0 && (
+//                     <PieChartComponent
+//                       key={userData?.user?.mobile}
+//                       vendorStatus={vendorStatus}
+//                       t={t}
+//                     />
+//                   )}
+
+
+//             <View style={{
+//               // flex: 3
+//               flex: total ? 3 : 7
+//             }}>
+//               {allShops?.length > 0 ? (
+//                 <FlatList
+//                   style={styles.flatList}
+//                   data={services}
+//                   numColumns={3}
+//                   renderItem={({ item, index }) => (
+//                     <View style={styles.flatListitem}>
+//                       <TouchableOpacity
+//                         style={styles.item}
+//                         onPress={() => goToHandler(item.navigateTo)}
+//                       >
+//                         <View style={{ alignItems: "center" }}>
+//                           <Text>{item.icon}</Text>
+//                           <Text style={styles.itemText}>{t(item.name)}</Text>
+//                         </View>
+//                       </TouchableOpacity>
+//                       <TourGuideZone
+//                         key={index}
+//                         zone={4 + index}
+//                         text={item.name ? `Go to ${item.name}` : "Finished"}
+//                         shape={"circle"}
+//                         style={{
+//                           position: "absolute",
+//                           top: height * 0.02,
+//                           left: width * 0.1,
+//                           // width: 80,
+//                           height: height * 0.1,
+//                           // borderRadius: 25,
+//                           backgroundColor: "transparent",
+//                           flex: 1,
+//                           margin: width * 0.05,
+//                         }}
+//                         pointerEvents="box-none"
+//                       />
+//                     </View>
+//                   )}
+//                   keyExtractor={(item, index) => index.toString()}
+//                   ListEmptyComponent={<Text>No Items Found</Text>}
+// >>>>>>> Akash
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

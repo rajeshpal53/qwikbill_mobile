@@ -35,13 +35,13 @@ const AddRole = () => {
   const [AddRode, SetAddRole] = useState("");
   const { showSnackbar } = useSnackbar();
   const timeoutId = useRef(null);
-  const [currentUserRole, setcurrentUserRole] = useState("Manager")
+  const [currentUserRole, setcurrentUserRole] = useState("");
 
   // useEffect(() => {
   //   console.log("SELECTED SHOP IS ", editData);
   // }, [editData]);
 
-  console.log("DATA OF USER IS ", userData);
+  console.log("DATA OF USER IS123 589", selectedShop);
 
   const roleOptions = [
     { label: "Owner", value: "Owner" },
@@ -50,8 +50,55 @@ const AddRole = () => {
     { label: "Viewer", value: "Viewer" },
   ];
 
+  const getRoleNameFromFk = (fk) => {
+    switch (fk) {
+      case 1:
+        return "Owner";
+      case 2:
+        return "Manager";
+      case 3:
+        return "Employee";
+      case 4:
+        return "Viewer";
+      default:
+        return "Owner";
+    }
+  };
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      console.log("User data is ", userData?.user?.id)
+      console.log("vendor data is ", selectedShop?.vendor?.id)
+      try {
+        const response = await readApi(
+          `userRoles/getUserRoleByUserIdAndVendorfk?usersfk=${userData?.user?.id}&vendorfk=${selectedShop?.vendor?.id}`,
+          {
+            Authorization: `Bearer ${userData?.token}`,
+          }
+        );
+        console.log("Response is data is ", response);
+        const roleFk = response?.data?.rolesfk;
+        console.log("Data of role is ", roleFk);
+
+        if (roleFk){
+          const roleName = getRoleNameFromFk(roleFk);
+          console.log("DATA OF ROLE ID ", roleName);
+          setcurrentUserRole(roleName);
+        }
+      } catch (error) {
+        console.error("Error fetching user role:", error);
+      }
+    };
+
+    if (userData?.user?.id && selectedShop?.vendor?.id) {
+      fetchUserRole();
+    }
+  }, [userData?.user?.id, selectedShop?.vendor?.id]);
+
+
+
+
   const getAssignableRoles = (userRole) => {
-    switch (userRole?.toLowerCase()) {
+    switch (userRole) {
       case "Owner":
         return roleOptions.filter((role) => role.value !== "Owner");
       case "Manager":
@@ -62,19 +109,16 @@ const AddRole = () => {
             role.value === "Viewer"
         );
       case "Employee":
+        console.log("This is working")
         return roleOptions.filter(
           (role) => role.value === "Employee" || role.value === "Viewer"
         );
       case "Viewer":
-        return roleOptions.filter(
-          (role) => role.value === "Viewer"
-        );
+        return roleOptions.filter((role) => role.value === "Viewer");
       default:
         return roleOptions;
     }
   };
-
-
 
   // const roleOptions = ["Owner", "Manager", "Employee", "Viewer"];
 
@@ -177,7 +221,7 @@ const AddRole = () => {
     let data = {};
     if (User) {
       data = {
-        vendorfk: selectedShop?.id,
+        vendorfk: selectedShop?.vendor?.id,
         usersfk: User?.id,
         rolesfk: getStatusFk(),
         email: User?.email,
@@ -187,7 +231,7 @@ const AddRole = () => {
         mobile: dataToSend?.userMobile,
         name: dataToSend?.userName,
         email: dataToSend?.email,
-        vendorfk: selectedShop?.id,
+        vendorfk: selectedShop?.vendor?.id,
         rolesfk: getStatusFk(),
       };
     }
@@ -206,8 +250,6 @@ const AddRole = () => {
       setLoading(false);
     }
   };
-
-
 
   return (
     <ScrollView style={styles.container}>
