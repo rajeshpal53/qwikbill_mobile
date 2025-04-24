@@ -148,6 +148,7 @@ const CreateNewPasscode = ({ navigation }) => {
                               onBlur={handleBlur("passcode")}
                               value={values.passcode}
                               keyboardType="numeric"
+                              maxLength={4}
                             />
                             {errors.passcode && touched.passcode ? (
                               <HelperText style={styles.error}>
@@ -164,6 +165,7 @@ const CreateNewPasscode = ({ navigation }) => {
                               onBlur={handleBlur("confirmPasscode")}
                               value={values.confirmPasscode}
                               keyboardType="numeric"
+                              maxLength={4}
                             />
                             {errors.confirmPasscode &&
                             touched.confirmPasscode ? (

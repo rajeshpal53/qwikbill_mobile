@@ -83,7 +83,7 @@ function CustomerVerification({ loginDetail1 }) {
                 Customer Verification
               </Text>
               <Text variant="labelSmall" style={{ color: "grey", textAlign: "center", fontFamily: fontFamily.medium }}>
-                We will send you a one-time password on this email {loginDetail1 && loginDetail1.email} address.
+                We will send you a one-time password on this registered mobile {loginDetail1 && loginDetail1.email} number.
               </Text>
 
               {!isOtpSent ? (
@@ -288,8 +288,9 @@ function Forgetpasscode({ navigation }) {
               // backgroundColor:"orange",
               height: "25%",
               width: "100%",
+              justifyContent:"center",
               alignItems: "center",
-
+              
             }}
           >
             <View style={{}}>
@@ -298,7 +299,7 @@ function Forgetpasscode({ navigation }) {
                 style={styles.img}
               />
             </View>
-            <View
+            {/* <View
               style={{
                 // backgroundColor:"pink",
                 alignItems: "center",
@@ -310,7 +311,8 @@ function Forgetpasscode({ navigation }) {
               <Text style={{ color: "white", letterSpacing: 3, marginVertical: 2 }}>
                 Biling Software
               </Text>
-            </View>
+            </View> */}
+
           </View>
           {isOtp ? (
             <ValidateOTP navigation={navigation} otpValue={otpValue} />
@@ -383,11 +385,11 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   img: {
-    height: 70,
-    width: 70,
+    height: 220,
+    width: 220,
     elevation: 2,
     alignSelf: "center",
-    marginVertical: 10,
+    marginVertical: 12,
   },
   tooltip: {
     backgroundColor: "white",

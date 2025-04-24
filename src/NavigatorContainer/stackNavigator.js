@@ -548,7 +548,7 @@ export default function StackNavigator() {
           component={ViewShopsScreen}
           options={{
             headerRight: () => <HomeHeaderRight />,
-            // headerTitle: !searchMode ? "My Shops" : "", // Provide a default title
+             headerTitle: "View Shop" ,
             // headerTitleAlign: searchMode ? "left" : "center",
             headerTitleAlign: "center",
 
