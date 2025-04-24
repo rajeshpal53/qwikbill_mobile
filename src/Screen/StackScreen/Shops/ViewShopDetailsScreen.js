@@ -20,13 +20,13 @@ const ViewShopDetailsScreen = ({ route }) => {
 
   const defaultImage = require("../../../../assets/myShop.jpg");
 
-  console.log("one selected shop item ",item)
-  console.log("one selected shop name  item ",item.shopname)
+  console.log("one selected shop item ",allShops)
+  console.log("one selected shop name  item ",item.vendor.shopname)
 
 
   useEffect(() => {
-    if (item?.shopname && allShops?.length > 0) {
-      const matchedShop = allShops.find(shop => shop.shopname === item.shopname);
+    if (item?.vendor?.shopname && allShops?.length > 0) {
+      const matchedShop = allShops.find(shop => shop.vendor.shopname === item.vendor.shopname);
       if (matchedShop) {
         updateSelectedShop(matchedShop);
       }
@@ -62,12 +62,12 @@ const ViewShopDetailsScreen = ({ route }) => {
       <View style={Styles.MainContainer}>
         <Card>
           <View style={Styles.ImageCard}>
-            {console.log(`${NORM_URL}${item.shopImage}?${new Date().getTime()}`,"dldldldllddl")}
+            {console.log(`${NORM_URL}${item?.vendor?.shopImage}?${new Date().getTime()}`,"dldldldllddl")}
             <Card.Cover
               // source={{ uri: imageUrl }}
               source={
-                item.shopImage && typeof item.shopImage === "string" && item.shopImage.trim() !== ""
-                  ? { uri: `${NORM_URL}${item.shopImage}?${new Date().getTime()}` }
+                item.vendor.shopImage && typeof item?.vendor?.shopImage === "string" && item?.vendor?.shopImage.trim() !== ""
+                  ? { uri: `${NORM_URL}${item?.vendor?.shopImage}?${new Date().getTime()}` }
                   : defaultImage
               }
               resizeMode="cover"

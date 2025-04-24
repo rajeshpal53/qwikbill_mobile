@@ -98,7 +98,7 @@ const AddProduct = ({ navigation }) => {
             taxRate: values?.TaxRate,
             // hsncodefk: HSNCode?.id,
             isStock: values?.IsStockData,
-            vendorfk: selectedShop.id,
+            vendorfk: selectedShop.vendor.id,
             hsncode: parseInt(values.HSNCode),
           };
           console.log("Data is 15863", ProductData);

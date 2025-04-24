@@ -49,7 +49,7 @@ const ViewAllVendersCard = ({ item }) => {
   };
 
   return (
-    <ScrollView>
+  
       <Card style={styles.card}>
         <View style={styles.container}>
           <View style={styles.ImageView}>
@@ -57,7 +57,7 @@ const ViewAllVendersCard = ({ item }) => {
               {
                 <Avatar.Text
                   size={40}
-                  label={item?.shopname.charAt(0)}
+                  label={item?.vendor?.shopname.charAt(0)}
                   style={styles.avatarPlaceholder}
                 />
               }
@@ -65,7 +65,7 @@ const ViewAllVendersCard = ({ item }) => {
             <View style={styles.shopnameView}>
 
               <View style={styles.InnershopnameView}>
-                <Text style={styles.shopnameText}>{item?.shopname}</Text>
+                <Text style={styles.shopnameText}>{item?.vendor?.shopname}</Text>
               </View>
 
               {/* <View style={{ width: "20%" }}>
@@ -113,7 +113,7 @@ const ViewAllVendersCard = ({ item }) => {
                 />
               </View>
               <View>
-                <Text style={styles.detailsText}>{item?.whatsappnumber}</Text>
+                <Text style={styles.detailsText}>{item?.user?.mobile}</Text>
               </View>
             </View>
             
@@ -127,9 +127,41 @@ const ViewAllVendersCard = ({ item }) => {
                 />
               </View>
               <View>
-                <Text style={styles.detailsText}>{item?.shopAddress}</Text>
+                <Text style={styles.detailsText}>{item?.vendor?.shopAddress}</Text>
               </View>
             </View>
+
+
+            <View style={styles.InnerDetailsView}>
+              <View>
+                <MaterialIcons
+                  name="person"
+                  size={18}
+                  color="rgba(0, 0, 0, 0.6)"
+                  style={styles.icon} // Custom style
+                />
+              </View>
+              <View>
+                <Text style={styles.detailsText}>{item?.role?.name}</Text>
+              </View>
+            </View>
+           
+
+
+            <View style={styles.InnerDetailsView}>
+              <View>
+                <MaterialIcons
+                  name="description"
+                  size={18}
+                  color="rgba(0, 0, 0, 0.6)"
+                  style={styles.icon} // Custom style
+                />
+              </View>
+              <View>
+                <Text style={styles.detailsText}>{item?.role?.description}</Text>
+              </View>
+            </View>
+            
             
           </View>
           <View style={styles.StatusandRatingView}>
@@ -154,7 +186,7 @@ const ViewAllVendersCard = ({ item }) => {
           </View>
         </View>
       </Card>
-    </ScrollView>
+  
   );
 };
 
@@ -163,17 +195,19 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginHorizontal: 10,
     borderRadius: 8,
-    elevation: 3,
+    elevation: 4,
     flex: 1,
     backgroundColor: "#fff",
     paddingHorizontal: 5,
+   // shadowOffset:2,
+   // shadowColor:"#ddd"
 
     // alignContent:"center"
   },
   container: {
     flex: 1,
     paddingVertical: 5,
-    marginVertical: 5,
+    marginVertical: 6,
   
   },
   ImageView: {
@@ -181,6 +215,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     flexDirection: "row",
   
+  marginVertical:2
   },
   detailscontainerView: {
     // marginVertical: 5,
@@ -199,7 +234,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     marginRight: 20,
     flex: 1,
-    // borderWidth:2
+    marginVertical:3,
   },
 
   shopnameView: {
@@ -216,20 +251,21 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-  
+
     marginBottom:5,
-    marginLeft:3
+    marginLeft:6
   },
   statusView: {},
   shopnameText: {
-    fontSize: fontSize.labelLarge,
+    fontSize: fontSize.headingSmall,
     fontFamily: "Poppins-Bold",
     marginTop: 2,
   },
   detailsText: {
     paddingHorizontal: 5,
-    fontSize: fontSize.labelMedium,
+    fontSize: fontSize.label,
     fontFamily: "Poppins-Medium",
+    marginHorizontal:2
   },
   avatarPlaceholder: {
      borderRadius: 15,

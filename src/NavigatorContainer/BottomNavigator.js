@@ -169,7 +169,7 @@ export default function BottomNavigator({
           ),
 
           headerTitle: () => (
-            <Text style={styles.headerTitle}>{t("Profile Setting")}</Text>
+            <Text style={styles.headerTitle}>{t("Profile ")}</Text>
           ),
           headerTitleAlign: "center",
         }}

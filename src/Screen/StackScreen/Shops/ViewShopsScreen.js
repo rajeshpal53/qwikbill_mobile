@@ -10,7 +10,7 @@ import {
 import { FAB, Text, ActivityIndicator } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import ItemList from "../../../Components/Lists/ItemList";
-import { fontSize, readApi } from "../../../Util/UtilApi";
+import { API_BASE_URL, fontSize, readApi } from "../../../Util/UtilApi";
 import { useIsFocused } from "@react-navigation/native";
 import { useSnackbar } from "../../../Store/SnackbarContext";
 import { deleteApi } from "../../../Util/UtilApi";
@@ -53,31 +53,73 @@ export default function ViewShopsScreen() {
 
   console.log("shopData is ", shopData);
 
+  // useEffect(() => {
+  //   const fetchVendorData = async () => {
+  //     try {
+  //       setIsLoading(true);
+  //       const token = userData?.token;
+  //       console.log("token is ",token)
+  //       console.log("User ID:", userData?.user?.id);
+
+  //       const response = await readApi(
+  //         // `vendors/getVendorsByUserId/${userData?.user?.id}`,
+  //         `userRoles/getVendorByUserRolesUserId/${userData?.user?.id}`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       );
+  //             console.log("all shoppp response ",response)
+
+  //       setShopData(response);
+  //     } catch (err) {
+  //       setShopData([]);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+
+  //   fetchVendorData();
+  // }, [isFocused]);
+
+
+
+
   useEffect(() => {
-    console.log("Inside a useeffect ");
-    const fetchVendorData = async () => {
+    const fetchUserRoles = async () => {
       try {
-        setIsLoading(true);
-        const token = userData?.token;
-        // const api = `vendors/${userData?.user?.id}`
-        const response = await readApi(
-          `vendors/getVendorsByUserId/${userData?.user?.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setShopData(response);
+        const response = await fetch(`${API_BASE_URL}userRoles/getVendorByUserRolesUserId/${userData?.user?.id}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${userData?.token?.trim()}`,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const data = await response.json();
+        console.log("dataaaaa",data)
+
+        if (!response.ok) {
+          throw new Error(`Status: ${res.status}, Message: ${data.message}`);
+        } else {
+          //console.log("something went wrong , try again !")
+          setShopData(data.data)
+
+        }
       } catch (err) {
+        console.error("Raw fetch error:", err.message);
         setShopData([]);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchVendorData();
-  }, [isFocused]);
+    fetchUserRoles();
+  }, []);
+
+
 
   // useEffect(() => {
   //   const fetchSearchingData = async () => {
@@ -93,30 +135,19 @@ export default function ViewShopsScreen() {
     searchdata();
   }, [searchQuery]);
 
-const searchdata = () => {
-  if (searchQuery?.length > 0) {
-    const found = shopData.filter(
-      (item) => item?.shopname?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setSearchedData(found);
-    setSearchCalled(true);
-  } else {
-    setSearchedData([]);
-    setSearchCalled(false); 
-  }
-};
-// useEffect(() => {
-//   searchdata();
-// }, [searchQuery]);
-
-
-  // useEffect(() => {
-  //   if(searchQuery?.length <= 0) {
-  //     setSearchedData([]);
-  //     setSearchCalled(false);
-  //   }
-  // }, [searchQuery]);
-
+  const searchdata = () => {
+    if (searchQuery?.length > 0) {
+      const found = shopData.filter(
+        (item) => item?.vendor?.shopname?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSearchedData(found);
+      setSearchCalled(true);
+    } else {
+      setSearchedData([]);
+      setSearchCalled(false);
+    }
+  };
+ 
   if (isLoading) {
     return <ActivityIndicator size="large" />;
   }
@@ -182,7 +213,7 @@ const searchdata = () => {
           setTranscript={setTranscript}
           placeholderText="Search Vender ..."
           searchData={searchdata}
-          //    refuser={searchBarRef}
+        //    refuser={searchBarRef}
         />
 
         {/* <View style={styles.allbuttonView}>
@@ -215,7 +246,7 @@ const searchdata = () => {
               onEdit={handleEdit}
             />
           )}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item?.id?.toString() ?? Math.random().toString()}
           ListEmptyComponent={() => (
             <View style={{ alignItems: "center", marginTop: 20 }}>
               <Text style={{ fontSize: 16, color: "gray" }}>
@@ -275,7 +306,7 @@ const styles = StyleSheet.create({
   InnerContainer: {
     marginTop: 10,
     flex: 1,
-    
+
   },
   fab: {
     position: "absolute",

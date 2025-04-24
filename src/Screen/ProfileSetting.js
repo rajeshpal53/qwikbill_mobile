@@ -230,6 +230,8 @@ const ProfileSetting = ({
   // const [sameMenuItems, setSameMeuItems] = useState()
   const [menuItems, setMenuItems] = useState();
 
+  console.log("user data in profile ",userData)
+
   useEffect(() => {
     const UpdatemanuItem = () => {
       setIsLoading(true);
@@ -311,53 +313,28 @@ const ProfileSetting = ({
   // }
 
 
-  // useEffect(() => {
-  //   if (userData) {
-  //     console.log("userDataaaa:", userData);
-
-  //     if (userData?.user?.profilePicurl) {
-  //       const nevVar = `${NORM_URL}/${userData?.user?.profilePicurl}`;
-  //       setImageUrl(nevVar);
-  //       console.log("Store image data is ", nevVar);
-  //     } else if (userData?.user?.gender == null) {
-  //       setImageUrl(`${NORM_URL}assets/mobile/neutral.png`);
-  //     } else if (userData?.user?.gender === "Female") {
-  //       setImageUrl(`${NORM_URL}assets/mobile/female.png`);
-  //     } else if (
-  //       userData?.user?.gender === "Male" ||
-  //       userData?.user?.gender === "male"
-  //     ) {
-  //       setImageUrl(`${NORM_URL}assets/mobile/male.png`);
-  //     } else {
-  //       setImageUrl(`${NORM_URL}assets/mobile/neutral.png`);
-  //     }
-  //   } else {
-  //     setImageUrl(`${NORM_URL}assets/mobile/neutral.png`);
-  //   }
-  // }, [isFocused, userData]);
-
-
-
 
   useEffect(() => {
     if (userData) {
       if (userData?.user?.profilePicurl) {
         const nevVar = `${NORM_URL}/${userData?.user?.profilePicurl}`;
+        console.log("profile image issss",nevVar)
         setImageUrl(nevVar);
       } else if (userData?.user?.gender == null) {
-        setImageUrl(`${NORM_URL}assets/mobile/neutral.png`);
+        setImageUrl("https://dailysabji.com/assets/mobile/neutral.png");
       } else if (userData?.user?.gender === "Female") {
-        setImageUrl(`${NORM_URL}assets/mobile/female.png`);
+        setImageUrl("https://dailysabji.com/assets/mobile/female.png");
       } else if (
         userData?.user?.gender === "Male" ||
         userData?.user?.gender === "male"
       ) {
-        setImageUrl(`${NORM_URL}assets/mobile/male.png`);
+        setImageUrl("https://dailysabji.com/assets/mobile/male.png");
       } else {
-        setImageUrl(`${NORM_URL}assets/mobile/neutral.png`);
+        setImageUrl("https://dailysabji.com/assets/mobile/neutral.png");
       }
     } else {
-      setImageUrl(`${NORM_URL}assets/mobile/neutral.png`);
+      setImageUrl("https://dailysabji.com/assets/mobile/neutral.png");
+
     }
   }, [isFocused, userData]); // Removed imageUrl from dependency array
 
@@ -685,8 +662,8 @@ const ProfileSetting = ({
             <Image
               source={
                 userData?.user?.profilePicurl
-                  ? { uri: `${NORM_URL}/${userData.user.profilePicurl}` }
-                  : require("../../assets/Avatar.png")
+                  ? { uri: `${NORM_URL}/${userData?.user?.profilePicurl}` }
+                  : { uri: "https://dailysabji.com/assets/mobile/neutral.png" }
               }
               style={styles.fullImage}
             />

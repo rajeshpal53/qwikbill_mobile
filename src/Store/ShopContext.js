@@ -14,44 +14,50 @@ export const ShopProvider = ({ children }) => {
   const { userData } = useContext(UserDataContext);
   const [loader, setloader] = useState(false);
 
-  console.log("SELECTED SHOP IS ", selectedShop);
+  console.log("SELECTED SHOP ISSSSS ", selectedShop);
 
   console.log("USER DATA IS 1578", userData?.user?.id);
 
   console.log("DATA OF ALL SHOP 1000", allShops);
 
   //Open for Add product modal
-  useEffect(() => {
-    const getProductsBYShops = async () => {
-      const id = userData?.user?.id;
-      if (!id) return; // early return if id is undefined
+  // useEffect(() => {
+  //   const getProductsBYShops = async () => {
+  //     const id = userData?.user?.id;
+  //     if (!id) return; // early return if id is undefined
 
-      try {
-        let response = await readApi(
-          `userRoles/getVendorByUserRolesUserId/${id}`,
-          {
-            Authorization: `Bearer ${userData?.token}`,
-          }
-        );
-        console.log("response of products in shop context is ", response?.data);
-        console.log(`${API_BASE_URL}vendors/getVendorsByUserId/${id}`);
+  //     try {
+  //       let response = await readApi(
+  //         `userRoles/getVendorByUserRolesUserId/${id}`,
+  //         {
+  //           Authorization: `Bearer ${userData?.token}`,
+  //         }
+  //       );
+  //       console.log("response of products in shop context is ", response?.data);
+    
 
-        const hasProducts = response?.data.some((shop) => shop.product?.length > 0);
+  //       const hasProducts = response.some(
+  //         (shop) => Array.isArray(shop.vendor?.product) && shop.vendor.product.length > 0
+  //       );
+        
+  //       if (hasProducts) {
+  //         setNoItemModal(false);
+  //       } else {
+  //         setNoItemModal(true);
+  //       }
+  //     } catch (err) {
+  //       console.log("unable to get products of shops ", err);
+  //     }
+  //   };
 
-        if (hasProducts) {
-          setNoItemModal(false);
-        } else {
-          setNoItemModal(true);
-        }
-      } catch (err) {
-        console.log("unable to get products of shops ", err);
-      }
-    };
+  //   if (userData?.user?.id) {
+  //     getProductsBYShops();
+  //   }
+  // }, [userData]);
 
-    if (userData?.user?.id) {
-      getProductsBYShops();
-    }
-  }, [userData]);
+
+
+
 
   useEffect(() => {
     const checkSelectedShopProducts = async (id) => {
@@ -64,57 +70,37 @@ export const ShopProvider = ({ children }) => {
             Authorization: `Bearer ${userData?.token}`,
           }
         );
+
         console.log("Fetched selected shop data:", response?.data);
-
-        // Find the shop that matches the selected shop
-        if (!Array.isArray(response?.data) || response?.data.length === 0) {
-          setNoItemModal(false); // No vendors → don't show modal
-          console.log("This condition")
-          return;
-        }
-
-        const hasShopname = response?.data.some((shop) => shop.shopname?.trim());
-        if (!hasShopname) {
-          console.log("This condition2")
-          setNoItemModal(false); // No shopname at all → don't show modal
-          return;
-        }
+        console.log(`${API_BASE_URL}userRoles/getVendorByUserRolesUserId/${id}`);
 
         const matchedShop = response?.data.find(
-          (shop) => shop.shopname === selectedShop.shopname
+          (shop) => shop.vendor?.id === selectedShop.vendor?.id
         );
 
-        const hasProducts = matchedShop?.product?.length > 0;
-        setNoItemModal(!hasProducts); // if no products, show modal
+        const hasProducts = Array.isArray(matchedShop?.vendor?.product) && matchedShop.vendor.product.length > 0;
+
+        setNoItemModal(!hasProducts); // Show modal only if selected shop has no products
+        
+
       } catch (err) {
         console.log("Error checking products for selected shop:", err);
         setNoItemModal(true); // fallback: show modal
       }
     };
 
+if (selectedShop && userData?.user?.id) {
     checkSelectedShopProducts(userData?.user?.id);
+  }    
   }, [selectedShop]);
+
+
 
   useEffect(() => {
     loadData();
   }, [userData]);
 
-  // const loadData = async () => {
-  //   try {
-  //     setloader(true);
-  //     if (userData?.token) {
-  //       await fetchShopsFromServer();
-  //       // await loadAllShops();
-  //     } else {
-  //       console.log("Tokan is not available ");
-  //       setloader(false);
-  //     }
-  //   } catch (error) {
-  //     console.log("Unable to fetch data for user:", error);
-  //   } finally {
-  //     setloader(false);
-  //   }
-  // };
+  
 
   const loadData = async () => {
     try {
