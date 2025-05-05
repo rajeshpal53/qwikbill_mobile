@@ -213,7 +213,7 @@ function ViewInvoiceScreen1({ navigation }) {
                 marginTop: "40%",
               }}
             >
-              <NoDataFound textString={"No Users Found"} />
+              <NoDataFound textString={"No Invoice Found"} />
             </View>
           ) : null
         }

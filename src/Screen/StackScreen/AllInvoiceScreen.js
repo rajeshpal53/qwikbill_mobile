@@ -45,7 +45,7 @@ const AllInvoiceScreen = () => {
   }, [selected, sortBy]);
 
   useEffect(() => {
-    console.log("SET SELECTED VALUE152 ", selectedShop?.id);
+    console.log("SET SELECTED VALUE152 ", selectedShop?. vendor?.id);
   }, [selectedShop]);
 
   // useEffect(() => {

@@ -782,7 +782,6 @@ const CreateShopScreen = ({ navigation }) => {
             );
 
             console.log("Service provider Created Successfully ", response);
-
             showSnackbar(t("Service provider Created Successfully"), "success");
 
             // navigation.navigate("ViewEditServicesScreen", {
@@ -800,7 +799,7 @@ const CreateShopScreen = ({ navigation }) => {
           if (isLoading) {
             setIsLoading(false);
           }
-
+          console.log("Error creating or updating service provider: ", error);
           if (routeData) {
             console.log("DATA OF USER", routeData)
             console.error(
