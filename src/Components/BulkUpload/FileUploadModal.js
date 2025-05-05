@@ -55,7 +55,7 @@ const FileUploadModal = ({ visible, setBulkUploadModalVisible, navigation }) => 
     });
 
     formData.append("productcategoryfk", SelectedCat);
-    formData.append("vendorfk", selectedShop?.id);
+    formData.append("vendorfk", selectedShop?. vendor?.id);
 
     console.log("FormData ", formData)
 

@@ -116,16 +116,16 @@ export default function CreateInvoice({ navigation, route }) {
     fetchCount();
   },[buttonsModes,invoiceType,selectedValue])
   const fetchCount=async()=>{
-    const response= await readApi(`vendors/${selectedShop.id}`)
+    const response= await readApi(`vendors/${selectedShop?. vendor?.id}`)
     console.log(response,"fetchCount")
     const date = new Date();
     const formattedDate = `${String(date.getDate()).padStart(2, '0')}${String(date.getMonth() + 1).padStart(2, '0')}${date.getFullYear()}`;
     setStoreCount(++response.invoiceCount)
     if(selectedValue==="provisional"){
       // newCount = ${vendor.shopname}${formattedDate}G${vendor.invoiceCount++}
-        setInvoiceNumber(`${selectedShop.shopname}${formattedDate}P${++response.invoiceCount}`)
+        setInvoiceNumber(`${selectedShop.vendor?.shopname}${formattedDate}P${++response.invoiceCount}`)
     } else{
-      setInvoiceNumber(`${selectedShop.shopname}${formattedDate}G${++response.invoiceCount}`)
+      setInvoiceNumber(`${selectedShop.vendor?.shopname}${formattedDate}G${++response.invoiceCount}`)
     }
   }
 

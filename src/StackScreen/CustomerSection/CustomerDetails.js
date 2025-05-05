@@ -198,7 +198,7 @@ const CustomerDetail = ({ navigation }) => {
   const [searchedData, setSearchedData] = useState([]);
   const [searchCalled, setSearchCalled] = useState(false);
 
-
+  console.log("Selected Shop is ", JSON.stringify(selectedShop)); 
   console.log("DATA OF EDIT ", customerData);
 
   useEffect(() => {
@@ -208,7 +208,7 @@ const CustomerDetail = ({ navigation }) => {
 
 
   useEffect(() => {
-    let api = `customers/getCustomersByVendorId/${selectedShop?.id}`;
+    let api = `customers/getCustomersByVendorId/${selectedShop?.vendor?.id}`;
     const FetchAlluser = async () => {
       try {
         setLoading(true);

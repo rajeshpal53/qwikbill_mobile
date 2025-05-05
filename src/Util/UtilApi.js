@@ -8,7 +8,7 @@ export const API_BASE_URL = "https://rajeshpal.online/qapi/";
 
 //for preview:>  eas build --platform android  --profile preview
 // for development:> eas build --platform android  --profile development
-// for production:> eas build --platform android  --profile preview
+// for production:> eas build --platform android  --profile production
 
 export const NORM_URL="https://rajeshpal.online/"
 const apiRequest = async (method, url, data = null, headers) => {
@@ -108,9 +108,6 @@ export const updateApi = async (endpoint, data, headers) => {
     2:"paid",
     3:"partially paid",
   }
-
-
-
   export const RoleStatusName={
    1:"owner",
    2:"manager",
