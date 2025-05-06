@@ -7,10 +7,13 @@ import TransactionCard from "../../Component/TransactionCard";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
 import NoDataFound from "../../Components/NoDataFound";
 import OpenmiqModal from "../../Modal/Openmicmodal";
+import UserDataContext from "../../Store/UserDataContext";
 
 function TransactionScreen() {
   const [transactions, setTransactions] = useState([]);
   const { selectedShop } = useContext(ShopContext);
+  const { userData } = useContext(UserDataContext); // Assuming you have an AuthContext
+
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -24,12 +27,12 @@ function TransactionScreen() {
   const [totalPages, settotalPages] = useState(1);
   const PAGE_SIZE = 10;
 
-    useEffect(() => {
-      if (searchQuery?.length <= 0) {
-        setSearchedData([]);
-        setSearchCalled(false);
-      }
-    }, [searchQuery]);
+  useEffect(() => {
+    if (searchQuery?.length <= 0) {
+      setSearchedData([]);
+      setSearchCalled(false);
+    }
+  }, [searchQuery]);
 
 
   useEffect(() => {
@@ -45,7 +48,7 @@ function TransactionScreen() {
           setTransactions(response?.transactions);
           settotalPages(response?.totalPages || 1);
           console.log("Transactions updated:", response?.transactions);
-          console.log("Length of transaction",response?.transactions.length)
+          console.log("Length of transaction", response?.transactions.length)
         } else if (response?.transactions.length > 0) {
           console.log("Inside of else if condition")
           setTransactions((prev) => [...prev, ...response?.transactions]);
@@ -70,36 +73,39 @@ function TransactionScreen() {
     console.log("Updated Transactions:", transactions);
   }, [transactions]);
 
-  const fetchSearchedData = async () => {
-    try {
-      setSearchCalled(true);
-      setIsLoading(true);
-      const trimmedQuery = searchQuery?.trim();
-      console.log("trimmedQuery DATA IS ", trimmedQuery);
+  // const fetchSearchedData = async () => {
+  //   try {
+  //     setSearchCalled(true);
+  //     setIsLoading(true);
+  //     const trimmedQuery = searchQuery?.trim();
+  //     console.log("trimmedQuery DATA IS ", trimmedQuery);
 
-      let api = `users/searchUser?searchTerm=${trimmedQuery}`;
+  //     let api = `users/searchUser?searchTerm=${trimmedQuery}`;
 
-      const response = await readApi(api, {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userData?.token}`,
-      });
+  //     const response = await readApi(api, {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${userData?.token}`,
+  //     });
 
-      console.log("RESPONSE DATA IS ", response);
+  //     console.log("RESPONSE DATA IS ", response);
 
-      if (response?.users?.length > 0) {
-        setSearchedData(response?.users);
-      } else {
-        setSearchedData([]);
-      }
-    } catch (error) {
-      console.log("Unable to get data ", error);
-      if (error?.status === 404) {
-        setSearchedData([]);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     if (response?.length > 0) {
+  //       setSearchedData(response);
+  //     } else {
+  //       setSearchedData([]);
+  //     }
+  //   } catch (error) {
+  //     console.log("Unable to get data ", error);
+  //     if (error?.status === 404) {
+  //       setSearchedData([]);
+  //     }
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+
+
 
   console.log("Length of ", searchedData?.length)
   const loadMoreData = () => {
@@ -114,14 +120,14 @@ function TransactionScreen() {
     }
   };
 
-  // const filteredData = transactions
-  //   .map((item) => ({
-  //     ...item,
-  //     name: item.user.name ?? "Unknown", // Replace null or undefined name with "Unknown"
-  //   }))
-  //   .filter((item) =>
-  //     item.name.toLowerCase().includes(searchQuery.toLowerCase())
-  //   );
+  const filteredData = transactions
+    .map((item) => ({
+      ...item,
+      name: item.user.name ?? "Unknown", // Replace null or undefined name with "Unknown"
+    }))
+    .filter((item) =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
   const Loader = () => {
     if (!isLoading) return null;
@@ -144,15 +150,14 @@ function TransactionScreen() {
             setsearchmodal={setsearchmodal}
             setTranscript={setTranscript}
             placeholderText="Search Your transactions..."
-            searchData={fetchSearchedData}
+          // searchData={fetchSearchedData}
           />
         </View>
       </View>
 
       <FlatList
-        data={
-          searchQuery?.length > 0 && searchCalled ? searchedData : transactions
-        }
+        data={searchQuery.trim().length > 0 ? filteredData : transactions}
+
         renderItem={({ item }) => <TransactionCard item={item} />}
         keyExtractor={(item) => item.id.toString()}
         ListFooterComponent={Loader}
@@ -160,7 +165,7 @@ function TransactionScreen() {
         onEndReached={loadMoreData}
         onEndReachedThreshold={0.5}
         ListEmptyComponent={() =>
-          !isLoading && transactions?.length === 0 ? (
+          !isLoading && (
             <View
               style={{
                 alignItems: "center",
@@ -170,7 +175,7 @@ function TransactionScreen() {
             >
               <NoDataFound textString={"No Users Found"} />
             </View>
-          ) : null
+          ) 
         }
       />
 
@@ -201,4 +206,4 @@ const styles = StyleSheet.create({
 
 export default TransactionScreen;
 
-// a
+

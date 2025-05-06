@@ -46,7 +46,7 @@ const AllItemProduct = ({ navigation }) => {
     try {
       setloader(true);
       const response = await readApi(
-        `products/getProductByVendorfk/${selectedShop?.id}?page=${page}&limit=${PAGE_LIMIT}`,
+        `products/getProductByVendorfk/${selectedShop?.vendor?.id}?page=${page}&limit=${PAGE_LIMIT}`,
         {
           Authorization: `Bearer ${userData?.token}`,
         }
