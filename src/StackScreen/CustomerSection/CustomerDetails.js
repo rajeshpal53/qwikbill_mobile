@@ -208,7 +208,7 @@ const CustomerDetail = ({ navigation }) => {
 
 
   useEffect(() => {
-    let api = `customers/getCustomersByVendorId/${selectedShop?.id}`;
+    let api = `customers/getCustomersByVendorId/${selectedShop?.vendor?.id}`;
     const FetchAlluser = async () => {
       try {
         setLoading(true);

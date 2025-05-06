@@ -317,7 +317,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       console.log("confirmation", JSON.stringify(confirmation));
       setConfirm(confirmation);
       //   setConfirm(true);
-      setAutoVerification(true); // Set auto-verification flag
+      setAutoVerification(true); // Set auto-verification flags
       console.log("debugg33333");
       setAutoVerification(false); // Reset auto-verification flag
       // Alert.alert(
