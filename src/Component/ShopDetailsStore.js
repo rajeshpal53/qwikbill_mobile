@@ -6,6 +6,7 @@ import { useContext, useState } from "react";
 import UserDataContext from "../Store/UserDataContext";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next"; // if not already
+import { ShopContext } from "../Store/ShopContext";
 
 
 const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => {
@@ -13,7 +14,7 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
   const { userData } = useContext(UserDataContext);
   const navigation = useNavigation();
   const {t} =  useTranslation();
-
+  const {selectedShop}=useContext(ShopContext)
   const handleDelete = (item) => {
     console.log("Button pressed", item);
     setConfirmModalVisible(true);
@@ -23,8 +24,11 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
 
   const handleEdit = (item) => {
     // setSelectedModal(null);
+    console.log("item under viewshop , ", item);
+    const newPayload={user:item?.user,...item?.vendor}
+    console.log("new payload is , ", newPayload);
     navigation.navigate("CreateShopScreen", {
-      editItem: item,
+      editItem: newPayload,
       isUpdateAddress: true,
 
     });
@@ -140,8 +144,8 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
         </View>
 
 
-        
-        <View style={styles.ButtonView}>
+        {selectedShop?.role?.name === "owner"&&(<View>
+             <View style={styles.ButtonView}>
           <TouchableOpacity
             style={styles.closeButton}
             onPress={() => handleEdit(item)}
@@ -158,6 +162,9 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
             <Text style={{ color: "#fff" }}>Delete</Text>
           </TouchableOpacity>
         </View>
+          </View>)
+        }
+       
       </View>
     </View>
   );

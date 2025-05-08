@@ -1,13 +1,13 @@
 import { FlatList, RefreshControl, ScrollView, StyleSheet, Text } from "react-native";
 import { View } from "react-native";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
-import OpenmiqModal from "../../Modal/Openmicmodal";
+import OpenmiqModal from "../../Components/Modal/Openmicmodal";
 import { useContext, useEffect, useRef, useState } from "react";
 import NoDataFound from "../../Components/NoDataFound";
 import { readApi } from "../../Util/UtilApi";
 import AllVenderDataCard from "../../Component/Cards/AllVenderDataCard";
 import { ActivityIndicator } from "react-native-paper";
-import ConfirmModal from "../../Modal/ConfirmModal";
+import ConfirmModal from "../../Components/Modal/ConfirmModal";
 import { useNavigation } from "@react-navigation/native";
 import UserDataContext from "../../Store/UserDataContext";
 

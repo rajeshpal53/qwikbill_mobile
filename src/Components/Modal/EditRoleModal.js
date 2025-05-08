@@ -32,16 +32,13 @@ const EditRoleModal = ({ visible, onClose, selectedRole }) => {
   const pickerRef = useRef();
   const [isDisabled, setIsDisabled] = useState(true);
   const { showSnackbar } = useSnackbar();
-
   const [currentUserRole, setcurrentUserRole] = useState("");
-
   const roleOptions = [
     { label: "Owner", value: "owner" },
     { label: "Manager", value: "manager" },
     { label: "Employee", value: "employee" },
     { label: "Viewer", value: "viewer" },
   ];
-
   const validationSchema = Yup.object().shape({
     userRole: Yup.string().required("User Role is required"),
     // userMobile: Yup.string()
@@ -53,7 +50,7 @@ const EditRoleModal = ({ visible, onClose, selectedRole }) => {
     //   .required("Email is required"),
   });
 
-  console.log("User role data is ",selectedRole?.id);
+  console.log("User role data is ",selectedRole);
 
   const getStatusFk = () => {
     console.log("ADDROLE IS ", AddRode)
@@ -202,7 +199,6 @@ const EditRoleModal = ({ visible, onClose, selectedRole }) => {
                 <View style={styles.disabledInput}>
                   <Text>{selectedRole?.user?.email}</Text>
                 </View>
-
                 {/*Select Shop */}
                 <Text style={styles.label}>Select Shop</Text>
                 <View
@@ -257,7 +253,7 @@ const EditRoleModal = ({ visible, onClose, selectedRole }) => {
                     style={{ width: "100%", height: 60 }}
                   >
                     {/* <Picker.Item label="Select Role" value="" /> */}
-                    {getAssignableRoles(currentUserRole).map((role, index) => (
+                    {getAssignableRoles(selectedShop?.role?.name).map((role, index) => (
                       <Picker.Item
                         key={index}
                         label={role?.label || "Unknown Role"}

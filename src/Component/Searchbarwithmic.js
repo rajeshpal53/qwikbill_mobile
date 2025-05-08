@@ -14,7 +14,7 @@ import {
   useSpeechRecognitionEvent,
 } from "expo-speech-recognition";
 import { Platform, PermissionsAndroid } from "react-native";
-import OpenmiqModal from "../Modal/Openmicmodal";
+import OpenmiqModal from "../Components/Modal/Openmicmodal";
 import { Searchbar } from "react-native-paper";
 import { fontSize } from "../Util/UtilApi";
 import { useTranslation } from "react-i18next";

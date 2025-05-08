@@ -207,7 +207,7 @@ const PdfScreen = ({ navigation }) => {
           }}
           onError={(error) => {
             console.log(error,"flflflfllf");
-            showSnackbar(error,"error")
+            showSnackbar("failed to load pdf","error")
             setIsLoading(false)
           }}
          
@@ -222,7 +222,7 @@ const PdfScreen = ({ navigation }) => {
            }}
            onError={(error) => {
              console.log(error);
-             showSnackbar(error,"error")
+             showSnackbar("error failed to load pdf","error")
              setIsLoading(false)
            }}
           
