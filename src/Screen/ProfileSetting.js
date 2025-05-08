@@ -205,7 +205,7 @@ const ProfileSetting = ({
   const [imageUrl, setImageUrl] = useState(`${NORM_URL}assets/mobile/male.png`);
 
   const { showSnackbar } = useSnackbar();
-  const { userData, clearUserData } = useContext(UserDataContext);
+  const { userData, clearUserData,saveUserData} = useContext(UserDataContext);
   // const { setCreateuser } = useContext(WalletContext);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -216,7 +216,30 @@ const ProfileSetting = ({
     setRefreshing(true);
     await fetchServiceProvider(userData);
     setRefreshing(false);
+    await fetchUser();
+ 
   };
+  const fetchUser=async()=>{
+    try{
+      const response = await readApi(`getUserByMobile/${userData?.user?.mobile}`)
+      const updatedresponse ={
+        user:response,
+        token:userData.token
+      }
+      console.log(response,"setrefreshresponse")
+      saveUserData(updatedresponse)
+      return true;
+    }catch(err){
+      console.log("error in fetching user data",err)
+    }
+    finally{
+       return false;
+    }
+   
+
+  }
+ 
+
   const { t, i18n } = useTranslation();
   const isFocused = useIsFocused();
   const AdminOption = [
@@ -243,7 +266,7 @@ const ProfileSetting = ({
             value: "changeLanguage",
           },
 
-          ...(userData?.user?.roles === null ? AdminOption : []),
+          ...(userData?.user?.roles === 'admin' ? AdminOption : []),
           { icon: "policy", label: "Policies", value: "Policies" },
 
           ...(userData

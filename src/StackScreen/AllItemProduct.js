@@ -41,12 +41,12 @@ const AllItemProduct = ({ navigation }) => {
 
   console.log("PAGE IS SSSS", page);
   console.log("TOTAL PAGE IS ", totalpage);
-
+  
   const fetchProductData = async () => {
     try {
       setloader(true);
       const response = await readApi(
-        `products/getProductByVendorfk/${selectedShop?.vendor?.id}?page=${page}&limit=${PAGE_LIMIT}`,
+        `products/getProductByVendorfk?vendorfk=${selectedShop?.vendor?.id}?page=${page}&limit=${PAGE_LIMIT}`,
         {
           Authorization: `Bearer ${userData?.token}`,
         }
