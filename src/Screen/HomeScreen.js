@@ -24,7 +24,7 @@ import {
 import { Button, Card, TextInput, ActivityIndicator } from "react-native-paper";
 import { AuthContext } from "../Store/AuthContext";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
-import { services } from "../tempList/ServicesList";
+import { services,rolePermissions} from "../tempList/ServicesList";
 import CreateInvoice from "../Components/CreateInvoice";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { API_BASE_URL, ButtonColor, fontFamily, fontSize, readApi } from "../Util/UtilApi";
@@ -55,7 +55,7 @@ import {
 } from "react-native-reanimated";
 import PieChartComponent from "../Components/PieChartComponent ";
 import { Dimensions } from "react-native";
-import ConfirmModal from "../Modal/ConfirmModal";
+import ConfirmModal from "../Components/Modal/ConfirmModal";
 import { useTranslation } from "react-i18next";
 import FileUploadModal from "../Components/BulkUpload/FileUploadModal";
 
@@ -103,7 +103,6 @@ export default function HomeScreen({ navigation, noItemData }) {
       console.log("Modal should show now because noItemModal is true.");
     }
   }, [noItemModal]);
-
 
   useEffect(() => {
     const checkTourStatus = async () => {
@@ -194,6 +193,7 @@ export default function HomeScreen({ navigation, noItemData }) {
       setRefreshing(false);
     }
   };
+
 
   const total =
     (vendorStatus?.totalSales || 0) +
@@ -300,11 +300,21 @@ export default function HomeScreen({ navigation, noItemData }) {
                     style={styles.flatList}
                     data={services}
                     numColumns={3}
-                    renderItem={({ item, index }) => (
+                    renderItem={({ item, index }) => 
+                      {
+                    const role = selectedShop?.role?.name;
+                const isDisabled = !rolePermissions[role]?.includes(item.name);
+               
+                       return(
                       <View style={styles.flatListitem}>
                         <TouchableOpacity
-                          style={styles.item}
-                          onPress={() => goToHandler(item.navigateTo)}
+                          style={[styles.item, isDisabled && { opacity: 0.5 },]}
+                          onPress={() => {
+                            if (!isDisabled) {
+                              goToHandler(item.navigateTo);
+                            }
+                          }}  
+                          disabled={isDisabled}
                         >
                           <View style={{ alignItems: "center" }}>
                             <Text>{item.icon}</Text>
@@ -328,7 +338,7 @@ export default function HomeScreen({ navigation, noItemData }) {
                           pointerEvents="box-none"
                         />
                       </View>
-                    )}
+                    )}}
                     keyExtractor={(item, index) => index.toString()}
                     ListEmptyComponent={<Text>No Items Found</Text>}
                   />

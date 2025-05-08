@@ -18,10 +18,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { ToggleButton, TextInput, Card } from "react-native-paper";
-import AddInvoice from "./AddInvoice";
-import AddInvoiceScreen from "../Screen/AddInvoiceScreen";
+
 import DropDownList from "../UI/DropDownList";
-import ThreeToggleBtns from "./ThreeToggleBtns";
 import { ShopDetailContext } from "../Store/ShopDetailContext";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import ItemDataTable from "../Component/Cards/ItemDataTable";
@@ -211,14 +209,6 @@ export default function CreateInvoice({ navigation, route }) {
               <DropDownList options={allShops} />
             </View>
           </View>
-
-          {/* <ThreeToggleBtns
-            buttonsModes={buttonsModes}
-            setButtonsModes={setButtonsModes}
-            navigation={navigation}
-            toggleButtonsTexts={toggleButtonsTexts}
-            handleButtonPress={handleButtonPress}
-          /> */}
           <CustomToggleButton
             options={toggleOptions}
             value={selectedValue}

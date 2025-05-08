@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {View,Text,StyleSheet}from 'react-native'
 import { useRoute } from '@react-navigation/native';
 import { readApi } from '../../Util/UtilApi';
@@ -6,7 +6,8 @@ import { FlatList } from 'react-native-gesture-handler';
 import TransactionCard from '../../Component/TransactionCard';
 import { ActivityIndicator,FAB} from 'react-native-paper';
 import Icon from "react-native-vector-icons/Ionicons";
-import TransactionModal from '../../Modal/TransactionModal';
+import TransactionModal from '../../Components/Modal/TransactionModal';
+import { ShopContext } from '../../Store/ShopContext';
 function InvoiceTransactionScreen() {
   const route= useRoute();
   const{invoices}=route.params||null
@@ -14,6 +15,7 @@ function InvoiceTransactionScreen() {
   const[transactions,setTransactions]=useState([])
   const[isLoading,setIsLoading]=useState(false)
   const [visible,setVisible]=useState(false)
+  const {selectedShop}=useContext(ShopContext)
   useEffect(()=>{
     fetchinvoiceData()
   },[])
@@ -44,14 +46,17 @@ function InvoiceTransactionScreen() {
         renderItem={({item})=>(<TransactionCard item={item}/>)}
         keyExtractor={(item) => item.id.toString()}
       />
-       <FAB icon={() => <Icon name="add-outline" size={25} color="white" />}
-           theme={{ colors: { primary: '#fff' } }}
-              style={styles.fab}
-              color="white"
-              onPress={()=>{setVisible(true)}}
-            
-              labelStyle={{color:"#ffffff"}}
-             />   
+      {selectedShop?.role?.name!=="viewer"&&(
+        <FAB icon={() => <Icon name="add-outline" size={25} color="white" />}
+        theme={{ colors: { primary: '#fff' } }}
+           style={styles.fab}
+           color="white"
+           onPress={()=>{setVisible(true)}}
+         
+           labelStyle={{color:"#ffffff"}}
+          />   
+      )}
+       
     
     <TransactionModal visible={visible} onClose={() => setVisible(false)} invoices={invoices}/>
   </View>

@@ -25,8 +25,8 @@ import { deleteApi, fontSize, readApi, updateApi } from "../../Util/UtilApi";
 import NoDataFound from "../../../src/Components/NoDataFound";
 import UserCard from "../../Component/Cards/UserCard";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
-import OpenmiqModal from "../../Modal/Openmicmodal";
-import EditCustomerDetailsModal from "../../Modal/EditCustomerDetailsModal";
+import OpenmiqModal from "../../Components/Modal/Openmicmodal";
+import EditCustomerDetailsModal from "../../Components/Modal/EditCustomerDetailsModal";
 import axios from "axios";
 import { useSnackbar } from "../../Store/SnackbarContext";
 

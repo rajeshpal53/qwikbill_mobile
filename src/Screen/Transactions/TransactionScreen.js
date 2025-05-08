@@ -6,7 +6,7 @@ import { ShopContext } from "../../Store/ShopContext";
 import TransactionCard from "../../Component/TransactionCard";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
 import NoDataFound from "../../Components/NoDataFound";
-import OpenmiqModal from "../../Modal/Openmicmodal";
+import OpenmiqModal from "../../Components/Modal/Openmicmodal";
 
 function TransactionScreen() {
   const [transactions, setTransactions] = useState([]);

@@ -4,8 +4,8 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { Button, TextInput } from "react-native-paper";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import { ButtonColor, fontSize, updateApi } from "../Util/UtilApi";
-import UserDataContext from "../Store/UserDataContext";
+import { ButtonColor, fontSize, updateApi } from "../../Util/UtilApi";
+import UserDataContext from "../../Store/UserDataContext";
 import { useContext, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 

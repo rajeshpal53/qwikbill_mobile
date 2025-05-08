@@ -6,7 +6,7 @@ import { ShopContext } from "../../Store/ShopContext";
 import { ActivityIndicator, FAB } from "react-native-paper";
 import ViewInvoiceCard from "../../Components/ViewInvoiceCard";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
-import OpenmiqModal from "../../Modal/Openmicmodal";
+import OpenmiqModal from "../../Components/Modal/Openmicmodal";
 import FilterButtons from "../../Components/FilterButtons";
 import FilterModal from "../../Components/Modal/FilterModal";
 import UserDataContext from "../../Store/UserDataContext";
@@ -39,7 +39,7 @@ function ViewInvoiceScreen1({ navigation }) {
   useEffect(() => {
     setPage(1);
     fetchInvoices(1);
-  }, [selected, sortBy]);
+  }, [selected, sortBy,selectedShop?.vendor?.id]);
 
   const onRefresh = async () => {
     setRefreshing(true); // Set refreshing state to true
@@ -115,7 +115,7 @@ function ViewInvoiceScreen1({ navigation }) {
 
   useEffect(() => {
     if (page > 1) fetchInvoices(page);
-  }, [page]);
+  }, [page,selectedShop]);
 
 
 
