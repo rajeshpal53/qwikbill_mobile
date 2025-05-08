@@ -291,7 +291,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           const finalTotal = (parseInt(cartsValue?.totalPrice) || 0) - (parseInt(cartsValue?.discount) || 0);
           const extraData = {
             usersfk: User?.id,
-            vendorfk: selectedShop?.id,
+            vendorfk: selectedShop?. vendor?.id,
             statusfk: getStatusFk(),
             subtotal: cartsValue?.totalPrice,
             // address: "123 Main Street, City, Country",
@@ -299,10 +299,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
             finaltotal: finalTotal,
             // vendorprofit: 100,
             paymentMode: "COD",
-            ...(PaymentStatus == "Unpaid" || PaymentStatus == "Partially Paid"
-              ? { remainingamount: cartsValue?.afterdiscount }
-              : {}),
-
+            ...(PaymentStatus == "Unpaid" || PaymentStatus == "Partially Paid" ? { remainingamount: cartsValue?.afterdiscount } : {remainingamount:0}),
             // ...(selectedButton == "provisional" ? {provisionNumber: "12"} : {}),
           };
 
@@ -360,7 +357,8 @@ const CreateInvoiceForm = ({ selectedButton }) => {
         }) => {
           console.log("DATA VALID",isValid)
           console.log("DATA Dirty", dirty)
-
+          console.log("cart is , ", carts.length);
+          console.log("error is , ", error);
           return (
           <View>
             {/* Phone Field */}
@@ -509,11 +507,13 @@ const CreateInvoiceForm = ({ selectedButton }) => {
                 <ItemDataTable carts={carts} />
                 <PriceDetails setPaymentStatus={setPaymentStatus} />
               </View>
-            )}
+            )
+         
+            }
 
             {/* Submit Button */}
             <TouchableOpacity
-              disabled={error || isValid || !dirty || carts?.length <= 0}
+            disabled={error || isValid || !dirty || carts?.length <= 0}
               style={[
                 styles.submitButton,
                 {

@@ -35,7 +35,7 @@ function DropDownList({ options, setSelectedshop, disabled }) {
   //   useEffect(() => {
   //     // console.log("selectedShop is changed 1 - ", selectedShop)
   //     options?.map((item) => {
-  //       if(item?.id == selectedShop?.id){
+  //       if(item?.id == selectedShop?. vendor?.id){
   // console.log("same shop is , ", item)
   //       }
   //     })

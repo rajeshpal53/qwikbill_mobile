@@ -41,7 +41,7 @@ function TransactionScreen() {
         setIsLoading(true);
         // Fetch data from API
         const response = await readApi(
-          `transaction/getTransactionsByVendorfk/${selectedShop?.id}/?page=${page}&limit=${PAGE_SIZE}`
+          `transaction/getTransactionsByVendorfk/${selectedShop?. vendor?.id}/?page=${page}&limit=${PAGE_SIZE}`
         );
         console.log("API Response:", response);
         if (page == 1) {
@@ -66,7 +66,7 @@ function TransactionScreen() {
       }
     };
     fetchTransactions();
-  }, [page, selectedShop?.id, hasMore]);
+  }, [page, selectedShop?. vendor?.id, hasMore]);
 
   // Log transactions AFTER state update
   useEffect(() => {

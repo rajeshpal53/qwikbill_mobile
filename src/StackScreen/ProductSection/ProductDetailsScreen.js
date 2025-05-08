@@ -510,7 +510,7 @@ export default ProductDetailsScreen;
 //   }
 //   SetProductData(sortedData);
 // }, [filterOptionSelect]);
-// const api = `products/getProductByVendorfk/${selectedShop?.id}?page=${page}&limit=${PAGE_SIZE}`;
+// const api = `products/getProductByVendorfk/${selectedShop?. vendor?.id}?page=${page}&limit=${PAGE_SIZE}`;
 
 // useEffect(() => {
 //   getproductdata();

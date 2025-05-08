@@ -29,7 +29,6 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
 
     });
   };
-
   const handleViewProduct =() =>{
     navigation.navigate("wertone", {
       screen: "Products",

@@ -84,7 +84,7 @@ const EditRole = () => {
       if (selectedShop?.vendor?.id) {
         api = `userRoles/getUserRoleByVendorfk/${selectedShop?.vendor?.id}`;
       } else {
-        console.log("selectedShop.id is missing");
+        console.log("selectedShop?. vendor?.id is missing");
         setLoading(false);
         return;
       }
