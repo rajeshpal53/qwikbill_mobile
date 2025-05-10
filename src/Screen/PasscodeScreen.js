@@ -60,7 +60,7 @@ export default function PasscodeScreen({ navigation }) {
 
 
 
-
+  console.log("passkey in passCode screen",passkey)
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",

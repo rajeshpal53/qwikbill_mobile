@@ -158,76 +158,29 @@ const ProviderServiceForm = ({
         )}
       </View>
       <View style={{ padding: 5 }}>
-        <View style={{ minHeight: 200, padding: 10 }}>
-          <View style={{ width: "100%" }}>
-            <RichToolbar
-              editor={richText}
-              // style={{color:"#000"}}
-              actions={[
-                actions.setBold,
-                actions.setItalic,
-                actions.setUnderline,
-                actions.insertBulletsList,
-                actions.insertOrderedList,
-                actions.undo,
-                actions.redo,
-              ]}
-            />
-          </View>
+  <View style={{ padding: 10 }}>
+    <TextInput
+      mode="outlined"
+      multiline
+      numberOfLines={10} // Helps Paper calculate height
+      maxLength={500}
+      placeholder="Enter description (max 500 characters)..."
+      value={values.description}
+      onChangeText={handleChange('description')}
+      onBlur={handleBlur('description')}
+      style={{
+        height: 250,
+        textAlignVertical: 'top', // Start from top
+        backgroundColor: '#fff',  // Prevent transparent issues
+      }}
+    />
+    <Text style={{ color: 'rgba(0,0,0,0.5)', marginTop: 5 }}>
+      {values?.description?.length || 0}/500
+    </Text>
+  </View>
+</View>
+ 
 
-          <ScrollView
-            ref={scrollViewRef}
-            // scrollEnabled={true}
-            nestedScrollEnabled={true}
-            contentContainerStyle={{ flexGrow: 1 }}
-            // style={{padding:5}}
-          >
-            <RichEditor
-  ref={richText}
-  style={{ minHeight: 200, padding: 10 }}
-  placeholder={t("Start writing here...")}
-  initialContentHTML={editorContent || ""}
-  onInitialized={() => {
-    setEditorReady(true);
-    richText.current?.setContentHTML(editorContent || "");
-  }}
-  onChange={(text) => {
-    if (text?.length <= 500) {
-      setEditorContent(text);
-      setFieldValue("editorContent", text);
-    } else {
-      richText.current?.setContentHTML(editorContent);
-    }
-  }}
-  onHeightChange={handleHeightChange}
-/>
-            {/* <RichEditor
-              ref={richText}
-              style={{ minHeight: 200, padding: 10 }}
-              placeholder={t("Start writing here...")}
-              initialContentHTML={editorContent}
-              onInitialized={() => {
-                setEditorReady(true);
-                richText.current?.setContentHTML(editorContent);
-              }}
-              onChange={(text) => {
-                if (text.length <= 500) {
-                  handleEditorChange(text);
-                } else {
-                  richText.current?.setContentHTML(editorContent);
-                }
-              }}
-              onHeightChange={handleHeightChange}
-            /> */}
-          </ScrollView>
-
-          <Text style={{ color: "rgba(0,0,0,0.5)" }}>
-            {editorContent.length}/500
-          </Text>
-
-          {/* Rich Text Toolbar */}
-        </View>
-      </View>
 
       {/* <View
       style={{

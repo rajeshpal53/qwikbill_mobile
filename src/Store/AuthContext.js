@@ -13,9 +13,8 @@ export const AuthContext = createContext();
 
 // Create a provider component
 export const AuthProvider = ({ children }) => {
-  const { isPasskey } = usePasskey();
-  //const navigation = useNavigation();  
-
+  const { isPasskey, passkey } = usePasskey();
+  //const navigation = useNavigation();
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginDetail, setLoginDetail] = useState({});
@@ -79,63 +78,55 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  
   const handleLogin = async (values, navigation) => {
     try {
-
-      console.log("login screen",values);
+      console.log("login screen", values);
+      console.log("login screen passkey", passkey);
+      console.log(`isPasskey`, isPasskey, passkey);
 
       setIsLoading(true);
-  
+
       const payload = {
         mobile: values.mobile,
         password: values?.password,
       };
-  
-  
+
       const response = await createApi("users/loginUser", payload);
       console.log("Full API Response:", response);
-  
-    
+
       if (!response || response?.error || !response?.token) {
-        console.log("Login failed: Invalid credentials"); 
+        console.log("Login failed: Invalid credentials");
         showSnackbar("Invalid mobile number or password", "error");
-        await AsyncStorage.removeItem("loginDetail"); 
-        await saveUserData(null); 
+        await AsyncStorage.removeItem("loginDetail");
+        await saveUserData(null);
         setIsLoading(false);
         return;
       }
-  
-    
       await storeData("loginDetail", response);
-      await AsyncStorage.setItem("firstTimeLogin", "true");  // ✅ Mark first login
+      await AsyncStorage.setItem("firstTimeLogin", "true"); // ✅ Mark first login
 
       setLoginDetail(response);
       console.log("Saving user data:", response);
 
       await saveUserData(response);
-      
-      if (navigation) {
-        if (isPasskey) {
-          //navigation.navigate("Passcode");
-          navigation.reset({ index: 0, routes: [{ name: "Passcode" }] });  
-
-        } else {
-          //navigation.navigate("CreateNewPasscode");
-          navigation.reset({ index: 0, routes: [{ name: "CreateNewPasscode" }] });
-
-        }
-      }
+      return true;
+      // if (isPasskey === false) {
+      //   console.log("isPasskey is explicitly false");
+      //   return true;
+      // } else {
+      //   console.log("isPasskey is true, null, or undefined");
+      //   return true;
+      //   // navigation.reset({ index: 0, routes: [{ name: "passcode" }] });
+      // }
     } catch (error) {
       //console.error("Login error:", error);
       showSnackbar(`${error.data.message}`, "error");
+      return false;
       // showSnackbar("Wrong phone number or password .", "error");
     } finally {
       setIsLoading(false);
     }
   };
-  
-  
 
   const logout = async () => {
     try {
