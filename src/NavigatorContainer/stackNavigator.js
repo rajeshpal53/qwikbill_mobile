@@ -40,7 +40,6 @@ import ShopDetailScreen from "../Screen/StackScreen/Shops/ShopDetailScreen.js";
 import VendorDetailScreen from "../Screen/Vendors/VendorDetailScreen.js";
 import EditProfile from "../Screen/EditProfile.js";
 import SetPasswordSreen from "../StackScreen/SetPasswordScreen.js";
-import UserloginScreen from "../StackScreen/UserLoginScreen.js";
 import CustomBackButton from "../Component/CustomBackButton.js";
 import CustomerDetails from "../StackScreen/Customerdetails.js";
 import AllItemProduct from "../../src/StackScreen/AllItemProduct.js";
@@ -69,6 +68,8 @@ import EditRole from "../Screen/StackScreen/EditRole.js";
 import RoleDetailsScreen from "../Screen/StackScreen/RoleDetailsScreen.js";
 import InvoiceTransactionScreen from "../Screen/StackScreen/InvoiceTransactionScreen.js";
 import { useTranslation } from "react-i18next";
+import { usePasskey } from "../Store/PasskeyContext.js";
+
 
 
 export default function StackNavigator() {
@@ -81,6 +82,7 @@ export default function StackNavigator() {
   const [roleDetails, setroleDetails] = useState(false);
   const [noItemModal, setNoItemModal] = useState(false);
   const [noItemData, setNoItemData] = useState({});
+  const {passkey}=usePasskey()
     const{t}=useTranslation()
   const fetchServiceProvider = async (userData) => {
     try {
@@ -139,9 +141,15 @@ export default function StackNavigator() {
     <>
       <Stack.Navigator
         // initialRouteName={userData ? "Passcode" : "login"}
-        initialRouteName={
-          isForgetPasswordState ? "login" : userData ? "Passcode" : "login"
-        }
+       initialRouteName={
+  isForgetPasswordState
+    ? "login"
+    : userData
+      ? passkey === null
+        ? "CreateNewPasscode"
+        : "Passcode"
+      : "login"
+}
         screenOptions={
           {
             // headerTitle: "Create Invoice",
@@ -407,14 +415,6 @@ export default function StackNavigator() {
             headerTitle: "Set Password", // Provide a default title
           }}
         />
-        <Stack.Screen
-          name="UserloginScreen"
-          component={UserloginScreen}
-          options={{
-            headerTitle: "User Login", // Provide a default title
-          }}
-        />
-
         <Stack.Screen
           name="AllItemProduct"
           component={AllItemProduct}
