@@ -48,7 +48,6 @@ import UserDataContext from "../Store/UserDataContext.js";
 import PdfScreen from "../Component/PdfViewer.js";
 import EditProfileScreen from "../Screen/StackScreen/EditProfileScreen.js";
 import AddRole from "../Screen/StackScreen/Addrole.js";
-import { withCopilot } from "react-native-copilot";
 import ViewShopDetailsScreen from "../Screen/StackScreen/Shops/ViewShopDetailsScreen.js";
 import ViewInvoiceScreen1 from "../Screen/Invoices/ViewInvoiceScreen1.js";
 import InvoicePreviewScreen from "../Screen/Invoices/InvoicePreviewScreen.js";
