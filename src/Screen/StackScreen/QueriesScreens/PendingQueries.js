@@ -27,7 +27,7 @@ import { ActivityIndicator } from "react-native-paper";
 import QueryCard from "./QueryCard";
 import { useIsFocused } from "@react-navigation/native";
 import { RefreshControl } from "react-native-gesture-handler";
-import ConfirmModal from "../../../Modal/ConfirmModal";
+import ConfirmModal from "../../../Components/Modal/ConfirmModal";
 import ViewQueryDetailModal from "./viewQueryDetailModal";
 
 const PendingQueries = () => {

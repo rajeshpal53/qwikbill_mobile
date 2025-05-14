@@ -140,33 +140,37 @@ const AllRoleDetailsCard = ({ item, getRoleData, setRoleId, setVisible }) => {
           </View> */}
 
           {/* Buttons with Icons */}
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => HandleEditRole(item)}
-            >
-              <MaterialCommunityIcons
-                name="pencil"
-                size={18}
-                color="white"
-                style={styles.icon}
-              />
-              <Text style={styles.buttonText}>Edit</Text>
-            </TouchableOpacity>
+          
+          {!(item.role.name === "owner" || item?.user?.mobile === userData?.user?.mobile) && (
+  <View style={styles.buttonContainer}>
+    <TouchableOpacity
+      style={styles.button}
+      onPress={() => HandleEditRole(item)}
+    >
+      <MaterialCommunityIcons
+        name="pencil"
+        size={18}
+        color="white"
+        style={styles.icon}
+      />
+      <Text style={styles.buttonText}>Edit</Text>
+    </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[styles.button, styles.deleteButton]}
-              onPress={() => HandleRole(item)}
-            >
-              <MaterialCommunityIcons
-                name="trash-can"
-                size={18}
-                color="white"
-                style={styles.icon}
-              />
-              <Text style={styles.buttonText}>Delete</Text>
-            </TouchableOpacity>
-          </View>
+    <TouchableOpacity
+      style={[styles.button, styles.deleteButton]}
+      onPress={() => HandleRole(item)}
+    >
+      <MaterialCommunityIcons
+        name="trash-can"
+        size={18}
+        color="white"
+        style={styles.icon}
+      />
+      <Text style={styles.buttonText}>Delete</Text>
+    </TouchableOpacity>
+  </View>
+)}
+        
 
           {isEditModalVisible && (
             <EditRoleModal

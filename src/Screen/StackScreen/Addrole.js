@@ -244,7 +244,8 @@ const AddRole = () => {
       console.log("DATA OF SUBMIT ", response);
       showSnackbar("Role Create successfully", "success");
     } catch (error) {
-      console.log("Unable to create data", error);
+      // console.log("Unable to create data", error);
+      showSnackbar(`Unable to create data ${error?.data?.error}`, "error");
       setLoading(false);
     } finally {
       setLoading(false);

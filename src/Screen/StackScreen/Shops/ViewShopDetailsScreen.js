@@ -5,7 +5,7 @@ import { useContext, useState ,useEffect } from "react";
 import UserDataContext from "../../../Store/UserDataContext";
 import UserDetailsStore from "../../../Component/UserDetailsstore";
 import ShopDetailsStore from "../../../Component/ShopDetailsStore";
-import ConfirmModal from "../../../Modal/ConfirmModal";
+import ConfirmModal from "../../../Components/Modal/ConfirmModal";
 import { NORM_URL,deleteApi } from "../../../Util/UtilApi";
 import { useSnackbar } from "../../../Store/SnackbarContext";
 import { ShopContext } from "../../../Store/ShopContext";

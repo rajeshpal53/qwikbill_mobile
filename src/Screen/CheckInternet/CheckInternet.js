@@ -1,77 +1,35 @@
-import {View, Text, StyleSheet, Image, Modal} from "react-native"
-import React, { useEffect } from "react"
-import NetInfo from "@react-native-community/netinfo"
-import { Feather } from "@expo/vector-icons";
-const CheckInternet = ({isConnected, setIsConnected}) => {
+// CheckInternet.js
+import React, { useState, useEffect } from "react";
+import InternetConnection from "../../Components/Modal/InternetConnection";
+import NetInfo from "@react-native-community/netinfo";
 
-    useEffect(() => {
-        const unsubscribe = NetInfo.addEventListener(state => {
-            console.log("Connection type", state.type);
-            console.log("Is connected?", state.isConnected);
-            setIsConnected(state.isConnected);
-          });
+const CheckInternet = () => {
+  const [modalVisible, setModalVisible] = useState(false);
 
-          // Unsubscribe
-          return () => {
-            unsubscribe();
-          };
-    }, [])
-    return (
-      <Modal
-        visible={!isConnected}
-        transparent={true}
-        animationType="slide"
-      >
-        <View style={styles.container}>
-        <Feather name="wifi-off" size={30} color="#black" />
-        </View>
-      </Modal>
-    );
+  // If no internet connection, show the modal
+  useEffect(() => {
+    const checkConnection = async () => {
+      const state = await NetInfo.fetch();
+      setModalVisible(!state.isConnected); // Show modal if no connection
+    };
+    checkConnection(); // Check when component mounts
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setModalVisible(!state.isConnected); // Show/hide modal on network change
+    });
+
+    // Clean up the listener on unmount
+    return () => unsubscribe();
+  }, []);
+
+  return (
+
+      <InternetConnection
+      visible={modalVisible}
+      onClose={() => setModalVisible(false)} // Close modal when user clicks Retry
+    />
+
+    
+  );
 };
 
 export default CheckInternet;
-
-const styles = StyleSheet.create({
-    container:{
-      flex:1,
-      backgroundColor:"#fff",
-      justifyContent:"center",
-    },
-    image:{
-        width:200,
-        height:200,
-        alignSelf:"center"
-    }
-})
-
-// NoInternetScreen.js
-// import React from "react";
-// import { View, Text, StyleSheet, Button } from "react-native";
-// import { Image } from "react-native";
-
-// const CheckInternet = ({ onRetry }) => {
-//   return (
-//     <View style={styles.container}>
-//         <Image
-//           source={require("../../assets/noInternet.png")}
-//           style={styles.image}
-//         />
-//         <Button title="Retry" onPress={onRetry} />
-//     </View>
-//   );
-// };
-
-
-// export default CheckInternet;
-
-// const styles = StyleSheet.create({
-//     container:{
-//         backgroundColor:"#fff",
-//         justifyContent:"center",
-//     },
-//     image:{
-//         width:200,
-//         height:200,
-//         alignSelf:"center"
-//     }
-// })

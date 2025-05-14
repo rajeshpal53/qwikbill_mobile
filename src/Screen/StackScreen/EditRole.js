@@ -26,7 +26,7 @@ import AllRoleDetailsCard from "../../Component/Cards/AllRoleDetailsCard";
 import { FlatList } from "react-native-gesture-handler";
 import { FAB } from "react-native-paper";
 import NoDataFound from "../../Components/NoDataFound";
-import OpenmiqModal from "../../Modal/Openmicmodal";
+import OpenmiqModal from "../../Components/Modal/Openmicmodal";
 import DeleteModal from "../../UI/DeleteModal";
 import { useSnackbar } from "../../Store/SnackbarContext";
 
@@ -113,35 +113,30 @@ const EditRole = () => {
 
   const HandleDeleteRole = async (roleId) => {
     console.log("Data of item is 345", roleId);
+    const headers = {
+      Authorization: `Bearer ${userData?.token}`,
+    };
     try {
       setLoading(true);
-      const response = await deleteApi(`userRoles/${roleId}`);
+      const response = await deleteApi(`userRoles/${roleId}`,headers);
       console.log("GET ALL DATA IS125 ", response?.data);
       if (response?.data) {
         setRoleData((prevData) =>
           prevData.filter((role) => role.id !== roleId)
         );
         console.log("GET ALL DATA IS response", response.data);
+        showSnackbar("Role deleted successfully","success")
       } else {
         console.log("No data returned from delete API");
       }
     } catch (error) {
       console.log("Unable to fetch Role data", error);
+      showSnackbar("Unable to fetch Role data", "error");
+
     } finally {
       setLoading(false);
       setVisible(false);
-      // =======
-      //       if (roleId) {
-      //         const deleteResponse = await deleteApi(`roles/${roleId}`);
-      //         if (deleteResponse) {
-      //           showSnackbar("Role deleted successfully!", "success");
-      //           setRoleData((prev) => prev.filter((role) => role.id != roleId));
-      //         } else {
-      //           console.log("Failed to delete the offer. Response: ", deleteResponse);
-      //         }
-      //       } else {
-      //         console.log("Unable to get Id");
-      // >>>>>>> faizan
+     
     }
   };
 
@@ -158,7 +153,6 @@ const EditRole = () => {
       setSearchCalled(false);
     }
   };
-
   const Loader = () => {
     if (!loading) return null;
     return (
@@ -263,7 +257,6 @@ const EditRole = () => {
           ListFooterComponent={Loader}
           showsVerticalScrollIndicator={false}
         />
-
         <FAB
           icon="plus"
           style={styles.fab}

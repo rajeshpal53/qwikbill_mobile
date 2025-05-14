@@ -177,12 +177,12 @@ import Icon from "react-native-vector-icons/Ionicons";
 import axios from "axios";
 import CustomerDetailsCard from "../../Component/Cards/CustomerDetailsCard";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
-import EditCustomerDetailsModal from "../../Modal/EditCustomerDetailsModal";
+import EditCustomerDetailsModal from "../../Components/Modal/EditCustomerDetailsModal";
 import { API_BASE_URL, readApi } from "../../Util/UtilApi";
 import { ShopContext } from "../../Store/ShopContext";
 import { useIsFocused } from "@react-navigation/native";
 import NoDataFound from "../../Components/NoDataFound";
-import OpenmiqModal from "../../Modal/Openmicmodal";
+import OpenmiqModal from "../../Components/Modal/Openmicmodal";
 
 const CustomerDetail = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");

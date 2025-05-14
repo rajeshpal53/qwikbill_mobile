@@ -24,7 +24,7 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 import CustomerDetailsCard from "../../Component/Cards/CustomerDetailsCard";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
-import EditCustomerDetailsModal from "../../Modal/EditCustomerDetailsModal";
+import EditCustomerDetailsModal from "../../Components/Modal/EditCustomerDetailsModal";
 import ProductDetailsCard from "../../Component/Cards/ProductDetailsCard";
 // import { setProductitem } from "../../Redux/CartProductRedux/ProductSlice";
 import { setProductitem } from "../../Redux/slices/ProductSlice";
@@ -36,7 +36,7 @@ import FileUploadModal from "../../Components/BulkUpload/FileUploadModal";
 import { ShopContext } from "../../Store/ShopContext";
 import UserDataContext from "../../Store/UserDataContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import OpenmiqModal from "../../Modal/Openmicmodal";
+import OpenmiqModal from "../../Components/Modal/Openmicmodal";
 import CustomeFilterDropDown from "../../Component/CustomFilterDropDown";
 import { useFocusEffect } from "@react-navigation/native";
 import NoDataFound from "../../Components/NoDataFound";
@@ -109,13 +109,11 @@ const ProductDetailsScreen = ({ navigation }) => {
     selectedShop?.vendor?.id,
     refresh,
   ]);
-
-
   console.log("SELECTED SHOP123 ",selectedShop)
 
   const onRefresh = async () => {
     setRefreshing(true);  // Set refreshing state to true
-    await getproductdata(); // Fetch new data
+    await getproductdata(1); // Fetch new data
     setRefreshing(false); // Set refreshing state to false once done
   };
 
@@ -226,13 +224,11 @@ useEffect(()=>{
       const trimmedQuery = searchQuery?.trim();
       console.log("trimmedQuery DATA IS ", trimmedQuery);
 
-      let api = `products/searchProducts?searchTerm=${trimmedQuery}`;
-
+      let api = `products/searchProducts?searchTerm=${trimmedQuery}&vendorfk=${selectedShop?.vendor?.id}`;
       const response = await readApi(api, {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userData?.token}`,
       });
-
       console.log("RESPONSE DATA IS45989", response);
 
       if (response?.length > 0) {
@@ -348,8 +344,9 @@ useEffect(()=>{
           </View>
         )}
       />
-
-      <FAB.Group
+    {
+        (selectedShop?.role?.name === "owner" || selectedShop?.role?.name === "manager") &&(
+        <FAB.Group
         open={open}
         visible
         icon={open ? "close" : "plus"}
@@ -385,6 +382,9 @@ useEffect(()=>{
           backgroundColor: "#007bff", //
         }}
       />
+      )
+    }
+     
 
       {/* Bulk Upload Modal */}
       {bulkUploadModalVisible && (

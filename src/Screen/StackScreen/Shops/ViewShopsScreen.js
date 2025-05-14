@@ -19,7 +19,7 @@ import { AuthContext } from "../../../Store/AuthContext";
 import UserDataContext from "../../../Store/UserDataContext";
 import ViewAllVendersCard from "../../../Component/Cards/ViewAllVendersCard";
 import Searchbarwithmic from "../../../Component/Searchbarwithmic";
-import OpenmiqModal from "../../../Modal/Openmicmodal";
+import OpenmiqModal from "../../../Components/Modal/Openmicmodal";
 // const fetchSearchData = async (searchQuery) => {
 //   try {
 //     // console.log("shopid , ,", shopId)
@@ -169,7 +169,7 @@ export default function ViewShopsScreen() {
 
   const handleEdit = (item) => {
     // console.log(`Editing shop with ID ${id}`);
-    // console.log("item under viewshop , ", item);
+    console.log("item under viewshop , ", item);
     navigation.navigate("CreateShopScreen", { shop: item });
   };
 

@@ -11,6 +11,13 @@ import {
 } from "@expo/vector-icons";
 import { responsiveFontSize } from "react-native-responsive-dimensions";
 
+
+export const rolePermissions = {
+  owner: ["Create Invoice", "Add Product", "Add Shop","View Your Shops","Transactions","Product Upload","View Customer"],
+  manager: ["Create Invoice", "Add Product","View Your Shops","Transactions","Product Upload","View Customer"],
+  employee:["Create Invoice","View Your Shops","Transactions","View Customer"],
+  viewer: ["View Your Shops", "Transactions","View Customer"], 
+};
 export const services = [
   {
     name: "Create Invoice",

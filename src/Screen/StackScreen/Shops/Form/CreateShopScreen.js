@@ -391,6 +391,7 @@ const CreateShopScreen = ({ navigation }) => {
         // );
         setInitialData({
           name: routeData?.user?.name || "",
+          address: routeData?.user?.address || "",
           mobile: routeData?.user?.mobile || "",
           email: routeData?.user?.email || "",
           gender: routeData?.user?.gender || userData?.user?.gender || "",
@@ -626,7 +627,7 @@ const CreateShopScreen = ({ navigation }) => {
         updateUserPayloadData.append("name", values?.name);
         updateUserPayloadData.append("mobile", values?.mobile);
         updateUserPayloadData.append("aadharCard", values?.aadhaarNumber);
-
+        updateUserPayloadData.append("address",values?.userAddress)
         const formattedDate = formatDate(values?.dob);
         updateUserPayloadData.append("dob", formattedDate);
 
@@ -806,9 +807,8 @@ const CreateShopScreen = ({ navigation }) => {
               "Something went Wrong Updating Service Provider route data",
               error
             );
-
             showSnackbar(
-              t("Something went Wrong Updating Service Provider route data"),
+              `Something went Wrong Updating Service Provider ${error.data.error}`,
               "error"
             );
           } else {
@@ -818,7 +818,7 @@ const CreateShopScreen = ({ navigation }) => {
             );
 
             showSnackbar(
-              t("Something went Wrong Creating Service Provider route data"),
+              t(`Something went Wrong Creating Service Provider  ${error.data.error}`),
               "error"
             );
           }

@@ -23,7 +23,7 @@ import { useWindowDimensions } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import { ActivityIndicator } from "react-native-paper";
 import { useSnackbar } from "../Store/SnackbarContext";
-import SetpasswordModal from "../Modal/SetpasswordModal";
+import SetpasswordModal from "../Components/Modal/SetpasswordModal";
 
 import { AuthContext } from "../Store/AuthContext";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";

@@ -177,9 +177,9 @@ import {
   Modal,
   Alert,
 } from "react-native";
-import { createApi } from "../Util/UtilApi";
-import UserDataContext from "../Store/UserDataContext";
-import { useSnackbar } from "../Store/SnackbarContext";
+import { createApi } from "../../Util/UtilApi";
+import UserDataContext from "../../Store/UserDataContext";
+import { useSnackbar } from "../../Store/SnackbarContext";
 
 const TransactionModal = ({ visible, onClose,invoices }) => {
   const [amount, setAmount] = useState("");

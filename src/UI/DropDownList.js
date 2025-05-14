@@ -71,8 +71,8 @@ function DropDownList({ options, setSelectedshop, disabled }) {
             <Picker.Item
               key={index}
               value={item.vendor.id} // pass primitive value
-              label={`${item?.vendor?.shopname ?? "Unnamed Shop"} (by ${item?.user?.name ?? "Unknown"})`}
-              color="#555555"
+              label={`${item?.vendor?.shopname ?? "Unnamed Shop"} (by ${item?.role?.name})`}// ${item?.user?.name ?? "Unknown"}
+              color="#555555" 
             />
           ))}
         </Picker>
