@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { View, StyleSheet, ScrollView, TouchableOpacity,Alert } from "react-native";
 import { RadioButton, Text, TextInput } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -8,14 +8,15 @@ import CategoryDropDown from "../UI/DropDown/CategoryDropdown";
 import { ShopContext } from "../Store/ShopContext";
 import { useSnackbar } from "../Store/SnackbarContext";
 import { useRoute } from "@react-navigation/native";
-
+import RazorpayCheckout from 'react-native-razorpay';
+import UserDataContext from "../Store/UserDataContext";
 const AddProduct = ({ navigation }) => {
   // const [options, setOptions] = useState([]);
   // const [showOptions, setShowOptions] = useState(false);
   // const [showHsnOptions, setShowHsnOptions] = useState(false);
   const route = useRoute();
   const { EditData, isUpdated, setRefresh } = route.params;
-
+  const {userData}=useContext(UserDataContext)
   const [HSNCode, SetHSNCode] = useState();
   const { selectedShop } = useContext(ShopContext);
   const { showSnackbar } = useSnackbar();
@@ -45,6 +46,52 @@ const AddProduct = ({ navigation }) => {
     ),
     IsStockData: Yup.boolean().nullable().required("Stock status is required"),
   });
+
+   const handlePayment = async (amount) => {
+      // const response= await createApi("wallet/createOrderRazorpay",{ amount,currency: "INR",})
+      // console.log("respnse of orderapi",response)
+      // const order= await response;
+    const options = {
+      description: 'Test payment for order #1234',
+      image: 'https://dailysabji.com/assets/dailysabji.png', // Optional: Your brand/logo URL
+      currency: 'INR',
+      key: 'rzp_test_3YVR197XSieDE6', // Replace with your Razorpay test or live key
+      amount:amount,
+        // order_id: order.id, 
+      name: 'Daily Sabji',
+      prefill: {
+        email: userData?.user?.email,
+        contact:userData?.user?.mobile,
+        name: userData?.user?.name,
+      },
+      theme: { color: '#3399cc' },
+    };
+    // Open Razorpay Checkout
+    console.log("Razorpay options: ", options);
+    RazorpayCheckout.open(options)
+      .then(async(data) => {
+        // Success  
+       console.log("payment data:",data)
+      //  setIsLoading(true)
+  // const response= await createApi("wallet/verifyPayment",{razorpay_order_id:data?.razorpay_order_id,
+  //   razorpay_payment_id:data?.razorpay_payment_id, 
+  //   razorpay_signature:data?.razorpay_signature, 
+  //   userfk:userData?.user?.id, 
+  //   amount:amount})
+      console.log( "response of verify  result",response)
+      Alert.alert('Payment Success', `Payment ID: ${data.razorpay_payment_id}`);
+      // setIsLoading(false)
+      })
+      .catch((error) => {
+        // Error
+        console.error("payment error",error)
+        Alert.alert(
+          'Payment Failed',
+          `Error: ${error.code} | ${error.description}`
+        );
+        //  setIsLoading(false)
+      });
+  };
 
   const HandleHsnCode = async (hsncode, setFieldValue) => {
     if (timeoutId.current) {
@@ -90,6 +137,7 @@ const AddProduct = ({ navigation }) => {
         }}
         validationSchema={validationSchema}
         onSubmit={async (values, { resetForm }) => {
+         await  handlePayment(20)
           const ProductData = {
             productcategoryfk: values?.ProductCategory,
             name: values?.ProductName,
