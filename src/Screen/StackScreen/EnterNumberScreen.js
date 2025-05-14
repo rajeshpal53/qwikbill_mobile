@@ -38,7 +38,7 @@ import * as Yup from "yup";
 // import * as Notifications from "expo-notifications"
 import CountryCodeModal from "../../Component/CountryCodeModal";
 import AutoSlidingCarousel from "../../Component/AutoSlidingCarousel";
-import SetpasswordModal from "../../Modal/SetpasswordModal";
+import SetpasswordModal from "../../Components/Modal/SetpasswordModal";
 import UserDataContext from "../../Store/UserDataContext";
 import { AuthContext } from "../../Store/AuthContext";
 // import { useTranslation } from "react-i18next";

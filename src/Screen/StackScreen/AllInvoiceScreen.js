@@ -1,6 +1,6 @@
 import { FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
-import OpenmiqModal from "../../Modal/Openmicmodal";
+import OpenmiqModal from "../../Components/Modal/Openmicmodal";
 import { useContext, useEffect, useRef, useState } from "react";
 import NoDataFound from "../../Components/NoDataFound";
 import { readApi } from "../../Util/UtilApi";

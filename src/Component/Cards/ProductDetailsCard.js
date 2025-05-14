@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -10,12 +10,13 @@ import { Card, Avatar } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { fontSize } from "../../Util/UtilApi";
+import { ShopContext } from "../../Store/ShopContext";
 
 
 const ProductDetailsCard = ({ item, setRefresh, setProductId, setVisible }) => {
   const [Opendetails, setOpendetails] = useState(false);
   const navigation = useNavigation();
-
+  const{selectedShop}=useContext(ShopContext)
   const HandleProductDelete = () =>{
     console.log("ITEM ID IS ",item?.id)
     setProductId(item?.id)
@@ -47,25 +48,30 @@ const ProductDetailsCard = ({ item, setRefresh, setProductId, setVisible }) => {
           </View>
 
           <View style={styles.ButtonTextView}>
-            <View style={styles.ButtonView}>
-              <View>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("AddProduct", { EditData: item, isUpdated: true, setRefresh:setRefresh })
-                }
-                  style={styles.iconButton}
-                >
-                  <MaterialIcons name="edit" size={24} color="#1E88E5" />
-                </TouchableOpacity>
-              </View>
-              <View>
-                <TouchableOpacity
-                  onPress={() => HandleProductDelete(item)}
-                  style={styles.iconButton}
-                >
-                  <MaterialIcons name="delete" size={24} color="#E53935" />
-                </TouchableOpacity>
-              </View>
-            </View>
+            {
+              (selectedShop?.role?.name === "owner" || selectedShop?.role?.name === "manager") &&(
+                <View style={styles.ButtonView}>
+                <View>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("AddProduct", { EditData: item, isUpdated: true, setRefresh:setRefresh })
+                  }
+                    style={styles.iconButton}
+                  >
+                    <MaterialIcons name="edit" size={24} color="#1E88E5" />
+                  </TouchableOpacity>
+                </View>
+                <View>
+                  <TouchableOpacity
+                    onPress={() => HandleProductDelete(item)}
+                    style={styles.iconButton}
+                  >
+                    <MaterialIcons name="delete" size={24} color="#E53935" />
+                  </TouchableOpacity>
+                </View>
+              </View> 
+              )
+            }
+           
             <View style={styles.Availabletext}>
               <Text style={item.isStock ? styles.inStock : styles.outOfStock}>
                 {item.isStock ? `In Stock` : "Out of Stock"}

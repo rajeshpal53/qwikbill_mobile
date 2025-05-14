@@ -11,7 +11,6 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { ActivityIndicator } from "react-native-paper";
 import PasscodeScreen from "../Screen/PasscodeScreen.js";
 import LoginScreen from "../Screen/LoginScreen.js";
-import AddInvoiceScreen from "../Screen/AddInvoiceScreen.js";
 import {
   Button,
   Pressable,
@@ -20,24 +19,14 @@ import {
   Text,
   StyleSheet,
 } from "react-native";
-import { CustomTabBar } from "../Components/CustomDrawerContent.js";
 import AddProductScreen from "../Screen/AddProductScreen.js";
-import InvoiceDetailScreen from "../Screen/InvoiceDetailScreen.js";
 import ProductDetailScreen from "../Screen/ProductDetailScreen.js";
-import EditInvoiceScreen from "../Screen/EditInvoiceScreen.js";
 import EditProductScreen from "../Screen/EditProductScreen.js";
-import EditCustomerScreen from "../Screen/EditCustomerScreen.js";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Feather } from "@expo/vector-icons";
 import HomeHeaderRight from "../Components/HeaderComponents/HomeHeaderRight.js";
 import CreateInvoice from "../Components/CreateInvoice.js";
-import LogoutBtn from "../Components/HeaderComponents/LogoutBtn.js";
-import ReviewAndPayScreen from "../Screen/ReviewAndPayScreen.js";
-import InvoiceSuccessScreen from "../Screen/InvoiceSuccessScreen.js";
-import AddVendorScreen from "../Screen/AddVendorScreen.js";
-import * as LocalAuthentication from "expo-local-authentication";
 import LocalAuthScreen from "../LocalAuthScreen.js";
-import FilterInvoiceScreen from "../Screen/FilterInvoiceScreen.js";
 import ViewInvoiceScreen from "../Screen/Invoices/ViewInvoiceScreen.js";
 import RotateBtn from "../Components/HeaderComponents/RotateBtn.js";
 import GenrateInvoiceScreen from "../Screen/GenrateInvoiceScreen.js";
@@ -46,10 +35,6 @@ import CreateNewPasscode from "../Screen/ForgetPasscode/CreateNewPasscode.js";
 import CreateShopScreen from "../Screen/StackScreen/Shops/Form/CreateShopScreen.js";
 import ViewShopsScreen from "../Screen/StackScreen/Shops/ViewShopsScreen.js";
 import VendorListScreen from "../Screen/Vendors/VendorListScreen.js";
-import SignupScreen from "../Screen/SignupScreen.js";
-import ViewClientScreen from "../Screen/Client/ViewClientScreen.js";
-import VendorFormScreen from "../Screen/Vendors/VendorFormScreen.js";
-import TaxScreen from "../Screen/hsncode/TaxScreen.js";
 import CheckInternet from "../Screen/CheckInternet/CheckInternet.js";
 import ShopDetailScreen from "../Screen/StackScreen/Shops/ShopDetailScreen.js";
 import VendorDetailScreen from "../Screen/Vendors/VendorDetailScreen.js";
@@ -58,14 +43,11 @@ import SetPasswordSreen from "../StackScreen/SetPasswordScreen.js";
 import UserloginScreen from "../StackScreen/UserLoginScreen.js";
 import CustomBackButton from "../Component/CustomBackButton.js";
 import CustomerDetails from "../StackScreen/Customerdetails.js";
-import AddCustomerScreen from "../Screen/AddCustomerScreen";
 import AllItemProduct from "../../src/StackScreen/AllItemProduct.js";
-import CustomerDetailScreen from "../Screen/CustomerDetailScreen.js";
 import EnterNumberScreen from "../Screen/StackScreen/EnterNumberScreen.js";
 import UserDataContext from "../Store/UserDataContext.js";
 import PdfScreen from "../Component/PdfViewer.js";
 import EditProfileScreen from "../Screen/StackScreen/EditProfileScreen.js";
-import CategoryDropDown from "../UI/DropDown/CategoryDropdown.js";
 import AddRole from "../Screen/StackScreen/Addrole.js";
 import { withCopilot } from "react-native-copilot";
 import ViewShopDetailsScreen from "../Screen/StackScreen/Shops/ViewShopDetailsScreen.js";
@@ -91,7 +73,6 @@ import { useTranslation } from "react-i18next";
 
 export default function StackNavigator() {
   const Stack = createStackNavigator();
-  const [isConnected, setIsConnected] = useState(false);
   const [isLandscape, setIsLandscape] = useState(false);
   const { isAuthenticated, isLoading, searchMode } = useContext(AuthContext);
   const { userData, fetchUserData, clearUserData } =
@@ -101,13 +82,6 @@ export default function StackNavigator() {
   const [noItemModal, setNoItemModal] = useState(false);
   const [noItemData, setNoItemData] = useState({});
     const{t}=useTranslation()
-
-
-  // const { shopDetails } = useContext(ShopDetailContext);
-
-  // const ViewCustomerWithTour  = withCopilot(AddCustomerScreen)
-  // console.log("DATA OF USER IS ", userData);
-
   const fetchServiceProvider = async (userData) => {
     try {
       if (userData) {
@@ -124,11 +98,6 @@ export default function StackNavigator() {
         } else {
           setroleDetails(false);
         }
-
-        // console.log("shopname isss",response?.data?.vendor?.shopname)
-        // if (response?.data?.vendor?.shopname) {
-        //     setNoItemModal(true);
-        // }
       } else {
         console.log("service Provider Not Found , ", userData);
         setroleDetails(false);
@@ -136,22 +105,7 @@ export default function StackNavigator() {
     } catch (err) {
       console.log("Error is , , - ", err);
       console.log("err.data.status", err.status);
-      // const statusCode = err?.status;
-      // console.log("Extracted Status Code: ", statusCode);
-      // if (err.status == 403 || err.status == 401) {
-      //   console.log("Unauthorized! Redirecting...");
-      //   showSnackbar("Session Expired! Please login again.", "error");
-      // await clearUserData();
-      //   await AsyncStorage.removeItem("remoteMessages");
-      //   await AsyncStorage.removeItem("userAddresses");
-      //   navigationRef.dispatch(
-      //     CommonActions.reset({
-      //       index: 0,
-      //       routes: [{ name: "EnterNumber" }],
-      //     })
-      //   );
-      // }
-      // setroleDetails(false);
+     
     } finally {
       // setIsLoading(false);
     }
@@ -170,19 +124,6 @@ export default function StackNavigator() {
       });
   }, []);
 
-  // const serviceProviderFetching = () => {
-  //   console.log("1before fetchuserData");
-  //   fetchUserData().then((respo) => {
-  //     console.log(respo, " 5 data fetchUserData");
-  //     if (respo) {
-  //       fetchServiceProvider(respo);
-  //     }
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   serviceProviderFetching();
-  // }, []);
 
   if (isLoading) {
     return (
@@ -226,24 +167,6 @@ export default function StackNavigator() {
             />
           )}
         </Stack.Screen>
-
-        {/* <Stack.Screen
-          name="wertone"
-          component={BottomNavigator}
-          options={{ headerShown: false }}
-        /> */}
-
-        <Stack.Screen
-          name="AddCustomer"
-          component={AddCustomerScreen}
-          options={{
-            // headerTitle: "Add Customer",
-            headerTitle: () => (
-              <Text style={styles.headerTitle}>{t("Add Customer")}</Text>
-            ),
-            headerTitleAlign: "center",
-          }}
-        />
         <Stack.Screen
           name="AddProduct"
           component={AddProductScreen}
@@ -267,32 +190,6 @@ export default function StackNavigator() {
             // headerTitleAlign: searchMode ? "left" : "center",
           }}
         />
-
-        <Stack.Screen name="viewClient" component={ViewClientScreen} />
-
-        {/* <Stack.Screen name="EditProfilePage" component={EditProfileScreen}
-          options={{
-            // headerShown: false,
-            headerTitle: () => (
-              <Text style={styles.headerTitle}>{("Edit Profile")}</Text>
-            ),
-            headerTitleAlign: "center",
-            headerTintColor: "#000",
-            headerShadowVisible: false,
-            headerLeft: () => <CustomBackButton />,
-          }}
-        />
-
-        <Stack.Screen name="EditProfile"
-          component={EditProfileScreen}
-          options={{
-            // headerShown: false,
-            headerTitle: () => (
-              <Text style={styles.headerTitle}>{("Update Profile")}</Text>
-            ),
-            headerTitleAlign: "center",
-            headerTintColor: "#000",
-            headerShadowVisible: false, */}
         <Stack.Screen
           name="EditProfilePage"
           component={EditProfileScreen}
@@ -304,40 +201,6 @@ export default function StackNavigator() {
             headerTitleAlign: "center",
 
             // headerLeft: () => <CustomBackButton />,
-          }}
-        />
-
-        <Stack.Screen
-          name="hsncode"
-          component={TaxScreen}
-          options={{
-            headerRight: () => <HomeHeaderRight />,
-            headerStyle: {
-              backgroundColor: "#0c3b73", // Your desired background color
-            },
-            // headerTitle: searchMode ? "" : "HSN Codes",
-            // headerTitleAlign: searchMode ? "left" : "center",
-          }}
-        />
-        <Stack.Screen
-          name="VendorForm"
-          component={VendorFormScreen}
-          options={{
-            headerTitle: "Add Vendor",
-          }}
-        />
-        <Stack.Screen
-          name="InvoiceDetail"
-          component={InvoiceDetailScreen}
-          options={{
-            headerTitle: "Invoice Details",
-          }}
-        />
-        <Stack.Screen
-          name="CustomerDetail"
-          component={CustomerDetailScreen}
-          options={{
-            headerTitle: "Customer Details",
           }}
         />
         <Stack.Screen
@@ -355,13 +218,6 @@ export default function StackNavigator() {
           }}
         />
         <Stack.Screen
-          name="EditInvoice"
-          component={EditInvoiceScreen}
-          options={{
-            headerTitle: "Edit Invoice Details",
-          }}
-        />
-        <Stack.Screen
           name="EditProduct"
           component={EditProductScreen}
           options={{
@@ -375,13 +231,13 @@ export default function StackNavigator() {
             headerTitle: "Edit Profile",
           }}
         />
-        <Stack.Screen
+        {/* <Stack.Screen
           name="EditCustomer"
           component={EditCustomerScreen}
           options={{
             headerTitle: "Edit People Details",
           }}
-        />
+        /> */}
         <Stack.Screen
           name="Passcode"
           component={PasscodeScreen}
@@ -422,35 +278,9 @@ export default function StackNavigator() {
             headerTitle: "Generate Invoice",
           }}
         />
-        <Stack.Screen
-          name="ReviewAndPay"
-          component={ReviewAndPayScreen}
-          options={{
-            headerTitle: "Review And Pay",
-            headerRight: () => (
-              <RotateBtn
-                isLandscape={isLandscape}
-                setIsLandscape={setIsLandscape}
-              />
-            ),
-            headerTitleAlign: "center",
-            // headerLeft: () => (
-            //   <CustomBackButton
-            //     isLandscape={isLandscape}
-            //     setIsLandscape={setIsLandscape}
-            //   />
-            // ),
-            headerTitleAlign: "center",
-          }}
-        />
-        <Stack.Screen
-          name="InvoiceSuccess"
-          component={InvoiceSuccessScreen}
-          options={{
-            headerTitle: "Invoice Success",
-          }}
-        />
-        <Stack.Screen
+       
+       
+        {/* <Stack.Screen
           name="Invoices"
           component={FilterInvoiceScreen}
           options={
@@ -460,7 +290,7 @@ export default function StackNavigator() {
               //      ("kunal store"))
             }
           }
-        />
+        /> */}
         <Stack.Screen
           name="ViewInvoices"
           component={ViewInvoiceScreen}
@@ -695,22 +525,7 @@ export default function StackNavigator() {
             />
           )}
         </Stack.Screen>
-
-        <Stack.Screen
-          name="Signup"
-          component={SignupScreen}
-          screenOptions={{ headerShown: false }}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="AddInvoice"
-          component={AddInvoiceScreen}
-          screenOptions={{
-            headerTitle: "Create Invoice",
-          }}
-        />
+       
 
         <Stack.Screen
           name="CustomerDetails"
@@ -837,11 +652,7 @@ export default function StackNavigator() {
           }}
         />
       </Stack.Navigator>
-
-      <CheckInternet
-        isConnected={isConnected}
-        setIsConnected={setIsConnected}
-      />
+      <CheckInternet />
     </>
   );
 }

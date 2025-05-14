@@ -7,7 +7,7 @@ import { useSnackbar } from "../../../Store/SnackbarContext";
 import { ActivityIndicator } from "react-native-paper";
 import QueryCard from "./QueryCard";
 import { RefreshControl } from "react-native-gesture-handler";
-import ConfirmModal from "../../../Modal/ConfirmModal";
+import ConfirmModal from "../../../Components/Modal/ConfirmModal";
 import ViewQueryDetailModal from "./viewQueryDetailModal";
 
 const ResolvedQueries = () => {

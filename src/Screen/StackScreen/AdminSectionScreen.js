@@ -307,7 +307,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { NORM_URL,createApi} from "../../Util/UtilApi";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
-import ConfirmModal from "../../Modal/ConfirmModal";
+import ConfirmModal from "../../Components/Modal/ConfirmModal";
 import { fontFamily, fontSize } from "../../Util/UtilApi";
 import { useSnackbar } from "../../Store/SnackbarContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";

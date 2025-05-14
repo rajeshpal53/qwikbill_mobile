@@ -174,9 +174,9 @@ import { Text, Card, Avatar, Button } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialIcons";
 // import ChangeLanguageModal from "../Modal/ChangeLanguageModal";
 import { useTranslation } from "react-i18next";
-import ConfirmModal from "../Modal/ConfirmModal";
+import ConfirmModal from "../Components/Modal/ConfirmModal";
 import UserDataContext from "../Store/UserDataContext";
-import { createApi, fontSize, NORM_URL } from "../Util/UtilApi";
+import { createApi, fontSize, NORM_URL,readApi} from "../Util/UtilApi";
 import { useIsFocused } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
 // import { WalletContext } from "../Store/WalletContext";
@@ -184,7 +184,7 @@ import FastImage from "react-native-fast-image";
 import auth from "@react-native-firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSnackbar } from "../Store/SnackbarContext";
-import ChangeLanguageModal from "../Modal/ChangeLanguageModal";
+import ChangeLanguageModal from "../Components/Modal/ChangeLanguageModal";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { ShopContext } from "../Store/ShopContext";
 
@@ -216,12 +216,12 @@ const ProfileSetting = ({
     setRefreshing(true);
     await fetchServiceProvider(userData);
     setRefreshing(false);
-    await fetchUser();
+    await fetchUser(setRefreshing);
  
   };
-  const fetchUser=async()=>{
+  const fetchUser=async(setRefreshing)=>{
     try{
-      const response = await readApi(`getUserByMobile/${userData?.user?.mobile}`)
+      const response = await readApi(`users/getUserByMobile/${userData?.user?.mobile}`)
       const updatedresponse ={
         user:response,
         token:userData.token
@@ -230,9 +230,10 @@ const ProfileSetting = ({
       saveUserData(updatedresponse)
       return true;
     }catch(err){
-      console.log("error in fetching user data",err)
+      console.error("error in fetching user data",err)
     }
     finally{
+      setRefreshing(false)
        return false;
     }
    

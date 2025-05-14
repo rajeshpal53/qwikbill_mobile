@@ -21,7 +21,7 @@ import {
   updateApi,
 } from "../../Util/UtilApi";
 import { useSnackbar } from "../../Store/SnackbarContext";
-import ConfirmModal from "../../Modal/ConfirmModal";
+import ConfirmModal from "../../Components/Modal/ConfirmModal";
 import { useTranslation } from "react-i18next";
 import ServiceImagePicker from "../../UI/ServiceImagePicker";
 import DateTimePicker from "@react-native-community/datetimepicker";

@@ -3,7 +3,7 @@ import axios from 'axios';
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
 
 export const API_BASE_URL = "https://rajeshpal.online/qapi/";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // export const API_BASE_URL = "http://192.168.1.35:2235/";
 
 //for preview:>  eas build --platform android  --profile preview
@@ -11,25 +11,32 @@ export const API_BASE_URL = "https://rajeshpal.online/qapi/";
 // for production:> eas build --platform android  --profile production
 
 export const NORM_URL="https://rajeshpal.online/"
-const apiRequest = async (method, url, data = null, headers) => {
-    try {
-        const response = await axios({
-           url: `${API_BASE_URL}${url}`,
-            method,
-            data: data ? JSON.stringify(data) : null, // Stringify the data if present
-           headers:{
-              'Content-Type': 'application/json', // Set the content type to JSON
-              ...headers,
-            },
-            withCredentials: true, // Include credentials
-          });
-          return response.data||'';
-    } catch (error) {
-      console.error("error is , error")
-      console.error(`Error with ${method.toUpperCase()} request to ${url}:`, error.response || error.message);
-      throw error.response || error.message;
-    }
-  };
+const apiRequest = async (method, url, data = null, customHeaders = {}) => {
+  try {
+    const userDataString = await AsyncStorage.getItem('userData');
+    const userData = userDataString ? JSON.parse(userDataString) : null;
+    const token = userData?.token;
+
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...customHeaders,
+    };
+
+    const response = await axios({
+      url: `${API_BASE_URL}${url}`,
+      method,
+      data: data ? JSON.stringify(data) : null,
+      headers,
+      withCredentials: true,
+    });
+
+    return response.data || '';
+  } catch (error) {
+    console.error(`Error with ${method.toUpperCase()} request to ${url}:`, error.response || error.message);
+    throw error.response || error.message;
+  }
+};
 
   const deleteApiRequest= async( method ,url, headers={})=>{
         const response= await axios({
@@ -59,8 +66,8 @@ export const updateApi = async (endpoint, data, headers) => {
   };
 
   // DELETE
-  export const deleteApi = async (endpoint) => {
-    return deleteApiRequest('delete', endpoint,);
+  export const deleteApi = async (endpoint,headers) => {
+    return deleteApiRequest('delete', endpoint, headers);
   };
   export const fontSize = {
     headingLarge: 24,

@@ -15,7 +15,6 @@ import {
 // import QuillEditor from "react-native-cn-quill/lib/QuillEditor";
 // import QuillToolbar from "react-native-cn-quill/lib/QuillToolbar";
 
-
 const ProviderServiceForm = ({
   handleBlur,
   handleChange,
@@ -37,19 +36,28 @@ const ProviderServiceForm = ({
   const [editorContent, setEditorContent] = useState("Hello THere");
   const [isEditorReady, setEditorReady] = useState(false);
 
-
+  useEffect(() => {
+    if (richText.current && editorContent && isEditorReady) {
+      try {
+        richText.current?.setContentHTML(editorContent);
+      } catch (err) {
+        console.error("RichEditor Error:", err);
+      }
+    }
+  }, [editorContent, isEditorReady]);
 
   const handleHeightChange = (height) => {
-    // if (height > editorHeight) {
-    //   // If editor grows in height, scroll to bottom
-    //   setEditorHeight(height);
-    //   scrollViewRef.current?.scrollToEnd({ animated: true });
-    // }
+    if (height > editorHeight) {
+      // If editor grows in height, scroll to bottom
+      setEditorHeight(height);
+      if (scrollViewRef.current) {
+        scrollViewRef.current.scrollToEnd({ animated: true });
+      }
+    }
   };
 
   console.log("hellow service");
-  console.log(richText.current, "richtext of current ")
-  console.log(editorContent, " editor content is ")
+  console.log(editorContent, " editor content is ");
 
   const setLocationFields = async (data, setFieldValue) => {
     if (data?.latitude && data?.longitude) {
@@ -76,8 +84,6 @@ const ProviderServiceForm = ({
     setFieldValue("editorContent", content); // Update Formik state (if needed)
   };
 
-
-
   useEffect(() => {
     if (richText.current && editorContent && isEditorReady) {
       try {
@@ -88,116 +94,142 @@ const ProviderServiceForm = ({
     }
   }, [isEditorReady]);
 
-
-
   return (
     <View style={{ gap: 10 }}>
-      <ScrollView
-        nestedScrollEnabled={true}
-        ref={scrollViewRef}
-      >
-        <View style={{ marginVertical: 20 }}>
-          <ServiceImagePicker
-            image={values?.shopImage}
-            label={"Shop Image"}
-            setFieldValue={setFieldValue}
-            uploadFieldName={shopImageField}
-          />
-        </View>
-        <View>
-          <TextInput
-            label={t("Shop Name") + " *"}
-            mode={textInputMode}
-            style={{ backgroundColor: "transparent" }}
-            onChangeText={handleChange("shopName")}
-            onBlur={handleBlur("shopName")}
-            value={values.shopName || ""}
-            error={touched.shopName && errors.shopName}
-          />
-          {touched.shopName && errors.shopName && (
-            <Text style={{ color: "red" }}>{errors.shopName}</Text>
-          )}
-        </View>
+      <View style={{ marginVertical: 20 }}>
+        <ServiceImagePicker
+          image={values?.shopImage}
+          label={"Shop Image"}
+          setFieldValue={setFieldValue}
+          uploadFieldName={shopImageField}
+        />
+      </View>
+      <View>
+        <TextInput
+          label={t("Shop Name") + " *"}
+          mode={textInputMode}
+          style={{ backgroundColor: "transparent" }}
+          onChangeText={handleChange("shopName")}
+          onBlur={handleBlur("shopName")}
+          value={values.shopName || ""}
+          error={touched.shopName && errors.shopName}
+        />
+        {touched.shopName && errors.shopName && (
+          <Text style={{ color: "red" }}>{errors.shopName}</Text>
+        )}
+      </View>
 
-        <View>
-          {/* <Pressable
+      <View>
+        {/* <Pressable
         onPress={() => {
           if(!values?.latitude || values?.latitude === ""){
             showPopUpMessage("Please First click on Change Location Button", "error");
           }
         }}
         > */}
-          <TextInput
-            label={t("Shop Address") + " *"}
-            // disabled = { (!values?.latitude || values?.latitude === "") ? true : false}
-            mode={textInputMode}
-            style={{ backgroundColor: "transparent" }}
-            onChangeText={handleChange("shopAddress")}
-            onBlur={handleBlur("shopAddress")}
-            value={values.shopAddress}
-            error={touched.shopAddress && errors.shopAddress}
-          />
-          {/* </Pressable> */}
-          {touched.shopAddress && errors.shopAddress && (
-            <Text style={{ color: "red" }}>{errors.shopAddress}</Text>
-          )}
+        <TextInput
+          label={t("Shop Address") + " *"}
+          // disabled = { (!values?.latitude || values?.latitude === "") ? true : false}
+          mode={textInputMode}
+          style={{ backgroundColor: "transparent" }}
+          onChangeText={handleChange("shopAddress")}
+          onBlur={handleBlur("shopAddress")}
+          value={values.shopAddress}
+          error={touched.shopAddress && errors.shopAddress}
+        />
+        {/* </Pressable> */}
+        {touched.shopAddress && errors.shopAddress && (
+          <Text style={{ color: "red" }}>{errors.shopAddress}</Text>
+        )}
 
-          <TextInput
-            label={t("Gst Number")}
-            // disabled = { (!values?.latitude || values?.latitude === "") ? true : false}
-            mode={textInputMode}
-            style={{ backgroundColor: "transparent" }}
-            onChangeText={handleChange("gstNumber")}
-            onBlur={handleBlur("gstNumber")}
-            value={values.gstNumber}
-            error={touched.gstNumber && errors.gstNumber}
-          />
-          {/* </Pressable> */}
-          {touched.gstNumber && errors.gstNumber && (
-            <Text style={{ color: "red" }}>{errors.gstNumber}</Text>
-          )}
-        </View>
-
-
-        <View style={{ height: 300, backgroundColor: "#fff", elevation: 5 }}>
-
-          <>
-            {/* <RichEditor
-              key="editor"
-              ref={richText}
-              style={{ height: 200 }}
-              placeholder="Start writing here..."
-              useContainer={true}
-
-              initialContentHTML={editorContent}
-              onChange={handleEditorChange}
-              editorInitializedCallback={() => {
-                console.log("Editor Initialized");
-                setEditorReady(true);
-              }}
-            /> */}
+        <TextInput
+          label={t("Gst Number")}
+          // disabled = { (!values?.latitude || values?.latitude === "") ? true : false}
+          mode={textInputMode}
+          style={{ backgroundColor: "transparent" }}
+          onChangeText={handleChange("gstNumber")}
+          onBlur={handleBlur("gstNumber")}
+          value={values.gstNumber}
+          error={touched.gstNumber && errors.gstNumber}
+        />
+        {/* </Pressable> */}
+        {touched.gstNumber && errors.gstNumber && (
+          <Text style={{ color: "red" }}>{errors.gstNumber}</Text>
+        )}
+      </View>
+      <View style={{ padding: 5 }}>
+        <View style={{ minHeight: 200, padding: 10 }}>
+          <View style={{ width: "100%" }}>
             <RichToolbar
               editor={richText}
+              // style={{color:"#000"}}
               actions={[
                 actions.setBold,
                 actions.setItalic,
                 actions.setUnderline,
                 actions.insertBulletsList,
                 actions.insertOrderedList,
-                actions.insertLink,
                 actions.undo,
                 actions.redo,
               ]}
             />
-          </>
+          </View>
 
+          <ScrollView
+            ref={scrollViewRef}
+            // scrollEnabled={true}
+            nestedScrollEnabled={true}
+            contentContainerStyle={{ flexGrow: 1 }}
+            // style={{padding:5}}
+          >
+            <RichEditor
+  ref={richText}
+  style={{ minHeight: 200, padding: 10 }}
+  placeholder={t("Start writing here...")}
+  initialContentHTML={editorContent || ""}
+  onInitialized={() => {
+    setEditorReady(true);
+    richText.current?.setContentHTML(editorContent || "");
+  }}
+  onChange={(text) => {
+    if (text?.length <= 500) {
+      setEditorContent(text);
+      setFieldValue("editorContent", text);
+    } else {
+      richText.current?.setContentHTML(editorContent);
+    }
+  }}
+  onHeightChange={handleHeightChange}
+/>
+            {/* <RichEditor
+              ref={richText}
+              style={{ minHeight: 200, padding: 10 }}
+              placeholder={t("Start writing here...")}
+              initialContentHTML={editorContent}
+              onInitialized={() => {
+                setEditorReady(true);
+                richText.current?.setContentHTML(editorContent);
+              }}
+              onChange={(text) => {
+                if (text.length <= 500) {
+                  handleEditorChange(text);
+                } else {
+                  richText.current?.setContentHTML(editorContent);
+                }
+              }}
+              onHeightChange={handleHeightChange}
+            /> */}
+          </ScrollView>
 
+          <Text style={{ color: "rgba(0,0,0,0.5)" }}>
+            {editorContent.length}/500
+          </Text>
+
+          {/* Rich Text Toolbar */}
         </View>
+      </View>
 
-
-
-
-        {/* <View
+      {/* <View
       style={{
         height: 300,
         backgroundColor: "#fff",
@@ -217,23 +249,23 @@ const ProviderServiceForm = ({
           placeholder="Start writing here..."
         />
     </View> */}
-        {isAdmin && (
+      {isAdmin && (
+        <View
+          style={{
+            backgroundColor: "#fff",
+            elevation: 5,
+            paddingHorizontal: 5,
+            gap: 8,
+          }}
+        >
           <View
             style={{
-              backgroundColor: "#fff",
-              elevation: 5,
-              paddingHorizontal: 5,
-              gap: 8,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
             }}
           >
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              {/* <GenericSwitch
+            {/* <GenericSwitch
             label="Is Online"
             value={values?.isOnline}
             onValueChange={(newValue) => {
@@ -244,28 +276,23 @@ const ProviderServiceForm = ({
             labelStyle={{ fontFamily: "Poppins-Regular" }}
           /> */}
 
-              {isAdmin && (
-                <GenericSwitch
-                  label="Approved"
-                  value={values?.isApproved}
-                  onValueChange={(newValue) => {
-                    setFieldValue("isApproved", newValue);
-                  }}
-                  color="#0a6846"
-                  containerStyle={styles.switchComponentStyle}
-                  labelStyle={{ fontFamily: "Poppins-Regular" }}
-                />
-              )}
-            </View>
+            {isAdmin && (
+              <GenericSwitch
+                label="Approved"
+                value={values?.isApproved}
+                onValueChange={(newValue) => {
+                  setFieldValue("isApproved", newValue);
+                }}
+                color="#0a6846"
+                containerStyle={styles.switchComponentStyle}
+                labelStyle={{ fontFamily: "Poppins-Regular" }}
+              />
+            )}
+          </View>
 
-            <Divider
-              style={{ width: "70%", height: 0.2, alignSelf: "center" }}
-            />
-                     </View>
-        )}
-
-
-      </ScrollView>
+          <Divider style={{ width: "70%", height: 0.2, alignSelf: "center" }} />
+        </View>
+      )}
     </View>
   );
 };

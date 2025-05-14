@@ -13,7 +13,7 @@ import { ProductItem } from "../../ProductData";
 // import { setProduct } from "../Redux/CartProductRedux/ProductSlice";
 import { setProduct } from "../Redux/slices/ProductSlice";
 import { useDispatch, useSelector } from "react-redux";
-import OpenmiqModal from "../Modal/Openmicmodal";
+import OpenmiqModal from "../Components/Modal/Openmicmodal";
 import { readApi } from "../Util/UtilApi";
 import { ShopContext } from "../Store/ShopContext";
 import UserDataContext from "../Store/UserDataContext";
