@@ -33,7 +33,11 @@
         "expo-build-properties",
         {
           "android": {
-            "enableProguardInReleaseBuilds": true
+            "enableProguardInReleaseBuilds": true,
+             "kotlinVersion": "1.9.10",
+            "gradlePluginVersion": "8.1.1",
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34
           }
         }
       ]
