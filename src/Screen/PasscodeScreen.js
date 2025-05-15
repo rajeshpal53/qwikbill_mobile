@@ -29,7 +29,6 @@ import { useContext, useState, useEffect } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { AuthContext } from "../Store/AuthContext";
 import * as LocalAuthentication from "expo-local-authentication";
-import moment from "moment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Linking } from "react-native";
 import { usePasskey } from "../Store/PasskeyContext";
@@ -60,7 +59,7 @@ export default function PasscodeScreen({ navigation }) {
 
 
 
-
+  console.log("passkey in passCode screen",passkey)
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",

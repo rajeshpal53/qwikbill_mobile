@@ -8,6 +8,7 @@ import { ShopContext } from "../../Store/ShopContext";
 import axios from "axios";
 import { useSnackbar } from "../../Store/SnackbarContext";
 import { useDownloadInvoice } from "../../Util/DownloadInvoiceHandler";
+
 const FileUploadModal = ({ visible, setBulkUploadModalVisible, navigation }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [SelectedCat, setSelectedCat] = useState("");
@@ -36,6 +37,8 @@ const FileUploadModal = ({ visible, setBulkUploadModalVisible, navigation }) => 
       console.log("Error picking file:", error);
     }
   };
+
+
 
   const uploadFile = async () => {
     if (!selectedFile || !SelectedCat) {
