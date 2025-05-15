@@ -20,10 +20,24 @@
         }
       ],
       [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Allow ${PRODUCT_NAME} to use the microphone.",
+          "speechRecognitionPermission": "Allow ${PRODUCT_NAME} to use speech recognition.",
+          "androidSpeechServicePackages": [
+            "com.google.android.googlequicksearchbox"
+          ]
+        }
+      ],
+      [
         "expo-build-properties",
         {
           "android": {
-            "enableProguardInReleaseBuilds": true
+            "enableProguardInReleaseBuilds": true,
+             "kotlinVersion": "1.9.10",
+            "gradlePluginVersion": "8.1.1",
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34
           }
         }
       ]
