@@ -81,6 +81,8 @@ export default function StackNavigator() {
   const [roleDetails, setroleDetails] = useState(false);
   const [noItemModal, setNoItemModal] = useState(false);
   const [noItemData, setNoItemData] = useState({});
+    const [isConnected, setIsConnected] = useState(false);
+
   const {passkey}=usePasskey()
     const{t}=useTranslation()
   const fetchServiceProvider = async (userData) => {
@@ -651,7 +653,11 @@ export default function StackNavigator() {
           }}
         />
       </Stack.Navigator>
-      <CheckInternet />
+      
+       <CheckInternet
+        isConnected={isConnected}
+        setIsConnected={setIsConnected}
+      />
     </>
   );
 }

@@ -73,7 +73,7 @@ import { ShopContext } from "../../../../Store/ShopContext";
 
 const uploadImagesSchema = Yup.object().shape({
   aadhaarNumber: Yup.string()
-    .matches(/^\d{12}$/, "Aadhaar number must be 12 digits")
+    .matches(/^\d{12}$/, "Aadhaar number must be 12 digitsssss")
     .required("Aadhaar number is required"),
 
   aadharFrontImage: Yup.mixed().required("Aadhar Front image is required"),

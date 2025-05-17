@@ -35,11 +35,29 @@ function ViewInvoiceScreen1({ navigation }) {
   const { allShops, selectedShop } = useContext(ShopContext);
   const [transcript, setTranscript] = useState("");
   const [refreshing, setRefreshing] = useState(false);
+  const [mainLoading, setMainLoading] = useState(true);
+
 
   useEffect(() => {
-    setPage(1);
-    fetchInvoices(1);
-  }, [selected, sortBy,selectedShop?.vendor?.id]);
+    if (page === 1) {
+      fetchInvoices(1);
+    } else {
+      setPage(1); // triggers other useEffect, fetchInvoices will run from there
+    }
+  }, [selected, sortBy, selectedShop?.vendor?.id]);
+
+  useEffect(() => {
+    if (page > 1) {
+      fetchInvoices(page);
+    }
+  }, [page]);
+
+
+
+  // useEffect(() => {
+  //   setPage(1);
+  //   fetchInvoices(1);
+  // }, [selected, sortBy,selectedShop?.vendor?.id]);
 
   const onRefresh = async () => {
     setRefreshing(true); // Set refreshing state to true
@@ -65,7 +83,7 @@ function ViewInvoiceScreen1({ navigation }) {
   const fetchInvoices = async (pageNum = 1) => {
     if (pageNum === 1) {
       setHasMore(true);
-      // setMainLoading(true);
+       setMainLoading(true);
     }
     setIsLoading(true);
     try {
@@ -83,7 +101,7 @@ function ViewInvoiceScreen1({ navigation }) {
       if (pageNum === 1) setInvoices([]);
     } finally {
       setIsLoading(false);
-      // setMainLoading(false);
+       setMainLoading(false);
     }
   };
 
@@ -95,7 +113,7 @@ function ViewInvoiceScreen1({ navigation }) {
     if (!isLoading && hasMore) {
       const nextPage = page + 1;
       setPage(nextPage);
-  
+
       if (searchQuery?.length > 0 && searchCalled) {
         fetchSearchedData(searchQuery, nextPage);
       } else {
@@ -110,12 +128,12 @@ function ViewInvoiceScreen1({ navigation }) {
     setHasMore(true);
     fetchSearchedData(query, 1);
   };
-  
-  
+
+
 
   useEffect(() => {
     if (page > 1) fetchInvoices(page);
-  }, [page,selectedShop]);
+  }, [page, selectedShop]);
 
 
 
@@ -205,7 +223,7 @@ function ViewInvoiceScreen1({ navigation }) {
         onEndReachedThreshold={0.5}
         ListFooterComponent={isLoading ? <Loader /> : null}
         ListEmptyComponent={() =>
-          !isLoading && invoices.length <= 0 ? (
+          !mainLoading && invoices.length <= 0 ? (
             <View
               style={{
                 alignItems: "center",

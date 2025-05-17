@@ -176,7 +176,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
 import ConfirmModal from "../Components/Modal/ConfirmModal";
 import UserDataContext from "../Store/UserDataContext";
-import { createApi, fontSize, NORM_URL,readApi} from "../Util/UtilApi";
+import { createApi, fontSize, NORM_URL, readApi } from "../Util/UtilApi";
 import { useIsFocused } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
 // import { WalletContext } from "../Store/WalletContext";
@@ -205,41 +205,39 @@ const ProfileSetting = ({
   const [imageUrl, setImageUrl] = useState(`${NORM_URL}assets/mobile/male.png`);
 
   const { showSnackbar } = useSnackbar();
-  const { userData, clearUserData,saveUserData} = useContext(UserDataContext);
+  const { userData, clearUserData, saveUserData } = useContext(UserDataContext);
   // const { setCreateuser } = useContext(WalletContext);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { updateSelectedShop } = useContext(
-    ShopContext
-  )
+  const { updateSelectedShop, noItemModal, selectedShop} = useContext(ShopContext)
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchServiceProvider(userData);
     setRefreshing(false);
     await fetchUser(setRefreshing);
- 
+
   };
-  const fetchUser=async(setRefreshing)=>{
-    try{
+  const fetchUser = async (setRefreshing) => {
+    try {
       const response = await readApi(`users/getUserByMobile/${userData?.user?.mobile}`)
-      const updatedresponse ={
-        user:response,
-        token:userData.token
+      const updatedresponse = {
+        user: response,
+        token: userData.token
       }
-      console.log(response,"setrefreshresponse")
+      console.log(response, "setrefreshresponse")
       saveUserData(updatedresponse)
       return true;
-    }catch(err){
-      console.error("error in fetching user data",err)
+    } catch (err) {
+      console.error("error in fetching user data", err)
     }
-    finally{
+    finally {
       setRefreshing(false)
-       return false;
+      return false;
     }
-   
+
 
   }
- 
+
 
   const { t, i18n } = useTranslation();
   const isFocused = useIsFocused();
@@ -254,7 +252,7 @@ const ProfileSetting = ({
   // const [sameMenuItems, setSameMeuItems] = useState()
   const [menuItems, setMenuItems] = useState();
 
-  console.log("user data in profile ",userData)
+  console.log("user data in profile ", userData)
 
   useEffect(() => {
     const UpdatemanuItem = () => {
@@ -268,17 +266,19 @@ const ProfileSetting = ({
           },
 
           ...(userData?.user?.roles === 'admin' ? AdminOption : []),
-          { icon: "policy", label: "Policies", value: "Policies" },
+          { icon: "policy", label: " Terms and Policy ", value: "Policies" },
 
           ...(userData
             ? [
-              {
-                icon: "person-add",
-                label: roleDetails ? "Edit Role" : "Assign New Role",
-                value: roleDetails ? "EditRole" : "AssignNewRole",
-              },
+              selectedShop ?
+                {
+                  icon: "person-add",
+                  label: roleDetails ? "Edit Role" : "Assign New Role",
+                  value: roleDetails ? "EditRole" : "AssignNewRole",
+                } : null,
               // { icon: "logout", label: "Logout1", value: "Logout1" },
-            ]
+            ].filter(Boolean) // << THIS REMOVES null SAFELY
+
             : []),
 
           ...(userData
@@ -342,7 +342,7 @@ const ProfileSetting = ({
     if (userData) {
       if (userData?.user?.profilePicurl) {
         const nevVar = `${NORM_URL}/${userData?.user?.profilePicurl}`;
-        console.log("profile image issss",nevVar)
+        console.log("profile image issss", nevVar)
         setImageUrl(nevVar);
       } else if (userData?.user?.gender == null) {
         setImageUrl("https://dailysabji.com/assets/mobile/neutral.png");

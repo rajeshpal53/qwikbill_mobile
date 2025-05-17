@@ -20,7 +20,7 @@ import { usePasskey } from "../Store/PasskeyContext";
 
 import axios from "axios";
 import { useWindowDimensions } from "react-native";
-// import NetInfo from "@react-native-community/netinfo";
+import NetInfo from "@react-native-community/netinfo";
 import { ActivityIndicator } from "react-native-paper";
 import { useSnackbar } from "../Store/SnackbarContext";
 import SetpasswordModal from "../Components/Modal/SetpasswordModal";
@@ -189,22 +189,14 @@ const LoginScreen = ({ navigation }) => {
       <Formik
         initialValues={{ mobile: "", password: "" }}
         validationSchema={validationSchema}
-        onSubmit={async (values, { resetForm }) => {
+        onSubmit={async (value, { resetForm }) => {
           try {
-            console.log("login screen",values)
-            showSnackbar("Login successful","success")
-            const response= await handleLogin(values);
-            if(response){
-                if (isPasskey === false) {
-        console.log("isPasskey is explicitly false");
-      navigation.reset({ index: 0, routes: [{ name: "CreateNewPasscode" }] });
-
-      } else {
-        console.log("isPasskey is true, null, or undefined");
-        navigation.reset({ index: 0, routes: [{ name: "passcode" }] });
-      }
-     }
-         
+            await handleLogin(value, navigation);
+            // if (isPasskey) {
+            //   navigation.navigate("Passcode");
+            // } else {
+            //   navigation.navigate("CreateNewPasscode");
+            // }
           } catch (error) {
             console.log("Unable to login ", error);
           } finally {

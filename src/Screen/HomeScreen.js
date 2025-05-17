@@ -24,7 +24,7 @@ import {
 import { Button, Card, TextInput, ActivityIndicator } from "react-native-paper";
 import { AuthContext } from "../Store/AuthContext";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
-import { services,rolePermissions} from "../tempList/ServicesList";
+import { services, rolePermissions } from "../tempList/ServicesList";
 import CreateInvoice from "../Components/CreateInvoice";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { API_BASE_URL, ButtonColor, fontFamily, fontSize, readApi } from "../Util/UtilApi";
@@ -158,7 +158,7 @@ export default function HomeScreen({ navigation, noItemData }) {
 
       if (response && response.success) {
         console.log("Dashboard Vendor Status Response:", response);
-        console.log(`${API_BASE_URL}invoice/getVendorStats/${selectedShop?. vendor?.id}`)
+        console.log(`${API_BASE_URL}invoice/getVendorStats/${selectedShop?.vendor?.id}`)
         setVendorStatus({ ...response });
         await AsyncStorage.setItem("vendorStatus", JSON.stringify(response));
       } else {
@@ -234,7 +234,7 @@ export default function HomeScreen({ navigation, noItemData }) {
     <SafeAreaView style={styles.safeContainer}>
 
       <View style={styles.overlay}>
-        <View style={styles.header }>
+        <View style={styles.header}>
           <View style={{ marginBottom: -10 }}>
             <Text style={styles.headerText}>
               {t("Welcome")}{" "}
@@ -245,9 +245,9 @@ export default function HomeScreen({ navigation, noItemData }) {
           </View>
           <Text style={styles.subHeaderText}>Last Login : {lastLoginTime}</Text>
         </View>
-  
+
         <View>
-          <View style={styles.dropDownContainer }>
+          <View style={styles.dropDownContainer}>
             <View style={styles.dropdownRow}>
               <Ionicons name="storefront-sharp" size={24} color="#0c3b73" />
               <DropDownList options={allShops} />
@@ -255,7 +255,7 @@ export default function HomeScreen({ navigation, noItemData }) {
           </View>
         </View>
       </View>
-  
+
       <ScrollView
         contentContainerStyle={styles.scrollView}
         scrollEnabled={allShops && allShops.length > 0 && Boolean(total)}
@@ -270,9 +270,9 @@ export default function HomeScreen({ navigation, noItemData }) {
             top={200}
             text={"Welcome to the QwikBill"}
           />
-  
+
           <View style={styles.container}>
-            
+
             {allShops && allShops.length > 0 && vendorStatus?.numberOfProducts != 0 && (
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View style={{ flexDirection: "row", gap: 7, height: height * 0.09, marginVertical: "4%", }}>
@@ -284,7 +284,7 @@ export default function HomeScreen({ navigation, noItemData }) {
                 </View>
               </ScrollView>
             )}
-  
+
             {allShops && allShops.length > 0 && vendorStatus != null && total > 0 && (
               <PieChartComponent
                 key={userData?.user?.mobile}
@@ -292,59 +292,64 @@ export default function HomeScreen({ navigation, noItemData }) {
                 t={t}
               />
             )}
-  
+
             <View style={{ flex: total ? 2 : 7 }}>
               {allShops?.length > 0 ? (
-                <View style={{ flex: 1, justifyContent: "center"  ,marginTop:"5%" }}>
+                <View style={{ flex: 1, justifyContent: "center", marginTop: "5%" }}>
                   <FlatList
                     style={styles.flatList}
-                    data={services}
+                    data={services.filter(service => {
+                      if (service.name === "Add Product") {
+                        return !!selectedShop;
+                      }
+                      return true
+                    })}
                     numColumns={3}
-                    renderItem={({ item, index }) => 
-                      {
-                    const role = selectedShop?.role?.name;
-                const isDisabled = !rolePermissions[role]?.includes(item.name);
-               
-                       return(
-                      <View style={styles.flatListitem}>
-                        <TouchableOpacity
-                          style={[styles.item, isDisabled && { opacity: 0.5 },]}
-                          onPress={() => {
-                            if (!isDisabled) {
-                              goToHandler(item.navigateTo);
-                            }
-                          }}  
-                          disabled={isDisabled}
-                        >
-                          <View style={{ alignItems: "center" }}>
-                            <Text>{item.icon}</Text>
-                            <Text style={styles.itemText}>{t(item.name)}</Text>
-                          </View>
-                        </TouchableOpacity>
-                        <TourGuideZone
-                          key={index}
-                          zone={4 + index}
-                          text={item.name ? `Go to ₹{item.name}` : "Finished"}
-                          shape={"circle"}
-                          style={{
-                            position: "absolute",
-                            top: height * 0.02,
-                            left: width * 0.1,
-                            height: height * 0.1,
-                            backgroundColor: "transparent",
-                            flex: 1,
-                            margin: width * 0.05,
-                          }}
-                          pointerEvents="box-none"
-                        />
-                      </View>
-                    )}}
+                    renderItem={({ item, index }) => {
+                      const role = selectedShop?.role?.name;
+                      const isDisabled = !rolePermissions[role]?.includes(item.name);
+
+                      return (
+                        <View style={styles.flatListitem}>
+                          <TouchableOpacity
+                            style={[styles.item, isDisabled && { opacity: 0.5 },]}
+                            onPress={() => {
+                              if (!isDisabled) {
+                                goToHandler(item.navigateTo);
+                              }
+                            }}
+                            disabled={isDisabled}
+                          >
+                            <View style={{ alignItems: "center" }}>
+                              <Text>{item.icon}</Text>
+                              <Text style={styles.itemText}>{t(item.name)}</Text>
+                            </View>
+                          </TouchableOpacity>
+                          <TourGuideZone
+                            key={index}
+                            zone={4 + index}
+                            text={item.name ? `Go to ₹{item.name}` : "Finished"}
+                            shape={"circle"}
+                            style={{
+                              position: "absolute",
+                              top: height * 0.02,
+                              left: width * 0.1,
+                              height: height * 0.1,
+                              backgroundColor: "transparent",
+                              flex: 1,
+                              margin: width * 0.05,
+                            }}
+                            pointerEvents="box-none"
+                          />
+                        </View>
+                      )
+                    }}
                     keyExtractor={(item, index) => index.toString()}
                     ListEmptyComponent={<Text>No Items Found</Text>}
                   />
                 </View>
               ) : (
-                <View style={{ flex: 0.5, justifyContent: "flex-end", alignItems: "center",marginTop:"10%" }}>
+                <View style={{ flex: 0.5, justifyContent: "flex-end", alignItems: "center", marginTop: "10%" }}>
                   <Image
                     source={require("../../assets/invoiceGenrate.png")}
                     style={{ width: 300, height: 280 }}
@@ -359,7 +364,7 @@ export default function HomeScreen({ navigation, noItemData }) {
                 </View>
               )}
             </View>
-  
+
             {noItemModal && (
               <ConfirmModal
                 visible={noItemModal}
@@ -373,7 +378,7 @@ export default function HomeScreen({ navigation, noItemData }) {
                 buttonTitle="Add Products"
               />
             )}
-  
+
             <View>
               {bulkUploadModalVisible && (
                 <FileUploadModal
@@ -387,9 +392,9 @@ export default function HomeScreen({ navigation, noItemData }) {
       </ScrollView>
     </SafeAreaView>
   );
-  
 
-  
+
+
 }
 
 const StatCard = ({ title, value, change }) => {
@@ -425,12 +430,12 @@ const StatCard = ({ title, value, change }) => {
 const styles = StyleSheet.create({
   safeContainer: {
     flex: 1,
-    
+
     // paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   scrollView: {
     //height: "140%",
-   // flex: 1,
+    // flex: 1,
     // paddingHorizontal: responsiveWidth(1),  // instead of fixed 20px
     //paddingVertical: responsiveHeight(2),
   },
@@ -443,9 +448,9 @@ const styles = StyleSheet.create({
   },
   container: {
     marginHorizontal: responsiveWidth(5),
-  
-   // height: verticalScale(900),
-   flex:1
+
+    // height: verticalScale(900),
+    flex: 1
   },
   header: {
     flex: 0.5,
@@ -454,7 +459,7 @@ const styles = StyleSheet.create({
     // paddingBottom:0,
     gap: responsiveHeight(1),
   },
-  
+
   btntext: {
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.labelLarge,
@@ -483,7 +488,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f6f2f7",
     borderRadius: 10,
     marginTop: "3%",
-    marginHorizontal:15
+    marginHorizontal: 15
 
   },
   userDropdown: {
@@ -492,7 +497,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f6f2f7",
     borderRadius: 10,
     marginTop: "3%",
-    marginHorizontal:15
+    marginHorizontal: 15
   },
 
   dropdownRow: {
@@ -544,7 +549,7 @@ const styles = StyleSheet.create({
   },
 
   flatList: {
-flexGrow:1
+    flexGrow: 1
 
   },
   item: {
@@ -565,8 +570,8 @@ flexGrow:1
     color: "#555555",
   },
   overlay: {
-   // position: "absolute",
-   // top: 0, // Adjust the top value as needed
+    // position: "absolute",
+    // top: 0, // Adjust the top value as needed
     width: "100%",
     height: responsiveHeight(23),
     backgroundColor: "#0c3b73",
