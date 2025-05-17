@@ -42,6 +42,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import NoDataFound from "../../Components/NoDataFound";
 import DeleteModal from "../../UI/DeleteModal";
 import { useTranslation } from "react-i18next";
+import axios from "axios";
 
 
 
@@ -77,6 +78,8 @@ const ProductDetailsScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const { t } = useTranslation();
 
+  console.log("token is", userData?.token)
+
 
   useFocusEffect(
     useCallback(() => {
@@ -109,7 +112,7 @@ const ProductDetailsScreen = ({ navigation }) => {
     selectedShop?.vendor?.id,
     refresh,
   ]);
-  console.log("SELECTED SHOP123 ",selectedShop)
+  console.log("SELECTED SHOP123 ", selectedShop)
 
   const onRefresh = async () => {
     setRefreshing(true);  // Set refreshing state to true
@@ -119,7 +122,7 @@ const ProductDetailsScreen = ({ navigation }) => {
 
   const Apistore = (page) => {
     let api = `products/getProducts?vendorfk=${selectedShop?.vendor?.id}&page=${page}&limit=${PAGE_SIZE}`;
-    console.log(" api for all products",api)
+    console.log(" api for all products", api)
 
     if (filterOptionSelect === "Sort By Name") {
       api += "&sortBy=alphabetical";
@@ -143,8 +146,8 @@ const ProductDetailsScreen = ({ navigation }) => {
 
       if (api) {
         const response = await readApi(api);
-      //console.log("API Response ", response);
-      console.log("appi response of all productsss ",response);
+        //console.log("API Response ", response);
+        console.log("appi response of all productsss ", response);
 
         SetProductData((prevData) => {
           if (page === 1) {
@@ -169,9 +172,9 @@ const ProductDetailsScreen = ({ navigation }) => {
     }
   };
 
-useEffect(()=>{
-      console.log("jayesh produccts data is ",Productdata);
-},[])
+  useEffect(() => {
+    console.log("jayesh produccts data is ", Productdata);
+  }, [])
 
   const loadMoreData = () => {
     if (!loader && hasMore && page < totalPages) {
@@ -184,10 +187,19 @@ useEffect(()=>{
   };
 
   const HandleDeleteProduct = async (ProductId) => {
+    const api =`https://qwikbill.in/qapi/`
     console.log("Data of item is 345", ProductId);
+    console.log(` api is ${api}products/${ProductId}`)
+
     try {
       setloader(true);
-      const response = await deleteApi(`products/${ProductId}`);
+      const response = await axios.delete(`${api}products/${ProductId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userData?.token}`
+        }
+      });
+
       console.log("GET ALL DATA IS125 ", response?.data);
       if (response?.data) {
         SetProductData((prevData) =>
@@ -277,7 +289,7 @@ useEffect(()=>{
             setTranscript={setTranscript}
             placeholderText="Search User by name..."
             searchData={fetchSearchedData}
-            // showSearchedData={showSearchedData}
+          // showSearchedData={showSearchedData}
           />
         </View>
       </View>
@@ -297,7 +309,7 @@ useEffect(()=>{
                     style={[
                       styles.suggestionButton,
                       filterOptionSelect === suggestbtn &&
-                        styles.selectedSuggestionButton,
+                      styles.selectedSuggestionButton,
                     ]}
                     onPress={() => handleFilterChange(suggestbtn)}
                   >
@@ -344,47 +356,47 @@ useEffect(()=>{
           </View>
         )}
       />
-    {
-        (selectedShop?.role?.name === "owner" || selectedShop?.role?.name === "manager") &&(
-        <FAB.Group
-        open={open}
-        visible
-        icon={open ? "close" : "plus"}
-        actions={[
-          {
-            icon: "plus",
-            label: t("Add Product"),
-            onPress: () =>
-              navigation.navigate("AddProduct", {
-                EditData: null,
-                isUpdated: false,
-                setRefresh: setRefresh,
-              }),
-            style: { backgroundColor: "#2196F3" },
-          },
-          {
-            icon: "archive",
-            label: t("Bulk Product"),
-            onPress: handleBulkproduct,
-            style: { backgroundColor: "#2196F3" },
-          },
-        ]}
-        onStateChange={onStateChange}
-        style={
-          {
-            // position: 'absolute',
-            // right: 10,
-            // bottom: 20,
-            // elevation: 5, // To give the button a floating effect on Android
-          }
-        }
-        fabStyle={{
-          backgroundColor: "#007bff", //
-        }}
-      />
-      )
-    }
-     
+      {
+        (selectedShop?.role?.name === "owner" || selectedShop?.role?.name === "manager") && (
+          <FAB.Group
+            open={open}
+            visible
+            icon={open ? "close" : "plus"}
+            actions={[
+              {
+                icon: "plus",
+                label: t("Add Product"),
+                onPress: () =>
+                  navigation.navigate("AddProduct", {
+                    EditData: null,
+                    isUpdated: false,
+                    setRefresh: setRefresh,
+                  }),
+                style: { backgroundColor: "#2196F3" },
+              },
+              {
+                icon: "archive",
+                label: t("Bulk Product"),
+                onPress: handleBulkproduct,
+                style: { backgroundColor: "#2196F3" },
+              },
+            ]}
+            onStateChange={onStateChange}
+            style={
+              {
+                // position: 'absolute',
+                // right: 10,
+                // bottom: 20,
+                // elevation: 5, // To give the button a floating effect on Android
+              }
+            }
+            fabStyle={{
+              backgroundColor: "#007bff", //
+            }}
+          />
+        )
+      }
+
 
       {/* Bulk Upload Modal */}
       {bulkUploadModalVisible && (
