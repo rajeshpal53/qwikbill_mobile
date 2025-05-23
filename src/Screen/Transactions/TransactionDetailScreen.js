@@ -18,7 +18,7 @@ const TransactionDetailScreen = ({ item }) => {
   const transaction = route.params;
   const navigation = useNavigation();
   const { createdAt, transactionStatus, id, invoice, vendor, user, amount, invoicefk, name } = route.params.item || null;
-  
+
 
   console.log("Invoice Data:", invoice);
   console.log("Vendor Data:", vendor);
@@ -32,7 +32,7 @@ const TransactionDetailScreen = ({ item }) => {
         setIsLoading(true)
         const response = await readApi(`invoice/invoices/${invoicefk}`)
         console.log("response isss ", response)
-      //  console.log(`${API_BASE_URL}invoice/invoices/${invoicefk}`)
+        //  console.log(`${API_BASE_URL}invoice/invoices/${invoicefk}`)
 
         if (response) {
           setDetailData(Array.isArray(response) ? response : [response]);  // Ensure it's always an array
@@ -133,7 +133,7 @@ const TransactionDetailScreen = ({ item }) => {
           style={{ marginTop: 20 }}
         />
       ) : (
-       null
+        null
       )}
       {detailData && Array.isArray(detailData) && detailData.length > 0 ? (
         detailData.map((item) => (
@@ -189,18 +189,29 @@ const TransactionDetailScreen = ({ item }) => {
 
             <View style={styles.section}>
               <View style={styles.userRow}>
-                <Avatar.Text size={50} label={userName ? userName?.charAt(0)?.toUpperCase() :
+                <Avatar.Text size={70} label={userName ? userName?.charAt(0)?.toUpperCase() :
                   <Feather name="arrow-down-right" size={20} color={"white"} />
 
                 } />
-                <View style={{ marginLeft: 10 }}>
-                  <Text style={styles.label}>{user?.name || "N/A"}</Text>
-                  <Text style={styles.label}>{user?.mobile || "N/A"}</Text>
+                <View style={{ marginLeft: 15 ,gap:3 }}>
+
+                  <View style={{ flexDirection: "row",  alignItems: "center" }}>
+                    <MaterialIcons name="person" size={16} color="gray" style={{marginHorizontal:6}} />
+                    <Text style={styles.label}>{user?.name || "N/A"}</Text>
+                  </View>
+
+                  <View style={{ flexDirection: "row", alignItems: "center"  }}>
+                    <MaterialIcons name="phone" size={16} color="gray" style={{marginHorizontal:6}} />
+                    <Text style={styles.label}>{user?.mobile || "N/A"}</Text>
+                  </View>
+
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <MaterialIcons name="location-on" size={16} color="gray" style={{marginHorizontal:6}} />
+                    <Text style={styles.address}>{user.address || "N/A"}</Text>
+                  </View>
                 </View>
-              </View>
-              <View style={styles.preRow}>
-                <MaterialIcons name="location-on" size={16} color="gray" />
-                <Text style={styles.address}>{user.address || "N/A"}</Text>
+
+
               </View>
             </View>
 
@@ -338,7 +349,8 @@ const styles = StyleSheet.create({
   },
   label: {
     marginLeft: 3,
-    marginTop: 3
+    marginTop: 3,
+    alignItems:"center"
   },
   preRow: {
     flexDirection: "row",
@@ -388,14 +400,14 @@ const styles = StyleSheet.create({
     padding: 16,
     textAlign: "center",
   },
-noDataText:{
-  color:"red",
-  justifyContent:"center",
-  alignItems:"center",
-  alignSelf:"center",
-  fontFamily:fontFamily.medium,
-  marginVertical:8
-}
+  noDataText: {
+    color: "red",
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    fontFamily: fontFamily.medium,
+    marginVertical: 8
+  }
 });
 
 export default TransactionDetailScreen;
