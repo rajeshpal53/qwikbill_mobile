@@ -180,6 +180,7 @@ const AddProduct = ({ navigation }) => {
               if (response) {
                 showSnackbar("Product Added Successfully", "success");
                 resetForm();
+                setRefresh((prev)=>!prev)
                 navigation.goBack();
               } else {
                 showSnackbar("Failed to add product", "error");

@@ -74,7 +74,7 @@ const getFallbackText = () => {
                 size={100}
                 // source={require("../../../assets/Mens-haircut.png")}
                 source={{
-                  uri: profileUrl || `${NORM_URL}/assets/mobile/male.png`,}}
+                  uri: `${NORM_URL}/assets/mobile/male.png`,}}
               />
             ) : (
               <>
