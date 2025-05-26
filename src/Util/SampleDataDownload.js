@@ -3,7 +3,7 @@ import { Platform, Alert, StatusBar } from "react-native";
 import * as FileSystem from "expo-file-system";
 import * as Notifications from "expo-notifications";
 import * as Sharing from "expo-sharing";
-import * as IntentLauncher from "expo-intent-launcher";
+// import * as IntentLauncher from "expo-intent-launcher";
 import { StorageAccessFramework } from "expo-file-system";
 import { useStorageLocationContext } from "../Store/StorageLocationContext";
 Notifications.setNotificationHandler({
@@ -65,10 +65,10 @@ export const useDownloadInvoice = () => {
     try {
       if (Platform.OS === "android" && saveFolderUri) {
         // Open the folder using the saved URI
-        IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
-          data: saveFolderUri,
-          flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
-        });
+        // IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
+        //   data: saveFolderUri,
+        //   flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
+        // });
       }
     } catch (error) {
       console.error("Error opening the folder is , ", error);
@@ -81,11 +81,11 @@ export const useDownloadInvoice = () => {
     try {
       if (Platform.OS === "android" && saveFileUri) {
         // Open the file using the content URI
-        IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
-          data: saveFileUri, // Use the content URI from the folder
-          flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
-          type: "application/pdf", // MIME type (optional but helpful)
-        });
+        // IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
+        //   data: saveFileUri, // Use the content URI from the folder
+        //   flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
+        //   type: "application/pdf", // MIME type (optional but helpful)
+        // });
       }
     } catch (error) {
       console.error("Error , ", error);

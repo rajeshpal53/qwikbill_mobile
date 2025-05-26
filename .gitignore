@@ -2,6 +2,9 @@ Form values before submit:# Learn more https://docs.github.com/en/get-started/ge
 
 # dependencies
 node_modules/
+android
+ios
+*build-*
 
 # Expo
 .expo/
