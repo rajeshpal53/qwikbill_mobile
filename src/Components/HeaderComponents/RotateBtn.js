@@ -8,16 +8,16 @@ import { useOrientationChange } from "react-native-orientation-locker";
 import { useDeviceOrientationChange } from "react-native-orientation-locker";
 import { useLockListener } from "react-native-orientation-locker";
 
-import * as ScreenOrientation from "expo-screen-orientation"
+// import * as ScreenOrientation from "expo-screen-orientation"
 export default function RotateBtn({isLandscape, setIsLandscape}){
 
     // const [isLandscape, setIsLandscape] = useState(false);
 
       const handleRotate = async () => {
         if (isLandscape) {
-          await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT); // Lock to portrait
+          // await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT); // Lock to portrait
         } else {
-          await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE); // Lock to landscape
+          // await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE); // Lock to landscape
         }
         setIsLandscape(!isLandscape); // Toggle the state
       };

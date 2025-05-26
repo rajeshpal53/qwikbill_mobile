@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { View, Text, Dimensions, StyleSheet } from "react-native";
-import { PieChart } from "react-native-chart-kit";
+// import { PieChart } from "react-native-chart-kit";
 import Animated, { useSharedValue, withTiming, useAnimatedStyle } from "react-native-reanimated";
 import { fontFamily, fontSize } from "../Util/UtilApi";
 
@@ -65,7 +65,7 @@ const PieChartComponent = ({ vendorStatus, t }) => {
                 <View style={styles.chartWrapper}>
                     <View style={styles.chartContainer}>
                     <Animated.View style={[styles.pieChartWrapper ,animatedStyle ]}>
-                        <PieChart
+                        {/* <PieChart
                             data={chartData}
                             width={screenWidth * 0.6}
                             height={210}
@@ -80,7 +80,7 @@ const PieChartComponent = ({ vendorStatus, t }) => {
                             paddingLeft={"25"}
                             center={[10, 4]}
                            hasLegend={false}
-                        />
+                        /> */}
                     </Animated.View>
                     </View>
 

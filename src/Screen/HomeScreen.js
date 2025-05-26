@@ -36,17 +36,16 @@ import {
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { useFonts } from "expo-font";
 import UserDataContext from "../Store/UserDataContext";
 import { ShopDetailContext } from "../Store/ShopDetailContext";
 import { RefreshControl } from "react-native-gesture-handler";
-import {
-  TourGuideProvider,
-  TourGuideZone,
-  TourGuideZoneByPosition,
-  useTourGuideController,
-} from "rn-tourguide";
+// import {
+//   TourGuideProvider,
+//   TourGuideZone,
+//   TourGuideZoneByPosition,
+//   useTourGuideController,
+// } from "rn-tourguide";
 import { ShopContext } from "../Store/ShopContext";
 import {
   useSharedValue,
@@ -84,7 +83,7 @@ export default function HomeScreen({ navigation, noItemData }) {
   const isFocused = useIsFocused();
   const [currentStep, setCurrentStep] = useState(0);
   const [isTourGuideActive, setIsTourGuideActive] = useState(false);
-  const { canStart, start, stop, eventEmitter } = useTourGuideController();
+  // const { canStart, start, stop, eventEmitter } = useTourGuideController();
   const [bulkUploadModalVisible, setBulkUploadModalVisible] = useState(false)
   const [refreshing, setRefreshing] = useState(false);
   const [userSkipped, setUserSkipped] = useState(false);
@@ -112,7 +111,7 @@ export default function HomeScreen({ navigation, noItemData }) {
 
         if (!hasSeen) {
           console.log('Starting the tour...');
-          start();
+          // start();
           await AsyncStorage.setItem('hasSeenTour', 'true');
         } else {
           console.log('Tour already seen');
@@ -263,13 +262,13 @@ export default function HomeScreen({ navigation, noItemData }) {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.scrollView}>
-          <TourGuideZoneByPosition
+          {/* <TourGuideZoneByPosition
             zone={0}
             shape={"circle"}
             isTourGuide
             top={200}
             text={"Welcome to the QwikBill"}
-          />
+          /> */}
   
           <View style={styles.container}>
             
@@ -321,7 +320,7 @@ export default function HomeScreen({ navigation, noItemData }) {
                             <Text style={styles.itemText}>{t(item.name)}</Text>
                           </View>
                         </TouchableOpacity>
-                        <TourGuideZone
+                        {/* <TourGuideZone
                           key={index}
                           zone={4 + index}
                           text={item.name ? `Go to ₹{item.name}` : "Finished"}
@@ -336,7 +335,7 @@ export default function HomeScreen({ navigation, noItemData }) {
                             margin: width * 0.05,
                           }}
                           pointerEvents="box-none"
-                        />
+                        /> */}
                       </View>
                     )}}
                     keyExtractor={(item, index) => index.toString()}

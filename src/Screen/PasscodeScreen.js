@@ -19,7 +19,7 @@ import {
   Button,
   Card,
 } from "react-native-paper";
-import Tooltip from "react-native-walkthrough-tooltip";
+// import Tooltip from "react-native-walkthrough-tooltip";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import TextBox from "react-native-password-eye";
@@ -351,7 +351,7 @@ export default function PasscodeScreen({ navigation }) {
 
                             {/* second */}
                             <View style={{ justifyContent: "center" }}>
-                              <Tooltip
+                              {/* <Tooltip
                                 isVisible={tooltipVisible}
                                 content={
                                   <View style={styles.tooltipContent}>
@@ -377,7 +377,7 @@ export default function PasscodeScreen({ navigation }) {
                                     setTooltipVisible(true);
                                   }}
                                 />
-                              </Tooltip>
+                              </Tooltip> */}
                             </View>
 
                             {/* third */}

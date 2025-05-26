@@ -22,7 +22,7 @@ import * as Font from "expo-font";
 import StackNavigator from "./src/NavigatorContainer/stackNavigator.js";
 import { FontProvider } from "./src/Store/FontProvider.js";
 // import { CopilotProvider } from "react-native-copilot";
-import { TourGuideProvider } from "rn-tourguide";
+// import { TourGuideProvider } from "rn-tourguide";
 import { ShopProvider } from "./src/Store/ShopContext.js";
 import { StorageLocationProvider } from "./src/Store/StorageLocationContext.js";
 import { setupTokenRefreshListener, requestUserPermission } from "./src/Util/NotificationHandler.js";
@@ -73,7 +73,6 @@ export default function App() {
               <Provider store={Store}>
                 <I18nextProvider i18n={i18n}>
                   <PaperProvider theme={customTheme}>
-                    <TourGuideProvider {...{ borderRadius: 16,backdropColor: 'hsla(64, 5.80%, 47.50%, 0.39)' }}>
                       <NavigationContainer>
                         <AuthProvider>
                           <LoginTimeProvider>
@@ -87,7 +86,6 @@ export default function App() {
                           </LoginTimeProvider>
                         </AuthProvider>
                       </NavigationContainer>
-                    </TourGuideProvider>
                   </PaperProvider>
                 </I18nextProvider>
               </Provider>

@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons'; // or any other icon library
-import * as ScreenOrientation from "expo-screen-orientation"
+// import * as ScreenOrientation from "expo-screen-orientation"
 
 const CustomBackButton = ({isLandscape, setIsLandscape}) => {
   const navigation = useNavigation();
@@ -16,7 +16,7 @@ const CustomBackButton = ({isLandscape, setIsLandscape}) => {
   const handleRotate = async () => {
     if (isLandscape) {
         setIsLandscape(false);
-      await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT); // Lock to portrait
+      // await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT); // Lock to portrait
     }
     navigation.goBack();
   };

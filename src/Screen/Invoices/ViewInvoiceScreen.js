@@ -11,7 +11,7 @@ import { Feather } from "@expo/vector-icons";
 import DeleteModal from "../../UI/DeleteModal";
 import { useSnackbar } from "../../Store/SnackbarContext";
 import { useWindowDimensions, BackHandler } from "react-native";
-import * as ScreenOrientation from "expo-screen-orientation"
+// import * as ScreenOrientation from "expo-screen-orientation"
 import { useFocusEffect } from "@react-navigation/native";
 
 const headlineMap = {
@@ -98,7 +98,7 @@ export default function ViewInvoiceScreen({navigation}) {
  // Custom back button handler
  const onBackPress = async() => {
   // Perform any action when the back button is pressed
-    await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT); // Lock to portrait
+    // await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT); // Lock to portrait
 
     navigation.goBack()
     return true; // Returning true prevents the default behavior (going back)
@@ -205,7 +205,7 @@ const hideMenu = () => {
 
 const onEdit = async(item) => {
   if(isLandScape){
-    await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT); // Lock to portrait
+    // await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT); // Lock to portrait
   }
   navigation.navigate("AddInvoice", {item:item})
   // console.log("Edit id is ", id);
