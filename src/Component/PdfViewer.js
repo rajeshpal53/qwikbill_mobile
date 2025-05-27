@@ -27,7 +27,7 @@ import { clearCart } from "../Redux/slices/CartSlice";
 import { useDownloadInvoice } from "../Util/DownloadInvoiceHandler";
 import { useTranslation } from "react-i18next";
 import { AntDesign, Feather,FontAwesome5,MaterialCommunityIcons} from "@expo/vector-icons";
-import Pdf from 'react-native-pdf';
+// import Pdf from 'react-native-pdf';
 
 
 
@@ -193,7 +193,7 @@ const PdfScreen = ({ navigation }) => {
         <Text style={{fontFamily:"Poppins-Bold", fontSize:fontSize.headingSmall}}>Invoice Preview</Text>
       </View> */}
         {isLoading && <ActivityIndicator size="large" color="blue" />}
-      {viewInvoiceData ? (
+      {/* {viewInvoiceData ? (
        <Pdf
        style={{ height: "60%"  }}
           source={pdfSource}
@@ -227,7 +227,7 @@ const PdfScreen = ({ navigation }) => {
            }}
           
          />
-      )}
+      )} */}
      <Card style={styles.card}>
       {/* Customer Name and Amount Section */}
       <View style={styles.headerContainer}>
