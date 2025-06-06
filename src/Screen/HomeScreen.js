@@ -104,6 +104,8 @@ export default function HomeScreen({ navigation, noItemData }) {
     }
   }, [noItemModal]);
 
+  console.log("jayessssh tokennn ,",userData?.token)
+
   useEffect(() => {
     const checkTourStatus = async () => {
       try {

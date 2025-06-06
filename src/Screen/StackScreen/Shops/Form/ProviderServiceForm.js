@@ -95,7 +95,7 @@ const ProviderServiceForm = ({
   }, [isEditorReady]);
 
   return (
-    <View style={{ gap: 10 }}>
+    <View style={{ gap: 12}}>
       <View style={{ marginVertical: 20 }}>
         <ServiceImagePicker
           image={values?.shopImage}
@@ -156,6 +156,19 @@ const ProviderServiceForm = ({
         {touched.gstNumber && errors.gstNumber && (
           <Text style={{ color: "red" }}>{errors.gstNumber}</Text>
         )}
+
+        <TextInput
+          label={t("CIN Number")}
+          // disabled = { (!values?.latitude || values?.latitude === "") ? true : false}
+          mode={textInputMode}
+         style={{ backgroundColor: "transparent" }}
+          onChangeText={handleChange("cinNumber")}
+          onBlur={handleBlur("cinNumber")}
+          value={values.cinNumber}
+          error={touched.cinNumber && errors.cinNumber}
+        />
+
+
       </View>
       <View style={{ padding: 5 }}>
   <View style={{ padding: 10 }}>

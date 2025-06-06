@@ -175,6 +175,11 @@ const ProductDetailsScreen = ({ navigation }) => {
   useEffect(() => {
     console.log("jayesh produccts data is ", Productdata);
   }, [])
+<<<<<<< HEAD
+=======
+
+  console.log(userData?.token, "toke iss ")
+>>>>>>> e057e2e (updates on create shop screen , working on search filter and bulk upload)
 
   const loadMoreData = () => {
     if (!loader && hasMore && page < totalPages) {
@@ -189,6 +194,7 @@ const ProductDetailsScreen = ({ navigation }) => {
   const HandleDeleteProduct = async (ProductId) => {
     const api =`https://qwikbill.in/qapi/`
     console.log("Data of item is 345", ProductId);
+<<<<<<< HEAD
     console.log(` api is ${api}products/${ProductId}`)
 
     try {
@@ -198,13 +204,23 @@ const ProductDetailsScreen = ({ navigation }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${userData?.token}`
         }
+=======
+    console.log("Token being sent:", userData?.token);
+
+    try {
+      setloader(true);
+      const response = await deleteApi(`products/${ProductId}`, {
+        headers: {
+          Authorization: `Bearer ${userData?.token}`,
+        },
+>>>>>>> e057e2e (updates on create shop screen , working on search filter and bulk upload)
       });
 
       console.log("GET ALL DATA IS125 ", response?.data);
       if (response?.data) {
-        SetProductData((prevData) =>
-          prevData.filter((role) => role.id !== ProductId)
-        );
+      await  getproductdata();
+
+
         console.log("GET ALL DATA IS response", response.data);
       } else {
         console.log("No data returned from delete API");

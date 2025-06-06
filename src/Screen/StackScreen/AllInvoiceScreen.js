@@ -114,6 +114,8 @@ const AllInvoiceScreen = () => {
 
       let api = `invoice/searchInvoices?searchTerm=${trimmedQuery}`;
 
+      console.log("api serach ",api )
+
       const response = await readApi(api, {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userData?.token}`,
@@ -121,8 +123,8 @@ const AllInvoiceScreen = () => {
 
       console.log("RESPONSE DATA IS159", response);
 
-      if (response?.users?.length > 0) {
-        setSearchedData(response?.users);
+      if (response?.length > 0) {
+        setSearchedData(response);
       } else {
         setSearchedData([]);
       }

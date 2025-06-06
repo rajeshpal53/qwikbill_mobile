@@ -53,22 +53,25 @@ const ProviderProfileForm = ({
       <View>
         {/* <Card style={{ backgroundColor:"#fff", padding:10}}> */}
         {console.log("proiileImage is , ", values?.profileImage)}
-        <ServiceImagePicker
-          image={values?.profileImage}
-          label="Profile Image"
-          isAdmin={isAdmin}
-          setFieldValue={setFieldValue}
-          uploadFieldName={profileImageField}
-          type={"rounded"}
-          camera={true}
-         // gallary={isAdmin ? true : false}
-         gallary={true}
-        />
-        {touched.profileImage && errors.profileImage && (
-          <Text style={{ color: "red", textAlign: "center" }}>
-            {errors.profileImage}
-          </Text>
-        )}
+        <View style={{ marginBottom: 12, marginTop: 5 }}>
+          <ServiceImagePicker
+            image={values?.profileImage}
+            label="Profile Image"
+            isAdmin={isAdmin}
+            setFieldValue={setFieldValue}
+            uploadFieldName={profileImageField}
+            type={"rounded"}
+            camera={true}
+            // gallary={isAdmin ? true : false}
+            gallary={true}
+          />
+          {touched.profileImage && errors.profileImage && (
+            <Text style={{ color: "red", textAlign: "center" }}>
+              {errors.profileImage}
+            </Text>
+          )}
+
+        </View>
         {/* </Card> */}
 
         <TextInput
@@ -174,7 +177,7 @@ const ProviderProfileForm = ({
 
       <View>
         <View style={styles.dateTitle}>
-          <Text style={styles.dateTitleText}>DOB*</Text>
+          <Text style={styles.dateTitleText}>DOB</Text>
 
           <Pressable
             onPress={() => setShowDateTimePicker(true)}
@@ -199,7 +202,9 @@ const ProviderProfileForm = ({
                 // dateWithEndOfDay.setHours(23, 59, 59, 999); // Set time to 11:59 PM
                 // setFieldValue("dob", dateWithEndOfDay); // Set the form value
 
-                setFieldValue("dob", selectedDate);
+                if (event.type === "set" && selectedDate) {
+                  setFieldValue("dob", selectedDate);
+                }
               }
             }}
           />
@@ -208,6 +213,9 @@ const ProviderProfileForm = ({
           <Text style={{ color: "red", marginLeft: 2 }}>{errors.dob}</Text>
         ) : null}
       </View>
+
+      {console.log("date sssss", values.dob)}
+
 
       <View>
         <TextInput
@@ -218,6 +226,8 @@ const ProviderProfileForm = ({
           onBlur={handleBlur("userAddress")}
           value={values.userAddress}
           error={touched.userAddress && errors.userAddress}
+          multiline={true}
+          numberOfLines={4}
         />
         {touched.userAddress && errors.userAddress && (
           <Text style={{ color: "red" }}>{errors.userAddress}</Text>

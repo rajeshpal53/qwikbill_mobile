@@ -132,8 +132,8 @@ const AllVenderScreen = () => {
 
       console.log("RESPONSE DATA IS ", response);
 
-      if (response?.length > 0) {
-        setSearchedData(response);
+      if (response?.vendors?.length > 0) {
+        setSearchedData(response.vendors); // ✅ FIX HERE
       } else {
         setSearchedData([]);
       }

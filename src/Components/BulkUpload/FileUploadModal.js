@@ -8,11 +8,13 @@ import { ShopContext } from "../../Store/ShopContext";
 import axios from "axios";
 import { useSnackbar } from "../../Store/SnackbarContext";
 import { useDownloadInvoice } from "../../Util/DownloadInvoiceHandler";
+import UserDataContext from "../../Store/UserDataContext";
 
 const FileUploadModal = ({ visible, setBulkUploadModalVisible, navigation }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [SelectedCat, setSelectedCat] = useState("");
   const { selectedShop } = useContext(ShopContext);
+  const {userData} = useContext(UserDataContext)
   const {showSnackbar}=useSnackbar();
 
   const{downloadInvoicePressHandler, shareInvoicePressHandler} = useDownloadInvoice()
@@ -62,24 +64,14 @@ const FileUploadModal = ({ visible, setBulkUploadModalVisible, navigation }) => 
 
     console.log("FormData ", formData)
 
-    // formData.forEach((value, key) => {
-    //   // If the value is an object (like a file), log its details
-    //   if (value && value.uri) {
-    //     console.log(`Key: ${key}, File URI: ${value.uri}, Name: ${value.name}, Type: ${value.type}`);
-    //   } else {
-    //     console.log(`Key: ${key}, Value: ${value}`);
-    //   }
-    // });
-
-    // for (let pair of formData.entries()) {
-    //   console.log(`Datatatata of pair ${pair[0]}, ${pair[1]}`);
-    // }
+    
     try {
       const url = `products/bulkCreateProducts`;
       // const response = await createApi(url, formData);
       const response= await axios.post(`${API_BASE_URL}${url}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${userData?.token}`,
         },
       });
       console.log("RESPONSE OF UPLOAD FILE IS_________", response);

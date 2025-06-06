@@ -11,7 +11,12 @@
   "dependencies": {
     "@babel/plugin-transform-class-properties": "^7.25.9",
     "@babel/plugin-transform-private-property-in-object": "^7.25.9",
+
     "@expo/vector-icons": "^14.0.4",
+    "@expo/cli": "^0.21.8",
+    "@expo/metro-runtime": "~4.0.0",
+  
+
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/datetimepicker": "8.2.0",
     "@react-native-community/masked-view": "^0.1.11",
@@ -37,8 +42,12 @@
     "expo": "^52.0.35",
     "expo-build-properties": "~0.13.1",
     "expo-dev-client": "~5.0.4",
+
     "expo-document-picker": "~13.0.1",
     "expo-file-system": "^18.0.4",
+
+    
+
     "expo-font": "~13.0.1",
     "expo-image-picker": "~16.0.3",
     "expo-intent-launcher": "~12.0.2",
@@ -63,28 +72,40 @@
     "react-native": "^0.76.3",
     "react-native-chart-kit": "^6.12.0",
     "react-native-cn-quill": "^0.7.20",
+
+    "react-fast-compare": "^3.2.2",
+
+  
+    "react-native-blob-util": "^0.22.2",
+
     "react-native-copilot": "^3.3.3",
     "react-native-document-picker": "^9.3.1",
     "react-native-fast-image": "^8.6.3",
+    "react-native-file-viewer": "^2.1.5",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-image-resizer": "1.4.5",
     "react-native-image-zoom-viewer": "^3.0.1",
+
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
+
+    "react-native-intent-launcher": "^0.2.1",
+
     "react-native-linear-gradient": "^2.8.3",
     "react-native-logs": "^5.3.0",
     "react-native-maps": "1.18.0",
     "react-native-modal": "^13.0.1",
+
     "react-native-orientation-locker": "^1.7.0",
     "react-native-otp-entry": "^1.8.2",
-    "react-native-pager-view": "6.5.1",
+  
     "react-native-paper": "^5.12.5",
     "react-native-password-eye": "^1.0.5",
     "react-native-pdf": "^6.7.7",
     "react-native-pell-rich-editor": "^1.9.0",
     "react-native-picker-select": "^9.3.1",
     "react-native-progress-steps": "^1.3.4",
-    "react-native-ratings": "^8.1.0",
-    "react-native-razorpay": "^2.3.0",
+    
+
     "react-native-reanimated": "~3.16.1",
     "react-native-reanimated-carousel": "^3.5.1",
     "react-native-responsive-dimensions": "^3.1.1",
@@ -93,17 +114,45 @@
     "react-native-share": "^11.1.0",
     "react-native-size-matters": "^0.4.2",
     "react-native-svg": "15.8.0",
+
+    "react-native-onboarding-swiper": "^1.3.0",
+  
+
+    "react-native-pager-view": "6.5.1",
+
+
+    "react-native-pie-chart": "^4.0.1",
+
+    "react-native-ratings": "^8.1.0",
+    "react-native-razorpay": "2.3.0",
+  
+
+    "react-native-render-html": "^6.3.4",
+
+  
+  
+  
+    "react-native-sound": "^0.11.2",
+  
+
     "react-native-swipe-list-view": "^3.2.9",
     "react-native-tab-view": "^4.0.3",
     "react-native-tourguide": "^1.0.6",
     "react-native-vector-icons": "^10.2.0",
     "react-native-walkthrough-tooltip": "^1.6.0",
     "react-native-webview": "13.12.5",
+
+  
+
     "react-redux": "^9.1.2",
     "redux": "^5.0.1",
     "rn-tourguide": "^3.3.2",
     "uuid": "^11.0.3",
+
     "yup": "^1.6.1"
+
+  
+
   },
   "devDependencies": {
     "@babel/core": "^7.26.0"
