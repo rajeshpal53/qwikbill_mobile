@@ -27,12 +27,20 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
     console.log("item under viewshop , ", item);
     const newPayload={user:item?.user,...item?.vendor}
     console.log("new payload is , ", newPayload);
+
+    console.log("newPayload before navigating:", newPayload?.user?.id);
+
+  if (!item || !item.vendor) {
+    console.warn("🚫 Payload is incomplete or null. Navigation skipped.");
+    return;
+  }
     navigation.navigate("CreateShopScreen", {
       editItem: newPayload,
       isUpdateAddress: true,
 
     });
   };
+
   const handleViewProduct =() =>{
     navigation.navigate("wertone", {
       screen: "Products",

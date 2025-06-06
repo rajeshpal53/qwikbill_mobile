@@ -63,9 +63,8 @@ const PriceDetails = ({ setPaymentStatus }) => {
       {/* Price  */}
       <View style={styles.priceView}>
         <Text style={styles.label}>{t("Price")} ({carts.length})</Text>
-        <Text style={styles.value}>{`₹ ${
-          totalPrice?.toFixed(2) || "total"
-        }`}</Text>
+        <Text style={styles.value}>{`₹ ${totalPrice?.toFixed(2) || "total"
+          }`}</Text>
       </View>
 
       {/* Discount  */}
@@ -121,10 +120,10 @@ const PriceDetails = ({ setPaymentStatus }) => {
       {/* Total Amount  */}
       <View style={styles.priceView}>
         <Text style={styles.Totallabel}>{t("Total Amount")}</Text>
-        {}
+        { }
         <Text
           style={[styles.value, { fontSize: fontSize.labelLarge }]}
-        >{`₹ ${afterdiscount.toFixed(2)}`}</Text>
+        >{`₹ ${Math.ceil(afterdiscount)}`}</Text>
       </View>
     </View>
   );
@@ -199,8 +198,8 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.labelMedium,
   },
-  errorText:{
-    color:"red"
+  errorText: {
+    color: "red"
   }
 });
 

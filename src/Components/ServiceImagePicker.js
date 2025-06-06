@@ -181,6 +181,12 @@ export default function ServiceImagePicker({
     }
   };
 
+
+  const removeImage = () => {
+    setFieldValue(uploadFieldName, null);
+    setImageUrl("");
+  };
+
   const pickCameraImage = async () => {
     const permission = await ImagePicker.getCameraPermissionsAsync();
 
@@ -356,33 +362,54 @@ export default function ServiceImagePicker({
             </Text>
 
             <View>
-              {camera && 
-              <TouchableOpacity
-                style={{ minHeight: 48, justifyContent: "center" }}
-                onPress={() => {
-                  closeModal();
-                  pickCameraImage();
-                }}
-              >
-                <Text
-                  style={{
-                    fontFamily: "Poppins-Regular",
-                    color: "rgba(0, 0, 0, 0.7)",
+              {camera &&
+                <TouchableOpacity
+                  style={{ minHeight: 48, justifyContent: "center" }}
+                  onPress={() => {
+                    closeModal();
+                    pickCameraImage();
                   }}
                 >
-                  1. Camera
-                </Text>
-              </TouchableOpacity>
+                  <Text
+                    style={{
+                      fontFamily: "Poppins-Regular",
+                      color: "rgba(0, 0, 0, 0.7)",
+                    }}
+                  >
+                    1. Camera
+                  </Text>
+                </TouchableOpacity>
               }
 
               <Divider />
 
-                  {gallary && 
+              {gallary &&
+                <TouchableOpacity
+                  style={{ minHeight: 48, justifyContent: "center" }}
+                  onPress={() => {
+                    closeModal();
+                    pickGallaryImage();
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontFamily: "Poppins-Regular",
+                      color: "rgba(0, 0, 0, 0.7)",
+                    }}
+                  >
+                    2. Upload From Gallary
+                  </Text>
+                </TouchableOpacity>
+              }
+
+              <Divider />
+
+
               <TouchableOpacity
                 style={{ minHeight: 48, justifyContent: "center" }}
                 onPress={() => {
                   closeModal();
-                  pickGallaryImage();
+                  removeImage();
                 }}
               >
                 <Text
@@ -391,10 +418,9 @@ export default function ServiceImagePicker({
                     color: "rgba(0, 0, 0, 0.7)",
                   }}
                 >
-                  2. Upload From Gallary
+                  3. Remove Image
                 </Text>
               </TouchableOpacity>
-              }
             </View>
           </View>
         </View>

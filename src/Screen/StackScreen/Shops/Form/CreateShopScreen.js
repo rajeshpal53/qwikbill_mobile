@@ -26,7 +26,7 @@ import * as Yup from "yup";
 import { useIsFocused, useRoute } from "@react-navigation/native";
 // import SelectionDropdown from "../../../../ComponentContainer/SelectionDropdown";
 
-import { API_BASE_URL, createApi, NORM_URL, readApi } from "../../../../Util/UtilApi";
+import { API_BASE_URL, createApi, fontSize, NORM_URL, readApi } from "../../../../Util/UtilApi";
 
 // import UserDataContext from "../../../../Store/UserDataContext";
 import { useSnackbar } from "../../../../Store/SnackbarContext";
@@ -45,7 +45,7 @@ import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
 import Icon from "react-native-vector-icons/AntDesign";
 import axios from "axios";
 import UserDataContext from "../../../../Store/UserDataContext";
-import ProviderMoreDetails from "./ProviderMoreDetails";
+//import ProviderMoreDetails from "./ProviderMoreDetails";
 import { ShopContext } from "../../../../Store/ShopContext";
 
 // Form validation schema using Yup
@@ -71,24 +71,31 @@ import { ShopContext } from "../../../../Store/ShopContext";
 //     .max(99, "age must be at most 99"), // Maximum age limit
 // });
 
+<<<<<<< HEAD
 const uploadImagesSchema = Yup.object().shape({
   aadhaarNumber: Yup.string()
     .matches(/^\d{12}$/, "Aadhaar number must be 12 digitsssss")
     .required("Aadhaar number is required"),
+=======
+// const uploadImagesSchema = Yup.object().shape({
+//   aadhaarNumber: Yup.string()
+//     .matches(/^\d{12}$/, "Aadhaar number must be 12 digits")
+//     .required("Aadhaar number is required"),
+>>>>>>> e057e2e (updates on create shop screen , working on search filter and bulk upload)
 
-  aadharFrontImage: Yup.mixed().required("Aadhar Front image is required"),
+//   aadharFrontImage: Yup.mixed().required("Aadhar Front image is required"),
 
-  aadharBackImage: Yup.mixed().required("Aadhar Back image is required"),
-});
+//   aadharBackImage: Yup.mixed().required("Aadhar Back image is required"),
+// });
 
 const ShopValidataionSchema = Yup.object().shape({
   shopName: Yup.string()
-  .required("Shop Name is required")
-  .max(50, "Shop Name cannot be more than 50 characters"),
+    .required("Shop Name is required")
+    .max(50, "Shop Name cannot be more than 50 characters"),
 
-shopAddress: Yup.string()
-  .required("Shop Address is required")
-  .max(50, "Shop Address cannot be more than 50 characters"),
+  shopAddress: Yup.string()
+    .required("Shop Address is required")
+    .max(50, "Shop Address cannot be more than 50 characters"),
   //  gstNumber: Yup.string().matches(
   //       /^[A-Z]{2}[0-9]{1}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z0-9]{1}[Z]{1}[0-9]{1}$/,
   //       "Invalid GSTIN format. Example: AB1234567890Z1"
@@ -104,43 +111,28 @@ shopAddress: Yup.string()
 const ProfileValidationSchema = Yup.object().shape({
   profileImage: Yup.mixed().required("profile image is required"),
   name: Yup.string().required("Name is required")
-  .max(50, "Name cannot be more than 50 characters"),
+    .max(50, "Name cannot be more than 50 characters"),
   whatsappNumber: Yup.string()
     .required("WhatsApp number is required")
-    .matches(/^[6-9]\d{9}$/, "Invalid WhatsApp number"),
+    .matches(/^[6-9]\d{9}$/, "WhatsApp number must be  10 digits"),
 
 
 
   mobile: Yup.string().required("mobile number is required"),
   // .matches(/^[6-9]\d{9}$/, "Invalid Mobile Number")
   email: Yup.string()
-  .email("Invalid email format")
-  .required("Email is required"),
-  
+    .email("Invalid email format")
+    .notRequired(),
+
   gender: Yup.string().required("Gender is required"),
-  dob: Yup.string()
-    .required("DOB is required")
-    .test("min-age", "You must be at least 5 years old", function (value) {
-      if (!value) return false;
-
-      // Parse the entered DOB
-      const enteredDate = new Date(value);
-
-      // Ensure it's a valid date
-      if (isNaN(enteredDate.getTime())) return false;
-
-      // Get today's date
+  dob: Yup.date()
+    .nullable()
+    .notRequired()
+    .test("min-age", "Age must be at least 5 years", function (value) {
+      if (!value) return true; // skip validation if empty
       const today = new Date();
-
-      // Calculate the minimum age date (5 years ago from today)
-      const minAgeDate = new Date(
-        today.getFullYear() - 5,
-        today.getMonth(),
-        today.getDate()
-      );
-
-      // The entered DOB must be earlier than or equal to minAgeDate
-      return enteredDate <= minAgeDate;
+      const age = today.getFullYear() - value.getFullYear();
+      return age >= 5;
     }),
 
   //------------------------------------------------
@@ -231,13 +223,17 @@ const CreateShopScreen = ({ navigation }) => {
         return item?.value?.toLocaleLowerCase() === userData?.user?.gender;
       });
 
-    //return gender?.gender || userData?.user?.gender || "";
-    return gender?.value || userData?.user?.gender || "";
+      //return gender?.gender || userData?.user?.gender || "";
+      return gender?.value || userData?.user?.gender || "";
 
     } else {
       return "Select Gender";
     }
   });
+
+
+
+  console.log("route data isssss", routeData)
 
   // console.log("route data is , ", routeData)
   console.log("userData is , ", userData);
@@ -267,6 +263,7 @@ const CreateShopScreen = ({ navigation }) => {
     profileImage: userData?.user?.profilePicurl || null,
   });
 
+  
   useEffect(() => {
     const handleBackPress = navigation.addListener("beforeRemove", (e) => {
       if (!submit.current && !isFormSubmitted) {
@@ -405,8 +402,8 @@ const CreateShopScreen = ({ navigation }) => {
           shopAddress: routeData?.shopAddress || "",
           gstNumber: routeData?.gstNumber || "",
           whatsappNumber: routeData?.whatsappnumber || "",
-          aadhaarNumber:
-            routeData?.aadharCard || routeData?.user?.aadharCard || "",
+          // aadhaarNumber:
+          //   routeData?.aadharCard || routeData?.user?.aadharCard || "",
 
           kilometerRadius: routeData?.drange || "",
           latitude: routeData?.latitude || "",
@@ -420,20 +417,20 @@ const CreateShopScreen = ({ navigation }) => {
             (routeData?.shopImage &&
               formatUrl(routeData?.shopImage, "shopImage")) ||
             null,
-          aadharFrontImage:
-            (routeData?.user?.aadharCardFronturl &&
-              formatUrl(
-                routeData?.user?.aadharCardFronturl,
-                "aadharCardFronturl"
-              )) ||
-            null,
-          aadharBackImage:
-            (routeData?.user?.aadharCardBackurl &&
-              formatUrl(
-                routeData?.user?.aadharCardBackurl,
-                "aadharCardBackurl"
-              )) ||
-            null,
+          // aadharFrontImage:
+          //   (routeData?.user?.aadharCardFronturl &&
+          //     formatUrl(
+          //       routeData?.user?.aadharCardFronturl,
+          //       "aadharCardFronturl"
+          //     )) ||
+          //   null,
+          // aadharBackImage:
+          //   (routeData?.user?.aadharCardBackurl &&
+          //     formatUrl(
+          //       routeData?.user?.aadharCardBackurl,
+          //       "aadharCardBackurl"
+          //     )) ||
+          //   null,
           profileImage:
             (routeData?.user?.profilePicurl &&
               formatUrl(routeData?.user?.profilePicurl, "profilePicurl")) ||
@@ -464,21 +461,21 @@ const CreateShopScreen = ({ navigation }) => {
           (userData?.user?.profilePicurl &&
             formatUrl(userData?.user?.profilePicurl, "profilePicurl")) ||
           null,
-        aadharFrontImage:
-          (userData?.user?.aadharCardFronturl &&
-            formatUrl(
-              userData?.user?.aadharCardFronturl,
-              "aadharCardFronturl"
-            )) ||
-          null,
-        aadharBackImage:
-          (userData?.user?.aadharCardBackurl &&
-            formatUrl(
-              userData?.user?.aadharCardBackurl,
-              "aadharCardBackurl"
-            )) ||
-          null,
-        aadhaarNumber: userData?.user?.aadharCard || "",
+        // aadharFrontImage:
+        //   (userData?.user?.aadharCardFronturl &&
+        //     formatUrl(
+        //       userData?.user?.aadharCardFronturl,
+        //       "aadharCardFronturl"
+        //     )) ||
+        //   null,
+        // aadharBackImage:
+        //   (userData?.user?.aadharCardBackurl &&
+        //     formatUrl(
+        //       userData?.user?.aadharCardBackurl,
+        //       "aadharCardBackurl"
+        //     )) ||
+        //   null,
+        // aadhaarNumber: userData?.user?.aadharCard || "",
       }));
     } catch (error) {
       console.log("eror is , ", error);
@@ -499,14 +496,7 @@ const CreateShopScreen = ({ navigation }) => {
     return imageFile;
   };
 
-  //  // Convert `dd-mm-yyyy` to a `Date` object
-  //  const parseServerDate = (dateString) => {
-  //   // Parse the date string "01 June 2024" to a Date object
 
-  //   const [day, monthName, year] = dateString.split(" ");
-  //   const month = new Date(`${monthName} 1, 2024`).getMonth(); // Get month index (0-based)
-  //   return new Date(year, month, day); // Return Date object
-  // };
 
   const handleGenderDropDownPress = () => {
     setGenderDropDownVisible((prev) => !prev);
@@ -566,6 +556,8 @@ const CreateShopScreen = ({ navigation }) => {
     }
   };
 
+  const lastStep = 2;
+
   const handleNextStep = async (validateForm, setFieldTouched) => {
     const errors = await validateForm();
 
@@ -579,8 +571,8 @@ const CreateShopScreen = ({ navigation }) => {
     if (Object.keys(errors).length > 0) {
       console.log("validation failed ", errors);
       return false;
-    } else if (currentStep < 2) {
-      console.log("next steop");
+    } else if (currentStep < lastStep) {
+      console.log("next step");
       setCurrentStep((prev) => prev + 1);
     }
   };
@@ -610,11 +602,13 @@ const CreateShopScreen = ({ navigation }) => {
       initialValues={initialData}
       enableReinitialize={true}
       validationSchema={
-        currentStep === 0
-          ? ProfileValidationSchema
-          : currentStep === 1
-          ? ShopValidataionSchema
-          : uploadImagesSchema
+        // currentStep === 0
+        //   ? ProfileValidationSchema
+        //   : currentStep === 1 
+        //     ? ShopValidataionSchema
+        //     : uploadImagesSchema
+
+        currentStep === 0 ? ProfileValidationSchema : ShopValidataionSchema
       }
       onSubmit={async (values) => {
         console.log("hi prathesm");
@@ -626,8 +620,8 @@ const CreateShopScreen = ({ navigation }) => {
 
         updateUserPayloadData.append("name", values?.name);
         updateUserPayloadData.append("mobile", values?.mobile);
-        updateUserPayloadData.append("aadharCard", values?.aadhaarNumber);
-        updateUserPayloadData.append("address",values?.userAddress)
+        //  updateUserPayloadData.append("aadharCard", values?.aadhaarNumber);
+        updateUserPayloadData.append("address", values?.userAddress)
         const formattedDate = formatDate(values?.dob);
         updateUserPayloadData.append("dob", formattedDate);
 
@@ -639,19 +633,19 @@ const CreateShopScreen = ({ navigation }) => {
           console.log("profdkdkd 111, ", values?.profileImage);
           updateUserPayloadData.append("profilePicurl", values?.profileImage);
         }
-        if (values?.aadharFrontImage) {
-          updateUserPayloadData.append(
-            "aadharCardFronturl",
-            values?.aadharFrontImage
-          );
-        }
+        // if (values?.aadharFrontImage) {
+        //   updateUserPayloadData.append(
+        //     "aadharCardFronturl",
+        //     values?.aadharFrontImage
+        //   );
+        // }
 
-        if (values?.aadharBackImage) {
-          updateUserPayloadData.append(
-            "aadharCardBackurl",
-            values?.aadharBackImage
-          );
-        }
+        // if (values?.aadharBackImage) {
+        //   updateUserPayloadData.append(
+        //     "aadharCardBackurl",
+        //     values?.aadharBackImage
+        //   );
+        // }
 
         updateUserPayloadData.append("password", userData?.user?.password);
 
@@ -683,6 +677,8 @@ const CreateShopScreen = ({ navigation }) => {
           );
           createdUserId = response?.data?.id;
 
+
+
           if (!isAdmin || routeData?.user?.mobile === userData?.user?.mobile) {
             const saveUser = {
               token: userData?.token,
@@ -691,6 +687,8 @@ const CreateShopScreen = ({ navigation }) => {
 
             saveUserData(saveUser);
           }
+
+
 
           showSnackbar(t("Your profile has been updated"), "success");
         } catch (error) {
@@ -724,9 +722,11 @@ const CreateShopScreen = ({ navigation }) => {
           data.append("isApprove", false);
         }
 
-        const userfk = routeData ? routeData?.user?.id : createdUserId;
+        const userfk = userData?.user?.id || createdUserId;
 
         data.append("usersfk", userfk);
+
+        console.log("userfk isssss ssss", routeData, createdUserId);
 
         if (routeData) {
           data.append("id", routeData?.id);
@@ -771,6 +771,9 @@ const CreateShopScreen = ({ navigation }) => {
             // navigation.pop(2);
             navigation.goBack();
           } else {
+            console.log("jayesh is happy", userfk);
+
+            console.log("route data befor api call ", data)
             const response = await axios.post(
               `${API_BASE_URL}vendors/createVendorWithImage`,
               data,
@@ -842,7 +845,7 @@ const CreateShopScreen = ({ navigation }) => {
         return (
           <View
             style={{
-              paddingHorizontal: 20,
+              paddingHorizontal: 18,
 
               //  backgroundColor: "orange",
               //  padding:5,
@@ -853,13 +856,15 @@ const CreateShopScreen = ({ navigation }) => {
           >
             <ProgressSteps
               activeStep={currentStep}
-              topOffset={10}
-              marginBottom={20}
+              topOffset={18}
+              marginBottom={5}
+              labelFontSize={50}
             >
               <ProgressStep
-                label="Profile Details"
+                // label="Profile Details"
                 scrollViewProps={styles.scrollViewProps}
                 removeBtnRow={true}
+                labelStyle={{ fontSize: 50 }}
               >
                 <View>
                   <ProviderProfileForm
@@ -888,10 +893,12 @@ const CreateShopScreen = ({ navigation }) => {
               </ProgressStep>
 
               <ProgressStep
-                label="Shop Details"
+                // label="Shop Details"
                 removeBtnRow={true}
                 scrollViewProps={styles.scrollViewProps}
-                // previousBtnTextStyle={{ display: 'none' }}
+                onSubmit={handleSubmit}
+
+              // previousBtnTextStyle={{ display: 'none' }}
               >
                 <View>
                   <ProviderServiceForm
@@ -913,9 +920,9 @@ const CreateShopScreen = ({ navigation }) => {
                   />
                 </View>
               </ProgressStep>
-              
-              <ProgressStep
-                label="Upload Images"
+
+              {/* <ProgressStep
+                // label="Upload Images"
                 onSubmit={handleSubmit}
                 scrollable={true}
                 removeBtnRow={true}
@@ -944,7 +951,7 @@ const CreateShopScreen = ({ navigation }) => {
                     aadharBackImageField="aadharBackImage"
                   />
                 </View>
-              </ProgressStep>
+              </ProgressStep> */}
 
             </ProgressSteps>
 
@@ -965,18 +972,17 @@ const CreateShopScreen = ({ navigation }) => {
                   // icon={"arrow-left"}
                   onPress={handlePrevStep}
                   disabled={currentStep === 0 ? true : false}
-                  // style={{ flex: 1 }}
+                // style={{ flex: 1 }}
                 >
                   {/* Previous */}
                   <Icon name="arrowleft" size={20} color="#fff" />
                 </Button>
 
-                {currentStep < 2 && (
+                {currentStep === 0 && (
                   <Button
                     mode="contained"
                     // icon={"arrow-right"}
                     contentStyle={{ flexDirection: "row-reverse" }}
-                    disabled={currentStep === 2 ? true : false}
                     onPress={() =>
                       handleNextStep(validateForm, setFieldTouched)
                     }
@@ -986,16 +992,16 @@ const CreateShopScreen = ({ navigation }) => {
                   </Button>
                 )}
 
-                {currentStep === 2 && (
+                {currentStep === 1 && (
                   <Button
                     mode="contained"
                     onPress={handleSubmit}
-                    disabled={currentStep === 2 ? false : true}
                     style={{ flex: 1 }}
                   >
                     {t("Submit")}
                   </Button>
                 )}
+
               </View>
             </View>
           </View>
