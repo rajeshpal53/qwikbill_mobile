@@ -193,7 +193,7 @@ const PdfScreen = ({ navigation }) => {
       {/* <View style={{alignItems:"center"}}>
         <Text style={{fontFamily:"Poppins-Bold", fontSize:fontSize.headingSmall}}>Invoice Preview</Text>
       </View> */}
-        {isLoading && <ActivityIndicator size="large" color="blue" />}
+        {/* {isLoading && <ActivityIndicator size="large" color="blue" />}
       {viewInvoiceData ? (
        <Pdf
        style={{ height: "60%"  }}
@@ -228,7 +228,7 @@ const PdfScreen = ({ navigation }) => {
            }}
           
          />
-      )}
+      )} */}
      <Card style={styles.card}>
       {/* Customer Name and Amount Section */}
       <View style={styles.headerContainer}>
