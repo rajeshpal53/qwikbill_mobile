@@ -96,7 +96,7 @@ export default function HomeScreen({ navigation, noItemData }) {
     console.log("all services isLoading,", allShops);
 
   }, [allShops]);
-
+useEffect(()=>{  console.log( ` our token isss ${userData?.token}`)},[])
   useEffect(() => {
     if (noItemModal) {
       console.log("Modal should show now because noItemModal is true.");

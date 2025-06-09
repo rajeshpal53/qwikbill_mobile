@@ -158,7 +158,7 @@ const CustomerDetails = ({ route, navigation }) => {
             <Text>Paid Amount</Text>
             <Text style={styles.amount}>₹150</Text>
           </View>
-        </View>
+       {/*} </View>
           <Text style={styles.sectionTitle}>Recent Orders</Text>
       <View style={styles.orderItem}>
         <View style={styles.orderRow}>
@@ -179,7 +179,7 @@ const CustomerDetails = ({ route, navigation }) => {
         </View>
         <TouchableOpacity style={styles.detailsButton}>
           <Text style={styles.detailsText}>View all invoices</Text>
-        </TouchableOpacity>
+        </TouchableOpacity>*/}
       </View>
       </View>
     </ScrollView>
