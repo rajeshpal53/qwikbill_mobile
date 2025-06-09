@@ -1,10 +1,7 @@
 import React, { useEffect } from "react";
 import { View, Text, Dimensions, StyleSheet } from "react-native";
-<<<<<<< HEAD
 import { PieChart } from "react-native-chart-kit";
-=======
 //import { PieChart } from "react-native-chart-kit";
->>>>>>> e057e2e (updates on create shop screen , working on search filter and bulk upload)
 import Animated, { useSharedValue, withTiming, useAnimatedStyle } from "react-native-reanimated";
 import { fontFamily, fontSize } from "../Util/UtilApi";
 

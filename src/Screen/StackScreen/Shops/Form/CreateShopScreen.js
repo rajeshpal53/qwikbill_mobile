@@ -71,17 +71,16 @@ import { ShopContext } from "../../../../Store/ShopContext";
 //     .max(99, "age must be at most 99"), // Maximum age limit
 // });
 
-<<<<<<< HEAD
 const uploadImagesSchema = Yup.object().shape({
   aadhaarNumber: Yup.string()
     .matches(/^\d{12}$/, "Aadhaar number must be 12 digitsssss")
     .required("Aadhaar number is required"),
-=======
+});
+//
 // const uploadImagesSchema = Yup.object().shape({
 //   aadhaarNumber: Yup.string()
 //     .matches(/^\d{12}$/, "Aadhaar number must be 12 digits")
 //     .required("Aadhaar number is required"),
->>>>>>> e057e2e (updates on create shop screen , working on search filter and bulk upload)
 
 //   aadharFrontImage: Yup.mixed().required("Aadhar Front image is required"),
 
@@ -1048,6 +1047,10 @@ const styles = StyleSheet.create({
 });
 
 export default CreateShopScreen;
+
+
+
+
 
 //-----------------------------------Submit Code------------------------------------------------------
 
