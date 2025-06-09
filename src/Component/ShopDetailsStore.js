@@ -7,33 +7,57 @@ import UserDataContext from "../Store/UserDataContext";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next"; // if not already
 import { ShopContext } from "../Store/ShopContext";
+import { deleteApi } from "../Util/UtilApi";
 
 
 const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => {
   console.log("DATA OF ITEM  jayesh ssssss ", item);
   const { userData } = useContext(UserDataContext);
   const navigation = useNavigation();
-  const {t} =  useTranslation();
-  const {selectedShop}=useContext(ShopContext)
-  const handleDelete = (item) => {
-    console.log("Button pressed", item);
-    setConfirmModalVisible(true);
-    setShopDeleteId(item?.id);
-    // setSelectedModal(null);
+  const { t } = useTranslation();
+  const { selectedShop } = useContext(ShopContext)
+
+  // const handleDelete = (item) => {
+  //   console.log("Button pressed", item);
+  //   setConfirmModalVisible(true);
+  //   setShopDeleteId(item?.id);
+  //   // setSelectedModal(null);
+  // };
+
+
+  const handleDelete = async (item) => {
+    console.log("vendor id isss", item.vendor.id);
+    const id = item.vendor.id 
+    console.log("my tokennn ",userData?.token)
+    try {
+      
+      const response = await deleteApi(`vendors/${id}`, {
+        headers: {
+          Authorization: `Bearer ${userData?.token}`,
+        },
+      });
+
+      console.log("response s  ", response);
+      console.log("item deleted");
+      showSnackbar("item delete successfully", "success");
+    } catch (error) {
+      console.error("Failed to delete the item :", error);
+      showSnackbar("Failed to delete the item", "error");
+    }
   };
 
   const handleEdit = (item) => {
     // setSelectedModal(null);
     console.log("item under viewshop , ", item);
-    const newPayload={user:item?.user,...item?.vendor}
+    const newPayload = { user: item?.user, ...item?.vendor }
     console.log("new payload is , ", newPayload);
 
     console.log("newPayload before navigating:", newPayload?.user?.id);
 
-  if (!item || !item.vendor) {
-    console.warn("🚫 Payload is incomplete or null. Navigation skipped.");
-    return;
-  }
+    if (!item || !item.vendor) {
+      console.warn("🚫 Payload is incomplete or null. Navigation skipped.");
+      return;
+    }
     navigation.navigate("CreateShopScreen", {
       editItem: newPayload,
       isUpdateAddress: true,
@@ -41,12 +65,12 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
     });
   };
 
-  const handleViewProduct =() =>{
+  const handleViewProduct = () => {
     navigation.navigate("wertone", {
       screen: "Products",
       params: { item },
     });
-      }
+  }
 
   return (
     <View>
@@ -141,7 +165,7 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
 
       <View style={styles.ButtonView}>
 
-      <View style={styles.ButtonView}>
+        <View style={styles.ButtonView}>
           <TouchableOpacity
             style={styles.closeButton}
             onPress={handleViewProduct}
@@ -152,27 +176,27 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
         </View>
 
 
-        {selectedShop?.role?.name === "owner"&&(<View>
-             <View style={styles.ButtonView}>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => handleEdit(item)}
-          >
-            <Text style={{ color: "#fff" }}>Edit</Text>
-          </TouchableOpacity>
-        </View>
+        {selectedShop?.role?.name === "owner" && (<View>
+          <View style={styles.ButtonView}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => handleEdit(item)}
+            >
+              <Text style={{ color: "#fff" }}>Edit</Text>
+            </TouchableOpacity>
+          </View>
 
-        <View style={styles.ButtonView}>
-          <TouchableOpacity
-            style={styles.downloadButton}
-            onPress={() => handleDelete(item)}
-          >
-            <Text style={{ color: "#fff" }}>Delete</Text>
-          </TouchableOpacity>
-        </View>
-          </View>)
+          <View style={styles.ButtonView}>
+            <TouchableOpacity
+              style={styles.downloadButton}
+              onPress={() => handleDelete(item)}
+            >
+              <Text style={{ color: "#fff" }}>Delete</Text>
+            </TouchableOpacity>
+          </View>
+        </View>)
         }
-       
+
       </View>
     </View>
   );
