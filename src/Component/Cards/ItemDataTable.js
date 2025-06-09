@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
+import { ScrollView } from "react-native";
 import { Card, TextInput } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import IncAndDicButton from "../../Redux/IncAndDicButton";
@@ -20,15 +21,20 @@ import { fontSize } from "../../Util/UtilApi";
 const ItemDataTable = () => {
   const carts = useSelector((state) => state.cart.Carts);
   const dispatch = useDispatch();
-
+  console.log("carts is " , carts);
+  const value = (carts?.sellPrice * carts?.quantity * carts?.taxRate) /
+          100;
+  console.log("value is " , value);
   return (
     <>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
       <Card style={styles.card}>
         {/* Header */}
         <View style={[styles.row, styles.header]}>
           <Text style={[styles.cell, styles.smallCell]}>No.</Text>
           <Text style={[styles.cell, styles.flexCell]}>Items</Text>
           <Text style={[styles.cell, styles.smallCell]}>Price</Text>
+          <Text style={[styles.cell, styles.smallCell]}>Tax(%)</Text>
           <Text style={[styles.cell, styles.smallCell]}>Quantity</Text>
           <Text style={[styles.cell, styles.smallCell]}>Action</Text>
         </View>
@@ -44,6 +50,11 @@ const ItemDataTable = () => {
               <Text style={[styles.cell, styles.smallCell]}>
               ₹{(item?.sellPrice * item?.quantity).toFixed(2)}
               </Text>
+              <Text style={[styles.cell, styles.smallCell]}>
+   (
+  {((item?.sellPrice * item?.quantity * item?.taxRate) / 100).toFixed(2)} )
+</Text>
+
               <View style={[styles.cell, styles.smallCell]}>
                 <IncAndDicButton item={item} />
               </View>
@@ -58,6 +69,7 @@ const ItemDataTable = () => {
           )}
         />
       </Card>
+      </ScrollView>
       {/* <PriceDetails /> */}
     </>
   );
@@ -82,18 +94,23 @@ const styles = StyleSheet.create({
   header: {
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
-    // paddingHorizontal: 5,
+    
+    //paddingHorizontal: 5,
   },
   cell: {
     textAlign: "center",
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 5,
+    paddingHorizontal: 10,
     fontFamily: "Poppins-Regular",
     fontSize: fontSize.labelMedium,
   },
   smallCell: {
     textAlign: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    
   },
   flexCell: {
     flex: 1,

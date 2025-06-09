@@ -27,12 +27,12 @@ import CreateInvoiveForm from "../Component/Form/CreateInvoiveForm";
 import { fontFamily, fontSize, readApi } from "../Util/UtilApi";
 import { ShopContext } from "../Store/ShopContext";
 import CustomToggleButton from "../Component/CustomToggleButton";
-import {
-  TourGuideProvider,
-  TourGuideZone,
-  TourGuideZoneByPosition,
-  useTourGuideController,
-} from "rn-tourguide";
+// import {
+//   TourGuideProvider,
+//   TourGuideZone,
+//   TourGuideZoneByPosition,
+//   useTourGuideController,
+// } from "rn-tourguide";
 import UserDataContext from "../Store/UserDataContext";
 import { useTranslation } from "react-i18next";
 
@@ -46,7 +46,7 @@ export default function CreateInvoice({ navigation, route }) {
   const pickerRef = useRef();
   const { allShops,selectedShop} = useContext(ShopContext);
   const [isTourGuideActive, setIsTourGuideActive] = useState(false);
-  const { canStart, start, stop, eventEmitter } = useTourGuideController();
+  // const { canStart, start, stop, eventEmitter } = useTourGuideController();
   const [invoiceNumber,setInvoiceNumber]=useState("");
   const { t } = useTranslation();
 
@@ -68,9 +68,9 @@ export default function CreateInvoice({ navigation, route }) {
   //   { label: 'Right', value: 'right' },
   // ];
   const toggleOptions = [
-    // { value: "recent", label: "Recent" },
     { value: "provisional", label: "Prov Invoice" },
     { value: "gst", label: "GST Invoice" },
+    { value: "Quatation", label: "Quatation" },
   ];
 
   //----------------------------------------------------
@@ -82,7 +82,7 @@ export default function CreateInvoice({ navigation, route }) {
   });
 
   const toggleButtonsTexts = {
-    // first: "Recent",
+     first: "Quatation",
     second: "Prov Invoice",
     third: "GST Invoice",
   };
@@ -96,19 +96,19 @@ export default function CreateInvoice({ navigation, route }) {
     };
   }, []);
 
-  useEffect(() => {
-    const checkIfTourSeen = async () => {
-      try {
-        if (isTourGuideActive && canStart) {
-          start();
-        }
-      } catch (error) {
-        console.log("Error checking tour guide status", error);
-      }
-    };
+  // useEffect(() => {
+  //   const checkIfTourSeen = async () => {
+  //     try {
+  //       // if (isTourGuideActive && canStart) {
+  //       //   start();
+  //       // }
+  //     } catch (error) {
+  //       console.log("Error checking tour guide status", error);
+  //     }
+  //   };
 
-    checkIfTourSeen();
-  }, [canStart]);
+  //   checkIfTourSeen();
+  // }, [canStart]);
 
   useEffect(()=>{
     fetchCount();
@@ -130,7 +130,7 @@ export default function CreateInvoice({ navigation, route }) {
   useEffect(() => {
     function setInvoiceHandler() {
       if (buttonsModes.firstButtonMode) {
-        setInvoiceType("recent");
+        setInvoiceType("quatation");
       } else if (buttonsModes.secondButtonMode) {
         setInvoiceType("provInvoice");
       } else {
@@ -190,7 +190,7 @@ export default function CreateInvoice({ navigation, route }) {
           <View style={styles.logoPickerContainer}>
             <Entypo name="shop" size={30} color="#0c3b73" />
             <View style={styles.pickerContainer}>
-              {isTourGuideActive && (
+              {/* {isTourGuideActive && (
                 <TourGuideZone
                   zone={1}
                   text={"See all the Vender"}
@@ -202,9 +202,10 @@ export default function CreateInvoice({ navigation, route }) {
                     width: "100%",
                     top: 36,
                     height: 32,
-                  }}
+                  }
+                }
                 />
-              )}
+              )} */}
 
               <DropDownList options={allShops} />
             </View>
@@ -219,9 +220,9 @@ export default function CreateInvoice({ navigation, route }) {
           <View style={styles.MainContainer}>
             <View style={styles.TextView}>
 
-                <Text style={styles.headerText}>
+                {/*<Text style={styles.headerText}>
                   {t("Invoice No:")} - {invoiceNumber}
-                </Text>
+                </Text> */}
 
               <CreateInvoiveForm selectedButton={selectedValue} />
             </View>

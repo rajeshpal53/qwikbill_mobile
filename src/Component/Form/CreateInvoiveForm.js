@@ -158,7 +158,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   };
 
   const handleGenerate = async (button = "download", formData, resetForm) => {
-    // setIsGenerated(true); // Trigger PDF generation when the button is pressed
+  
     if (selectedButton === "gst") {
       try {
         let api = "invoice/invoices";
@@ -199,7 +199,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           console.log("Inside a else if condition ");
           console.log("after removing someData, payloadData is debug 1, ", newPayload);
           console.log("userData is , ", userData);
-          console.log("userData token is , ", userData?.token);``
+          console.log("userData token is , ", userData?.token);
 
           const response = await createApi(api, newPayload, {
             Authorization: `Bearer ${userData?.token}`,
@@ -216,7 +216,66 @@ const CreateInvoiceForm = ({ selectedButton }) => {
         showSnackbar("Something went wrong creating Invoice is", "error");
       }
       console.log("Button pressed");
-    } else {
+
+    }
+    else if (selectedButton === "Quatation") {
+try {
+        let api = "invoice/invoices";
+        const { customerData, serviceProviderData, ...payloadData } = formData;
+        const newProducts = payloadData?.products?.map((item) => {
+          return {
+            id: item?.id,
+            productname: item?.name,
+            price: item?.sellPrice,
+            quantity: item?.quantity,
+          };
+        });
+
+        const newPayload = {
+          ...payloadData,
+          products: newProducts,
+          type: "quotation",
+        };
+        console.log("after removing someData, payloadData is , ", newPayload);
+
+        const response = await createApi(api, newPayload, {
+          Authorization: `Bearer ${userData?.token}`,
+        });
+
+        console.log("response of create invoice is, ", response);
+        showSnackbar("Invoice Created Successfully", "success");
+        // setCreatedInvoice(response?.customer);
+        dispatch(clearCart());
+        resetForm();
+        // invoiceCreated.current = true;
+
+        if (button == "download") {
+          console.log("Inside a if condition", response.customer);
+          return response;
+        } else if (button == "generate") {
+          console.log("Inside a else if condition ");
+          console.log("after removing someData, payloadData is debug 1, ", newPayload);
+          console.log("userData is , ", userData);
+          console.log("userData token is , ", userData?.token);
+
+          const response = await createApi(api, newPayload, {
+            Authorization: `Bearer ${userData?.token}`,
+          });
+
+          console.log("response of create invoice is, debug 2 ", response);
+          showSnackbar("Invoice Created Successfully", "success");
+          // setCreatedInvoice(response?.customer);
+          dispatch(clearCart());
+          navigation.pop(2);
+        }
+      } catch (error) {
+        console.log("error creating invoice is , ", error);
+        showSnackbar("Something went wrong creating Invoice is", "error");
+      }
+    }
+
+
+    else {
       console.log("This is from GST PDf ");
       try {
         let api = "invoice/invoices";
@@ -263,9 +322,9 @@ const CreateInvoiceForm = ({ selectedButton }) => {
         console.log("error creating invoice is , ", error);
         showSnackbar("Something went wrong creating Invoice is", "error");
       }
-      console.log("Button pressed");
     }
-  };
+
+  }
 
   return (
     <ScrollView>
@@ -291,7 +350,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           const finalTotal = (parseInt(cartsValue?.totalPrice) || 0) - (parseInt(cartsValue?.discount) || 0);
           const extraData = {
             usersfk: User?.id,
-            vendorfk: selectedShop?. vendor?.id,
+            vendorfk: selectedShop?.vendor?.id,
             statusfk: getStatusFk(),
             subtotal: cartsValue?.totalPrice,
             // address: "123 Main Street, City, Country",
@@ -299,7 +358,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
             finaltotal: finalTotal,
             // vendorprofit: 100,
             paymentMode: "COD",
-            ...(PaymentStatus == "Unpaid" || PaymentStatus == "Partially Paid" ? { remainingamount: cartsValue?.afterdiscount } : {remainingamount:0}),
+            ...(PaymentStatus == "Unpaid" || PaymentStatus == "Partially Paid" ? { remainingamount: cartsValue?.afterdiscount } : { remainingamount: 0 }),
             // ...(selectedButton == "provisional" ? {provisionNumber: "12"} : {}),
           };
 
@@ -355,237 +414,239 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           isValid,
           dirty,
         }) => {
-          console.log("DATA VALID",isValid)
+          console.log("DATA VALID", isValid)
           console.log("DATA Dirty", dirty)
           console.log("cart is , ", carts.length);
           console.log("error is , ", error);
           return (
-          <View>
-            {/* Phone Field */}
-            <TextInput
-              label="Phone"
-              mode="flat"
-              style={styles.input}
-              // onChangeText={handleChange("phone")}
-              onChangeText={async (phoneNumber) => {
-                setFieldValue("phone", phoneNumber);
-                await fetchUserData(phoneNumber, setFieldValue);
-              }}
-              // onBlur={() => handlePhoneBlur(values.phone)}
-              value={values.phone}
-              right={
-                values.phone ? (
-                  <TextInput.Icon
-                    icon="close"
-                    size={20}
-                    style={{ marginBottom: -22 }}
-                    onPress={() => setFieldValue("phone", "")}
+            <View>
+              {/* Phone Field */}
+              <TextInput
+                label="Phone"
+                mode="flat"
+                style={styles.input}
+                // onChangeText={handleChange("phone")}
+                onChangeText={async (phoneNumber) => {
+                  setFieldValue("phone", phoneNumber);
+                  await fetchUserData(phoneNumber, setFieldValue);
+                }}
+                // onBlur={() => handlePhoneBlur(values.phone)}
+                value={values.phone}
+                right={
+                  values.phone ? (
+                    <TextInput.Icon
+                      icon="close"
+                      size={20}
+                      style={{ marginBottom: -22 }}
+                      onPress={() => setFieldValue("phone", "")}
+                    />
+                  ) : null
+                }
+              />
+              {touched.phone && errors.phone && (
+                <Text style={styles.errorText}>{errors.phone}</Text>
+              )}
+              {/* Name Field */}
+              {loading && (
+                <View style={styles.loaderContainer}>
+                  <ActivityIndicator size="large" color="#0000ff" />
+                </View>
+              )}
+              <TextInput
+                label="Name"
+                mode="flat"
+                style={styles.input}
+                onChangeText={handleChange("name")}
+                onBlur={handleBlur("name")}
+                value={values.name}
+                editable={!loading}
+                right={
+                  loading ? (
+                    <ActivityIndicator
+                      size="small"
+                      color="#0000ff"
+                      style={{ marginBottom: -22, alignSelf: "center" }}
+                    />
+                  ) : values.name ? (
+                    <TextInput.Icon
+                      icon="close"
+                      size={20}
+                      style={{ marginBottom: -22 }}
+                      onPress={() => setFieldValue("name", "")} // Clears the input when close icon is pressed
+                    />
+                  ) : null
+                }
+              />
+              {touched.name && errors.name && (
+                <Text style={styles.errorText}>{errors.name}</Text>
+              )}
+
+              {loading && (
+                <View style={styles.loaderContainer}>
+                  <ActivityIndicator size="large" color="#0000ff" />
+                </View>
+              )}
+
+              {/* Address Field */}
+              <TextInput
+                label="Address"
+                mode="flat"
+                style={styles.input}
+                onChangeText={handleChange("address")}
+                onBlur={handleBlur("address")}
+                value={values.address}
+                editable={!loading}
+                right={
+                  loading ? (
+                    <ActivityIndicator
+                      size="small"
+                      color="#0000ff"
+                      style={{ marginBottom: -22 }}
+                    />
+                  ) : values.address ? (
+                    <TextInput.Icon
+                      icon="close"
+                      size={20}
+                      style={{ marginBottom: -22 }}
+                      onPress={() => setFieldValue("address", "")} // Clears the input when close icon is pressed
+                    />
+                  ) : null
+                }
+              />
+              {touched.address && errors.address && (
+                <Text style={styles.errorText}>{errors.address}</Text>
+              )}
+
+              {/* GST Number Field */}
+              {selectedButton == "gst" && (
+                <>
+                  <TextInput
+                    label="GST Number"
+                    mode="flat"
+                    style={styles.input}
+                    onChangeText={handleChange("gstNumber")}
+                    onBlur={handleBlur("gstNumber")}
+                    value={values.gstNumber}
+                    right={
+                      values.gstNumber ? (
+                        <TextInput.Icon
+                          icon="close"
+                          size={20}
+                          style={{ marginBottom: -22 }}
+                          onPress={() => setFieldValue("gstNumber", "")} // Clears the input when close icon is pressed
+                        />
+                      ) : null
+                    }
                   />
-                ) : null
-              }
-            />
-            {touched.phone && errors.phone && (
-              <Text style={styles.errorText}>{errors.phone}</Text>
-            )}
-            {/* Name Field */}
-            {loading && (
-              <View style={styles.loaderContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
+                  {touched.gstNumber && errors.gstNumber && (
+                    <Text style={styles.errorText}>{errors.gstNumber}</Text>
+                  )}
+                </>
+              )}
+
+              {/* Add Items Button */}
+              <View style={styles.buttonView}>
+                <TouchableOpacity
+                  style={styles.addButton}
+                  onPress={() => navigation.navigate("AllItemProduct")}
+                >
+                  <MaterialIcons name="add" size={20} color="white" />
+                  <Text style={styles.addButtonText}>Add Items</Text>
+                </TouchableOpacity>
               </View>
-            )}
-            <TextInput
-              label="Name"
-              mode="flat"
-              style={styles.input}
-              onChangeText={handleChange("name")}
-              onBlur={handleBlur("name")}
-              value={values.name}
-              editable={!loading}
-              right={
-                loading ? (
-                  <ActivityIndicator
-                    size="small"
-                    color="#0000ff"
-                    style={{ marginBottom: -22, alignSelf: "center" }}
-                  />
-                ) : values.name ? (
-                  <TextInput.Icon
-                    icon="close"
-                    size={20}
-                    style={{ marginBottom: -22 }}
-                    onPress={() => setFieldValue("name", "")} // Clears the input when close icon is pressed
-                  />
-                ) : null
+              {/* Item Data Table */}
+              {carts.length > 0 && (
+                <View style={{ marginTop: 10 }}>
+                  <TouchableOpacity
+                    style={{ marginRight: 10, marginTop: -40, marginBottom: 10, }}
+                    onPress={() => dispatch(clearCart())}
+                  >
+                    <Text style={{ color: "#007BFF" }}>Clear Cart</Text>
+                  </TouchableOpacity>
+                  <ItemDataTable carts={carts} />
+                  <PriceDetails setPaymentStatus={setPaymentStatus} selectedButton={selectedButton} />
+                  
+                </View>
+              )
+
               }
-            />
-            {touched.name && errors.name && (
-              <Text style={styles.errorText}>{errors.name}</Text>
-            )}
 
-            {loading && (
-              <View style={styles.loaderContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
-              </View>
-            )}
-
-            {/* Address Field */}
-            <TextInput
-              label="Address"
-              mode="flat"
-              style={styles.input}
-              onChangeText={handleChange("address")}
-              onBlur={handleBlur("address")}
-              value={values.address}
-              editable={!loading}
-              right={
-                loading ? (
-                  <ActivityIndicator
-                    size="small"
-                    color="#0000ff"
-                    style={{ marginBottom: -22 }}
-                  />
-                ) : values.address ? (
-                  <TextInput.Icon
-                    icon="close"
-                    size={20}
-                    style={{ marginBottom: -22 }}
-                    onPress={() => setFieldValue("address", "")} // Clears the input when close icon is pressed
-                  />
-                ) : null
-              }
-            />
-            {touched.address && errors.address && (
-              <Text style={styles.errorText}>{errors.address}</Text>
-            )}
-
-            {/* GST Number Field */}
-            {selectedButton == "gst" && (
-              <>
-                <TextInput
-                  label="GST Number"
-                  mode="flat"
-                  style={styles.input}
-                  onChangeText={handleChange("gstNumber")}
-                  onBlur={handleBlur("gstNumber")}
-                  value={values.gstNumber}
-                  right={
-                    values.gstNumber ? (
-                      <TextInput.Icon
-                        icon="close"
-                        size={20}
-                        style={{ marginBottom: -22 }}
-                        onPress={() => setFieldValue("gstNumber", "")} // Clears the input when close icon is pressed
-                      />
-                    ) : null
-                  }
-                />
-                {touched.gstNumber && errors.gstNumber && (
-                  <Text style={styles.errorText}>{errors.gstNumber}</Text>
-                )}
-              </>
-            )}
-
-            {/* Add Items Button */}
-            <View style={styles.buttonView}>
+              {/* Submit Button */}
               <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => navigation.navigate("AllItemProduct")}
+                disabled={error || isValid || !dirty || carts?.length <= 0}
+                style={[
+                  styles.submitButton,
+                  {
+                    opacity: carts?.length <= 0 ? 0.5 : 1,
+                    backgroundColor:
+                      error || isValid || !dirty || carts?.length <= 0
+                        ? "rgba(0, 0, 6, 0.5)"
+                        : "#007bff",
+                  },
+                ]}
+                onPress={handleSubmit}
               >
-                <MaterialIcons name="add" size={20} color="white" />
-                <Text style={styles.addButtonText}>Add Items</Text>
+                <Text style={styles.submitButtonText}>Submit</Text>
               </TouchableOpacity>
             </View>
-            {/* Item Data Table */}
-            {carts.length > 0 && (
-              <View style={{ marginTop: 10 }}>
-                <TouchableOpacity
-                  style={{ alignSelf: "flex-end", marginRight: 10 }}
-                  onPress={() => dispatch(clearCart())}
-                >
-                  <Text style={{ color: "#007BFF" }}>Clear Cart</Text>
-                </TouchableOpacity>
-                <ItemDataTable carts={carts} />
-                <PriceDetails setPaymentStatus={setPaymentStatus} />
-              </View>
-            )
-         
-            }
-
-            {/* Submit Button */}
-            <TouchableOpacity
-            disabled={error || isValid || !dirty || carts?.length <= 0}
-              style={[
-                styles.submitButton,
-                {
-                  opacity: carts?.length <= 0 ? 0.5 : 1,
-                  backgroundColor:
-                    error || isValid || !dirty || carts?.length <= 0
-                      ? "rgba(0, 0, 6, 0.5)"
-                      : "#007bff",
-                },
-              ]}
-              onPress={handleSubmit}
-            >
-              <Text style={styles.submitButtonText}>Submit</Text>
-            </TouchableOpacity>
-          </View>
           )
         }}
       </Formik>
     </ScrollView>
-  );
-};
+  )}
 
-const styles = StyleSheet.create({
-  buttonView: {
-    alignItems: "flex-end",
-    marginTop: 10,
-  },
-  addButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 8,
-    backgroundColor: ButtonColor.SubmitBtn,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#ccc",
-  },
-  addButtonText: {
-    marginLeft: 2,
-    // fontSize: 16,
-    fontWeight: "bold",
-    // color: "black",
-    fontFamily: "Poppins-Medium",
-    fontSize: fontSize.labelLarge,
-    color: "#fff",
-  },
-  input: {
-    flex: 1,
-    backgroundColor: "#f9f9f9",
-    height: 45,
-    marginTop: 10,
-    fontFamily: "Poppins-Medium",
-  },
-  errorText: {
-    color: "red",
-    fontSize: 12,
-    marginTop: 4,
-  },
-  submitButton: {
-    marginTop: 20,
-    // backgroundColor: ButtonColor.SubmitBtn,
-    padding: 10,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  submitButtonText: {
-    color: "white",
-    // fontWeight: "bold",
-    // fontSize: 16,
-    fontFamily: "Poppins-Regular",
-    fontSize: fontSize.labelLarge,
-  },
-});
 
-export default CreateInvoiceForm;
+  const styles = StyleSheet.create({
+    buttonView: {
+      alignItems: "flex-end",
+      marginTop: 10,
+    },
+    addButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: 8,
+      backgroundColor: ButtonColor.SubmitBtn,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: "#ccc",
+
+    },
+    addButtonText: {
+      marginLeft: 2,
+      // fontSize: 16,
+      fontWeight: "bold",
+      // color: "black",
+      fontFamily: "Poppins-Medium",
+      fontSize: fontSize.labelLarge,
+      color: "#fff",
+    },
+    input: {
+      flex: 1,
+      backgroundColor: "#f9f9f9",
+      height: 45,
+      marginTop: 10,
+      fontFamily: "Poppins-Medium",
+    },
+    errorText: {
+      color: "red",
+      fontSize: 12,
+      marginTop: 4,
+    },
+    submitButton: {
+      marginTop: 20,
+      // backgroundColor: ButtonColor.SubmitBtn,
+      padding: 10,
+      borderRadius: 8,
+      alignItems: "center",
+    },
+    submitButtonText: {
+      color: "white",
+      // fontWeight: "bold",
+      // fontSize: 16,
+      fontFamily: "Poppins-Regular",
+      fontSize: fontSize.labelLarge,
+    },
+  });
+
+  export default CreateInvoiceForm;
