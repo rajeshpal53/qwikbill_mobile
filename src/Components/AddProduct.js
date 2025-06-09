@@ -31,7 +31,7 @@ const AddProduct = ({ navigation }) => {
   }, [EditData, isUpdated]);
 
   const validationSchema = Yup.object().shape({
-    ProductCategory: Yup.string().required("Product category is required"),
+    /* ProductCategory: Yup.string().required("Product category is required"), */
     ProductName: Yup.string().required("Product name is required"),
     SellingPrice: Yup.number()
       .required("Selling price is required")
@@ -127,7 +127,7 @@ const AddProduct = ({ navigation }) => {
       <Formik
         enableReinitialize={true}
         initialValues={{
-          ProductCategory: EditData?.productcategoryfk || "",
+         /* ProductCategory: EditData?.productcategoryfk || "", */
           ProductName: EditData?.name || "",
           PurchasePrice: EditData?.costPrice || "",
           SellingPrice: EditData?.sellPrice || "",
@@ -139,7 +139,7 @@ const AddProduct = ({ navigation }) => {
         onSubmit={async (values, { resetForm }) => {
          await  handlePayment(20)
           const ProductData = {
-            productcategoryfk: values?.ProductCategory,
+            /* productcategoryfk: values?.ProductCategory, */
             name: values?.ProductName,
             costPrice: values?.PurchasePrice,
             sellPrice: values?.SellingPrice,
@@ -180,7 +180,6 @@ const AddProduct = ({ navigation }) => {
               if (response) {
                 showSnackbar("Product Added Successfully", "success");
                 resetForm();
-                setRefresh((prev)=>!prev)
                 navigation.goBack();
               } else {
                 showSnackbar("Failed to add product", "error");
@@ -216,7 +215,7 @@ const AddProduct = ({ navigation }) => {
         }) => (
           <View style={styles.container}>
             {/* Product Category */}
-            <View style={{ marginBottom: 10 }}>
+          {/*}  <View style={{ marginBottom: 10 }}>
               <CategoryDropDown
                 selectedCat={values.ProductCategory}
                 setSelectedCat={(categoryId) =>
@@ -292,7 +291,7 @@ const AddProduct = ({ navigation }) => {
 
             {/* Tax Value */}
             <TextInput
-              label="Tax Value"
+              label="Tax Rate(%)"
               keyboardType="numeric"
               mode="flat"
               style={styles.input}
@@ -302,7 +301,7 @@ const AddProduct = ({ navigation }) => {
             />
 
             {/* Stock Status (Radio Button) */}
-            <View style={styles.radioGroup}>
+          {/*<View style={styles.radioGroup}>
               <Text>Is in Stock?</Text>
               <RadioButton.Group
                 onValueChange={(value) => handleChange("IsStockData")(value)}
@@ -321,7 +320,7 @@ const AddProduct = ({ navigation }) => {
                 errors.IsStockData && ( // Ensure to use IsStockData here
                   <Text style={styles.errorText}>{errors.IsStockData}</Text>
                 )}
-            </View>
+            </View> */}
 
            
             {/* Submit Button */}

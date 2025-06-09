@@ -1,9 +1,11 @@
-import { useState,useEffect} from "react";
-import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { useState, useEffect } from "react";
+import { Text, View, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
 import { fontFamily, fontSize } from "../Util/UtilApi";
 import { Avatar } from "react-native-paper";
 import { debounce } from "lodash";
-import { API_BASE_URL,NORM_URL } from "../Util/UtilApi";
+import { API_BASE_URL, NORM_URL } from "../Util/UtilApi";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from "@expo/vector-icons"; // for icons
 // import EditCustomerDetailsModal from "../Modal/EditCustomerDetailsModal";
 // import EditCustomerDetailsModal from "../../Modal/EditCustomerDetailsModal";
@@ -13,49 +15,49 @@ const CustomerDetails = ({ route, navigation }) => {
   console.log("Items value", item);
   const [profileUrl, setProfileUrl] = useState("");
   const [fallbackText, setFallbackText] = useState("U");
-//   const [SelectedEditItem, setSelectedEditItem] = useState(null);
-//   const [editmodal, seteditmodal] = useState(false);
+  //   const [SelectedEditItem, setSelectedEditItem] = useState(null);
+  //   const [editmodal, seteditmodal] = useState(false);
 
   // Function for handling Edit button press
-//   const handleEdit = () => {
-//     setSelectedEditItem(item);
-//     seteditmodal(true);
-//   };
+  //   const handleEdit = () => {
+  //     setSelectedEditItem(item);
+  //     seteditmodal(true);
+  //   };
 
-//   // Function for handling Delete button press
-//   const handleDelete = () => {
-//     // Logic to handle deletion goes here
-//     console.log("Customer deleted", item.id);
-//   };
+  //   // Function for handling Delete button press
+  //   const handleDelete = () => {
+  //     // Logic to handle deletion goes here
+  //     console.log("Customer deleted", item.id);
+  //   };
 
 
-useEffect(() => {
-  const setUrl = () => {
-    if (item?.user?.profilePicurl) {
-      const tempUrl = `${NORM_URL}/${item?.user?.profilePicurl}`;
-      updateImageUrl(tempUrl);
-    } else {
-      const singleLetterText = getFallbackText();
-      setFallbackText(singleLetterText);
+  useEffect(() => {
+    const setUrl = () => {
+      if (item?.user?.profilePicurl) {
+        const tempUrl = `${NORM_URL}/${item?.user?.profilePicurl}`;
+        updateImageUrl(tempUrl);
+      } else {
+        const singleLetterText = getFallbackText();
+        setFallbackText(singleLetterText);
+      }
+    };
+
+    setUrl();
+  }, []);
+
+  const updateImageUrl = debounce((profilePicurl) => {
+    setProfileUrl(`${profilePicurl}?${new Date().getTime()}`);
+  }, 100);
+
+  const getFallbackText = () => {
+    let singleLetterText = "E";
+    if (item?.user?.name) {
+      singleLetterText = item.user.name.charAt(0).toUpperCase();
     }
+    return singleLetterText;
   };
-
-  setUrl();
-}, []);
-
-const updateImageUrl = debounce((profilePicurl) => {
-  setProfileUrl(`${profilePicurl}?${new Date().getTime()}`);
-}, 100);
-
-const getFallbackText = () => {
-  let singleLetterText = "E";
-  if (item?.user?.name) {
-    singleLetterText = item.user.name.charAt(0).toUpperCase();
-  }
-  return singleLetterText;
-};
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.card}>
         {/* Title */}
         <Text style={styles.title}>{item?.user?.name ?? "Unknown"}</Text>
@@ -67,26 +69,27 @@ const getFallbackText = () => {
             style={styles.profilePic}
           />
         </View> */}
-         <View style={styles.profileContainer}>
-          {console.log(profileUrl,"profilePicUrl")}
-            {item?.user?.profilePicurl && item?.user?.profilePicurl !== "" ? (
-              <Avatar.Image
-                size={100}
-                // source={require("../../../assets/Mens-haircut.png")}
-                source={{
-                  uri: `${NORM_URL}/assets/mobile/male.png`,}}
-              />
-            ) : (
-              <>
-                {/* {console.log("fallback is the , ", getFallbackText())} */}
-                <Avatar.Text size={100} label={ fallbackText|| "U"} />
-              </>
-            )}
-          </View>
+        <View style={styles.profileContainer}>
+          {console.log(profileUrl, "profilePicUrl")}
+          {item?.user?.profilePicurl && item?.user?.profilePicurl !== "" ? (
+            <Avatar.Image
+              size={100}
+              // source={require("../../../assets/Mens-haircut.png")}
+              source={{
+                uri: profileUrl || `${NORM_URL}/assets/mobile/male.png`,
+              }}
+            />
+          ) : (
+            <>
+              {/* {console.log("fallback is the , ", getFallbackText())} */}
+              <Avatar.Text size={100} label={fallbackText || "U"} />
+            </>
+          )}
+        </View>
 
         {/* Name */}
         <View style={styles.detailRow}>
-          <Text style={styles.label}>Name:</Text>
+          <Text style={styles.label}>Name :</Text>
           <Text style={styles.value}>{item?.user?.name ?? "Unknown"}</Text>
         </View>
 
@@ -105,7 +108,7 @@ const getFallbackText = () => {
         {/* Address */}
         <View style={styles.detailRow}>
           <Text style={styles.label}>Address:</Text>
-          <Text style={[styles.value,{flex:1, textAlign:"right"}]} numberOfLines={2} ellipsizeMode="tail">
+          <Text style={[styles.value, { flex: 1, textAlign: "right" }]} numberOfLines={2} ellipsizeMode="tail">
             {item?.user?.address ?? "Not Provided"}
           </Text>
         </View>
@@ -131,7 +134,55 @@ const getFallbackText = () => {
           setCustomerData={setCustomerData}
         />
       )} */}
-    </View>
+      <View style={styles.container4}>
+        <View style={styles.container2}>
+          <View style={styles.totalOrder}>
+            <Ionicons name="cart" size={24} color="#00008b" />
+            <Text >Total Order</Text>
+            <Text style={styles.amount}>1</Text>
+          </View>
+          <View style={styles.totalPurchase}>
+            <Ionicons name="stats-chart" size={24} color="#00008b" />
+            <Text>Total Purchase</Text>
+            <Text style={styles.amount}>₹150</Text>
+          </View>
+        </View>
+        <View style={styles.container3}>
+          <View style={styles.remainingAmount}>
+            <FontAwesome name="calendar" size={24} color="#00008b" />
+            <Text>Remaining Amount</Text>
+            <Text style={styles.amount}>₹0</Text>
+          </View>
+          <View style={styles.paidAmount}>
+            <Ionicons name="checkmark-circle" size={24} color="#00008b" />
+            <Text>Paid Amount</Text>
+            <Text style={styles.amount}>₹150</Text>
+          </View>
+       {/*} </View>
+          <Text style={styles.sectionTitle}>Recent Orders</Text>
+      <View style={styles.orderItem}>
+        <View style={styles.orderRow}>
+          <Text style={styles.orderLabel}>Order ID:</Text>
+          <Text style={styles.orderValue}>Enterprises07052025P2</Text>
+        </View>
+        <View style={styles.orderRow}>
+          <Text style={styles.orderLabel}>Order Date:</Text>
+          <Text style={styles.orderValue}>2025-05-07</Text>
+        </View>
+        <View style={styles.orderRow}>
+          <Text style={styles.orderLabel}>Amount:</Text>
+          <Text style={styles.orderValue}>₹150</Text>
+        </View>
+        <View style={styles.orderRow}>
+          <Text style={styles.orderLabel}>Payment Mode:</Text>
+          <Text style={styles.orderValue}>COD</Text>
+        </View>
+        <TouchableOpacity style={styles.detailsButton}>
+          <Text style={styles.detailsText}>View all invoices</Text>
+        </TouchableOpacity>*/}
+      </View>
+      </View>
+    </ScrollView>
   );
 };
 
@@ -140,6 +191,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f7f7f7",
     padding: 20,
+    backgroundColor: "",
+    margin:6,
   },
   card: {
     width: "100%",
@@ -219,6 +272,119 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.medium,
     fontSize: fontSize.labelLarge,
     marginLeft: 8,
+  },
+  container4:{
+    alignItems:"center",
+    flex:10,
+    paddingTop:20,
+  
+  },
+  container2: {
+    gap: 10,
+    flexDirection: "row",
+    marginBottom: 20,
+    paddingRight: 104,
+    paddingLeft:62,
+  },
+  totalOrder: {
+   width: "100%",
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    padding: 20,
+    elevation: 8, // Android shadow
+    shadowColor: "#aaa", // iOS shadow
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    marginLeft:40,
+     alignItems:"center",
+  },
+  totalPurchase: {
+       width: "100%",
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    padding: 20,
+    elevation: 8, // Android shadow
+    shadowColor: "#aaa", // iOS shadow
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+     alignItems:"center",
+  },
+  container3: {
+    gap: 10,
+    flexDirection: "row",
+    marginBottom: 20,
+    paddingRight: 104,
+    paddingLeft:62,
+  },
+  remainingAmount: {
+   width: "100%",
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    padding: 10,
+    elevation: 8, // Android shadow
+    shadowColor: "#aaa", // iOS shadow
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    marginLeft:40,
+   alignItems:"center",
+   paddingTop:"20",
+   
+  },
+  paidAmount: {
+       width: "100%",
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    padding: 20,
+    elevation: 8, // Android shadow
+    shadowColor: "#aaa", // iOS shadow
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+     alignItems:"center",
+  },
+    amount: { 
+      fontSize: 16,
+       fontWeight: 'bold',
+        marginTop: 4 ,
+      },
+  sectionTitle: {
+     marginLeft: 0,
+      marginTop: 0, 
+      fontSize: 22, 
+      fontWeight: 'bold' },
+  orderItem: {
+        width: "100%",
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    padding: 20,
+    elevation: 8, // Android shadow
+    shadowColor: "#aaa", // iOS shadow
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    margin:16,
+    marginBottom:50,
+    
+  },
+  orderRow: {
+     flexDirection: 'row',
+      justifyContent: 'space-between',
+       marginVertical: 10 ,
+      },
+  orderLabel: {
+     fontWeight: '600' ,
+    },
+  orderValue: { 
+    fontWeight: '400' },
+  detailsButton: { marginTop: 10,
+     alignSelf: 'flex-end' ,
+    },
+  detailsText: { 
+    color: '#2980b9', 
+    fontWeight: 'bold' ,
   },
 });
 
