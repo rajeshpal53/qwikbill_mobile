@@ -27,7 +27,7 @@ import { clearCart } from "../Redux/slices/CartSlice";
 import { useDownloadInvoice } from "../Util/DownloadInvoiceHandler";
 import { useTranslation } from "react-i18next";
 import { AntDesign, Feather,FontAwesome5,MaterialCommunityIcons} from "@expo/vector-icons";
-import Pdf from 'react-native-pdf';
+//import Pdf from 'react-native-pdf';
 
 
 
@@ -165,6 +165,7 @@ const PdfScreen = ({ navigation }) => {
         }
       }
     }
+    
    let params={}
     if(formData){
       params={
