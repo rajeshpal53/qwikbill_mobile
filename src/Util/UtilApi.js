@@ -10,7 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // for development:> eas build --platform android  --profile development
 // for production:> eas build --platform android  --profile production
 
-export const NORM_URL="https://rajeshpal.online/"
+export const NORM_URL="https://qwikbill.in/"
 const apiRequest = async (method, url, data = null, customHeaders = {}) => {
   try {
     const userDataString = await AsyncStorage.getItem('userData');
