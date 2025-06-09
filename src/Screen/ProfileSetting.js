@@ -187,7 +187,7 @@ import { useSnackbar } from "../Store/SnackbarContext";
 import ChangeLanguageModal from "../Components/Modal/ChangeLanguageModal";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { ShopContext } from "../Store/ShopContext";
-
+import ChatWithUs from "./StackScreen/ChatWithUs";
 
 const ProfileSetting = ({
   navigation,
@@ -209,7 +209,7 @@ const ProfileSetting = ({
   // const { setCreateuser } = useContext(WalletContext);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { updateSelectedShop, noItemModal, selectedShop} = useContext(ShopContext)
+  const { updateSelectedShop, noItemModal, selectedShop } = useContext(ShopContext)
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchServiceProvider(userData);
@@ -284,6 +284,9 @@ const ProfileSetting = ({
           ...(userData
             ? [{ icon: "logout", label: "Logout", value: "Logout" }]
             : []),
+
+          { icon: "chat", label: "Chat With Us ", value: "ChatWithUs" },
+
 
           { label: "Need more help?", value: "needMoreHelp" },
         ];
@@ -418,6 +421,8 @@ const ProfileSetting = ({
       navigation.navigate("EditRoleScreen", { isAdmin: false, AdminRoleData: null });
     } else if (value == "Logout1") {
       navigation.navigate("login");
+    } else if (value == "ChatWithUs") {
+      navigation.navigate("ChatWithUs");
     } else if (value === "needMoreHelp") {
       navigation.navigate("Policies", {
         webUri: `${NORM_URL}/helpandsupport?view=mobile`,
@@ -425,6 +430,7 @@ const ProfileSetting = ({
       });
     }
   };
+
   const logoutHandler = async () => {
     try {
       const response = await createApi(

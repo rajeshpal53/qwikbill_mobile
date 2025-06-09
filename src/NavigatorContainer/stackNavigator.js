@@ -68,6 +68,7 @@ import RoleDetailsScreen from "../Screen/StackScreen/RoleDetailsScreen.js";
 import InvoiceTransactionScreen from "../Screen/StackScreen/InvoiceTransactionScreen.js";
 import { useTranslation } from "react-i18next";
 import { usePasskey } from "../Store/PasskeyContext.js";
+import ChatWithUs from "../Screen/StackScreen/ChatWithUs.js";
 
 
 
@@ -81,10 +82,10 @@ export default function StackNavigator() {
   const [roleDetails, setroleDetails] = useState(false);
   const [noItemModal, setNoItemModal] = useState(false);
   const [noItemData, setNoItemData] = useState({});
-    const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
 
-  const {passkey}=usePasskey()
-    const{t}=useTranslation()
+  const { passkey } = usePasskey()
+  const { t } = useTranslation()
   const fetchServiceProvider = async (userData) => {
     try {
       if (userData) {
@@ -108,7 +109,7 @@ export default function StackNavigator() {
     } catch (err) {
       console.log("Error is , , - ", err);
       console.log("err.data.status", err.status);
-     
+
     } finally {
       // setIsLoading(false);
     }
@@ -142,15 +143,15 @@ export default function StackNavigator() {
     <>
       <Stack.Navigator
         // initialRouteName={userData ? "Passcode" : "login"}
-       initialRouteName={
-  isForgetPasswordState
-    ? "login"
-    : userData
-      ? passkey === null
-        ? "CreateNewPasscode"
-        : "Passcode"
-      : "login"
-}
+        initialRouteName={
+          isForgetPasswordState
+            ? "login"
+            : userData
+              ? passkey === null
+                ? "CreateNewPasscode"
+                : "Passcode"
+              : "login"
+        }
         screenOptions={
           {
             // headerTitle: "Create Invoice",
@@ -287,8 +288,8 @@ export default function StackNavigator() {
             headerTitle: "Generate Invoice",
           }}
         />
-       
-       
+
+
         {/* <Stack.Screen
           name="Invoices"
           component={FilterInvoiceScreen}
@@ -387,7 +388,7 @@ export default function StackNavigator() {
           component={ViewShopsScreen}
           options={{
             headerRight: () => <HomeHeaderRight />,
-             headerTitle: "View Shop" ,
+            headerTitle: "View Shop",
             // headerTitleAlign: searchMode ? "left" : "center",
             headerTitleAlign: "center",
 
@@ -526,7 +527,7 @@ export default function StackNavigator() {
             />
           )}
         </Stack.Screen>
-       
+
 
         <Stack.Screen
           name="CustomerDetails"
@@ -652,14 +653,22 @@ export default function StackNavigator() {
             headerTitle: "View Shop Details",
           }}
         />
+        <Stack.Screen
+          name="ChatWithUs"
+          component={ChatWithUs}
+          options={{
+            headerTitle: "Chat With Us",
+          }}
+        />
       </Stack.Navigator>
-      
-       <CheckInternet
+
+      <CheckInternet
         isConnected={isConnected}
         setIsConnected={setIsConnected}
       />
-    </>
-  );
+
+  </>
+);
 }
 const styles = StyleSheet.create({
   headerTitle: {
