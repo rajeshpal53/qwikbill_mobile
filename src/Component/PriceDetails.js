@@ -8,7 +8,8 @@ import { fontSize } from "../Util/UtilApi";
 import { useTranslation } from "react-i18next";
 
 
-const PriceDetails = ({ setPaymentStatus }) => {
+
+const PriceDetails = ({ setPaymentStatus ,selectedButton }) => {
   const dispatch = useDispatch();
   const totalPrice = useSelector((state) => state.cart.totalPrice);
   const afterdiscount = useSelector((state) => state.cart.afterdiscount);
@@ -56,18 +57,21 @@ const PriceDetails = ({ setPaymentStatus }) => {
 
   return (
     <View style={styles.Main}>
-      <View>
+       
+      {/*<View>
         <Text style={styles.headerText}>{t("Price Details")}</Text>
-      </View>
+      </View> */}
 
       {/* Price  */}
       <View style={styles.priceView}>
         <Text style={styles.label}>{t("Price")} ({carts.length})</Text>
-        <Text style={styles.value}>{`₹ ${totalPrice?.toFixed(2) || "total"
-          }`}</Text>
+        <Text style={styles.value}>{`₹ ${
+          totalPrice?.toFixed(2) || "total"
+        }`}</Text>
       </View>
 
       {/* Discount  */}
+      {  selectedButton !== "Quatation" && (
       <View style={styles.priceView}>
         <Text style={styles.label}>{t("Discount")}</Text>
         <View style={styles.discountInputWrapper}>
@@ -81,6 +85,7 @@ const PriceDetails = ({ setPaymentStatus }) => {
         </View>
         {/* Display error message */}
       </View>
+      )}
 
       {error && (
         <View style={styles.priceView}>
@@ -89,8 +94,9 @@ const PriceDetails = ({ setPaymentStatus }) => {
           </View>
         </View>
       )}
-
+   
       {/* Payment Status with Border Style */}
+      {  selectedButton !== "Quatation" && (
       <View style={[styles.priceView]}>
         <Text style={styles.label}>{t("Status")}</Text>
         <CustomDropdown
@@ -100,7 +106,7 @@ const PriceDetails = ({ setPaymentStatus }) => {
           t={t}
         />
       </View>
-
+)}
       {/* Partially Paid  */}
       {selectedStatus == "Partially Paid" && (
         <View style={styles.priceView}>
@@ -120,11 +126,12 @@ const PriceDetails = ({ setPaymentStatus }) => {
       {/* Total Amount  */}
       <View style={styles.priceView}>
         <Text style={styles.Totallabel}>{t("Total Amount")}</Text>
-        { }
+        {}
         <Text
           style={[styles.value, { fontSize: fontSize.labelLarge }]}
-        >{`₹ ${Math.ceil(afterdiscount)}`}</Text>
+        >{`₹ ${afterdiscount.toFixed(2)}`}</Text>
       </View>
+     
     </View>
   );
 };
@@ -189,17 +196,17 @@ const styles = StyleSheet.create({
     height: 50, // Ensure the dropdown has height
     width: "90%", // Make sure it fills the available width
   },
-  paymentStatusContainer: {
+ /* paymentStatusContainer: {
     borderBottomWidth: 1, // Border for the payment status row
     borderBottomColor: "#ddd",
-  },
+  },*/
 
   input: {
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.labelMedium,
   },
-  errorText: {
-    color: "red"
+  errorText:{
+    color:"red"
   }
 });
 
