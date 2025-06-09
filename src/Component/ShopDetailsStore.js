@@ -31,11 +31,10 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
     console.log("my tokennn ",userData?.token)
     try {
       
-      const response = await deleteApi(`vendors/${id}`, {
-        headers: {
-          Authorization: `Bearer ${userData?.token}`,
-        },
-      });
+      const response = await deleteApi(`vendors/${id}`,
+        {        
+           Authorization: `Bearer ${userData?.token}`,
+              });
 
       console.log("response s  ", response);
       console.log("item deleted");
