@@ -247,8 +247,13 @@ export default function HomeScreen({ navigation, noItemData }) {
   
         <View>
           <View style={styles.dropDownContainer }>
+            <TouchableOpacity
+                    onPress={() => navigation.navigate("DashBoardScreen")}
+                  >
+                    <Text>Go To Dashboard</Text>
+                  </TouchableOpacity>
             <View style={styles.dropdownRow}>
-              <Ionicons name="storefront-sharp" size={24} color="#0c3b73" />
+              <Text>See All Shops</Text>
               <DropDownList options={allShops} />
             </View>
           </View>
@@ -631,6 +636,7 @@ flexGrow:1
     fontWeight: "bold",
     color: "#000",
   },
+  
 
 });
 

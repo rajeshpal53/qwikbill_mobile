@@ -13,6 +13,8 @@ export const UserDataProvider = ({ children }) => {
         const storedData = await AsyncStorage.getItem('userData');
         if (storedData) {
           setUserData(JSON.parse(storedData));
+          console.log(storedData);
+          
         }
       } catch (error) {
         console.log('Error loading user data:', error);

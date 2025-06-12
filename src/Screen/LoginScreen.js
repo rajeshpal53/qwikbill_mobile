@@ -14,7 +14,7 @@ import { Text, TextInput, Button, Card, Divider } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createApi } from "../Util/UtilApi";
 import { usePasskey } from "../Store/PasskeyContext";
 
@@ -23,7 +23,7 @@ import { useWindowDimensions } from "react-native";
 // import NetInfo from "@react-native-community/netinfo";
 import { ActivityIndicator } from "react-native-paper";
 import { useSnackbar } from "../Store/SnackbarContext";
-import SetpasswordModal from "../Components/Modal/SetpasswordModal";
+// import SetpasswordModal from "../Components/Modal/SetpasswordModal";
 
 import { AuthContext } from "../Store/AuthContext";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
