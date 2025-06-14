@@ -1,6 +1,6 @@
 {
   "name": "qwikbill",
-  "main": "expo-router/entry",
+  "main": "expo/AppEntry.js",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
@@ -47,7 +47,6 @@
     "expo-local-authentication": "^16.0.4",
     "expo-location": "^18.1.5",
     "expo-notifications": "~0.31.3",
-    "expo-router": "~5.1.0",
     "expo-sharing": "^13.1.5",
     "expo-speech-recognition": "^2.1.0",
     "expo-splash-screen": "~0.30.9",
@@ -56,6 +55,7 @@
     "expo-system-ui": "~5.0.8",
     "expo-updates": "^0.28.14",
     "expo-web-browser": "~14.1.6",
+    "firebase": "^11.9.1",
     "formik": "^2.4.6",
     "i18next": "^25.2.1",
     "linking": "^0.1.0-beta.5",
