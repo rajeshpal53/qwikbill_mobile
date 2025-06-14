@@ -247,11 +247,6 @@ export default function HomeScreen({ navigation, noItemData }) {
   
         <View>
           <View style={styles.dropDownContainer }>
-            <TouchableOpacity
-                    onPress={() => navigation.navigate("DashBoardScreen")}
-                  >
-                    <Text>Go To Dashboard</Text>
-                  </TouchableOpacity>
             <View style={styles.dropdownRow}>
               <Text>See All Shops</Text>
               <DropDownList options={allShops} />

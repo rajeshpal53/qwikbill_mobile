@@ -68,7 +68,7 @@ import RoleDetailsScreen from "../Screen/StackScreen/RoleDetailsScreen.js";
 import InvoiceTransactionScreen from "../Screen/StackScreen/InvoiceTransactionScreen.js";
 import { useTranslation } from "react-i18next";
 import { usePasskey } from "../Store/PasskeyContext.js";
-import DashBoardScreen from "../Screen/DashBoardScreen.js"
+import AccountScreen from "../Screen/AccountScreen.js"
 
 
 export default function StackNavigator() {
@@ -278,7 +278,7 @@ export default function StackNavigator() {
             headerTitle: "Add Shop",
           }}
         />
-        <Stack.Screen name="DashBoardScreen" component={DashBoardScreen} />
+        <Stack.Screen name="AccountScreen" component={AccountScreen} />
         <Stack.Screen
           name="genrateInvoice"
           component={GenrateInvoiceScreen}

@@ -13,10 +13,10 @@ import { responsiveFontSize } from "react-native-responsive-dimensions";
 
 
 export const rolePermissions = {
-  owner: ["Create Invoice", "Add Product", "Add Shop","View Your Shops","Transactions","Product Upload","View Customer"],
-  manager: ["Create Invoice", "Add Product","View Your Shops","Transactions","Product Upload","View Customer"],
-  employee:["Create Invoice","View Your Shops","Transactions","View Customer"],
-  viewer: ["View Your Shops", "Transactions","View Customer"], 
+  owner: ["Create Invoice", "Add Product", "Add Shop","View Your Shops","Transactions","Product Upload","View Customer","View Account"],
+  manager: ["Create Invoice", "Add Product","View Your Shops","Transactions","Product Upload","View Customer","View Account"],
+  employee:["Create Invoice","View Your Shops","Transactions","View Customer","View Account"],
+  viewer: ["View Your Shops", "Transactions","View Customer","View Account"], 
 };
 export const services = [
   {
@@ -98,10 +98,16 @@ export const services = [
     navigateTo: "Customer",
   },
   {
-    name: "",
-    icon: "",
+    name: "View Account",
+    icon:  (
+      <MaterialCommunityIcons
+        name="account-details"
+        size={32}
+        color="#26a0df"
+      />
+    ),
     key: "9",
-    navigateTo: "",
+    navigateTo: "AccountScreen",
   },
   {
     name: "",
