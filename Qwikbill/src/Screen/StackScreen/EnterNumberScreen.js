@@ -381,9 +381,9 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
   //   }
   // };
 
-  // const closeModal = () => {
-  //   setPasswordModalVisible(false);
-  // };
+  const closeModal = () => {
+    setPasswordModalVisible(false);
+  };
 
   const Loader = () => {
     return (

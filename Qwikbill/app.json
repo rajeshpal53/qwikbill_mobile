@@ -1,37 +1,78 @@
 {
   "expo": {
-    "name": "Qwikbill",
-    "slug": "Qwikbill",
+    "name": "QwikBill",
+    "slug": "qwikbill",
     "version": "1.0.0",
+    "newArchEnabled": true,
     "orientation": "portrait",
     "icon": "./assets/qLogo.png",
-    "scheme": "qwikbill",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/qLogo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "plugins": [
+      
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID."
+        }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Allow ${PRODUCT_NAME} to use the microphone.",
+          "speechRecognitionPermission": "Allow ${PRODUCT_NAME} to use speech recognition.",
+          "androidSpeechServicePackages": [
+            "com.google.android.googlequicksearchbox"
+          ]
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableProguardInReleaseBuilds": false
+          }
+        }
+      ]
+
+    ],
     "ios": {
-      "supportsTablet": true
+      "buildNumber": "1.0.0",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSSpeechRecognitionUsageDescription": "Allow ${PRODUCT_NAME} to use speech recognition.",
+        "NSMicrophoneUsageDescription": "Allow ${PRODUCT_NAME} to use the microphone."
+      },
+      "bundleIdentifier": "com.wertone.qwikbill"
     },
     "android": {
+      "versionCode": 1,
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/qLogo.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
-      "package": "com.jayesh_satnurkar01.Qwikbill"
+      "permissions": [
+        "USE_FINGERPRINT",
+        "USE_BIOMETRIC",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.wertone.qwikbill"
     },
     "web": {
-      "bundler": "metro",
       "favicon": "./assets/qLogo.png"
     },
-    "plugins": [ ],
-    "experiments": {
-      "typedRoutes": true
-    },
     "extra": {
-      "router": {},
       "eas": {
-        "projectId": "2f253018-d497-4fb5-a1f1-2edbdfb9a5da"
+        "projectId": "230e4be6-1127-4c5c-a287-888b54ae4faf"
       }
-    }
+    },
+    "owner": "wertone"
   }
 }
