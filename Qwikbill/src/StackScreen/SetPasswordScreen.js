@@ -1,35 +1,35 @@
-import { Text, TouchableOpacity, View } from "react-native";
+// import { Text, TouchableOpacity, View } from "react-native";
 
-import { useState } from "react";
-import SetpasswordModal from "../Components/Modal/SetpasswordModal";
+// import { useState } from "react";
+// import SetpasswordModal from "../Components/Modal/SetpasswordModal";
 
-const SetPasswordSreen = ({ navigation }) => {
-  const [visible, setVisible] = useState(false);
+// const SetPasswordSreen = ({ navigation }) => {
+//   const [visible, setVisible] = useState(false);
 
-  const HandalsetPasswordModal = () => {
-    setVisible((prevState) => !prevState);
-    console("hello friends !")
-    alert("hello everyone")
-  };
+//   const HandalsetPasswordModal = () => {
+//     setVisible((prevState) => !prevState);
+//     console("hello friends !")
+//     alert("hello everyone")
+//   };
 
 
-  return (
-    <View style={{ flex: 1 }}>
-      <TouchableOpacity onPress={HandalsetPasswordModal}>
-        <Text>Set Password</Text>
-      </TouchableOpacity>
+//   return (
+//     <View style={{ flex: 1 }}>
+//       <TouchableOpacity onPress={HandalsetPasswordModal}>
+//         <Text>Set Password</Text>
+//       </TouchableOpacity>
 
-      {visible && (
-        <SetpasswordModal
-          visible={visible}
-          closeModal={HandalsetPasswordModal}
-          navigation={navigation}
+//       {visible && (
+//         <SetpasswordModal
+//           visible={visible}
+//           closeModal={HandalsetPasswordModal}
+//           navigation={navigation}
       
 
-        />
-      )}
-    </View>
-  );
-};
+//         />
+//       )}
+//     </View>
+//   );
+// };
 
-export default SetPasswordSreen;
+// export default SetPasswordSreen;
