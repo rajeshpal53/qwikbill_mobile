@@ -1,5 +1,5 @@
-import { Card, Divider, Text } from "react-native-paper";
 import { FlatList, StyleSheet, View } from "react-native";
+import { Card, Divider, Text } from "react-native-paper";
 
 function ProductDetail({ detail }) {
   const renderItem = ({ item }) => (
