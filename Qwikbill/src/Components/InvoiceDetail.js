@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
-import { ActivityIndicator, Text, Card, Divider } from "react-native-paper";
+import { useEffect } from "react";
+import { Card, Divider, Text } from "react-native-paper";
 
-import { FlatList, StyleSheet } from "react-native";
-import { View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 const InvoiceDetail = (props) => {
   const { detail } = props;
   const renderItem = ({ item }) => (

@@ -1,7 +1,5 @@
-import * as React from 'react';
-import { DataTable, Text, Divider } from 'react-native-paper';
-import { useState, useEffect} from 'react';
-import {StyleSheet} from "react-native";
+import { StyleSheet } from "react-native";
+import { DataTable, Divider, Text } from 'react-native-paper';
 
 
 const InvoiceDataTable = ({formData}) => {

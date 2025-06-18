@@ -1,33 +1,29 @@
-import React, { useContext, useEffect, useState } from "react";
-import { View, StyleSheet, Image, ScrollView, Pressable } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  TextInput,
-  Button,
-  Text,
-  useTheme,
-  List,
-  ActivityIndicator,
-} from "react-native-paper";
 import { Formik } from "formik";
+import { useContext, useEffect, useState } from "react";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  Button,
+  List,
+  Text,
+  TextInput
+} from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 import * as Yup from "yup";
 import UserDataContext from "../../Store/UserDataContext";
 // import { useLocation } from "../../Store/LocationContext";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { useRoute } from "@react-navigation/native";
+import axios from "axios";
+import { useTranslation } from "react-i18next";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import ConfirmModal from "../../Components/Modal/ConfirmModal";
+import { useSnackbar } from "../../Store/SnackbarContext";
+import ServiceImagePicker from "../../UI/ServiceImagePicker";
 import {
   API_BASE_URL,
-  createApi,
-  IMAGE_BASE_URL,
-  NORM_URL,
-  updateApi,
+  NORM_URL
 } from "../../Util/UtilApi";
-import { useSnackbar } from "../../Store/SnackbarContext";
-import ConfirmModal from "../../Components/Modal/ConfirmModal";
-import { useTranslation } from "react-i18next";
-import ServiceImagePicker from "../../UI/ServiceImagePicker";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import axios from "axios";
-import { useRoute } from "@react-navigation/native";
 
 const referenceDate = new Date("2025-01-08T07:29:04.338Z");
 // Minimum date for a person to be at least 5 years old
@@ -75,17 +71,6 @@ const validationSchema = Yup.object().shape({
       // The entered DOB must be earlier than or equal to minAgeDate
       return enteredDate <= minAgeDate;
     }),
-  // country: Yup.string().required("Country is required"),
-  // state: Yup.string().required("State is required"),
-  // city: Yup.string().required("City is required"),
-  // area: Yup.string().required("Area is required"),
-  // pincode: Yup.string()
-  //   .required("Pincode is required")
-  //   .matches(/^[0-9]{6}$/, "Pincode must be 6 digits"),
-  // age: Yup.number()
-  //   .required("age is required")
-  //   .min(5, "age is atleast 5 years") // Minimum age limit
-  //   .max(99, "age must be at most 99"), // Maximum age limit
 
 });
 
@@ -134,7 +119,7 @@ export default function EditProfileScreen({ navigation }) {
     profileImage: null,
     aadharFrontImage: null,
     aadharBackImage: null,
-  
+
 
   });
 
@@ -187,7 +172,7 @@ export default function EditProfileScreen({ navigation }) {
     };
 
 
-   
+
 
     if (routeData) {
       const tempRouteData = {
@@ -223,15 +208,12 @@ export default function EditProfileScreen({ navigation }) {
           },
         }
       );
-
       console.log("JSON Response:", response.data);
-        if( ( routeData && routeData?.mobile === userData?.user?.mobile ) || !routeData){
-          const saveUser = {
-            token: userData.token,
-            user: response?.data,
-          };
-
-
+      if ((routeData && routeData?.mobile === userData?.user?.mobile) || !routeData) {
+        const saveUser = {
+          token: userData.token,
+          user: response?.data,
+        };
 
         saveUserData(saveUser);
       }
@@ -246,17 +228,23 @@ export default function EditProfileScreen({ navigation }) {
       }
 
       navigation.goBack();
-      // setModalVisible(false);
-    }catch (err) {
+    } catch (err) {
       console.error("err", err);
-      showSnackbar(`Failed to update proflie`, "error");
-    // catch (error) {
-    //   console.error(`Error with ${method.toUpperCase()} request to ${url}:`, error.response || error.message);
-    //   showSnackbar(t(`Failed to update proflie`), "error");
+      showSnackbar(`Failed to update profile`, "error");
+      if (err.response) {
+        console.log("Response Data:", err.response.data);
+        console.log("Status:", err.response.status);
+        console.log("Headers:", err.response.headers);
+      } else if (err.request) {
+        console.log("Request Made But No Response:", err.request);
+      } else {
+        console.log("Error Message:", err.message);
+      }
     } finally {
       setIsLoading(false);
     }
   };
+
 
   useEffect(() => {
     console.log("USER DATA IS SHOWING ", userData?.user?.gender);
@@ -271,23 +259,23 @@ export default function EditProfileScreen({ navigation }) {
     );
   }
 
- const formatUrl = (url, imageDetail) => {
-  if (!url) return null; // Handle null cases
+  const formatUrl = (url, imageDetail) => {
+    if (!url) return null; // Handle null cases
 
-  // Ensure no double slashes in the final URL
-  const formattedUrl = `${NORM_URL.replace(/\/$/, '')}/${url.replace(/^\//, '')}`;
+    // Ensure no double slashes in the final URL
+    const formattedUrl = `${NORM_URL.replace(/\/$/, '')}/${url.replace(/^\//, '')}`;
 
-  const imageFile = {
-    uri: formattedUrl,
-    name: `${imageDetail}.jpeg`,               
-    type: `image/jpeg`,
+    const imageFile = {
+      uri: formattedUrl,
+      name: `${imageDetail}.jpeg`,
+      type: `image/jpeg`,
+    };
+
+    console.log("✅ Corrected Image URL:", imageFile);
+    return imageFile;
   };
 
-  console.log("✅ Corrected Image URL:", imageFile);
-  return imageFile;
-};
-
- // // Convert `dd-mm-yyyy` to a `Date` object
+  // // Convert `dd-mm-yyyy` to a `Date` object
   const parseServerDate = (dateString) => {
     console.log("Hi date , ", dateString);
     // Parse the date string "01 June 2024" to a Date object
@@ -347,7 +335,7 @@ export default function EditProfileScreen({ navigation }) {
 
         initialValues={initialData}
         enableReinitialize={true}
-        
+
         validationSchema={validationSchema}
         onSubmit={(values) => {
           // Handle form submission
@@ -382,8 +370,8 @@ export default function EditProfileScreen({ navigation }) {
             profileFormData.append("longitude", values.longitude);
           }
 
-
           setPostData(profileFormData);
+
         }}
       >
         {({
@@ -399,219 +387,206 @@ export default function EditProfileScreen({ navigation }) {
           useEffect(() => {
             console.log("profile image updated:", values?.profileImage);
           }, [values.profileImage]);
-          
+
           console.log("🖼 Profile Image in Formik Values:", values?.profileImage);
 
-          
-          return(
-          <SafeAreaView style={{ flex: 1 }}>
-            <View>
-              <ScrollView>
-                <View style={styles.container}>
-                  <View style={styles.inputsContainer}>
-                    {/* <ServiceImagePicker
-                      setImage={setProfileImage}
-                      image={profileImage}
-                      routeImageUrl={""}
-                      btnLabel="Upload Profile Image"
-                      isAdmin={true}
-                    /> */}
-                    {console.log(
-                      "profile image is sssddd, ",
-                      values?.profileImage
-                    )}
-                    <View>
-                      <ServiceImagePicker
-                        image={values?.profileImage}
-                        label="Profile Image"
-                        isAdmin={true}
-                        setFieldValue={setFieldValue}
-                        uploadFieldName={"profileImage"}
-                        type={"rounded"}
 
-                      />
-                      {touched.profileImage && errors.profileImage ? (
-                        <Text
-                          style={[styles.errorText, { alignSelf: "center" }]}
-                        >
-                          {errors.profileImage}
-                        </Text>
-                      ) : null}
-                    </View>
+          return (
+            <SafeAreaView style={{ flex: 1 }}>
+              <View>
+                <ScrollView>
+                  <View style={styles.container}>
+                    <View style={styles.inputsContainer}>
 
-                    <View>
-                      <TextInput
-                        label="Name"
-                        mode="flat"
-                        style={styles.input}
-                        // placeholder={"Enter Name"}
-                        onChangeText={handleChange("name")}
-                        onBlur={handleBlur("name")}
-                        value={values.name}
-                      />
-                      {touched.name && errors.name ? (
-                        <Text style={styles.errorText}>{errors.name}</Text>
-                      ) : null}
-                    </View>
-
-                    <View>
-                      <TextInput
-                        label="Mobile Number"
-                        mode="flat"
-                        style={styles.input}
-                        onChangeText={handleChange("mobile")}
-                        onBlur={handleBlur("mobile")}
-                        keyboardType="numeric"
-                        value={values.mobile}
-                        disabled
-                      />
-                      {touched.mobile && errors.mobile ? (
-                        <Text style={styles.errorText}>{errors.mobile}</Text>
-                      ) : null}
-                    </View>
-
-                    <View>
-                      <TextInput
-                        label="Email"
-                        mode="flat"
-                        style={styles.input}
-                        placeholder={"Email"}
-                        onChangeText={handleChange("email")}
-                        onBlur={handleBlur("email")}
-                        value={values.email}
-                      />
-                      {touched.email && errors.email ? (
-                        <Text style={styles.errorText}>{errors.email}</Text>
-                      ) : null}
-                    </View>
-
-                    <View style={styles.ageGenderContainer}>
+                      {console.log(
+                        "profile image is sssddd, ",
+                        values?.profileImage
+                      )}
                       <View>
-                        <List.Accordion
-                          accessibilityLabel="Gender"
+                        <ServiceImagePicker
+                          image={values?.profileImage}
+                          label="Profile Image"
+                          isAdmin={true}
+                          setFieldValue={setFieldValue}
+                          uploadFieldName={"profileImage"}
+                          type={"rounded"}
 
-                          style={{
-                            height: 56,
-                            borderBottomWidth: 1,
-                            borderBottomColor: "rgba(0, 0, 0, 0.3)",
-                          }}
-
-                          title={selectedGender || "Select Gender"}
-                          expanded={dropdownVisible}
-                          onPress={handlePress}
-                        // left={(props) => <List.Icon {...props} icon="earth" />}
-                        >
-                          <View style={styles.dropdownContainer}>
-                            <ScrollView
-                              contentContainerStyle={{ width: "100%" }}
-                            >
-                              {genderList.map((item, index) => (
-                                <List.Item
-                                  key={index}
-                                  title={item.gender}
-
-                                  onPress={() => {
-                                    setSelectedGender(item.gender);
-                                    setFieldValue("gender", item.gender);
-                                    setDropdownVisible(false);
-                                  }}
-                                />
-                              ))}
-                            </ScrollView>
-                          </View>
-                        </List.Accordion>
-                        {touched.gender && errors.gender ? (
-                          <Text style={styles.errorText}>{errors.gender}</Text>
+                        />
+                        {touched.profileImage && errors.profileImage ? (
+                          <Text
+                            style={[styles.errorText, { alignSelf: "center" }]}
+                          >
+                            {errors.profileImage}
+                          </Text>
                         ) : null}
                       </View>
 
-                     
-                    </View>
-
-                    {/* <AddressForm
-                      extraData={extraData}
-                      setExtraData={setExtraData}
-                      userData={userData.user}
-                      token={userData.token}
-                    /> */}
-
-
-                    <View style={{ marginTop: 10 }}>
-                      <View style={styles.dateTitle}>
-                        <Text style={styles.dateTitleText}>DOB*</Text>
-
-                        <Pressable
-                          onPress={() => setShowDateTimePicker(true)}
-                          style={styles.dateText}
-                        >
-                          <Icon name="calendar" size={20} color="#0a6846" />
-                          <Text style={styles.buttonText}>
-                            {values?.dob
-                              ? formatShowDate(values.dob)
-                              : "No date selected"}
-                          </Text>
-                        </Pressable>
-                      </View>
-                      {touched.dob && errors.dob ? (
-                        <Text style={styles.errorText}>{errors.dob}</Text>
-                      ) : null}
-
-                      {showDateTimePicker && (
-                        <DateTimePicker
-                          value={values.dob || new Date()}
-                          mode="date"
-                          display="default"
-                          onChange={(event, selectedDate) => {
-                            setShowDateTimePicker(false);
-                            if (selectedDate) {
-    
-                              setFieldValue("dob", selectedDate);
-                            }
-                          }}
-                        />
-                      )}
-                      
-                    </View>
-
-                    <View>
-                      <Pressable
-                        onPress={() => {
-                          if (!values?.latitude || values?.latitude === "") {
-                            showPopUpMessage(
-                              "Please First click on Change Location Button",
-                              "error"
-                            );
-                          }
-                        }}
-                      >
+                      <View>
                         <TextInput
-                          label="Address"
+                          label="Name"
                           mode="flat"
                           style={styles.input}
-                          onChangeText={handleChange("address")}
-                          onBlur={handleBlur("address")}
-                          value={values.address}
+                          // placeholder={"Enter Name"}
+                          onChangeText={handleChange("name")}
+                          onBlur={handleBlur("name")}
+                          value={values.name}
                         />
-                        {touched.address && errors.address ? (
-                          <Text style={styles.errorText}>{errors.address}</Text>
+                        {touched.name && errors.name ? (
+                          <Text style={styles.errorText}>{errors.name}</Text>
                         ) : null}
-                      </Pressable>
+                      </View>
+
+                      <View>
+                        <TextInput
+                          label="Mobile Number"
+                          mode="flat"
+                          style={styles.input}
+                          onChangeText={handleChange("mobile")}
+                          onBlur={handleBlur("mobile")}
+                          keyboardType="numeric"
+                          value={values.mobile}
+                          disabled
+                        />
+                        {touched.mobile && errors.mobile ? (
+                          <Text style={styles.errorText}>{errors.mobile}</Text>
+                        ) : null}
+                      </View>
+
+                      <View>
+                        <TextInput
+                          label="Email"
+                          mode="flat"
+                          style={styles.input}
+                          placeholder={"Email"}
+                          onChangeText={handleChange("email")}
+                          onBlur={handleBlur("email")}
+                          value={values.email}
+                        />
+                        {touched.email && errors.email ? (
+                          <Text style={styles.errorText}>{errors.email}</Text>
+                        ) : null}
+                      </View>
+
+                      <View style={styles.ageGenderContainer}>
+                        <View>
+                          <List.Accordion
+                            accessibilityLabel="Gender"
+
+                            style={{
+                              height: 56,
+                              borderBottomWidth: 1,
+                              borderBottomColor: "rgba(0, 0, 0, 0.3)",
+                            }}
+
+                            title={selectedGender || "Select Gender"}
+                            expanded={dropdownVisible}
+                            onPress={handlePress}
+                          // left={(props) => <List.Icon {...props} icon="earth" />}
+                          >
+                            <View style={styles.dropdownContainer}>
+                              <ScrollView
+                                contentContainerStyle={{ width: "100%" }}
+                              >
+                                {genderList.map((item, index) => (
+                                  <List.Item
+                                    key={index}
+                                    title={item.gender}
+
+                                    onPress={() => {
+                                      setSelectedGender(item.gender);
+                                      setFieldValue("gender", item.gender);
+                                      setDropdownVisible(false);
+                                    }}
+                                  />
+                                ))}
+                              </ScrollView>
+                            </View>
+                          </List.Accordion>
+                          {touched.gender && errors.gender ? (
+                            <Text style={styles.errorText}>{errors.gender}</Text>
+                          ) : null}
+                        </View>
+
+
+                      </View>
+
+                      <View style={{ marginTop: 10 }}>
+                        <View style={styles.dateTitle}>
+                          <Text style={styles.dateTitleText}>DOB*</Text>
+
+                          <Pressable
+                            onPress={() => setShowDateTimePicker(true)}
+                            style={styles.dateText}
+                          >
+                            <Icon name="calendar" size={20} color="#0a6846" />
+                            <Text style={styles.buttonText}>
+                              {values?.dob
+                                ? formatShowDate(values.dob)
+                                : "No date selected"}
+                            </Text>
+                          </Pressable>
+                        </View>
+                        {touched.dob && errors.dob ? (
+                          <Text style={styles.errorText}>{errors.dob}</Text>
+                        ) : null}
+
+                        {showDateTimePicker && (
+                          <DateTimePicker
+                            value={values.dob || new Date()}
+                            mode="date"
+                            display="default"
+                            onChange={(event, selectedDate) => {
+                              setShowDateTimePicker(false);
+                              if (selectedDate) {
+
+                                setFieldValue("dob", selectedDate);
+                              }
+                            }}
+                          />
+                        )}
+
+                      </View>
+
+                      <View>
+                        <Pressable
+                          onPress={() => {
+                            if (!values?.latitude || values?.latitude === "") {
+                              showPopUpMessage(
+                                "Please First click on Change Location Button",
+                                "error"
+                              );
+                            }
+                          }}
+                        >
+                          <TextInput
+                            label="Address"
+                            mode="flat"
+                            style={styles.input}
+                            onChangeText={handleChange("address")}
+                            onBlur={handleBlur("address")}
+                            value={values.address}
+                          />
+                          {touched.address && errors.address ? (
+                            <Text style={styles.errorText}>{errors.address}</Text>
+                          ) : null}
+                        </Pressable>
+                      </View>
+                    </View>
+                    <View style={styles.btnTxtContainer}>
+                      <Button
+                        mode="contained"
+                        onPress={handleSubmit}
+                        style={styles.button}
+                      >
+                        Update
+                      </Button>
                     </View>
                   </View>
-                  <View style={styles.btnTxtContainer}>
-                    <Button
-                      mode="contained"
-                      onPress={handleSubmit}
-                      style={styles.button}
-                    >
-                      Update
-                    </Button>
-                  </View>
-                </View>
-              </ScrollView>
-            </View>
-          </SafeAreaView>
-        )}}
+                </ScrollView>
+              </View>
+            </SafeAreaView>
+          )
+        }}
       </Formik>
       {modalVisible && (
         <ConfirmModal

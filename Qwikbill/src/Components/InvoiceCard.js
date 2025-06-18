@@ -1,11 +1,9 @@
-import React, { useContext, useState } from "react";
-import { Button, Card, Text } from "react-native-paper";
-import { IconButton, Icon } from "react-native-paper";
-import { FlatList, StyleSheet, View } from "react-native";
-import DeleteModal from "../UI/DeleteModal";
+import { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { Button, Card, Icon, IconButton, Text } from "react-native-paper";
 import { useSnackbar } from "../Store/SnackbarContext";
+import DeleteModal from "../UI/DeleteModal";
 import { deleteApi } from "../Util/UtilApi";
-import axios from "axios";
 function InvoiceCard({ invoices, navigation, setInvoices }) {
   const [visible, setVisible] = useState(false);
   const [invoiceId, setInvoiceId] = useState("");

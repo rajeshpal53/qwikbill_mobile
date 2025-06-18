@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { View } from "react-native";
-import { Card, Divider, Text } from "react-native-paper";
 import { useRoute } from "@react-navigation/native";
-import { ActivityIndicator, StyleSheet } from "react-native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { Card, Divider, Text } from "react-native-paper";
 import { readApi } from "../../../Util/UtilApi";
 
 const ShopDetailScreen = () => {

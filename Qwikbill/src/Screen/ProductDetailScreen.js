@@ -1,9 +1,8 @@
-import { ActivityIndicator, Text } from "react-native-paper"
-import { useState,useEffect } from "react"
+import { useEffect, useState } from "react"
 import { View } from "react-native"
+import { ActivityIndicator } from "react-native-paper"
 import ProductDetail from "../Components/ProductDetail"
 import { readApi } from "../Util/UtilApi"
-import { useIsFocused } from "@react-navigation/native"
 function ProductDetailScreen({route}) {
     const productId= route.params.productId
     const[detail,setDetail]= useState([])

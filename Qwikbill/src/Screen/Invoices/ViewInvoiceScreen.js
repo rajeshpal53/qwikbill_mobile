@@ -1,16 +1,15 @@
 // import { Text } from "react-native-paper"
-import { useRoute } from "@react-navigation/native";
-import { Divider, DataTable, FAB, Menu, ActivityIndicator } from "react-native-paper";
-import React, { useContext, useEffect, useState, useCallback } from "react";
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image} from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
-import { readApi, deleteApi } from "../../Util/UtilApi";
-import { ShopDetailContext } from "../../Store/ShopDetailContext";
-import InvoiceFilterModel from "../../Components/Modal/InvoiceFilterModel";
 import { Feather } from "@expo/vector-icons";
-import DeleteModal from "../../UI/DeleteModal";
+import { useRoute } from "@react-navigation/native";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { BackHandler, Image, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import { ActivityIndicator, DataTable, Divider, FAB, Menu } from "react-native-paper";
+import InvoiceFilterModel from "../../Components/Modal/InvoiceFilterModel";
+import { ShopDetailContext } from "../../Store/ShopDetailContext";
 import { useSnackbar } from "../../Store/SnackbarContext";
-import { useWindowDimensions, BackHandler } from "react-native";
+import DeleteModal from "../../UI/DeleteModal";
+import { deleteApi, readApi } from "../../Util/UtilApi";
 //import * as ScreenOrientation from "expo-screen-orientation"
 import { useFocusEffect } from "@react-navigation/native";
 

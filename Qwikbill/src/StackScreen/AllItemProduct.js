@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    FlatList,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { ProductItem } from "../../ProductData";
 import Searchbarwithmic from "../../src/Component/Searchbarwithmic";
