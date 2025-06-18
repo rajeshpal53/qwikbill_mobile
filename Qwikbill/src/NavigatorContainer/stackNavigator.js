@@ -12,6 +12,7 @@ import { ActivityIndicator } from "react-native-paper";
 import AllQueryAndSupport from "../../src/Screen/StackScreen/QueriesScreens/AllQueryAndSupport.js";
 import PdfScreen from "../Component/PdfViewer.js";
 import CreateInvoice from "../Components/CreateInvoice.js";
+import CustomBackButton from "../Components/HeaderComponents/CustomBackButton.js";
 import HomeHeaderRight from "../Components/HeaderComponents/HomeHeaderRight.js";
 import RotateBtn from "../Components/HeaderComponents/RotateBtn.js";
 import AddProductScreen from "../Screen/AddProductScreen.js";
@@ -487,13 +488,34 @@ export default function StackNavigator() {
           }}
         />
 
-        <Stack.Screen
+        {/* <Stack.Screen
           name="AllItemProduct"
           component={AllItemProduct}
           options={{
             headerTitle: "View All Products",
           }}
-        />
+        /> */}
+
+
+        <Stack.Screen
+          name="AllItemProduct"
+          component={AllItemProduct}
+          options={{
+            headerShown: true,
+            tabBarIcon: ({ color, size }) => (
+              <Icon name="people-outline" color={color} size={size} />
+            ),
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"Product "}</Text>
+            ),
+            headerTitleAlign: "center",
+            headerStyle: {
+              // backgroundColor: "transparent",
+              // backgroundColor: "#fff"
+            },
+            headerLeft: () => <CustomBackButton />,
+          }}
+        />
 
         <Stack.Screen
           name="Customer"

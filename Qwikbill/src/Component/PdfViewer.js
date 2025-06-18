@@ -7,7 +7,6 @@ import {
   Platform,
   TouchableOpacity,
 } from "react-native";
-import { WebView } from "react-native-webview";
 import Share from "react-native-share"; // Import for sharing functionality
 import {
   API_BASE_URL,
@@ -28,10 +27,8 @@ import { useDownloadInvoice } from "../Util/DownloadInvoiceHandler";
 import { useTranslation } from "react-i18next";
 import { AntDesign, Feather,FontAwesome5,MaterialCommunityIcons} from "@expo/vector-icons";
 //import Pdf from 'react-native-pdf';
-
-
-
-
+import { WebView } from 'react-native-webview';
+import * as FileSystem from 'expo-file-system';
 const PdfScreen = ({ navigation }) => {
   const [pdfPath, setPdfPath] = useState("");
   const formData = useRoute()?.params?.formData || null;
@@ -44,7 +41,7 @@ const PdfScreen = ({ navigation }) => {
   const [isLoading,setIsLoading]=useState(false)
   console.log("createdInvoice----------", createdInvoice);
   console.log("selectedButton----------", selectedButton);
-
+  const[pdfUri,setPdfUri] =useState("")
   const { t } = useTranslation();
   const [downloadLoading, setDownloadLoading] = useState(false);
   const [shareLoading, setShareLoading] = useState(false);
@@ -68,11 +65,29 @@ const PdfScreen = ({ navigation }) => {
     }
   }, [formData]);
 
+   useEffect(() => {
+   const downloadPdf = async () => {
+  try {
+    const fileUri = FileSystem.cacheDirectory + 'invoice.pdf';
+    const downloadResumable = FileSystem.createDownloadResumable(
+      `${API_BASE_URL}invoice/downloadInvoice/${viewInvoiceData?.id}`,
+      fileUri
+    );
+    const { uri } = await downloadResumable.downloadAsync();
+    const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+    setPdfUri(`data:application/pdf;base64,${base64}`);
+  } catch (err) {
+    console.log("Download error:", err);
+  }
+};
+    if (viewInvoiceData?.id) {
+      downloadPdf();
+    }
+  }, [viewInvoiceData]);
   const pdfSource = {
     uri: `${API_BASE_URL}invoice/downloadInvoice/${viewInvoiceData?.id}`, // Change to your PDF URL
     cache: true,
   };
-
   const getTodaysDate = () => {
     const today = new Date();
     const day = String(today.getDate()).padStart(2, "0");
@@ -82,7 +97,6 @@ const PdfScreen = ({ navigation }) => {
     const formattedDate = `${day}/${month}/${year}`;
     return formattedDate;
   };
-
   const handleDownload = async () => {
     let invoiceData = "";
     if (!createdInvoice) {
@@ -188,47 +202,30 @@ const PdfScreen = ({ navigation }) => {
         userfk:viewInvoiceData?.usersfk||viewInvoiceData?.userfk,
       }
     }  
+
+
+  //    if (!pdfUri) {
+  //   return (
+  //     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+  //       <ActivityIndicator size="large" />
+  //     </View>
+  //   );
+  // }
+
   return (
     <View style={{ flex: 1 }}>
-      {/* <View style={{alignItems:"center"}}>
-        <Text style={{fontFamily:"Poppins-Bold", fontSize:fontSize.headingSmall}}>Invoice Preview</Text>
-      </View> */}
-        {/* {isLoading && <ActivityIndicator size="large" color="blue" />}
-      {viewInvoiceData ? (
-       <Pdf
-       style={{ height: "60%"  }}
-          source={pdfSource}
-          trustAllCerts={false}
-          onLoadStart={() => {
-            setIsLoading(true); // Set loading to true when PDF starts loading
-          }}
-          onLoadComplete={(numberOfPages) => {
-            console.log(`PDF loaded with ${numberOfPages} pages`);
-            setIsLoading(false)
-          }}
-          onError={(error) => {
-            console.log(error,"flflflfllf");
-            showSnackbar("failed to load pdf","error")
-            setIsLoading(false)
-          }}
-         
-        />
-      ) : (
-        <Pdf
-        style={{ height: "80%"  }}
-           source={pdfSource}
-           onLoadComplete={(numberOfPages) => {
-             console.log(`PDF loaded with ${numberOfPages} pages`);
-             setIsLoading(false)
-           }}
-           onError={(error) => {
-             console.log(error);
-             showSnackbar("error failed to load pdf","error")
-             setIsLoading(false)
-           }}
-          
-         />
-      )} */}
+      {/* <WebView
+      source={{ uri: pdfUri }}
+      style={{ flex: 1}}
+      originWhitelist={['*']}
+    /> */}
+
+    <WebView
+  source={{
+    uri: `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(`${API_BASE_URL}invoice/downloadInvoice/${createdInvoice?.id}`)}`
+  }}
+  style={{ flex: 1 }}
+/>
      <Card style={styles.card}>
       {/* Customer Name and Amount Section */}
       <View style={styles.headerContainer}>
@@ -241,7 +238,7 @@ const PdfScreen = ({ navigation }) => {
           <Text style={styles.unpaidText}>
   {statusName[viewInvoiceData?.statusfk || formData?.statusfk]?.toUpperCase()}
 </Text>
-        </View>
+     </View>
       </View>
 
       {/* Action Buttons */}
@@ -280,9 +277,6 @@ const PdfScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
     </Card>
-
-
-     
     </View>
   );
 };

@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 import { Card } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,16 +17,17 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { addToCart, removeFromCart } from "../../Redux/slices/CartSlice";
 import { ButtonColor, fontSize } from "../../Util/UtilApi";
 
+
 const ProductCardDetails = ({ item }) => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.Carts);
-  // const isInCart = cartItems.some((cartItem) => cartItem.id === item.id);
-  const inCart = cartItems.find((cartItem) => cartItem.id === item.id) || null;
+  const isInCart = cartItems.some((cartItem) => cartItem.id === item.id);
+  //const inCart = cartItems.find((cartItem) => cartItem.id === item.id) || null;
 
 
   useEffect(() => {
-    console.log("InCart is , ", inCart);
-  }, [inCart]);
+    console.log("InCart is , ", isInCart);
+  }, [isInCart]);
   const handleAddToCart = (item) => {
     dispatch(addToCart(item));
   };
@@ -52,7 +53,7 @@ const ProductCardDetails = ({ item }) => {
 
           {/* Add Button Positioned at the Bottom */}
           <View style={styles.ButtonAndDeleteView}>
-            {inCart ? (
+            {isInCart ? (
               <>
                 <View
                   style={{
@@ -78,7 +79,7 @@ const ProductCardDetails = ({ item }) => {
                     }}
                   >
                     {/* Increment/Decrement Controls */}
-                    <IncAndDicButton item={inCart} />
+                    <IncAndDicButton item={isInCart} />
                   </View>
                 </View>
               </>

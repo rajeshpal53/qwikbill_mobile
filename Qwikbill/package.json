@@ -101,7 +101,9 @@
     "rn-tourguide": "^3.3.2",
     "uuid": "^11.1.0",
     "yup": "^1.6.1",
-    "expo-modules-core": "~2.4.0"
+    "expo-modules-core": "~2.4.0",
+    "react-native-svg": "15.11.2",
+    "expo-intent-launcher": "~12.1.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
