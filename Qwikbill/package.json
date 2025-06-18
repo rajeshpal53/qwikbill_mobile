@@ -5,8 +5,8 @@
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint"
   },
@@ -100,13 +100,16 @@
     "react-redux": "^9.2.0",
     "rn-tourguide": "^3.3.2",
     "uuid": "^11.1.0",
-    "yup": "^1.6.1"
+    "yup": "^1.6.1",
+    "expo-modules-core": "~2.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@react-native/codegen": "^0.80.0",
     "@types/react": "~19.0.10",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~9.2.0",
+    "react-native-codegen": "^0.70.7",
     "typescript": "~5.8.3"
   },
   "private": true
