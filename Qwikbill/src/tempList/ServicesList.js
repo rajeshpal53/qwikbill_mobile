@@ -1,22 +1,16 @@
 import {
-  MaterialCommunityIcons,
   FontAwesome5,
   Ionicons,
-  AntDesign,
-  Entypo,
-  MaterialIcons,
-  Octicons,
-  FontAwesome,
-  Feather,
+  MaterialCommunityIcons,
+  MaterialIcons
 } from "@expo/vector-icons";
-import { responsiveFontSize } from "react-native-responsive-dimensions";
 
 
 export const rolePermissions = {
-  owner: ["Create Invoice", "Add Product", "Add Shop","View Your Shops","Transactions","Product Upload","View Customer"],
+  owner: ["Create Invoice", "Add Product", "Add Shop","View Your Shops","Transactions","Product Upload","View Customer", "UserAccounts"],
   manager: ["Create Invoice", "Add Product","View Your Shops","Transactions","Product Upload","View Customer"],
-  employee:["Create Invoice","View Your Shops","Transactions","View Customer"],
-  viewer: ["View Your Shops", "Transactions","View Customer"], 
+  employee:["Create Invoice","View Your Shops","Transactions","View Customer", "UserAccounts"],
+  viewer: ["View Your Shops", "Transactions","View Customer", "UserAccounts"], 
 };
 export const services = [
   {
@@ -98,10 +92,10 @@ export const services = [
     navigateTo: "Customer",
   },
   {
-    name: "",
-    icon: "",
+    name: "UserAccounts",
+    icon: <FontAwesome5 name="user-cog" size={30} color="#26a0df" />,
     key: "9",
-    navigateTo: "",
+    navigateTo: "UserAccounts",
   },
   {
     name: "",

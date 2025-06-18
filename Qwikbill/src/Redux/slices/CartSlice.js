@@ -1,12 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {  addToCart as addToCartReducer,
-  removeFromCart as removeFromCartReducer,
+import {
+  addToCart as addToCartReducer,
   applyDiscount as applyDiscountReducer,
   applyPartiallyAmount as applyPartiallyAmountReducer,
   clearCart as clearCartReducer,
   decreaseQuantity as decreaseQuantityReducer,
   incrementQuantity as incrementQuantityReducer,
- } from "../reducers/cartReducers";
+  removeFromCart as removeFromCartReducer,
+} from "../reducers/cartReducers";
 
 const initialState = {
   Carts: [],

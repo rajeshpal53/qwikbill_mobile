@@ -1,26 +1,25 @@
-import { useState, useEffect, useRef } from "react";
 import { Formik } from "formik";
+import { useEffect, useRef, useState } from "react";
 import {
-  ScrollView,
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Alert,
   ActivityIndicator,
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { TextInput } from "react-native-paper";
 import * as Yup from "yup";
 
-import { ButtonColor, createApi, fontSize, readApi } from "../../Util/UtilApi";
+import { useNavigation } from "@react-navigation/native";
 import { useContext } from "react";
-import UserDataContext from "../../Store/UserDataContext";
 import { ShopContext } from "../../Store/ShopContext";
-import DropDownList from "../../UI/DropDownList";
-import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSnackbar } from "../../Store/SnackbarContext";
-import CustomDropdown from "../../Component/CustomeDropdown";
-import AddroleDropdown from "../../Component/AddRoleDropdown";
+import UserDataContext from "../../Store/UserDataContext";
+import DropDownList from "../../UI/DropDownList";
+import { ButtonColor, createApi, fontSize, readApi } from "../../Util/UtilApi";
+//import AddroleDropdown from "../../Component/AddRoleDropdown";
 // import RNPickerSelect from "react-native-picker-select";
 import { Picker } from "@react-native-picker/picker";
 

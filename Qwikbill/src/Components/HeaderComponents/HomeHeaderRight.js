@@ -1,13 +1,9 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
-import SearchHeader from "../SearchHeader";
-import { useContext } from "react";
-import { Ionicons } from "@expo/vector-icons";
-import { AuthContext } from "../../Store/AuthContext";
-import { ActivityIndicator } from "react-native-paper";
-import { useNavigation } from '@react-navigation/native';
-import LogoutBtn from "./LogoutBtn";
-import SearchBarComp from "../SearchBarComp";
+import { StyleSheet, View } from "react-native";
+//import SearchHeader from "../SearchHeader";
 import { Entypo } from "@expo/vector-icons";
+import { useNavigation } from '@react-navigation/native';
+import { useContext } from "react";
+import { AuthContext } from "../../Store/AuthContext";
 // import {LogoutBtn} from "./LogoutBtn"
 
 export default function HomeHeaderRight() {

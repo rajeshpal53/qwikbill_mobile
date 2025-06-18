@@ -1,21 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
-  Image,
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from "react-native";
 import { Card } from "react-native-paper";
-import IncAndDicButton from "../../Redux/IncAndDicButton";
 import { useDispatch, useSelector } from "react-redux";
+import IncAndDicButton from "../../Redux/IncAndDicButton";
 // import {
 //   addToCart,
 //   removeFromCart,
 // } from "../../Redux/CartProductRedux/CartSlice";
-import { addToCart, removeFromCart } from "../../Redux/slices/CartSlice";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { addToCart, removeFromCart } from "../../Redux/slices/CartSlice";
 import { ButtonColor, fontSize } from "../../Util/UtilApi";
 
 const ProductCardDetails = ({ item }) => {

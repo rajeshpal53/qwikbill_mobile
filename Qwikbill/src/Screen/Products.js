@@ -1,6 +1,7 @@
 // Products.js
-import React, { useEffect, useState, useContext } from "react";
-import { View, StyleSheet, Button, TouchableWithoutFeedback } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
+import { useContext, useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
 import {
   ActivityIndicator,
   FAB,
@@ -9,19 +10,16 @@ import {
   Text,
 } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { useIsFocused } from "@react-navigation/native";
-import { readApi, createApi, API_BASE_URL } from "../Util/UtilApi";
-import { AuthContext } from "../Store/AuthContext";
-import ItemList from "../Components/Lists/ItemList";
 import Icon from "react-native-vector-icons/Ionicons";
-import { deleteApi } from "../Util/UtilApi";
+import ItemList from "../Components/Lists/ItemList";
+import { AuthContext } from "../Store/AuthContext";
+import { ShopDetailContext } from "../Store/ShopDetailContext";
 import { useSnackbar } from "../Store/SnackbarContext";
 import DeleteModal from "../UI/DeleteModal";
-import { ShopDetailContext } from "../Store/ShopDetailContext";
-import FabGroup from "../Components/FabGroup";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import FileUploadModal from "../Components/BulkUpload/FileUploadModal";
+import { API_BASE_URL, deleteApi, readApi } from "../Util/UtilApi";
+//import FabGroup from "../Components/FabGroup";
 import axios from "axios";
+import FileUploadModal from "../Components/BulkUpload/FileUploadModal";
 
 
 const fetchSearchData = async (searchQuery, shopId) => {

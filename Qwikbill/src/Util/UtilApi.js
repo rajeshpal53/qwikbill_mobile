@@ -1,16 +1,16 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
 
 export const API_BASE_URL = "https://qwikbill.in/qapi/";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 // export const API_BASE_URL = "http://192.168.1.35:2235/";
 
 //for preview:>  eas build --platform android  --profile preview
 // for development:> eas build --platform android  --profile development
 // for production:> eas build --platform android  --profile production
 
-export const NORM_URL="https://rajeshpal.online/"
+export const NORM_URL="https://qwikbill.in/"
 const apiRequest = async (method, url, data = null, customHeaders = {}) => {
   try {
     const userDataString = await AsyncStorage.getItem('userData');
