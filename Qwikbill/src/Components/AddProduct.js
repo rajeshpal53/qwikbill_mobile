@@ -2,7 +2,7 @@ import { useRoute } from "@react-navigation/native";
 import { Formik } from "formik";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { Text, TextInput } from "react-native-paper";
+import { Button, Text, TextInput } from "react-native-paper";
 import RazorpayCheckout from 'react-native-razorpay';
 import * as Yup from "yup";
 import { ShopContext } from "../Store/ShopContext";
@@ -43,7 +43,7 @@ const AddProduct = ({ navigation }) => {
       .when("SellingPrice", (sellingPrice, schema) =>
         schema.max(sellingPrice - 0.01, "Purchase price must be less than selling price")
       ),
-    IsStockData: Yup.boolean().nullable().required("Stock status is required"),
+    // IsStockData: Yup.boolean().nullable().required("Stock status is required"),
   });
 
   const handlePayment = async (amount) => {
@@ -313,10 +313,13 @@ const AddProduct = ({ navigation }) => {
             <TouchableOpacity
               style={styles.submitButton}
               onPress={handleSubmit}
-            // type="submit"
+          
             >
               <Text style={styles.submitButtonText}>Submit</Text>
             </TouchableOpacity>
+
+
+            {/* <Button type="submit" > Submit </Button> */}
           </View>
         )}
       </Formik>
