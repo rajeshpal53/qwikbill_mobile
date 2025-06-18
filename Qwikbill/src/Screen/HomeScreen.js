@@ -30,7 +30,7 @@ import {
 } from "rn-tourguide";
 import FileUploadModal from "../Components/BulkUpload/FileUploadModal";
 import ConfirmModal from "../Components/Modal/ConfirmModal";
-import PieChartComponent from "../Components/PieChartComponent ";
+//import PieChartComponent from "../Components/PieChartComponent ";
 import { AuthContext } from "../Store/AuthContext";
 import { LoginTimeContext } from "../Store/LoginTimeContext";
 import { ShopContext } from "../Store/ShopContext";
@@ -277,13 +277,13 @@ export default function HomeScreen({ navigation, noItemData }) {
               </ScrollView>
             )}
 
-            {allShops && allShops.length > 0 && vendorStatus != null && total > 0 && (
+            {/* {allShops && allShops.length > 0 && vendorStatus != null && total > 0 && (
               <PieChartComponent
                 key={userData?.user?.mobile}
                 vendorStatus={vendorStatus}
                 t={t}
               />
-            )}
+            )} */}
 
             <View style={{ flex: total ? 2 : 7 }}>
               {allShops?.length > 0 ? (

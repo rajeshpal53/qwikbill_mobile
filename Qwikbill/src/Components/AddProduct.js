@@ -1,22 +1,21 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { View, StyleSheet, ScrollView, TouchableOpacity,Alert } from "react-native";
-import { RadioButton, Text, TextInput } from "react-native-paper";
+import { useRoute } from "@react-navigation/native";
 import { Formik } from "formik";
+import { useContext, useEffect, useRef, useState } from "react";
+import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Text, TextInput } from "react-native-paper";
+import RazorpayCheckout from 'react-native-razorpay';
 import * as Yup from "yup";
-import { createApi, readApi, updateApi } from "../Util/UtilApi";
-import CategoryDropDown from "../UI/DropDown/CategoryDropdown";
 import { ShopContext } from "../Store/ShopContext";
 import { useSnackbar } from "../Store/SnackbarContext";
-import { useRoute } from "@react-navigation/native";
-import RazorpayCheckout from 'react-native-razorpay';
 import UserDataContext from "../Store/UserDataContext";
+import { createApi, readApi, updateApi } from "../Util/UtilApi";
 const AddProduct = ({ navigation }) => {
   // const [options, setOptions] = useState([]);
   // const [showOptions, setShowOptions] = useState(false);
   // const [showHsnOptions, setShowHsnOptions] = useState(false);
   const route = useRoute();
   const { EditData, isUpdated, setRefresh } = route.params;
-  const {userData}=useContext(UserDataContext)
+  const { userData } = useContext(UserDataContext)
   const [HSNCode, SetHSNCode] = useState();
   const { selectedShop } = useContext(ShopContext);
   const { showSnackbar } = useSnackbar();
@@ -37,31 +36,31 @@ const AddProduct = ({ navigation }) => {
       .required("Selling price is required")
       .typeError("Selling price must be a number"),
     TaxRate: Yup.number().typeError("Tax value must be a number"),
-    HSNCode:Yup.string().matches(/^\d{4}(\d{2})?(\d{2})?$/, 'Enter a valid 4, 6, or 8-digit HSN code'),
+    HSNCode: Yup.string().matches(/^\d{4}(\d{2})?(\d{2})?$/, 'Enter a valid 4, 6, or 8-digit HSN code'),
     PurchasePrice: Yup.number()
-    .required("Purchase price is required")
-    .typeError("Purchase price must be a number")
-    .when("SellingPrice", (sellingPrice, schema) =>
-      schema.max(sellingPrice - 0.01, "Purchase price must be less than selling price")
-    ),
+      .required("Purchase price is required")
+      .typeError("Purchase price must be a number")
+      .when("SellingPrice", (sellingPrice, schema) =>
+        schema.max(sellingPrice - 0.01, "Purchase price must be less than selling price")
+      ),
     IsStockData: Yup.boolean().nullable().required("Stock status is required"),
   });
 
-   const handlePayment = async (amount) => {
-      // const response= await createApi("wallet/createOrderRazorpay",{ amount,currency: "INR",})
-      // console.log("respnse of orderapi",response)
-      // const order= await response;
+  const handlePayment = async (amount) => {
+    // const response= await createApi("wallet/createOrderRazorpay",{ amount,currency: "INR",})
+    // console.log("respnse of orderapi",response)
+    // const order= await response;
     const options = {
       description: 'Test payment for order #1234',
       image: 'https://dailysabji.com/assets/dailysabji.png', // Optional: Your brand/logo URL
       currency: 'INR',
       key: 'rzp_test_3YVR197XSieDE6', // Replace with your Razorpay test or live key
-      amount:amount,
-        // order_id: order.id, 
+      amount: amount,
+      // order_id: order.id, 
       name: 'Daily Sabji',
       prefill: {
         email: userData?.user?.email,
-        contact:userData?.user?.mobile,
+        contact: userData?.user?.mobile,
         name: userData?.user?.name,
       },
       theme: { color: '#3399cc' },
@@ -69,22 +68,22 @@ const AddProduct = ({ navigation }) => {
     // Open Razorpay Checkout
     console.log("Razorpay options: ", options);
     RazorpayCheckout.open(options)
-      .then(async(data) => {
+      .then(async (data) => {
         // Success  
-       console.log("payment data:",data)
-      //  setIsLoading(true)
-  // const response= await createApi("wallet/verifyPayment",{razorpay_order_id:data?.razorpay_order_id,
-  //   razorpay_payment_id:data?.razorpay_payment_id, 
-  //   razorpay_signature:data?.razorpay_signature, 
-  //   userfk:userData?.user?.id, 
-  //   amount:amount})
-      console.log( "response of verify  result",response)
-      Alert.alert('Payment Success', `Payment ID: ${data.razorpay_payment_id}`);
-      // setIsLoading(false)
+        console.log("payment data:", data)
+        //  setIsLoading(true)
+        // const response= await createApi("wallet/verifyPayment",{razorpay_order_id:data?.razorpay_order_id,
+        //   razorpay_payment_id:data?.razorpay_payment_id, 
+        //   razorpay_signature:data?.razorpay_signature, 
+        //   userfk:userData?.user?.id, 
+        //   amount:amount})
+        console.log("response of verify  result", response)
+        Alert.alert('Payment Success', `Payment ID: ${data.razorpay_payment_id}`);
+        // setIsLoading(false)
       })
       .catch((error) => {
         // Error
-        console.error("payment error",error)
+        console.error("payment error", error)
         Alert.alert(
           'Payment Failed',
           `Error: ${error.code} | ${error.description}`
@@ -127,7 +126,7 @@ const AddProduct = ({ navigation }) => {
       <Formik
         enableReinitialize={true}
         initialValues={{
-         /* ProductCategory: EditData?.productcategoryfk || "", */
+          /* ProductCategory: EditData?.productcategoryfk || "", */
           ProductName: EditData?.name || "",
           PurchasePrice: EditData?.costPrice || "",
           SellingPrice: EditData?.sellPrice || "",
@@ -136,8 +135,12 @@ const AddProduct = ({ navigation }) => {
           IsStockData: EditData?.isStock || null,
         }}
         validationSchema={validationSchema}
+
         onSubmit={async (values, { resetForm }) => {
-         await  handlePayment(20)
+          console.log("Before handlePayment");
+
+          // await handlePayment(20);
+          console.log("Values areeee ", values);
           const ProductData = {
             /* productcategoryfk: values?.ProductCategory, */
             name: values?.ProductName,
@@ -150,7 +153,10 @@ const AddProduct = ({ navigation }) => {
             hsncode: parseInt(values.HSNCode),
           };
           console.log("Data is 15863", ProductData);
-          if (isUpdated) {
+
+          if (isUpdated === true) {
+            console.log(" issss update ", isUpdated)
+
             console.log("Edit field is ", ProductData);
             try {
               // Pass ProductData to the update API request
@@ -171,9 +177,14 @@ const AddProduct = ({ navigation }) => {
               showSnackbar("Error updating product", "error");
             }
           } else {
+            console.log(" issss update ", isUpdated)
             try {
               // Create a new product
-              const response = await createApi(`products/`, ProductData);
+              const response = await createApi(`products/`, ProductData, {
+                headers: {
+                  Authorization: `Bearer ${userData?.token}`
+                }
+              });
 
               console.log("Full response from createApi:", response);
 
@@ -188,19 +199,7 @@ const AddProduct = ({ navigation }) => {
               showSnackbar("Error creating product", "error");
               console.log("Unable to Upload data ", error);
             }
-// =======
-//           try {
-//              const response =await createApi(`products/`, ProductData);
-//              console.log("Response is Add Product", response);
-//               if (response){
-//                 resetForm();
-//                 navigation.goBack();
-//                 showSnackbar("Product Add Successfully", "success");
-//               }
-//           } catch (error) {
-//             showSnackbar(error, "error");
-//             console.log("Unable to Upload data ", error);
-// >>>>>>> faizan
+
           }
         }}
       >
@@ -214,20 +213,7 @@ const AddProduct = ({ navigation }) => {
           setFieldValue,
         }) => (
           <View style={styles.container}>
-            {/* Product Category */}
-          {/*}  <View style={{ marginBottom: 10 }}>
-              <CategoryDropDown
-                selectedCat={values.ProductCategory}
-                setSelectedCat={(categoryId) =>
-                  setFieldValue("ProductCategory", categoryId)
-                }
-              />
-              {touched.ProductCategory && errors.ProductCategory && (
-                <Text style={styles.errorText}>{errors.ProductCategory}</Text>
-              )}
-            </View>
 
-            {/* Product Name */}
             <TextInput
               label="Product Name"
               mode="flat"
@@ -301,7 +287,7 @@ const AddProduct = ({ navigation }) => {
             />
 
             {/* Stock Status (Radio Button) */}
-          {/*<View style={styles.radioGroup}>
+            {/*<View style={styles.radioGroup}>
               <Text>Is in Stock?</Text>
               <RadioButton.Group
                 onValueChange={(value) => handleChange("IsStockData")(value)}
@@ -322,11 +308,12 @@ const AddProduct = ({ navigation }) => {
                 )}
             </View> */}
 
-           
+
             {/* Submit Button */}
             <TouchableOpacity
               style={styles.submitButton}
               onPress={handleSubmit}
+            // type="submit"
             >
               <Text style={styles.submitButtonText}>Submit</Text>
             </TouchableOpacity>
@@ -394,78 +381,3 @@ const styles = StyleSheet.create({
 
 export default AddProduct;
 
-// {showHsnOptions && (
-//   <View style={styles.suggestionsContainer}>
-//     <ScrollView style={styles.suggestionsList}>
-//       {options.map((option, index) => (
-//         <React.Fragment key={index}>
-//           <List.Item
-//             // key={index}
-//             title={option.taxName}
-//             onPress={async () => {
-//               setFieldValue("HSNCode", option.taxName);
-//               setFieldValue(
-//                 "taxValue",
-//                 option.taxValue.toString()
-//               );
-//               setShowHsnOptions(false);
-//             }}
-//           ></List.Item>
-//           <Divider />
-//         </React.Fragment>
-//       ))}
-//     </ScrollView>
-//   </View>
-// )}
-
-// const fetchCategoryOptions = async (input) => {
-//   const response = await readApi(
-//     `api/productcategory/search?fields=name&q=${input}&page=1&items=10`
-//   );
-//   const data = await response;
-//   return data.result; // Adjust according to your API response
-// };
-
-// // Fetch HSN Codes
-// const fetchHsnOptions = async (input) => {
-//   const response = await readApi(
-//     `api/taxes/list?fields=taxName&q=${input}&page=1&items=10`
-//   );
-//   const data = await response;
-//   return data.result; // Adjust according to your API response
-// };
-
-// Validation Schema for Formik
-
-// const fetchOptions = async (input) => {
-//   const response = await readApi(
-//     `api/productcategory/search?fields=name&q=${input}&page=1&items=10`
-//   );
-//   const data = await response;
-//   return data.result; // Adjust according to your API response
-// };
-// const fetchHsnOptions = async (input) => {
-//   const response = await readApi(
-//     `api/taxes/list?fields=taxName&q=${input}&page=1&items=10`
-//   );
-//   const data = await response;
-//   return data.result; // Adjust according to your API response
-// };
-
-// // Fetch Category Options
-// const fetchCategoryOptions = async (input) => {
-//   const response = await readApi(
-//     `api/productcategory/search?fields=name&q=${input}&page=1&items=10`
-//   );
-//   const data = await response;
-//   return data.result;
-// };
-
-// // Fetch HSN Code Options
-// const fetchHsnOptions = async (input) => {
-//   const response = await readApi(
-//     `api/taxes/list?fields=taxName&q=${input}&page=1&items=10`
-//   );
-//   const data = await response;
-//   return data.result;
-// };

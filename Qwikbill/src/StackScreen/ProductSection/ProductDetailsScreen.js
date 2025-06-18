@@ -1,48 +1,40 @@
 import {
-  Text,
-  View,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  ScrollView,
-  RefreshControl,
-} from "react-native";
-import React, {
-  useEffect,
-  useState,
-  useContext,
   useCallback,
+  useContext,
+  useEffect,
   useRef,
+  useState,
 } from "react";
 import {
-  FAB,
-  Searchbar,
-  Portal,
-  PaperProvider,
+  FlatList,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import {
   ActivityIndicator,
+  FAB
 } from "react-native-paper";
-import Icon from "react-native-vector-icons/Ionicons";
-import CustomerDetailsCard from "../../Component/Cards/CustomerDetailsCard";
+import ProductDetailsCard from "../../Component/Cards/ProductDetailsCard";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
 import EditCustomerDetailsModal from "../../Components/Modal/EditCustomerDetailsModal";
-import ProductDetailsCard from "../../Component/Cards/ProductDetailsCard";
 // import { setProductitem } from "../../Redux/CartProductRedux/ProductSlice";
-import { setProductitem } from "../../Redux/slices/ProductSlice";
 import { useDispatch, useSelector } from "react-redux";
 // import { ProductItems } from "../../../ProductItems";
-import { deleteApi, fontSize, readApi } from "../../Util/UtilApi";
 import { useIsFocused } from "@react-navigation/native";
 import FileUploadModal from "../../Components/BulkUpload/FileUploadModal";
+import OpenmiqModal from "../../Components/Modal/Openmicmodal";
 import { ShopContext } from "../../Store/ShopContext";
 import UserDataContext from "../../Store/UserDataContext";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import OpenmiqModal from "../../Components/Modal/Openmicmodal";
-import CustomeFilterDropDown from "../../Component/CustomFilterDropDown";
+import { deleteApi, fontSize, readApi } from "../../Util/UtilApi";
+//import CustomeFilterDropDown from "../../Component/CustomFilterDropDown";
 import { useFocusEffect } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 import NoDataFound from "../../Components/NoDataFound";
 import DeleteModal from "../../UI/DeleteModal";
-import { useTranslation } from "react-i18next";
-import axios from "axios";
 
 
 

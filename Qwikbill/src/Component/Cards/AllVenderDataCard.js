@@ -1,16 +1,12 @@
-import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
-import { fontSize, getRandomImage, NORM_URL } from "../../Util/UtilApi";
-import { useContext, useEffect, useState } from "react";
-import { Card, Avatar, Divider } from "react-native-paper";
-import EvilIcons from "react-native-vector-icons/EvilIcons";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useContext, useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { Avatar, Card } from "react-native-paper";
+import { fontSize, getRandomImage, NORM_URL } from "../../Util/UtilApi";
 
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useWindowDimensions } from "react-native"; // Import the hook
 import { useNavigation } from "@react-navigation/native";
 import { debounce } from "lodash";
-import AllVendorDataScreen from "../../Screen/StackScreen/AllVendorDataScreen";
+import { useWindowDimensions } from "react-native"; // Import the hook
 import { ShopContext } from "../../Store/ShopContext";
 
 const AllVenderDataCard = ({

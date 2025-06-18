@@ -1,40 +1,27 @@
-import { React, useRef, useContext, useState, useEffect } from "react";
+import { Entypo } from "@expo/vector-icons";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
-  View,
-  Typography,
-  Text,
-  useWindowDimensions,
   StyleSheet,
-  Image,
   TouchableWithoutFeedback,
-  TouchableOpacity,
+  useWindowDimensions,
+  View
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { AuthContext } from "../Store/AuthContext";
-import { Entypo } from "@expo/vector-icons";
-import { Picker } from "@react-native-picker/picker";
-import { Button } from "react-native-paper";
-import { Ionicons } from "@expo/vector-icons";
-import { Formik } from "formik";
-import * as Yup from "yup";
-import { ToggleButton, TextInput, Card } from "react-native-paper";
 
 import DropDownList from "../UI/DropDownList";
-import { ShopDetailContext } from "../Store/ShopDetailContext";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import ItemDataTable from "../Component/Cards/ItemDataTable";
-import CreateInvoiveForm from "../Component/Form/CreateInvoiveForm";
-import { fontFamily, fontSize, readApi } from "../Util/UtilApi";
-import { ShopContext } from "../Store/ShopContext";
+//import ItemDataTable from "../Component/Cards/ItemDataTable";
 import CustomToggleButton from "../Component/CustomToggleButton";
+import CreateInvoiveForm from "../Component/Form/CreateInvoiveForm";
+import { ShopContext } from "../Store/ShopContext";
+import { fontSize, readApi } from "../Util/UtilApi";
 // import {
 //   TourGuideProvider,
 //   TourGuideZone,
 //   TourGuideZoneByPosition,
 //   useTourGuideController,
 // } from "rn-tourguide";
-import UserDataContext from "../Store/UserDataContext";
 import { useTranslation } from "react-i18next";
+import UserDataContext from "../Store/UserDataContext";
 
 
 export default function CreateInvoice({ navigation, route }) {
