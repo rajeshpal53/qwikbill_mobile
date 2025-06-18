@@ -20,13 +20,14 @@ import { ShopContext } from "../Store/ShopContext";
 import { useSnackbar } from "../Store/SnackbarContext";
 import UserDataContext from "../Store/UserDataContext";
 import { readApi } from "../Util/UtilApi";
-
-const AllItemProduct = ({ navigation }) => {
+import { useNavigation } from "@react-navigation/native";
+export default function AllItemProduct (){
   const [searchQuery, setSearchQuery] = useState("");
   const [searchmodal, setsearchmodal] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [showOverlay, setshowOverlay] = useState(false);
   const dispatch = useDispatch();
+  const navigation=useNavigation();
   // const products = useSelector((state) => state.product.products);
   const [products, setProducts] = useState(null);
   const carts = useSelector((state) => state.cart.Carts);
@@ -187,4 +188,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AllItemProduct;
