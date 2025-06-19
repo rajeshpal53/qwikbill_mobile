@@ -26,7 +26,7 @@ import { clearCart } from "../Redux/slices/CartSlice";
 import { useDownloadInvoice } from "../Util/DownloadInvoiceHandler";
 import { useTranslation } from "react-i18next";
 import { AntDesign, Feather,FontAwesome5,MaterialCommunityIcons} from "@expo/vector-icons";
-//import Pdf from 'react-native-pdf';
+import Pdf from 'react-native-pdf';
 import { WebView } from 'react-native-webview';
 import * as FileSystem from 'expo-file-system';
 const PdfScreen = ({ navigation }) => {
@@ -85,7 +85,7 @@ const PdfScreen = ({ navigation }) => {
     }
   }, [viewInvoiceData]);
   const pdfSource = {
-    uri: `${API_BASE_URL}invoice/downloadInvoice/${viewInvoiceData?.id}`, // Change to your PDF URL
+    uri:  `${API_BASE_URL}invoice/downloadInvoice/${createdInvoice?.id}`, // Change to your PDF URL
     cache: true,
   };
   const getTodaysDate = () => {
@@ -214,18 +214,33 @@ const PdfScreen = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1 }}>
+       <Pdf
+        style={{ height: "80%"  }}
+        trustAllCerts={false}
+           source={pdfSource}
+           onLoadComplete={(numberOfPages) => {
+             console.log(`PDF loaded with ${numberOfPages} pages`);
+             setIsLoading(false)
+           }}
+           onError={(error) => {
+             console.log(error,"error pdf");
+            //  showSnackbar(error,"error")
+             setIsLoading(false)
+           }}
+          
+         />
       {/* <WebView
       source={{ uri: pdfUri }}
       style={{ flex: 1}}
       originWhitelist={['*']}
     /> */}
 
-    <WebView
+    {/* <WebView
   source={{
     uri: `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(`${API_BASE_URL}invoice/downloadInvoice/${createdInvoice?.id}`)}`
   }}
   style={{ flex: 1 }}
-/>
+/> */}
      <Card style={styles.card}>
       {/* Customer Name and Amount Section */}
       <View style={styles.headerContainer}>
