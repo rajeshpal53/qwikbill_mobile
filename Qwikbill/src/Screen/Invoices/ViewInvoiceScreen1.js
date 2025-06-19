@@ -289,6 +289,7 @@ function ViewInvoiceScreen1({ navigation }) {
   const [searchModal, setSearchmodal] = useState(false);
   const [selected, setSelected] = useState("All");
   const [sortBy, setSortBy] = useState("");
+  const[dateRange,setDateRange]=useState({});
   const [date, setDate] = useState({
     startDate: new Date(),
     endDate: new Date(),
