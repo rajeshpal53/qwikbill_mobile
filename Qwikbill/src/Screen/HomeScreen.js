@@ -69,14 +69,15 @@ export default function HomeScreen({ navigation, noItemData }) {
   const [refreshing, setRefreshing] = useState(false);
   const [userSkipped, setUserSkipped] = useState(false);
   const [ready, setReady] = useState(false);
+  const [selectedYear, setSelectedYear] = useState('2025');
+  const [selectedMonth, setSelectedMonth] = useState('');
 
 
   useEffect(() => {
 
-    console.log("all services ,", services);
-    console.log("all services isLoading,", allShops);
+    console.log(" slected shop  isss ", selectedShop);
 
-  }, [allShops]);
+  }, [selectedShop]);
 
   useEffect(() => {
     if (noItemModal) {
@@ -84,7 +85,8 @@ export default function HomeScreen({ navigation, noItemData }) {
     }
   }, [noItemModal]);
 
-  console.log("jayessssh tokennn ,",userData?.token)
+  console.log("jayessssh tokennn ,", userData?.token)
+  console.log("jayessssh userData ,", userData)
 
   useEffect(() => {
     const checkTourStatus = async () => {
@@ -113,8 +115,8 @@ export default function HomeScreen({ navigation, noItemData }) {
 
 
   useEffect(() => {
- console.log(`vendor id isss ${userData?.user?.mobile} `)
-  },[])
+    console.log(`vendor id isss ${userData?.user?.mobile} `)
+  }, [])
 
   useEffect(() => {
     const getItem = async () => {
@@ -131,41 +133,91 @@ export default function HomeScreen({ navigation, noItemData }) {
     getItem();
   }, []);
 
-  useEffect(()=>{
+  // useEffect(() => {
+
+  //   const fetchVendorStaus = async () => {
+  //     try {
+
+  //       const id = selectedShop?.vendor?.id
+  //       setIsLoading(true);
+  //       setVendorStatus({});
+
+  //       const response = await readApi(
+  //         `invoice/getVendorStats/${id}`
+  //       );
+
+  //       if (response && response.success) {
+  //         console.log("Dashboard Vendor Status Response:", response);
+  //         console.log(` api isss ${API_BASE_URL}invoice/getVendorStats/${selectedShop?.vendor?.id}`)
+  //         setVendorStatus({ ...response });
+  //         await AsyncStorage.setItem("vendorStatus", JSON.stringify(response));
+  //       } else {
+  //         console.log("Something went wrong, please try again!");
+  //         setVendorStatus({});
+  //         await AsyncStorage.removeItem("vendorStatus"); // Clear AsyncStorage on error
+  //       }
+  //     } catch (error) {
+  //       console.log("Unable to get vendor dashboard data", error);
+  //       setVendorStatus({});
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+
+  //   fetchVendorStaus()
+
+  // }, [])
+
+
+
+
+  useEffect(() => {
 
     const fetchVendorStaus = async () => {
-    try {
-
-      const id = selectedShop?.vendor?.id
       setIsLoading(true);
-      setVendorStatus({});
+      try {
+        const id = selectedShop?.vendor?.id
 
-      const response = await readApi(
-        `invoice/getVendorStats/${id}`
-      );
 
-      if (response && response.success) {
-        console.log("Dashboard Vendor Status Response:", response);
-        console.log(` api isss ${API_BASE_URL}invoice/getVendorStats/${selectedShop?.vendor?.id}`)
-        setVendorStatus({ ...response });
-        await AsyncStorage.setItem("vendorStatus", JSON.stringify(response));
-      } else {
-        console.log("Something went wrong, please try again!");
-        setVendorStatus({});
-        await AsyncStorage.removeItem("vendorStatus"); // Clear AsyncStorage on error
+        if (!userData?.token) {
+          console.error('Token not found in user data');
+          setIsLoading(false);
+          return;
+        }
+
+        const apiUrl = `https://qwikbill.in/qapi/invoice/getVendorStats?year=${selectedYear}&usersfk=${id}${selectedMonth ? `&month=${selectedMonth}` : ''
+          }`;
+
+        console.log(`API URL: ${apiUrl}`); // Log the API URL for debugging
+
+        const response = await fetch(apiUrl, {
+          headers: {
+            Authorization: `Bearer ${userData?.token}`,
+          },
+        });
+
+        const json = await response.json();
+        console.log('API Response:', json);
+
+        if (json.success) {
+          setVendorStatus({
+            ...json,
+            monthlyRevenue: json.monthlyRevenue || [],
+          });
+        } else {
+          console.error('API success is false');
+        }
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.log("Unable to get vendor dashboard data", error);
-      setVendorStatus({});
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
 
-  fetchVendorStaus()
+    fetchVendorStaus();
+  }, []);
 
-  },[])
-  
+
 
   // useEffect(() => {
 
@@ -188,11 +240,11 @@ export default function HomeScreen({ navigation, noItemData }) {
 
 
   const total =
-    (vendorStatus?.totalSales || 0) +
-    (vendorStatus?.numberOfProducts || 0) +
-    (vendorStatus?.activeInvoices || 0) +
-    (vendorStatus?.newCustomers || 0) +
-    (vendorStatus?.totalInvoices || 0);
+    (vendorStatus?.totalRevenue|| 0) +
+    (vendorStatus?.amountPaid || 0) +
+    (vendorStatus?.amountRemaining || 0) +
+    (vendorStatus?.activeInvoices|| 0) 
+    
 
   const goToHandler = (Screen) => {
     // navigation.navigate("wertone", {screen:'CreateInvoice'});
@@ -268,11 +320,10 @@ export default function HomeScreen({ navigation, noItemData }) {
             {allShops && allShops.length > 0 && vendorStatus?.numberOfProducts != 0 && (
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View style={{ flexDirection: "row", gap: 7, height: height * 0.09, marginVertical: "4%", }}>
-                  <StatCard title="Total Sales" value={`₹ ${vendorStatus?.totalSales ?? "N/A"}`} />
-                  <StatCard title="Total Products" value={vendorStatus?.numberOfProducts ?? "N/A"} />
-                  <StatCard title="Active Invoices" value={vendorStatus?.activeInvoices ?? "N/A"} />
-                  <StatCard title="New Customers" value={vendorStatus?.newCustomers ?? "N/A"} />
-                  <StatCard title="Total Invoices" value={vendorStatus?.totalInvoices ?? "N/A"} />
+                  <StatCard title="Total Sales" value={`₹ ${vendorStatus?.totalRevenue ?? "N/A"}`} />
+                  <StatCard title="Total Products" value={vendorStatus?.amountPaid ?? "N/A"} />
+                  <StatCard title="Active Invoices" value={vendorStatus?.amountRemaining ?? "N/A"} />
+                  <StatCard title="New Customers" value={vendorStatus?.activeInvoices?? "N/A"} />
                 </View>
               </ScrollView>
             )}
@@ -596,10 +647,11 @@ const styles = StyleSheet.create({
   },
   flatListitem: {
     // borderWidth:2,
-    marginTop: 10,
+    marginTop: 4,
     paddingVertical: 8,
     flex: 1,
-    //  backgroundColor: "pink"
+    // marginBottom:1,
+    // backgroundColor: "pink"
   },
   chartContainer: {
     alignItems: "center",

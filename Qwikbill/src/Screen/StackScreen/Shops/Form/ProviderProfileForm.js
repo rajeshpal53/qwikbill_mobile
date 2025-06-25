@@ -6,6 +6,7 @@ import GenericDropdown from "../../../../UI/DropDown/GenericDropDown";
 import ServiceImagePicker from "../../../../Components/ServiceImagePicker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { useSnackbar } from "../../../../Store/SnackbarContext";
 
 const ProviderProfileForm = ({
   title,
@@ -29,6 +30,8 @@ const ProviderProfileForm = ({
   const [showDateTimePicker, setShowDateTimePicker] = useState(false);
   const [whatsappNumberSameChecked, setWhatsappNumberSameChecked] =
     useState(false);
+  const { showSnackbar } = useSnackbar();
+
   const { t } = useTranslation();
 
   const handleSelectGender = (genderValue) => {
@@ -70,9 +73,17 @@ const ProviderProfileForm = ({
               {errors.profileImage}
             </Text>
           )}
+          {
+            !values?.profileImage &&(
+            showSnackbar("Profile image is required.", "error")
+
+          )}
 
         </View>
         {/* </Card> */}
+
+        {console.log("proiileImage iss , ", values?.profileImage)}
+
 
         <TextInput
           label={t("Name") + " *"}
@@ -97,6 +108,7 @@ const ProviderProfileForm = ({
           mode={textInputMode}
           style={styles.input}
           onChangeText={handleChange("mobile")}
+          keyboardType="numeric"
           maxLength={10}
           onBlur={handleBlur("mobile")}
           value={values.mobile}
@@ -128,7 +140,7 @@ const ProviderProfileForm = ({
       <View>
         <TextInput
           style={styles.input}
-          label={t("WhatsApp Number")}
+          label={t("WhatsApp Number *")}
           mode={textInputMode}
           keyboardType="numeric"
           onChangeText={handleChange("whatsappNumber")}
@@ -164,7 +176,7 @@ const ProviderProfileForm = ({
             pickerContainerStyle={styles.pickerContainerStyle}
             pickerStyle={styles.pickerStyle}
             containerStyle={styles.containerStyle}
-            label="Gender"
+            label={"Gender" + " *"}
             options={genderList}
             selectedValue={selectedGender}
             onValueChange={handleSelectGender}
@@ -177,7 +189,7 @@ const ProviderProfileForm = ({
 
       <View>
         <View style={styles.dateTitle}>
-          <Text style={styles.dateTitleText}>DOB</Text>
+          <Text style={styles.dateTitleText}>Date Of Birth</Text>
 
           <Pressable
             onPress={() => setShowDateTimePicker(true)}

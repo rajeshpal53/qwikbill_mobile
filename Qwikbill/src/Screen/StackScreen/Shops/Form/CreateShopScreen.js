@@ -127,11 +127,11 @@ const ProfileValidationSchema = Yup.object().shape({
   dob: Yup.date()
     .nullable()
     .notRequired()
-    .test("min-age", "Age must be at least 5 years", function (value) {
+    .test("min-age", "Age must be at least 12 years", function (value) {
       if (!value) return true; // skip validation if empty
       const today = new Date();
       const age = today.getFullYear() - value.getFullYear();
-      return age >= 5;
+      return age >= 12;
     }),
 
   //------------------------------------------------

@@ -305,6 +305,7 @@ const AddRole = () => {
                 }}
                 value={values.userMobile}
                 keyboardType="phone-pad"
+                maxLength={10}
                 right={
                   values.userMobile ? (
                     <TextInput.Icon

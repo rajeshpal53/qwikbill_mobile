@@ -1,5 +1,6 @@
 import {
   FontAwesome5,
+  FontAwesome,
   Ionicons,
   MaterialCommunityIcons,
   MaterialIcons
@@ -7,10 +8,10 @@ import {
 
 
 export const rolePermissions = {
-  owner: ["Create Invoice", "Add Product", "Add Shop","View Your Shops","Transactions","Product Upload","View Customer", "UserAccounts"],
-  manager: ["Create Invoice", "Add Product","View Your Shops","Transactions","Product Upload","View Customer"],
-  employee:["Create Invoice","View Your Shops","Transactions","View Customer", "UserAccounts"],
-  viewer: ["View Your Shops", "Transactions","View Customer", "UserAccounts"], 
+  owner: ["Create Invoice", "Add Product", "Add Shop","View Your Shops","Transactions","Product Upload","View Customer", "Accounts Dashboard"],
+  manager: ["Create Invoice", "Add Product","View Your Shops","Transactions","Product Upload","View Customer", "Accounts Dashboard"],
+  employee:["Create Invoice","View Your Shops","Transactions","View Customer", "Accounts Dashboard"],
+  viewer: ["View Your Shops", "Transactions","View Customer", "Accounts Dashboard"], 
 };
 export const services = [
   {
@@ -92,8 +93,10 @@ export const services = [
     navigateTo: "Customer",
   },
   {
-    name: "UserAccounts",
-    icon: <FontAwesome5 name="user-cog" size={30} color="#26a0df" />,
+    name: "Accounts Dashboard",
+   // icon: <FontAwesome name="dashboard"  size={30}   color="#26a0df"/>,
+    icon: <MaterialIcons name="dashboard"  size={30}   color="#26a0df"/>,
+
     key: "9",
     navigateTo: "UserAccounts",
   },

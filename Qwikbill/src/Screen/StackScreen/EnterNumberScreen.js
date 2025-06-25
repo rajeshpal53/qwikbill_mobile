@@ -304,82 +304,83 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
     setIsTimerRunning(true); // Start the timer
   };
 
-  // Step 1: Send OTP
-  // const sendOtp = async (phoneNumber) => {
-  //   try {
-  //     setIsLoading(true);
-  //     console.log("debugg22222");
-  //     // log.info("debugg22222");
+ // Step 1: Send OTP
 
-  //     startTimer(30); // Start the timer
-  //     const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
-  //     console.log("confirmation", JSON.stringify(confirmation));
-  //     setConfirm(confirmation);
-  //     //   setConfirm(true);
-  //     setAutoVerification(true); // Set auto-verification flags
-  //     console.log("debugg33333");
-  //     setAutoVerification(false); // Reset auto-verification flag
-  //     // Alert.alert(
-  //     //   "OTP Sent!",
-  //     //   "Check your messages for the verification code."
-  //     // );
-  //     showSnackbar(
-  //       "OTP Sent! Check your messages for the verification code.",
-  //       "success"
-  //     );
-  //   } catch (error) {
-  //     // Alert.alert("Error", error.message);
-  //     showSnackbar(`OTP Sent failed ${error}`, "error");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  const sendOtp = async (phoneNumber) => {
+    try {
+      setIsLoading(true);
+      console.log("debugg22222");
+      // log.info("debugg22222");
 
-
-
-  // Step 2: Confirm OTP (Fallback for Manual Entry)
-
-  // const confirmOtp = async () => {
-  //   if (otp.length === 0) {
-  //     setOtpError(true);
-  //     return;
-  //   }
-  //   console.log(otp, "otp");
-  //   // log.info("Confirrm Otp Start ");
-  //   if (otp.length !== 6 || otp === "") {
-  //     setOtpError(true);
-  //     console.log(`ddsdddsdsd`);
-  //     return;
-  //   }
-  //   setIsDisabled(true);
-  //   setTimeout(() => {
-  //     setIsDisabled(false);
-  //   }, 10000); // 10 seconds
-  //   try {
-  //     if (confirm) {
-  //       console.log("debugg66666");
-  //       const userCredential = await confirm.confirm(otp);
-  //       console.log(userCredential, "djdjdjdj"); // Verifies the OTP
-  //       const user = userCredential.user; // Authenticated user object
-  //       // Fetch the ID token for backend verification
-  //       const idToken = await user.getIdToken();
-  //       setIdToken(idToken);
-  //       console.log("debugg77777 pra", user, idToken);
-  //       setPasswordModalVisible(true);
+      startTimer(30); // Start the timer
+      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
+      console.log("confirmation", JSON.stringify(confirmation));
+      setConfirm(confirmation);
+      //   setConfirm(true);
+      setAutoVerification(true); // Set auto-verification flags
+      console.log("debugg33333");
+      setAutoVerification(false); // Reset auto-verification flag
+      // Alert.alert(
+      //   "OTP Sent!",
+      //   "Check your messages for the verification code."
+      // );
+      showSnackbar(
+        "OTP Sent! Check your messages for the verification code.",
+        "success"
+      );
+    } catch (error) {
+      // Alert.alert("Error", error.message);
+      showSnackbar(`OTP Sent failed ${error}`, "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
 
-  //       // const isIdTokenValidate = await idTokenValidate(idToken);
 
-  //       // if (isIdTokenValidate) {
+ // Step 2: Confirm OTP (Fallback for Manual Entry)
 
-  //       // }
-  //     }
-  //   } catch (error) {
-  //     // Alert.alert("Invalid Code", "The code you entered is incorrect.");
-  //     // showSnackbar("Invalid Otp ", "error");
-  //     showSnackbar(` Failed to Login ${error}`, "error");
-  //   }
-  // };
+  const confirmOtp = async () => {
+    if (otp.length === 0) {
+      setOtpError(true);
+      return;
+    }
+    console.log(otp, "otp");
+    // log.info("Confirrm Otp Start ");
+    if (otp.length !== 6 || otp === "") {
+      setOtpError(true);
+      console.log(`ddsdddsdsd`);
+      return;
+    }
+    setIsDisabled(true);
+    setTimeout(() => {
+      setIsDisabled(false);
+    }, 10000); // 10 seconds
+    try {
+      if (confirm) {
+        console.log("debugg66666");
+        const userCredential = await confirm.confirm(otp);
+        console.log(userCredential, "djdjdjdj"); // Verifies the OTP
+        const user = userCredential.user; // Authenticated user object
+        // Fetch the ID token for backend verification
+        const idToken = await user.getIdToken();
+        setIdToken(idToken);
+        console.log("debugg77777 pra", user, idToken);
+        setPasswordModalVisible(true);
+
+
+        // const isIdTokenValidate = await idTokenValidate(idToken);
+
+        // if (isIdTokenValidate) {
+
+        // }
+      }
+    } catch (error) {
+      // Alert.alert("Invalid Code", "The code you entered is incorrect.");
+      // showSnackbar("Invalid Otp ", "error");
+      showSnackbar(` Failed to Login ${error}`, "error");
+    }
+  };
 
   const closeModal = () => {
     setPasswordModalVisible(false);

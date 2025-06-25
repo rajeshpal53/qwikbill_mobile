@@ -68,9 +68,9 @@ export default function CreateInvoice({ navigation, route }) {
   //   { label: 'Right', value: 'right' },
   // ];
   const toggleOptions = [
-    { value: "provisional", label: "Prov Invoice" },
-    { value: "gst", label: "GST Invoice" },
-    { value: "Quatation", label: "Quatation" },
+        { value: "Quatation", label: "Quatation" },
+    { value: "provisional", label: "Provisional " },
+    { value: "gst", label: "GST " },
   ];
 
   //----------------------------------------------------

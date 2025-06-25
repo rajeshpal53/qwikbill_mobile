@@ -192,6 +192,8 @@ const EditCustomerDetailsModal = ({
 
               <TextInput
                 label="Enter Phone Number"
+                keyboardType="numeric"
+                maxLength={10}
                 value={values.number}
                 onChangeText={handleChange("number")}
                 onBlur={handleBlur("number")}

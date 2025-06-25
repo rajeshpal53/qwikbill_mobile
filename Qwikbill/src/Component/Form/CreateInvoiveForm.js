@@ -423,6 +423,8 @@ try {
               <TextInput
                 label="Phone"
                 mode="flat"
+                keyboardType="phone-pad"
+                 maxLength={10}
                 style={styles.input}
                 // onChangeText={handleChange("phone")}
                 onChangeText={async (phoneNumber) => {

@@ -1,13 +1,16 @@
 import { Picker } from '@react-native-picker/picker';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useCallback } from 'react';
+import { useFocusEffect, } from '@react-navigation/native';
+//import ShopContext from '../../Store/ShopContext';
+import { ShopContext } from '../../Store/ShopContext';
 import {
-    ActivityIndicator,
-    Dimensions,
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  ActivityIndicator,
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 import { LineChart, PieChart } from 'react-native-chart-kit';
 import UserDataContext from '../../Store/UserDataContext';
@@ -17,53 +20,66 @@ const screenWidth = Dimensions.get('window').width;
 const UserAccounts = () => {
 
   const { userData } = useContext(UserDataContext);
+   const { allShops, selectedShop, noItemModal, setNoItemModal } =
+      useContext(ShopContext);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState('2025');
   const [selectedMonth, setSelectedMonth] = useState('');
-  useEffect(() => {
-    const loadStats = async () => {
-      setLoading(true);
-      try {
-        const user = await userData;
-        const token = user?.token;
 
-        if (!token) {
-          console.error('Token not found in user data');
-          setLoading(false);
-          return;
-        }
+   useEffect(() => {
+  
+      console.log(" slected shoppp  isss ", selectedShop);
+  
+    }, [selectedShop]);
 
-        const apiUrl = `https://qwikbill.in/qapi/invoice/getVendorStats?year=${selectedYear}&vendorfk=1${
-          selectedMonth ? `&month=${selectedMonth}` : ''
-        }`;
+  useFocusEffect(
+    useCallback(() => {
+      const loadStats = async () => {
+        setLoading(true);
+        try {
+          const user = await userData;
+          const token = user?.token;
+          const id = selectedShop?.user?.id
 
-        const response = await fetch(apiUrl, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+          console.log("vendorrr is ", id)
 
-        const json = await response.json();
-        console.log('API Response:', json);
 
-        if (json.success) {
-          setStats({
-            ...json,
-            monthlyRevenue: json.monthlyRevenue || [],
+          if (!token) {
+            console.error('Token not found in user data');
+            setLoading(false);
+            return;
+          }
+
+          const apiUrl = `https://qwikbill.in/qapi/invoice/getVendorStats?year=${selectedYear}&usersfk=${id}${selectedMonth ? `&month=${selectedMonth}` : ''
+            }`;
+
+          const response = await fetch(apiUrl, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           });
-        } else {
-          console.error('API success is false');
-        }
-      } catch (error) {
-        console.error('Error fetching stats:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    loadStats();
-  }, [selectedYear, selectedMonth]);
+          const json = await response.json();
+          console.log('API Response:', json);
+
+          if (json.success) {
+            setStats({
+              ...json,
+              monthlyRevenue: json.monthlyRevenue || [],
+            });
+          } else {
+            console.error('API success is false');
+          }
+        } catch (error) {
+          console.error('Error fetching stats:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      loadStats();
+    }, [selectedYear, selectedMonth]) // re-run when year or month changes
+  );
 
   if (loading) {
     return <ActivityIndicator size="large" color="#002B5B" style={{ marginTop: 50 }} />;
@@ -78,14 +94,14 @@ const UserAccounts = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.headerSection}>
+      {/* <View style={styles.headerSection}>
         <View>
           <Text style={styles.headerTitle}>Vendor</Text>
           <Text style={styles.headerTitle}>Financial</Text>
           <Text style={styles.headerTitle}>Overview</Text>
         </View>
         <Image source={require('../../../assets/qwikBill.jpeg')} style={styles.headerImage} />
-      </View>
+      </View> */}
 
       {/* Year & Month Picker */}
       <View style={styles.pickerContainer}>
@@ -236,6 +252,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 5,
     color: '#002B5B',
+    // textAlign:"center"
+    marginLeft: 6
   },
   cardContainer: {
     flexDirection: 'row',

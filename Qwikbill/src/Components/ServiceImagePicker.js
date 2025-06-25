@@ -8,7 +8,7 @@ import {
 } from "react-native";
 // import ImageResizer from "react-native-image-resizer";
 //import ImageResizer from "react-native-image-resizer";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons"; // For icons
+import { Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons"; // For icons
 import Entypo from "@expo/vector-icons/Entypo";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
@@ -69,44 +69,45 @@ export default function ServiceImagePicker({
   }, []);
 
   // Function to compress the image without changing the dimensions
-  // const compressImageToTargetSize = async (
-  //   uri,
-  //   targetSizeMB,
-  //   initialQuality = 100
-  // ) => {
-  //   try {
-  //     let quality = initialQuality; // Start with high quality
-  //     let compressedUri = uri;
-  //     let fileSize = await getImageFileSizeInMB(compressedUri);
 
-  //     console.log("file size one time is ", fileSize);
+  const compressImageToTargetSize = async (
+    uri,
+    targetSizeMB,
+    initialQuality = 100
+  ) => {
+    try {
+      let quality = initialQuality; // Start with high quality
+      let compressedUri = uri;
+      let fileSize = await getImageFileSizeInMB(compressedUri);
 
-  //     // Keep reducing the quality until we reach the target size or quality becomes too low
-  //     while (fileSize > targetSizeMB && quality > 10) {
-  //       const resizedImage = await ImageResizer.createResizedImage(
-  //         compressedUri,
-  //         // Keep original dimensions (no resizing)
-  //         800, // a large number for width, to maintain the original dimensions
-  //         800, // a large number for height, to maintain the original dimensions
-  //         format, // Use JPEG format for compression
-  //         quality - 10, // Adjust compression quality
-  //         0, // No rotation
-  //         null // No specific path, use default location
-  //       );
+      console.log("file size one time is ", fileSize);
 
-  //       compressedUri = resizedImage.uri;
-  //       fileSize = await getImageFileSizeInMB(compressedUri);
-  //       console.log("fileSize is, ", fileSize);
-  //       //
-  //       quality -= 10; // Reduce quality by 10 each time
-  //     }
+      // Keep reducing the quality until we reach the target size or quality becomes too low
+      while (fileSize > targetSizeMB && quality > 10) {
+        const resizedImage = await ImageResizer.createResizedImage(
+          compressedUri,
+          // Keep original dimensions (no resizing)
+          800, // a large number for width, to maintain the original dimensions
+          800, // a large number for height, to maintain the original dimensions
+          format, // Use JPEG format for compression
+          quality - 10, // Adjust compression quality
+          0, // No rotation
+          null // No specific path, use default location
+        );
 
-  //     return compressedUri; // Return the compressed image URI
-  //   } catch (error) {
-  //     console.error("Error compressing image:", error);
-  //     return uri; // Return the original URI if compression fails
-  //   }
-  // };
+        compressedUri = resizedImage.uri;
+        fileSize = await getImageFileSizeInMB(compressedUri);
+        console.log("fileSize is, ", fileSize);
+        //
+        quality -= 10; // Reduce quality by 10 each time
+      }
+
+      return compressedUri; // Return the compressed image URI
+    } catch (error) {
+      console.error("Error compressing image:", error);
+      return uri; // Return the original URI if compression fails
+    }
+  };
 
   // Helper function to calculate file size in MB
   const getImageFileSizeInMB = async (uri) => {
@@ -285,7 +286,7 @@ export default function ServiceImagePicker({
                   source={{
                     uri: imageUrl || "https://via.placeholder.com/150" || "",
                     headers: { Accept: "*/*" },
-                   // priority: FastImage.priority.high,
+                    // priority: FastImage.priority.high,
                     // cache: FastImage.cacheControl.web,
                   }}
                   style={[styles.imagePreview, imageSize]}
@@ -348,15 +349,22 @@ export default function ServiceImagePicker({
       >
         <View style={styles.modalContent}>
           <View style={{ padding: 10, gap: 10 }}>
-            <Text
-              style={{
-                fontSize: fontSize.headingSmall,
-                fontFamily: "Poppins-SemiBold",
-                color: "rgba(0, 0, 0, 0.7)",
-              }}
-            >
-              Select Option
-            </Text>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+
+              <Text
+                style={{
+                  fontSize: fontSize.headingSmall,
+                  fontFamily: "Poppins-SemiBold",
+                  color: "rgba(0, 0, 0, 0.7)",
+                }}
+              >
+                Select Option
+              </Text>
+              <TouchableOpacity onPress={closeModal} style={{ padding: 3 ,backgroundColor:"rgba(0, 0, 0, 0.1)", borderRadius:10}}>
+              <Ionicons name="close" size={30} color="gray" />
+              </TouchableOpacity>
+
+            </View>
 
             <View>
               {camera &&
@@ -402,22 +410,24 @@ export default function ServiceImagePicker({
               <Divider />
 
 
-              <TouchableOpacity
-                style={{ minHeight: 48, justifyContent: "center" }}
-                onPress={() => {
-                  closeModal();
-                  removeImage();
-                }}
-              >
-                <Text
-                  style={{
-                    fontFamily: "Poppins-Regular",
-                    color: "rgba(0, 0, 0, 0.7)",
+              {imageUrl &&
+                <TouchableOpacity
+                  style={{ minHeight: 48, justifyContent: "center" }}
+                  onPress={() => {
+                    closeModal();
+                    removeImage();
                   }}
                 >
-                  3. Remove Image
-                </Text>
-              </TouchableOpacity>
+                  <Text
+                    style={{
+                      fontFamily: "Poppins-Regular",
+                      color: "rgba(0, 0, 0, 0.7)",
+                    }}
+                  >
+                    3. Remove Image
+                  </Text>
+                </TouchableOpacity>
+              }
             </View>
           </View>
         </View>
@@ -504,5 +514,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     elevation: 5,
     marginHorizontal: 10,
+    borderRadius: 12
   },
 });

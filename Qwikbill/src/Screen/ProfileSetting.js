@@ -278,12 +278,13 @@ const ProfileSetting = ({
             ].filter(Boolean) // << THIS REMOVES null SAFELY
 
             : []),
+          { icon: "chat", label: "QwikBill Assistant", value: "ChatWithUs" },
+
 
           ...(userData
             ? [{ icon: "logout", label: "Logout", value: "Logout" }]
             : []),
 
-          {  icon :"chat",label: "Chat With Us?", value: "ChatWithUs" },
 
           { label: "Need more help?", value: "needMoreHelp" },
 
@@ -498,6 +499,7 @@ const ProfileSetting = ({
               refreshing={refreshing}
               onRefresh={onRefresh}
               colors={["#0a6846"]}
+              //  #26a0df
               progressBackgroundColor={"#fff"}
             />
           }
@@ -598,8 +600,8 @@ const ProfileSetting = ({
                           /> */}
                             <MaterialIcons name="support-agent" size={24} color="black" />
                             <View style={{ flex: 1 }}>
-                              <Text style={{ fontFamily: "Poppins-Medium" }}>{t("24x7 support")}</Text>
-                              <Text style={{ fontFamily: "Poppins-Regular", color: "rgba(0, 0, 0, 0.5)", fontSize: fontSize.label }}>{t("Talk to us in your language")}</Text>
+                              <Text style={{ fontFamily: "Poppins-Medium" }}>{t("Feedback and Help")}</Text>
+                              <Text style={{ fontFamily: "Poppins-Regular", color: "rgba(0, 0, 0, 0.5)", fontSize: fontSize.label }}>{t("Contact us for your query and support")}</Text>
                             </View>
 
                             <Text style={{ fontFamily: "Poppins-Medium", color: "#007BFF" }}>{t("Support")}</Text>
@@ -618,7 +620,8 @@ const ProfileSetting = ({
                         <Icon
                           name={item.icon}
                           size={24}
-                          color="#27ae60"
+                          color="#26a0df"
+                          // #26a0df
                           style={styles.icon}
                         />
                         <Text style={styles.label}>{t(item.label)}</Text>
@@ -660,7 +663,7 @@ const ProfileSetting = ({
       {visible && (
         <ConfirmModal
           visible={visible}
-          message="are you sure you want to logout"
+          message="Are you sure you want to log out ?"
           heading={"Confirm Logout"}
           setVisible={setVisible}
           handlePress={logoutHandler}
