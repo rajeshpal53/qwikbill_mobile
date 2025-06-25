@@ -7,7 +7,18 @@ import { Picker } from '@react-native-picker/picker';
 const GenericDropdown = ({ label, dropDownlabelStyle, options, selectedValue, onValueChange, containerStyle, pickerContainerStyle, pickerStyle, fontStyles }) => {
   return (
     <View style={containerStyle}>
-      {label && <Text style={[styles.label, dropDownlabelStyle]}>{label}</Text>}
+{label && (
+  <Text style={[styles.label, dropDownlabelStyle]}>
+    {typeof label === 'string' && label.includes('*') ? (
+      <>
+        {label.replace('*', '')}
+        <Text style={{ }}>*</Text>
+      </>
+    ) : (
+      label
+    )}
+  </Text>
+)}
       <View style={
         [
           // styles.container, 

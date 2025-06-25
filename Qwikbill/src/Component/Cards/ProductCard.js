@@ -38,62 +38,37 @@ const ProductCardDetails = ({ item }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <Card style={styles.card}>
-        <View style={styles.mainContainer}>
-          <View style={styles.container}>
-            {/* Product Details */}
-            <View style={styles.detailsContainer}>
-              <Text style={styles.productName}>{item?.name}</Text>
-              <Text style={styles.productInfo}>cost Price = ₹ {item?.costPrice}</Text>
-              <Text style={styles.productInfo}>sell Price = ₹ {item?.sellPrice}</Text>
-              <Text style={styles.productInfo}>{item?.isStock ? "in stock" : "out of stock"}</Text>
-              {/* <Text style={styles.productPrice}>₹ {item.Price}</Text> */}
-            </View>
-          </View>
+     <Card style={styles.card}>
+  <View style={styles.cardContent}>
+    <View style={styles.detailsWrapper}>
+      <Text style={styles.productName}>{item?.name}</Text>
+      <Text style={styles.productInfo}>Cost Price: ₹{item?.costPrice}</Text>
+      <Text style={styles.productInfo}>Sell Price: ₹{item?.sellPrice}</Text>
+    </View>
 
-          {/* Add Button Positioned at the Bottom */}
-          <View style={styles.ButtonAndDeleteView}>
-            {isInCart ? (
-              <>
-                <View
-                  style={{
-                    justifyContent: "space-between",
-                    flex: 1,
-                    alignItems: "center",
-                    marginVertical: 5,
-                  }}
-                >
-                  {/* Remove from Cart Button */}
-                  <View>
-                    <TouchableOpacity
-                      style={styles.removeButton}
-                      onPress={() => handleDeletetocart(item)}
-                    >
-                      <MaterialIcons name="delete" size={25} color="red" />
-                    </TouchableOpacity>
-                  </View>
-                  <View
-                    style={{
-                      justifyContent: "flex-end",
-                      alignItems: "flex-end",
-                    }}
-                  >
-                    {/* Increment/Decrement Controls */}
-                    <IncAndDicButton item={isInCart} />
-                  </View>
-                </View>
-              </>
-            ) : (
-              <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => handleAddToCart(item)}
-              >
-                <Text style={styles.addButtonText}>Add</Text>
-              </TouchableOpacity>
-            )}
-          </View>
+    <View style={styles.actionWrapper}>
+      {isInCart ? (
+        <View style={styles.inCartActions}>
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={() => handleDeletetocart(item)}
+          >
+            <MaterialIcons name="delete" size={24} color="#ff4d4f" />
+          </TouchableOpacity>
+          <IncAndDicButton item={isInCart} />
         </View>
-      </Card>
+      ) : (
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => handleAddToCart(item)}
+        >
+          <Text style={styles.addButtonText}>Add to Cart</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  </View>
+</Card>
+
     </ScrollView>
   );
 };
@@ -104,93 +79,64 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   card: {
-    elevation: 4,
-    borderRadius: 10,
-    backgroundColor: "#fff",
-    marginHorizontal: 10,
-    // marginVertical: 2,
-    // borderWidth:1
-  },
-  mainContainer: {
-    flexDirection: "row",
-    // paddingHorizontal: 5,
-    // paddingVertical: 10,
-    marginVertical: 15,
-  },
-  container: {
-    // flexDirection: "row",
-    flex: 1,
-  },
-  detailsContainer: {
-    marginLeft: 15,
-    // justifyContent: "center",
-    flex: 1,
-  },
-  productName: {
-    fontWeight: "bold",
-    // color: "#333",
-    marginVertical: 5,
-    fontFamily: "Poppins-Bold",
-    fontSize: fontSize.headingSmall,
-  },
-  productInfo: {
-    color: "#666",
-    marginTop: 4,
-    marginVertical: 2,
-    fontFamily: "Poppins-Medium",
-    fontSize: fontSize.labelMedium,
-  },
-  productPrice: {
-    fontSize: 16,
-    // fontWeight: "bold",
-    color: "#000",
-    marginVertical: 5,
-    fontFamily: "Poppins-Medium",
-    fontSize: fontSize.labelLarge,
-  },
-  textButtonView: {
-    marginTop: 10,
-    // flexDirection: "row",
-    // alignItems: "center",
-    justifyContent: "space-between",
-  },
-  addButton: {
-    backgroundColor: ButtonColor.SubmitBtn,
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 5,
-  },
-  addButtonText: {
-    color: "#fff",
-    // fontWeight: "bold",
-    // fontSize: 14,
-    fontSize: fontSize.labelMedium,
-    fontFamily: "Poppins-Medium",
-  },
-  quantityControlContainer: {
-    // flexDirection: "row",
-    // alignItems: "center",
-  },
-  quantityButton: {
-    backgroundColor: "#f0f0f0",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 5,
-    marginHorizontal: 10,
-  },
-  quantityButtonText: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  quantityText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  ButtonAndDeleteView: {
-    justifyContent: "flex-end",
-    marginRight: 8,
-  },
+  borderRadius: 16,
+  margin: 10,
+  backgroundColor: '#fff',
+  elevation: 5,
+  shadowColor: '#000',
+  shadowOpacity: 0.1,
+  shadowOffset: { width: 0, height: 2 },
+  shadowRadius: 8,
+},
+cardContent: {
+  flexDirection: 'column',
+  padding: 16,
+},
+detailsWrapper: {
+  marginBottom: 12,
+},
+productName: {
+  fontSize: 18,
+  fontFamily: 'Poppins-Bold',
+  color: '#333',
+  marginBottom: 4,
+},
+productInfo: {
+  fontSize: 14,
+  fontFamily: 'Poppins-Medium',
+  color: '#666',
+  marginVertical: 2,
+},
+actionWrapper: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+},
+inCartActions: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: 10,
+},
+iconButton: {
+  backgroundColor: '#fce4e4',
+  padding: 8,
+  borderRadius: 8,
+},
+addButton: {
+  backgroundColor: ButtonColor.SubmitBtn,
+  paddingVertical: 10,
+  paddingHorizontal: 20,
+  borderRadius: 8,
+  width:"50%",
+  alignItems: 'center',
+  justifyContent: 'center',
+},
+addButtonText: {
+  color: '#fff',
+  fontFamily: 'Poppins-Medium',
+  fontSize: 14,
+},
+
 });
 
 export default ProductCardDetails;

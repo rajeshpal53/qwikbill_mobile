@@ -36,19 +36,19 @@ const minAgeDate = new Date(
 const validationSchema = Yup.object().shape({
   // profileImage: Yup.mixed().required("Profile image is required"),
   name: Yup.string()
-    .required("name is required")
-    .min(2, "name atleast 2 characters long"),
+    .required("Name is required")
+    .min(2, "Name atleast 2 characters long"),
   mobile: Yup.string()
-    .required("mobile number is required")
-    .min(10, "mobile number must be at least 10 digits")
-    .max(15, "mobile number must be at most 15 digits"),
+    .required("Mobile number is required")
+    .min(10, "Mobile number must be at least 10 digits")
+    .max(15, "Mobile number must be at most 15 digits"),
   // email: Yup.string().email("Invalid email").required("Email is required"),
   gender: Yup.string().required("Gender is required").nullable(),
   address: Yup.string()
-    .required("address is required")
-    .min(4, "address atleast 4 characters long"),
+    .required("Address is required")
+    .min(4, "Address atleast 4 characters long"),
   dob: Yup.string()
-    .required("DOB is required")
+    .required("Date Of Birth is required")
     .test("min-age", "You must be at least 5 years old", function (value) {
       if (!value) return false;
 
@@ -444,6 +444,7 @@ export default function EditProfileScreen({ navigation }) {
                           onChangeText={handleChange("mobile")}
                           onBlur={handleBlur("mobile")}
                           keyboardType="numeric"
+                          maxLength={10}
                           value={values.mobile}
                           disabled
                         />

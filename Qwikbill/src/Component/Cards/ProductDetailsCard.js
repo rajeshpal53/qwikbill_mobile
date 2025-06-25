@@ -72,11 +72,11 @@ const ProductDetailsCard = ({ item, setRefresh, setProductId, setVisible }) => {
               )
             }
            
-            <View style={styles.Availabletext}>
+            {/* <View style={styles.Availabletext}>
               <Text style={item.isStock ? styles.inStock : styles.outOfStock}>
                 {item.isStock ? `In Stock` : "Out of Stock"}
               </Text>
-            </View>
+            </View> */}
           </View>
         </View>
       </Card>

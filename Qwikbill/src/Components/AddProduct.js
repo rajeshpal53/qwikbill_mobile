@@ -101,9 +101,11 @@ const AddProduct = ({ navigation }) => {
         const api = `hsn-codes`;
         const response = await readApi(api);
         if (response) {
-          const matchedHsnCode = response.find(
-            (item) => item?.code === hsncode
-          );
+
+           const matchedHsnCode = response.find(
+      (item) => item?.code === String(hsncode)
+    );
+    
           console.log("Matched HSN code is", matchedHsnCode);
           if (matchedHsnCode) {
             setFieldValue("HSNCode", matchedHsnCode?.code);
@@ -261,6 +263,7 @@ const AddProduct = ({ navigation }) => {
             <TextInput
               label="HSN Code"
               mode="flat"
+              keyboardType="numeric"
               style={styles.input}
               // onChangeText={handleChange("HSNCode")}
               onChangeText={async (HSNCode) => {

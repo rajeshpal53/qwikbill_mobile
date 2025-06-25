@@ -223,7 +223,7 @@ export default function StackNavigator() {
           options={{
             // headerTitle: "Add Invoice",
             headerTitle: () => (
-              <Text style={styles.headerTitle}>{"Add Invoice"}</Text>
+              <Text style={styles.headerTitle}>{"Create Invoice"}</Text>
             ),
             headerTitleAlign: "center",
           }}
