@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-//import auth from "@react-native-firebase/auth";
+import auth from "@react-native-firebase/auth";
 // import { useSnackbar } from "../../Store/SnackbarContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { OtpInput } from "react-native-otp-entry";
@@ -40,6 +40,7 @@ import CountryCodeModal from "../../Component/CountryCodeModal";
 import SetpasswordModal from "../../Components/Modal/SetpasswordModal";
 import { AuthContext } from "../../Store/AuthContext";
 import UserDataContext from "../../Store/UserDataContext";
+import { useSnackbar } from "../../Store/SnackbarContext";
 // import { useTranslation } from "react-i18next";
 
 const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
@@ -65,6 +66,8 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const { login, isAuthenticated, storeData, setLoginDetail, handleLogin } =
     useContext(AuthContext);
+
+    const {showSnackbar}=useSnackbar();
     const [idToken,setIdToken]=useState(null);
   // const [phoneNumber, setPhoneNumber] = useState('');
 
@@ -180,49 +183,49 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
     checkNotificationPermission();
   }, []);
 
-  // useEffect(() => {
-  //   async function signOutUser() {
-  //     try {
-  //       setIsLoading(true)
-  //       // showSnackbar("User signed out successfully (19.0.0)", "success");
-  //       await auth().signOut();
-  //       //log.info('User signed out successfully');
-  //     } catch (error) {
-  //       console.error("Error signing out:", error);
-  //       // showSnackbar("User signed out failed (19.0.0)", "error");
-  //     }finally{
-  //       setIsLoading(false)
-  //     }
-  //   }
-  //   signOutUser();
-  // }, []);
+  useEffect(() => {
+    async function signOutUser() {
+      try {
+        setIsLoading(true)
+        // showSnackbar("User signed out successfully (19.0.0)", "success");
+        await auth().signOut();
+        //log.info('User signed out successfully');
+      } catch (error) {
+        console.error("Error signing out:", error);
+        // showSnackbar("User signed out failed (19.0.0)", "error");
+      }finally{
+        setIsLoading(false)
+      }
+    }
+    signOutUser();
+  }, []);
 
-  // useEffect(() => {
-  //   // Firebase Auth State Listener
+  useEffect(() => {
+    // Firebase Auth State Listener
 
-  //   console.log("debugg111");
-  //   // log.info("debugg111");
-  //   const subscriber = auth().onAuthStateChanged(async (user) => {
-  //     console.log("debugg44444", JSON.stringify(user));
-  //     // log.info("debugg44444");
-  //     if (user) {
-  //       setIsVerified(true);
-  //       // const idToken = await user.getIdToken();
-  //       setIdToken(await user.getIdToken());
-  //       console.log("debugg55555", user);
-  //       // const fToken=await AsyncStorage.getItem("FCMToken");
-  //       // Alert.alert("Success", "Auto-verified successfully!");
-  //       let pNumber = user.phoneNumber.replace("+91", "");
-  //       // const response= await postData(pNumber,fToken,idToken);
-  //       showSnackbar("Login successfully!", "success");
-  //       setPasswordModalVisible(true);
+    console.log("debugg111");
+    // log.info("debugg111");
+    const subscriber = auth().onAuthStateChanged(async (user) => {
+      console.log("debugg44444", JSON.stringify(user));
+      // log.info("debugg44444");
+      if (user) {
+        setIsVerified(true);
+        // const idToken = await user.getIdToken();
+        setIdToken(await user.getIdToken());
+        console.log("debugg55555", user);
+        // const fToken=await AsyncStorage.getItem("FCMToken");
+        // Alert.alert("Success", "Auto-verified successfully!");
+        let pNumber = user.phoneNumber.replace("+91", "");
+        // const response= await postData(pNumber,fToken,idToken);
+        showSnackbar("Login successfully!", "success");
+        setPasswordModalVisible(true);
 
-  //     }
-  //   });
+      }
+    });
 
-  //   return subscriber;
-  //   // Unsubscribe on cleanup
-  // }, []);
+    return subscriber;
+    // Unsubscribe on cleanup
+  }, []);
 
   const idTokenValidate = async (idToken) => {
     const payload = {
@@ -311,7 +314,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       setIsLoading(true);
       console.log("debugg22222");
       // log.info("debugg22222");
-
+      console.log(phoneNumber)
       startTimer(30); // Start the timer
       const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
       console.log("confirmation", JSON.stringify(confirmation));
@@ -327,7 +330,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       showSnackbar(
         "OTP Sent! Check your messages for the verification code.",
         "success"
-      );
+      ); return true;
     } catch (error) {
       // Alert.alert("Error", error.message);
       showSnackbar(`OTP Sent failed ${error}`, "error");
@@ -582,13 +585,16 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
                             setIsLoading(true);
                             try {
                               console.log("Form submitted with:", values.phone);
-                              // const confirm = await signInWithPhoneNumber(values.phone);
+                              // const confirm = await auth().signInWithPhoneNumber(values.phone);
                               // navigation.navigate("EnterOtp", { values, confirm });
                               console.log("phoneNumber", "+91" + values.phone);
                               setPhoneNumber(values.phone);
-                              sendOtp("+91" + values.phone);
+                             await sendOtp("+91"+values.phone);
+                              // if(getOtp){
+                              // setConfirm(true);
+                              // }
+
                               // setIsVerified((prev) => !prev);
-                              setConfirm(true);
                             } catch (error) {
                               console.error(
                                 "Error submitting phone number:",
