@@ -7,6 +7,7 @@ import { Card } from "react-native-paper";
 import { ShopContext } from "../Store/ShopContext";
 import UserDataContext from "../Store/UserDataContext";
 import { deleteApi, fontSize } from "../Util/UtilApi";
+import { useSnackbar } from "../Store/SnackbarContext";
 
 
 const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => {
@@ -15,7 +16,7 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
   const navigation = useNavigation();
   const { t } = useTranslation();
   const { selectedShop } = useContext(ShopContext)
-
+  const {showSnackbar}=useSnackbar()
   // const handleDelete = (item) => {
   //   console.log("Button pressed", item);
   //   setConfirmModalVisible(true);

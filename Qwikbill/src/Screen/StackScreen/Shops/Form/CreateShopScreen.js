@@ -235,7 +235,7 @@ const CreateShopScreen = ({ navigation }) => {
   console.log("route data isssss", routeData)
 
   // console.log("route data is , ", routeData)
-  console.log("userData is , ", userData);
+  console.log("userData isefddfd, ", userData);
 
   const [initialData, setInitialData] = useState({
     name: userData?.user?.name || "",

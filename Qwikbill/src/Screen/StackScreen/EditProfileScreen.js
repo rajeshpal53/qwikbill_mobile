@@ -184,7 +184,7 @@ export default function EditProfileScreen({ navigation }) {
     }
   }, []);
 
-  console.log("userData is m ", userData);
+  // console.log("userData is m ", userData);
 
   useEffect(() => {
     console.log("postData is , ", postData);

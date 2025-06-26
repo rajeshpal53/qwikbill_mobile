@@ -75,7 +75,7 @@ export default function HomeScreen({ navigation, noItemData }) {
 
   useEffect(() => {
 
-    console.log(" slected shop  isss ", selectedShop);
+    // console.log(" slected shop  isss ", selectedShop);
 
   }, [selectedShop]);
 
@@ -85,8 +85,8 @@ export default function HomeScreen({ navigation, noItemData }) {
     }
   }, [noItemModal]);
 
-  console.log("jayessssh tokennn ,", userData?.token)
-  console.log("jayessssh userData ,", userData)
+  // console.log("jayessssh tokennn ,", userData?.token)
+  // console.log("jayessssh userData ,", userData)
 
   useEffect(() => {
     const checkTourStatus = async () => {
