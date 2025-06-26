@@ -317,6 +317,7 @@ function ViewInvoiceScreen1({ navigation }) {
       fetchInvoices(page);
     }
   }, [page]);
+      console.log(" slected shop in invoiceScreen1", selectedShop);
 
 
 
@@ -333,6 +334,7 @@ function ViewInvoiceScreen1({ navigation }) {
 
   const buildApiUrl = (pageNum) => {
     const id = selectedShop?.vendor?.id
+    console.log(id,"inViewinVoiceScreen")
     let api = `invoice/getInvoices?vendorfk=${id}&page=${pageNum}&size=10`;
     if (sortBy && sortBy != "datewise") api += `&dateWise=${sortBy}`;
     if (sortBy && sortBy == "datewise")
