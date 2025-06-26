@@ -271,7 +271,8 @@ const ProfileSetting = ({
               selectedShop ?
                 {
                   icon: "person-add",
-                  label: roleDetails ? "Edit Role" : "Assign New Role",
+                 // label: roleDetails ? "Edit Role" : "Assign New Role",
+                 label:"Add or Edit Role",
                   value: roleDetails ? "EditRole" : "AssignNewRole",
                 } : null,
               // { icon: "logout", label: "Logout1", value: "Logout1" },

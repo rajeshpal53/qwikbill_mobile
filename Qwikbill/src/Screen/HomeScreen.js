@@ -294,7 +294,7 @@ export default function HomeScreen({ navigation, noItemData }) {
           <View style={styles.dropDownContainer}>
             <View style={styles.dropdownRow}>
               <Ionicons name="storefront-sharp" size={24} color="#0c3b73" />
-              <DropDownList options={allShops} />
+              <DropDownList options={allShops}  />
             </View>
           </View>
         </View>

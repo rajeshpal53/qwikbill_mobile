@@ -34,12 +34,12 @@ export const ShopProvider = ({ children }) => {
   //         }
   //       );
   //       console.log("response of products in shop context is ", response?.data);
-    
+
 
   //       const hasProducts = response.some(
   //         (shop) => Array.isArray(shop.vendor?.product) && shop.vendor.product.length > 0
   //       );
-        
+
   //       if (hasProducts) {
   //         setNoItemModal(false);
   //       } else {
@@ -81,17 +81,21 @@ export const ShopProvider = ({ children }) => {
         const hasProducts = Array.isArray(matchedShop?.vendor?.product) && matchedShop.vendor.product.length > 0;
 
         setNoItemModal(!hasProducts); // Show modal only if selected shop has no products
-        
+
+        if(response?.data.length === 0) {
+          setNoItemModal(false); // If no shops found, show modal
+        }
 
       } catch (err) {
         console.log("Error checking products for selected shop:", err);
+        
         setNoItemModal(true); // fallback: show modal
       }
     };
 
-if (selectedShop && userData?.user?.id) {
-    checkSelectedShopProducts(userData?.user?.id);
-  }    
+    if (selectedShop && userData?.user?.id) {
+      checkSelectedShopProducts(userData?.user?.id);
+    }
   }, [selectedShop]);
 
 
@@ -100,7 +104,7 @@ if (selectedShop && userData?.user?.id) {
     loadData();
   }, [userData]);
 
-  
+
 
   const loadData = async () => {
     try {

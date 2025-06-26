@@ -24,41 +24,82 @@ import { AuthContext } from "../../Store/AuthContext";
 import { createApi } from "../../Util/UtilApi";
 import OTPInputView from "react-native-otp-entry";
 import { fontSize, fontFamily } from "../../Util/UtilApi";
-
-
+import { useSnackbar } from "../../Store/SnackbarContext";
+//import { usePhoneOtp } from "../../Components/phoneOtp";
 import { OtpInput } from "react-native-otp-entry"; // Updated dependency
 import { useNavigation } from "@react-navigation/native";
+//import { auth } from '../../firebase';
+//import { firebaseAuth } from "../../firebase";
+import { getApp } from '@react-native-firebase/app';
+
+import {
+  getAuth,
+  signInWithPhoneNumber,
+  signOut,
+  onAuthStateChanged
+} from '@react-native-firebase/auth';
 
 function CustomerVerification({ loginDetail1 }) {
   const [text, setText] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [otp, setOtp] = useState(""); // OTP input state
   const navigation = useNavigation();
-  const correctOtp = "123456"; // Default OTP
+  //const { sendOtp, confirmOtp, isLoading } = usePhoneOtp();
+  const [isLoading, setIsLoading] = useState(false);
+  const [confirm, setConfirm] = useState(null);
+  const [phone, setPhone] = useState("");
+  const { showSnackbar } = useSnackbar();
 
-  const handleGenerateOtp = () => {
-    if (text.length !== 10) {
-      Alert.alert("Invalid Input", "Please enter a valid 10-digit mobile number.");
+  useEffect(() => {
+    console.log("OTP sent?", isOtpSent);
+  }, [isOtpSent]);
+
+
+  const handleGenerateOtp = async () => {
+    if (phone.length !== 10) {
+      Alert.alert('Invalid Input', 'Enter a valid 10-digit mobile number.');
       return;
     }
-    setIsOtpSent(true);
-  };
 
-  const handleValidateOtp = () => {
-    if (otp === correctOtp) {
-      Alert.alert("Success", "Login successfully!", [
-        {
-          text: "OK",
-          onPress: () => {
-            navigation.navigate("CreateNewPasscode"); // Navigate to CreateNewPasscode screen
-            setOtp(null)
-          },
-        },
-      ]);
-    } else {
-      Alert.alert("Invalid OTP", "Please enter a valid 6-digit OTP.");
+    const fullPhoneNumber = `+91${phone.trim()}`;
+    console.log("Full Phone Number:", fullPhoneNumber);
+    try {
+      setIsLoading(true);
+
+      const auth = getAuth(getApp());
+      const confirmation = await signInWithPhoneNumber(auth, fullPhoneNumber);
+
+      setConfirm(confirmation);
+      setIsOtpSent(true);
+      showSnackbar('OTP sent! Check your messages.', 'success');
+    } catch (err) {
+      console.log('OTP Error:', err);
+      showSnackbar(err.message ?? 'Failed to send OTP', 'error');
+    } finally {
+      setIsLoading(false);
     }
   };
+
+
+  const handleValidateOtp = async () => {
+    if (!otp || otp.length !== 6) {
+      showSnackbar("Enter the 6-digit OTP.", "error");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      await confirm.confirm(otp);
+      Alert.alert("Success", "Logged in!", [
+        { text: "OK", onPress: () => navigation.navigate("CreateNewPasscode") },
+      ]);
+    } catch (err) {
+      showSnackbar("Invalid OTP. Please try again.", "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   const handleMobileInputChange = (newText) => {
     // Allow only numbers, remove any non-digit characters
@@ -93,9 +134,9 @@ function CustomerVerification({ loginDetail1 }) {
                   placeholder="Enter Mobile Number"
                   placeholderTextColor="#777"
                   maxLength={10}
-                  value={text}
+                  value={phone}
                   keyboardType="number-pad"
-                  onChangeText={handleMobileInputChange}
+                  onChangeText={(txt) => setPhone(txt.replace(/[^0-9]/g, ""))}
                   underlineColorAndroid="transparent"
                 />
 
@@ -106,21 +147,21 @@ function CustomerVerification({ loginDetail1 }) {
                   theme={{
                     containerStyle: { marginBottom: 20, },
                     pinCount: 6,
-                   // focusColor: "#0c3b73", // Ensuring focus color is applied
-                   // focusedBorderColor: "#0c3b73",
+                    // focusColor: "#0c3b73", // Ensuring focus color is applied
+                    // focusedBorderColor: "#0c3b73",
                     selectedTextColor: "darkblue",
                     placeholderTextColor: "#0c3b73",
-                     focusedPinCodeContainerStyle:{
-                      borderColor:"#0c3b73"
-                     },
-                     pinCodeTextStyle: {
-                        color:"rgba(0,0,0,0.6)",
-                        fontFamily:"Poppins-Medium",
-                        marginBottom:-8
-                     },
-                     focusStickStyle:{
-                      backgroundColor:"#0c3b73"
-                     },
+                    focusedPinCodeContainerStyle: {
+                      borderColor: "#0c3b73"
+                    },
+                    pinCodeTextStyle: {
+                      color: "rgba(0,0,0,0.6)",
+                      fontFamily: "Poppins-Medium",
+                      marginBottom: -8
+                    },
+                    focusStickStyle: {
+                      backgroundColor: "#0c3b73"
+                    },
 
                     textInputStyle: {
                       width: 45,
@@ -160,7 +201,8 @@ function CustomerVerification({ loginDetail1 }) {
                   fontFamily: fontFamily.thin,
                   marginVertical: 5
                 }}
-                onPress={!isOtpSent ? handleGenerateOtp : handleValidateOtp}
+                onPress={isOtpSent ? handleValidateOtp : handleGenerateOtp}
+
               >
                 <Text style={{ color: "#fff", fontSize: fontSize.labelMedium, fontFamily: fontFamily.medium }}>{isOtpSent ? "Validate OTP" : "Generate OTP"}</Text>
               </Button>
@@ -288,9 +330,9 @@ function Forgetpasscode({ navigation }) {
               // backgroundColor:"orange",
               height: "25%",
               width: "100%",
-              justifyContent:"center",
+              justifyContent: "center",
               alignItems: "center",
-              
+
             }}
           >
             <View style={{}}>
@@ -299,19 +341,6 @@ function Forgetpasscode({ navigation }) {
                 style={styles.img}
               />
             </View>
-            {/* <View
-              style={{
-                // backgroundColor:"pink",
-                alignItems: "center",
-              }}
-            >
-              <Text variant="titleLarge" style={{ color: "white", }}>
-                WERTONE
-              </Text>
-              <Text style={{ color: "white", letterSpacing: 3, marginVertical: 2 }}>
-                Biling Software
-              </Text>
-            </View> */}
 
           </View>
           {isOtp ? (

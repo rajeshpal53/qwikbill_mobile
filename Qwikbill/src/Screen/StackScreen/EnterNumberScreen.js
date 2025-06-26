@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import auth from "@react-native-firebase/auth";
+//import auth from "@react-native-firebase/auth";
 // import { useSnackbar } from "../../Store/SnackbarContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { OtpInput } from "react-native-otp-entry";
@@ -41,6 +41,14 @@ import SetpasswordModal from "../../Components/Modal/SetpasswordModal";
 import { AuthContext } from "../../Store/AuthContext";
 import UserDataContext from "../../Store/UserDataContext";
 import { useSnackbar } from "../../Store/SnackbarContext";
+import { getApp } from "@react-native-firebase/app";
+import { auth } from '../../firebase';
+import { firebaseAuth } from "../../firebase";
+import {
+  getAuth,
+  signInWithPhoneNumber,
+ signOut,
+onAuthStateChanged } from '@react-native-firebase/auth';
 // import { useTranslation } from "react-i18next";
 
 const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
@@ -66,9 +74,11 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const { login, isAuthenticated, storeData, setLoginDetail, handleLogin } =
     useContext(AuthContext);
+  const app = getApp();
+  const auth = getAuth(app);
 
-    const {showSnackbar}=useSnackbar();
-    const [idToken,setIdToken]=useState(null);
+  const { showSnackbar } = useSnackbar();
+  const [idToken, setIdToken] = useState(null);
   // const [phoneNumber, setPhoneNumber] = useState('');
 
   const Validation = Yup.object().shape({
@@ -77,19 +87,19 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       .matches(/^[0-9]+$/, "Phone number must be numeric")
       .min(10, "Phone number must be at least 10 digits")
       .max(10, "Phone number can be at most 10 digits")
-      // .test(
-      //   "check-number-availability",
-      //   "Number is already registered. Try a different number.",
-      //   async (value) => {
-      //     if (value && value.length === 10) {
-      //       // Check if the number is already registered
-      //       const isAvailable = await checkPhoneNumberAvailability(value);
-      //       console.log("VALUE IN PRESENT IS SSS123", isAvailable);
-      //       return isAvailable;
-      //     }
-      //     return true;
-      //   }
-      // ),
+    // .test(
+    //   "check-number-availability",
+    //   "Number is already registered. Try a different number.",
+    //   async (value) => {
+    //     if (value && value.length === 10) {
+    //       // Check if the number is already registered
+    //       const isAvailable = await checkPhoneNumberAvailability(value);
+    //       console.log("VALUE IN PRESENT IS SSS123", isAvailable);
+    //       return isAvailable;
+    //     }
+    //     return true;
+    //   }
+    // ),
   });
 
   useEffect(() => {
@@ -108,9 +118,9 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
     console.log("Enter number is ", phoneNumber);
     try {
       const response = await readApi(`users/getUserByMobile/${phoneNumber}`);
-      if(response?.mobile===phoneNumber){
+      if (response?.mobile === phoneNumber) {
         return false
-      }else{
+      } else {
         return true
       }
 
@@ -188,12 +198,12 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       try {
         setIsLoading(true)
         // showSnackbar("User signed out successfully (19.0.0)", "success");
-        await auth().signOut();
+        //await auth().signOut();
         //log.info('User signed out successfully');
       } catch (error) {
         console.error("Error signing out:", error);
         // showSnackbar("User signed out failed (19.0.0)", "error");
-      }finally{
+      } finally {
         setIsLoading(false)
       }
     }
@@ -205,26 +215,11 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
 
     console.log("debugg111");
     // log.info("debugg111");
-    const subscriber = auth().onAuthStateChanged(async (user) => {
-      console.log("debugg44444", JSON.stringify(user));
-      // log.info("debugg44444");
-      if (user) {
-        setIsVerified(true);
-        // const idToken = await user.getIdToken();
-        setIdToken(await user.getIdToken());
-        console.log("debugg55555", user);
-        // const fToken=await AsyncStorage.getItem("FCMToken");
-        // Alert.alert("Success", "Auto-verified successfully!");
-        let pNumber = user.phoneNumber.replace("+91", "");
-        // const response= await postData(pNumber,fToken,idToken);
-        showSnackbar("Login successfully!", "success");
-        setPasswordModalVisible(true);
-
-      }
+    //const subscriber = auth().onAuthStateChanged(async (user) => {
+    const subscriber = onAuthStateChanged(firebaseAuth, async (user) => {
+      // handle user state changes here if needed
     });
-
-    return subscriber;
-    // Unsubscribe on cleanup
+    return () => subscriber(); // Unsubscribe on cleanup
   }, []);
 
   const idTokenValidate = async (idToken) => {
@@ -253,27 +248,27 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
   };
 
 
-  const postData = async (password, isForgetPassword,navigation) => {
+  const postData = async (password, isForgetPassword, navigation) => {
     setIsLoading(true);
     console.log("FCMToken:", FCMToken);
     const payload = {
       mobile: phoneNumber,
       password,
-      idToken:idToken,
-      fcmtokens:[FCMToken]
+      idToken: idToken,
+      fcmtokens: [FCMToken]
     };
 
     console.log("Payload:", payload);
 
     try {
       if (payload?.mobile) {
-        let apiEndpoint =`users/signUp`;
+        let apiEndpoint = `users/signUp`;
 
         const response = await createApi(apiEndpoint, payload);
         console.log(`${isForgetPassword ? "Forgot Password" : "Sign-Up"} Response:`, response);
 
         await saveUserData(response);
-        await handleLogin({mobile:response?.user?.mobile,password:payload?.password},navigation);
+        await handleLogin({ mobile: response?.user?.mobile, password: payload?.password }, navigation);
         await AsyncStorage.setItem("updatedPassword", password);
         if (isForgetPassword) {
           setIsForgetPasswordState(true);
@@ -307,7 +302,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
     setIsTimerRunning(true); // Start the timer
   };
 
- // Step 1: Send OTP
+  // Step 1: Send OTP
 
   const sendOtp = async (phoneNumber) => {
     try {
@@ -316,17 +311,22 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       // log.info("debugg22222");
       console.log(phoneNumber)
       startTimer(30); // Start the timer
-      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
-      console.log("confirmation", JSON.stringify(confirmation));
+      // const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
+      // console.log("confirmation", JSON.stringify(confirmation));
+      // setConfirm(confirmation);
+      // //   setConfirm(true);
+      // setAutoVerification(true); // Set auto-verification flags
+      // console.log("debugg33333");
+      // setAutoVerification(false); // Reset auto-verification flag
+
+      const confirmation = await signInWithPhoneNumber(auth, phoneNumber);
+      console.log("confirmation", confirmation);
       setConfirm(confirmation);
-      //   setConfirm(true);
-      setAutoVerification(true); // Set auto-verification flags
-      console.log("debugg33333");
-      setAutoVerification(false); // Reset auto-verification flag
-      // Alert.alert(
-      //   "OTP Sent!",
-      //   "Check your messages for the verification code."
-      // );
+      setAutoVerification(true);
+      setAutoVerification(false);
+
+
+
       showSnackbar(
         "OTP Sent! Check your messages for the verification code.",
         "success"
@@ -341,7 +341,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
 
 
 
- // Step 2: Confirm OTP (Fallback for Manual Entry)
+  // Step 2: Confirm OTP (Fallback for Manual Entry)
 
   const confirmOtp = async () => {
     if (otp.length === 0) {
@@ -355,187 +355,193 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       console.log(`ddsdddsdsd`);
       return;
     }
+
+    // setIsDisabled(true);
+    // setTimeout(() => {
+    //   setIsDisabled(false);
+    // }, 10000); // 10 seconds
+    // try {
+    //   if (confirm) {
+    //     console.log("debugg66666");
+    //     const userCredential = await confirm.confirm(otp);
+    //     console.log(userCredential, "djdjdjdj"); // Verifies the OTP
+    //     const user = userCredential.user; // Authenticated user object
+    //     // Fetch the ID token for backend verification
+    //     const idToken = await user.getIdToken();
+    //     setIdToken(idToken);
+    //     console.log("debugg77777 pra", user, idToken);
+    //     setPasswordModalVisible(true);  
+    //   }
+
     setIsDisabled(true);
-    setTimeout(() => {
-      setIsDisabled(false);
-    }, 10000); // 10 seconds
+    setTimeout(() => setIsDisabled(false), 10000);
+
     try {
       if (confirm) {
-        console.log("debugg66666");
         const userCredential = await confirm.confirm(otp);
-        console.log(userCredential, "djdjdjdj"); // Verifies the OTP
-        const user = userCredential.user; // Authenticated user object
-        // Fetch the ID token for backend verification
+        const user = userCredential.user;
         const idToken = await user.getIdToken();
         setIdToken(idToken);
-        console.log("debugg77777 pra", user, idToken);
         setPasswordModalVisible(true);
-
-
-        // const isIdTokenValidate = await idTokenValidate(idToken);
-
-        // if (isIdTokenValidate) {
-
-        // }
       }
-    } catch (error) {
-      // Alert.alert("Invalid Code", "The code you entered is incorrect.");
-      // showSnackbar("Invalid Otp ", "error");
-      showSnackbar(` Failed to Login ${error}`, "error");
-    }
-  };
+    
+  } catch (error) {
 
-  const closeModal = () => {
-    setPasswordModalVisible(false);
-  };
+    showSnackbar(` Failed to Login ${error}`, "error");
+  }
+};
 
-  const Loader = () => {
-    return (
-      <Portal>
-        <Modal
-          visible={isLoading}
-          contentContainerStyle={styles.modalBackground}
-          accessible={true}
-          accessibilityLabel="Loading content. Please wait."
-          accessibilityRole="alert" // Announces this as an important message
-        >
-          <View style={styles.loaderContainer}>
-            <ActivityIndicator
-              animating={true}
-              size="large"
-              accessibilityLabel="Loading indicator"
-              accessibilityLiveRegion="assertive"
-            />
-          </View>
-        </Modal>
-      </Portal>
-    );
-  };
-  const t = (str) => {
-    return str;
-  };
+const closeModal = () => {
+  setPasswordModalVisible(false);
+};
+
+const Loader = () => {
   return (
-    <View style={styles.container}>
-      {!isVerified && (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior="height"
-            enabled={false}
-          >
-            {autoVerification ? (
-              <Text style={styles.autoVerifyText}>
-                Auto-verification in progress...
-              </Text>
-            ) : confirm ? (
-              <View style={styles.container1}>
-                <ScrollView
-                  contentContainerStyle={{ flexGrow: 1 }}
-                  scrollEnabled={true}
-                  showsVerticalScrollIndicator={false}
-                  keyboardShouldPersistTaps="always"
-                >
-                  {/* <ScrollView contentContainerStyle={{flexGrow:1, backgroundColor:"orange"}}> */}
-                  <View style={styles.container}>
-                    {/* <View style={{ flex:1, backgroundColor:"orange"}}> */}
-                    {/* <Text variant="headlineLarge" style={styles.title}>
+    <Portal>
+      <Modal
+        visible={isLoading}
+        contentContainerStyle={styles.modalBackground}
+        accessible={true}
+        accessibilityLabel="Loading content. Please wait."
+        accessibilityRole="alert" // Announces this as an important message
+      >
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator
+            animating={true}
+            size="large"
+            accessibilityLabel="Loading indicator"
+            accessibilityLiveRegion="assertive"
+          />
+        </View>
+      </Modal>
+    </Portal>
+  );
+};
+const t = (str) => {
+  return str;
+};
+return (
+  <View style={styles.container}>
+    {!isVerified && (
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior="height"
+          enabled={false}
+        >
+          {autoVerification ? (
+            <Text style={styles.autoVerifyText}>
+              Auto-verification in progress...
+            </Text>
+          ) : confirm ? (
+            <View style={styles.container1}>
+              <ScrollView
+                contentContainerStyle={{ flexGrow: 1 }}
+                scrollEnabled={true}
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="always"
+              >
+                {/* <ScrollView contentContainerStyle={{flexGrow:1, backgroundColor:"orange"}}> */}
+                <View style={styles.container}>
+                  {/* <View style={{ flex:1, backgroundColor:"orange"}}> */}
+                  {/* <Text variant="headlineLarge" style={styles.title}>
             Make your plan
           </Text> */}
-                    <TouchableOpacity
-                      style={{
-                        alignItems: "flex-start",
-                        height: 48,
-                        width: 80,
-                      }}
-                      onPress={() => {
-                        setConfirm(null);
-                      }}
-                    >
-                      <Button
-                        textColor="#fff"
-                        icon={() => (
-                          <MaterialCommunityIcons
-                            style={{}}
-                            name="less-than"
-                            size={18}
-                            color="#fff"
-                          />
-                        )}
-                        contentStyle={{
-                          flexDirection: "row",
-                          backgroundColor: "#fcb534",
-                        }}
-                        labelStyle={
-                          {
-                            // marginRight: 5, // Ensure no extra margin between the text and the icon
-                          }
-                        }
-                        style={{ borderRadius: 10 }}
-                      >
-                        {t("Back")}
-                      </Button>
-                    </TouchableOpacity>
-
-                    <View>
-                      <Image
-                        style={{ height: height * 0.4, width: "100%" }}
-                        source={require("../../../assets/getotp.png")}
-                      />
-                      {isLoading && <Loader />}
-                    </View>
-
-                    <Text variant="bodyLarge" style={styles.instructions}>
-                      {t("Enter the OTP sent to your mobile number")} +91
-                      {phoneNumber}
-                    </Text>
-
-                    <OtpInput numberOfDigits={6} onTextChange={setOtp} />
-
-                    {otpError && (
-                      <HelperText type="error">
-                        {t("Please enter a valid 6-digit OTP.")}
-                      </HelperText>
-                    )}
-
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        marginTop: 20,
-                      }}
-                    >
-                      {/* <Text style={styles.timer}>{t("Resend Otp in : ")} {timer}</Text> */}
-                      <TouchableOpacity
-                        onPress={handleResendOTP}
-                        disabled={timer !== 0}
-                      >
-                        <Text
-                          style={[
-                            styles.resendOTP,
-                            timer !== 0 && { color: "#AAA" },
-                          ]}
-                        >
-                          {/* {t(" Resend OTP")} */}
-                          {t("Resend OTP in")} {formatTime(timer)}
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-
+                  <TouchableOpacity
+                    style={{
+                      alignItems: "flex-start",
+                      height: 48,
+                      width: 80,
+                    }}
+                    onPress={() => {
+                      setConfirm(null);
+                    }}
+                  >
                     <Button
-                      mode="contained"
-                      onPress={confirmOtp}
-                      // onPress={() => setPasswordModalVisible(true)}
-                      style={styles.loginButton}
+                      textColor="#fff"
+                      icon={() => (
+                        <MaterialCommunityIcons
+                          style={{}}
+                          name="less-than"
+                          size={18}
+                          color="#fff"
+                        />
+                      )}
+                      contentStyle={{
+                        flexDirection: "row",
+                        backgroundColor: "#fcb534",
+                      }}
+                      labelStyle={
+                        {
+                          // marginRight: 5, // Ensure no extra margin between the text and the icon
+                        }
+                      }
+                      style={{ borderRadius: 10 }}
                     >
-                      {t("Login")}
+                      {t("Back")}
                     </Button>
+                  </TouchableOpacity>
 
+                  <View>
+                    <Image
+                      style={{ height: height * 0.4, width: "100%" }}
+                      source={require("../../../assets/getotp.png")}
+                    />
+                    {isLoading && <Loader />}
                   </View>
-                </ScrollView>
-              </View>
-            ) : (
-              <>
-                {/* {!isForgetPassword && (
+
+                  <Text variant="bodyLarge" style={styles.instructions}>
+                    {t("Enter the OTP sent to your mobile number")} +91
+                    {phoneNumber}
+                  </Text>
+
+                  <OtpInput numberOfDigits={6} onTextChange={setOtp} />
+
+                  {otpError && (
+                    <HelperText type="error">
+                      {t("Please enter a valid 6-digit OTP.")}
+                    </HelperText>
+                  )}
+
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      marginTop: 20,
+                    }}
+                  >
+                    {/* <Text style={styles.timer}>{t("Resend Otp in : ")} {timer}</Text> */}
+                    <TouchableOpacity
+                      onPress={handleResendOTP}
+                      disabled={timer !== 0}
+                    >
+                      <Text
+                        style={[
+                          styles.resendOTP,
+                          timer !== 0 && { color: "#AAA" },
+                        ]}
+                      >
+                        {/* {t(" Resend OTP")} */}
+                        {t("Resend OTP in")} {formatTime(timer)}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  <Button
+                    mode="contained"
+                    onPress={confirmOtp}
+                    // onPress={() => setPasswordModalVisible(true)}
+                    style={styles.loginButton}
+                  >
+                    {t("Login")}
+                  </Button>
+
+                </View>
+              </ScrollView>
+            </View>
+          ) : (
+            <>
+              {/* {!isForgetPassword && (
                   <View style={styles.topSection}>
                     <AutoSlidingCarousel
                       height={400}
@@ -547,259 +553,259 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
 
 
 
-                  <View style={styles.container}>
+              <View style={styles.container}>
 
-                    <View style={[styles.topHeader,{height:isForgetPassword ? "35%" : "40%"}]}>
-                      <Image source={require("../../../assets/aaaa_transparent.png")} style={styles.logo} />
-                      {/* <Text style={styles.appName}>WERTONE</Text>
+                <View style={[styles.topHeader, { height: isForgetPassword ? "35%" : "40%" }]}>
+                  <Image source={require("../../../assets/aaaa_transparent.png")} style={styles.logo} />
+                  {/* <Text style={styles.appName}>WERTONE</Text>
                       <Text style={styles.tagline}>Billing Software</Text> */}
-                    </View>
+                </View>
 
-                  </View>
+              </View>
 
-                {/* <View style={styles.loginSection}> */}
-               <View style={[styles.loginSection, { height: isForgetPassword ? "70%" : "65%" }]}>
+              {/* <View style={styles.loginSection}> */}
+              <View style={[styles.loginSection, { height: isForgetPassword ? "70%" : "65%" }]}>
 
-                  <ScrollView
-                    contentContainerStyle={styles.container}
-                    keyboardShouldPersistTaps="always"
-                  >
-                    <View style={{ flex: 1, justifyContent: "space-around" }}>
-                      <View style={{ gap: 20 }}>
-                        <Text style={styles.heading}>
-                          {isForgetPassword ? "Forgot Password" : "Welcome to QwikBill"}
-                        </Text>
-                        <Text style={{
-                           fontFamily: fontFamily.medium,
-                            fontSize: fontSize.label,
-                             marginHorizontal: 5,
-                             color:"#777",
-                             marginTop:-8
-                             }}>
-                          {isForgetPassword ? "Enter your registered mobile number to recieve a password reset OTP." : null}
-                        </Text>
-                        <Formik
-                          initialValues={{ phone: "" }}
-                          validationSchema={Validation}
-                          onSubmit={async (values, { resetForm }) => {
-                            setIsLoading(true);
-                            try {
-                              console.log("Form submitted with:", values.phone);
-                              // const confirm = await auth().signInWithPhoneNumber(values.phone);
-                              // navigation.navigate("EnterOtp", { values, confirm });
-                              console.log("phoneNumber", "+91" + values.phone);
-                              setPhoneNumber(values.phone);
-                             await sendOtp("+91"+values.phone);
-                              // if(getOtp){
-                              // setConfirm(true);
-                              // }
+                <ScrollView
+                  contentContainerStyle={styles.container}
+                  keyboardShouldPersistTaps="always"
+                >
+                  <View style={{ flex: 1, justifyContent: "space-around" }}>
+                    <View style={{ gap: 20 }}>
+                      <Text style={styles.heading}>
+                        {isForgetPassword ? "Forgot Password" : "Welcome to QwikBill"}
+                      </Text>
+                      <Text style={{
+                        fontFamily: fontFamily.medium,
+                        fontSize: fontSize.label,
+                        marginHorizontal: 5,
+                        color: "#777",
+                        marginTop: -8
+                      }}>
+                        {isForgetPassword ? "Enter your registered mobile number to recieve a password reset OTP." : null}
+                      </Text>
+                      <Formik
+                        initialValues={{ phone: "" }}
+                        validationSchema={Validation}
+                        onSubmit={async (values, { resetForm }) => {
+                          setIsLoading(true);
+                          try {
+                            console.log("Form submitted with:", values.phone);
+                            // const confirm = await auth().signInWithPhoneNumber(values.phone);
+                            // navigation.navigate("EnterOtp", { values, confirm });
+                            console.log("phoneNumber", "+91" + values.phone);
+                            setPhoneNumber(values.phone);
+                            await sendOtp("+91" + values.phone);
+                            // if(getOtp){
+                            // setConfirm(true);
+                            // }
 
-                              // setIsVerified((prev) => !prev);
-                            } catch (error) {
-                              console.error(
-                                "Error submitting phone number:",
-                                error
-                              );
-                            } finally {
-                              setIsLoading(false);
-                            }
-                          }}
-                        >
-                          {({
-                            handleChange,
-                            handleBlur,
-                            handleSubmit,
-                            values,
-                            errors,
-                            touched,
-                            isValid,
-                            dirty,
-                          }) => (
-                            <View
-                              style={{
-                                justifyContent: "center",
-                                width: "100%",
-                              }}
+                            // setIsVerified((prev) => !prev);
+                          } catch (error) {
+                            console.error(
+                              "Error submitting phone number:",
+                              error
+                            );
+                          } finally {
+                            setIsLoading(false);
+                          }
+                        }}
+                      >
+                        {({
+                          handleChange,
+                          handleBlur,
+                          handleSubmit,
+                          values,
+                          errors,
+                          touched,
+                          isValid,
+                          dirty,
+                        }) => (
+                          <View
+                            style={{
+                              justifyContent: "center",
+                              width: "100%",
+                            }}
+                          >
+                            <Text
+                              style={
+                                {
+                                  fontFamily: fontFamily.medium,
+                                  fontSize: fontSize.labelMedium,
+                                  marginHorizontal: 5
+                                }
+                              }
                             >
-                              <Text
-                                style={
-                                  {
+                              {t("Mobile Number")}
+                            </Text>
+
+                            <View style={styles.inputContainer}>
+                              <TouchableOpacity
+                                style={styles.countryCodeButton}
+                                onPress={() => setModalVisible(true)}
+                              >
+                                <View style={styles.flagContainer}>
+                                  {/* Replace with your flag icon if available */}
+                                  <Text style={styles.flagText}>🇮🇳</Text>
+                                </View>
+                                <Text style={styles.countryCodeText}>
+                                  +91
+                                </Text>
+                                <MaterialCommunityIcons
+                                  name="chevron-down"
+                                  size={20}
+                                  color={"#777"}
+                                  style={{ marginLeft: 8 }}
+                                />
+                              </TouchableOpacity>
+                              <Divider
+                                style={{
+                                  height: "60%", // Adjust height as needed
+                                  width: 1,
+
+                                  backgroundColor: "#ddd",
+                                  marginHorizontal: 6,
+                                }}
+                              />
+                              <TextInput
+                                placeholder={t("Enter Phone Number")}
+                                keyboardType="phone-pad"
+                                style={styles.input}
+                                underlineColor="transparent"
+                                activeUnderlineColor="transparent" // Remove active underline color
+                                // onChangeText={handlePhoneChange}
+                                onChangeText={handleChange("phone")}
+                                onBlur={handleBlur("phone")}
+                                value={values.phone}
+                                error={touched.phone && errors.phone}
+                                maxLength={10} // Limit input to 10 characters
+                                // autoFocus={true}
+                                mode={"flat"}
+                                cursorColor={"#1e90ff"}
+                              />
+
+                            </View>
+                            <View style={{ alignSelf: "center" }}>
+                              {touched && errors.phone && (
+                                <Text style={styles.errorText}>
+                                  {errors.phone}
+                                </Text>
+                              )}
+                            </View>
+
+                            <View>
+                              {isTimerRunning && (
+                                <Text>
+                                  {" "}
+                                  Resend OTP in {formatTime(timer)}
+                                </Text>
+                              )}
+
+                              <Button
+                                // style={styles.button}
+                                onPress={handleSubmit}
+                                disabled={isTimerRunning && timer > 0 || !isValid || !dirty || !values.phone}
+
+                                style={[
+                                  styles.button,
+                                  { borderRadius: 10 },
+                                  !isValid || !dirty || !values.phone
+                                    ? { backgroundColor: "#d3d3d3" }
+                                    : { backgroundColor: "#1E90FF" },
+                                ]}
+                                mode="contained"
+
+                              >
+                                <Text style={{
+                                  fontFamily: fontFamily.bold,
+                                  fontSize: fontSize.labelMedium,
+                                  color: "#fff"
+                                }}>
+
+                                  {isForgetPassword ? "Send OTP" : "Login with OTP"}
+                                </Text>
+                              </Button>
+                              {/* </TouchableOpacity> */}
+                              {isForgetPassword ?
+                                <Text
+                                  style={{
+                                    color: "#1E90FF",
+                                    alignSelf: "center",
                                     fontFamily: fontFamily.medium,
                                     fontSize: fontSize.labelMedium,
-                                   marginHorizontal: 5
-                                  }
-                                }
-                              >
-                                {t("Mobile Number")}
-                              </Text>
-
-                              <View style={styles.inputContainer}>
-                                <TouchableOpacity
-                                  style={styles.countryCodeButton}
-                                  onPress={() => setModalVisible(true)}
-                                >
-                                  <View style={styles.flagContainer}>
-                                    {/* Replace with your flag icon if available */}
-                                    <Text style={styles.flagText}>🇮🇳</Text>
-                                  </View>
-                                  <Text style={styles.countryCodeText}>
-                                    +91
-                                  </Text>
-                                  <MaterialCommunityIcons
-                                    name="chevron-down"
-                                    size={20}
-                                    color={"#777"}
-                                    style={{ marginLeft: 8 }}
-                                  />
-                                </TouchableOpacity>
-                                <Divider
-                                  style={{
-                                    height: "60%", // Adjust height as needed
-                                    width: 1,
-
-                                    backgroundColor: "#ddd",
-                                    marginHorizontal: 6,
+                                    marginTop: 8
                                   }}
-                                />
-                                <TextInput
-                                  placeholder={t("Enter Phone Number")}
-                                  keyboardType="phone-pad"
-                                  style={styles.input}
-                                  underlineColor="transparent"
-                                  activeUnderlineColor="transparent" // Remove active underline color
-                                  // onChangeText={handlePhoneChange}
-                                  onChangeText={handleChange("phone")}
-                                  onBlur={handleBlur("phone")}
-                                  value={values.phone}
-                                  error={touched.phone && errors.phone}
-                                  maxLength={10} // Limit input to 10 characters
-                                  // autoFocus={true}
-                                  mode={"flat"}
-                                  cursorColor={"#1e90ff"}
-                                />
-
-                              </View>
-                              <View style={{ alignSelf: "center" }}>
-                                {touched && errors.phone && (
-                                  <Text style={styles.errorText}>
-                                    {errors.phone}
-                                  </Text>
-                                )}
-                              </View>
-
-                              <View>
-                                {isTimerRunning && (
-                                  <Text>
-                                    {" "}
-                                    Resend OTP in {formatTime(timer)}
-                                  </Text>
-                                )}
-
-                                <Button
-                                  // style={styles.button}
-                                  onPress={handleSubmit}
-                                  disabled={isTimerRunning && timer > 0 || !isValid || !dirty || !values.phone}
-
-                                  style={[
-                                    styles.button,
-                                    { borderRadius: 10 },
-                                    !isValid || !dirty || !values.phone
-                                      ? { backgroundColor: "#d3d3d3" }
-                                      : { backgroundColor: "#1E90FF" },
-                                  ]}
-                                  mode="contained"
-
-                                >
-                                  <Text style={{
-                                    fontFamily: fontFamily.bold,
-                                    fontSize: fontSize.labelMedium,
-                                    color: "#fff"
-                                  }}>
-
-                                    {isForgetPassword ? "Send OTP" : "Login with OTP"}
-                                  </Text>
-                                </Button>
-                                {/* </TouchableOpacity> */}
-                                {isForgetPassword ?
-                                  <Text
-                                    style={{
-                                      color: "#1E90FF",
-                                      alignSelf: "center",
-                                      fontFamily: fontFamily.medium,
-                                      fontSize: fontSize.labelMedium,
-                                      marginTop: 8
-                                    }}
-                                    onPress={() => navigation.navigate("login")}
-                                  > Back to Login</Text> : null}
-                              </View>
+                                  onPress={() => navigation.navigate("login")}
+                                > Back to Login</Text> : null}
                             </View>
-                          )}
-                        </Formik>
-                      </View>
-                      <CountryCodeModal
-                        modalVisible={modalVisible}
-                        setModalVisible={setModalVisible}
-                      />
-                      {isLoading && <Loader />}
+                          </View>
+                        )}
+                      </Formik>
+                    </View>
+                    <CountryCodeModal
+                      modalVisible={modalVisible}
+                      setModalVisible={setModalVisible}
+                    />
+                    {isLoading && <Loader />}
 
-                      <View style={{ alignSelf: "center", marginHorizontal: 25, marginBottom: 40, alignItems: "center" }}>
-                        <Text style={{ color: "#777", fontFamily: fontFamily.medium, textAlign: "center" }}>
-                          {!isForgetPassword ?
-                            <Text
-                              style={{
-                                color: "#777",
-                                fontFamily: fontFamily.medium,
-                                fontSize: fontSize.label,
-                                textAlign: "center"
-                              }}>
-                              By signing in , you are agree to
-                            </Text>
-                            :
-                            <Text style={{
+                    <View style={{ alignSelf: "center", marginHorizontal: 25, marginBottom: 40, alignItems: "center" }}>
+                      <Text style={{ color: "#777", fontFamily: fontFamily.medium, textAlign: "center" }}>
+                        {!isForgetPassword ?
+                          <Text
+                            style={{
                               color: "#777",
                               fontFamily: fontFamily.medium,
                               fontSize: fontSize.label,
                               textAlign: "center"
                             }}>
-                              By resetting your password , you agree to our
-                            </Text>}
-
-                          <Text
-                            style={{
-                              color: "#1e90ff",
-                            }}
-                            onPress={() =>
-                              navigation.navigate("Policies", {
-                                // webUri: "https://rajeshpal.online/privacy-policy",
-                                webUri: `${NORM_URL}/privacy-policy?view=mobile`,
-                                headerTitle: "Privacy and Policies",
-                              })
-                            }
-                          >
-                            Terms and Policy.
+                            By signing in , you are agree to
                           </Text>
+                          :
+                          <Text style={{
+                            color: "#777",
+                            fontFamily: fontFamily.medium,
+                            fontSize: fontSize.label,
+                            textAlign: "center"
+                          }}>
+                            By resetting your password , you agree to our
+                          </Text>}
+
+                        <Text
+                          style={{
+                            color: "#1e90ff",
+                          }}
+                          onPress={() =>
+                            navigation.navigate("Policies", {
+                              // webUri: "https://rajeshpal.online/privacy-policy",
+                              webUri: `${NORM_URL}/privacy-policy?view=mobile`,
+                              headerTitle: "Privacy and Policies",
+                            })
+                          }
+                        >
+                          Terms and Policy.
                         </Text>
+                      </Text>
 
-                      </View>
                     </View>
-                  </ScrollView>
-                </View>
-              </>
-            )}
-          </KeyboardAvoidingView>
-        </TouchableWithoutFeedback>
-      )}
+                  </View>
+                </ScrollView>
+              </View>
+            </>
+          )}
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+    )}
 
-      <SetpasswordModal
-        visible={passwordModalVisible}
-        closeModal={closeModal}
-        navigation={navigation}
-        postData={postData}
-        isForgetPassword={isForgetPassword}
-        setIsForgetPasswordState={setIsForgetPasswordState}
-      />
-    </View>
-  );
+    <SetpasswordModal
+      visible={passwordModalVisible}
+      closeModal={closeModal}
+      navigation={navigation}
+      postData={postData}
+      isForgetPassword={isForgetPassword}
+      setIsForgetPasswordState={setIsForgetPasswordState}
+    />
+  </View>
+);
 };
 const styles = StyleSheet.create({
   container: {
@@ -851,11 +857,11 @@ const styles = StyleSheet.create({
     width: 22, // Set a fixed width
     height: 18, // Set a fixed height
     //borderRadius: 16, // Half of width/height to make it a circle
-   marginRight: 8, // Space between flag and code
+    marginRight: 8, // Space between flag and code
   },
   flagText: {
     fontSize: 23,
-    marginTop:-5,
+    marginTop: -5,
 
   },
   countryCodeText: {
@@ -878,8 +884,8 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.bold,
     //alignSelf: "center",
     color: "rgba(0,0,0,0.7)",
-    marginTop:12,
-    marginHorizontal:5
+    marginTop: 12,
+    marginHorizontal: 5
   },
   container1: {
     flex: 1,
