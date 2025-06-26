@@ -13,6 +13,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Alert
 } from "react-native";
 import {
   ActivityIndicator,
@@ -35,7 +36,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import NoDataFound from "../../Components/NoDataFound";
 import DeleteModal from "../../UI/DeleteModal";
-
 
 
 const ProductDetailsScreen = ({ navigation }) => {
@@ -181,23 +181,23 @@ const ProductDetailsScreen = ({ navigation }) => {
   };
 
   const HandleDeleteProduct = async (ProductId) => {
-    const api =`https://qwikbill.in/qapi/`
+    const api = `https://qwikbill.in/qapi/`
     console.log("Data of item is 345", ProductId);
 
     console.log(` api is ${api}products/${ProductId}`)
 
     try {
       setloader(true);
-    // The following block is the actual delete logic using your deleteApi helper
-    const response = await deleteApi(`products/${ProductId}`, {
-      headers: {
-        Authorization: `Bearer ${userData?.token}`,
-      },
-    });
+      // The following block is the actual delete logic using your deleteApi helper
+      const response = await deleteApi(`products/${ProductId}`, {
+        headers: {
+          Authorization: `Bearer ${userData?.token}`,
+        },
+      });
 
       console.log("GET ALL DATA IS125 ", response?.data);
       if (response?.data) {
-      await  getproductdata();
+        await getproductdata();
 
 
         console.log("GET ALL DATA IS response", response.data);
@@ -361,12 +361,17 @@ const ProductDetailsScreen = ({ navigation }) => {
               {
                 icon: "plus",
                 label: t("Add Product"),
-                onPress: () =>
-                  navigation.navigate("AddProduct", {
-                    EditData: null,
-                    isUpdated: false,
-                    setRefresh: setRefresh,
-                  }),
+                onPress: () => {
+                  if (selectedShop) {
+                    navigation.navigate("AddProduct", {
+                      EditData: null,
+                      isUpdated: false,
+                      setRefresh: setRefresh,
+                    });
+                  } else {
+                    Alert.alert(t('Please first become a vendor'));
+                  }
+                },
                 style: { backgroundColor: "#2196F3" },
               },
               {

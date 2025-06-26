@@ -110,7 +110,7 @@ export const ShopProvider = ({ children }) => {
       return;
     }
 
-    await fetchShopsFromServer();
+    // await fetchShopsFromServer();
 
     const storedSelectedShop = await AsyncStorage.getItem("selectedShop");
 
@@ -162,6 +162,7 @@ export const ShopProvider = ({ children }) => {
     }
   } catch (error) {
     console.log("Error getting shops from server:", error);
+    setSelectedShop(null)
   } finally {
     console.log("Turning off loader");
     setloader(false);
