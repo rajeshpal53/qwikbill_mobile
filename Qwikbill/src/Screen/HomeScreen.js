@@ -3,6 +3,8 @@ import {
   Ionicons
 } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import jwtDecode from 'jwt-decode';
+
 import { useIsFocused } from "@react-navigation/native";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -86,7 +88,33 @@ export default function HomeScreen({ navigation, noItemData }) {
   }, [noItemModal]);
 
   // console.log("jayessssh tokennn ,", userData?.token)
-  // console.log("jayessssh userData ,", userData)
+
+  useEffect(() => {
+    const validateToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+
+        if (!token) {
+          return navigation.replace('LoginScreen');
+        }
+
+        // ▸ Decode payload
+        const { exp } = jwtDecode(token);        
+
+        // ▸ Compare with “now” (in seconds)
+        if (exp && exp < Date.now() / 1000) {
+          await AsyncStorage.removeItem('userToken'); 
+          navigation.replace('LoginScreen');          
+        }
+      } catch (err) {
+        console.error('Token validation error', err);
+        navigation.replace('LoginScreen');            
+      }
+    };
+
+    validateToken();         
+  }, [navigation]);          
+
 
   useEffect(() => {
     const checkTourStatus = async () => {
@@ -133,86 +161,51 @@ export default function HomeScreen({ navigation, noItemData }) {
     getItem();
   }, []);
 
-  // useEffect(() => {
 
-  //   const fetchVendorStaus = async () => {
-  //     try {
+  const fetchVendorStaus = async () => {
+    setIsLoading(true);
+    try {
+      const id = selectedShop?.vendor?.id
 
-  //       const id = selectedShop?.vendor?.id
-  //       setIsLoading(true);
-  //       setVendorStatus({});
 
-  //       const response = await readApi(
-  //         `invoice/getVendorStats/${id}`
-  //       );
+      if (!userData?.token) {
+        console.error('Token not found in user data');
+        setIsLoading(false);
+        return;
+      }
 
-  //       if (response && response.success) {
-  //         console.log("Dashboard Vendor Status Response:", response);
-  //         console.log(` api isss ${API_BASE_URL}invoice/getVendorStats/${selectedShop?.vendor?.id}`)
-  //         setVendorStatus({ ...response });
-  //         await AsyncStorage.setItem("vendorStatus", JSON.stringify(response));
-  //       } else {
-  //         console.log("Something went wrong, please try again!");
-  //         setVendorStatus({});
-  //         await AsyncStorage.removeItem("vendorStatus"); // Clear AsyncStorage on error
-  //       }
-  //     } catch (error) {
-  //       console.log("Unable to get vendor dashboard data", error);
-  //       setVendorStatus({});
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
+      const apiUrl = `https://qwikbill.in/qapi/invoice/getVendorStats?year=${selectedYear}&usersfk=${id}${selectedMonth ? `&month=${selectedMonth}` : ''
+        }`;
 
-  //   fetchVendorStaus()
+      console.log(`API URL: ${apiUrl}`); // Log the API URL for debugging
 
-  // }, [])
+      const response = await fetch(apiUrl, {
+        headers: {
+          Authorization: `Bearer ${userData?.token}`,
+        },
+      });
 
+      const json = await response.json();
+      console.log('API Response:', json);
+
+      if (json.success) {
+        setVendorStatus({
+          ...json,
+          monthlyRevenue: json.monthlyRevenue || [],
+        });
+      } else {
+        console.error('API success is false');
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
 
 
   useEffect(() => {
-
-    const fetchVendorStaus = async () => {
-      setIsLoading(true);
-      try {
-        const id = selectedShop?.vendor?.id
-
-
-        if (!userData?.token) {
-          console.error('Token not found in user data');
-          setIsLoading(false);
-          return;
-        }
-
-        const apiUrl = `https://qwikbill.in/qapi/invoice/getVendorStats?year=${selectedYear}&usersfk=${id}${selectedMonth ? `&month=${selectedMonth}` : ''
-          }`;
-
-        console.log(`API URL: ${apiUrl}`); // Log the API URL for debugging
-
-        const response = await fetch(apiUrl, {
-          headers: {
-            Authorization: `Bearer ${userData?.token}`,
-          },
-        });
-
-        const json = await response.json();
-        console.log('API Response:', json);
-
-        if (json.success) {
-          setVendorStatus({
-            ...json,
-            monthlyRevenue: json.monthlyRevenue || [],
-          });
-        } else {
-          console.error('API success is false');
-        }
-      } catch (error) {
-        console.error('Error fetching stats:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
 
     fetchVendorStaus();
   }, []);
@@ -240,11 +233,11 @@ export default function HomeScreen({ navigation, noItemData }) {
 
 
   const total =
-    (vendorStatus?.totalRevenue|| 0) +
+    (vendorStatus?.totalRevenue || 0) +
     (vendorStatus?.amountPaid || 0) +
     (vendorStatus?.amountRemaining || 0) +
-    (vendorStatus?.activeInvoices|| 0) 
-    
+    (vendorStatus?.activeInvoices || 0)
+
 
   const goToHandler = (Screen) => {
     // navigation.navigate("wertone", {screen:'CreateInvoice'});
@@ -294,7 +287,7 @@ export default function HomeScreen({ navigation, noItemData }) {
           <View style={styles.dropDownContainer}>
             <View style={styles.dropdownRow}>
               <Ionicons name="storefront-sharp" size={24} color="#0c3b73" />
-              <DropDownList options={allShops}  />
+              <DropDownList options={allShops} />
             </View>
           </View>
         </View>
@@ -323,7 +316,7 @@ export default function HomeScreen({ navigation, noItemData }) {
                   <StatCard title="Total Sales" value={`₹ ${vendorStatus?.totalRevenue ?? "N/A"}`} />
                   <StatCard title="Total Products" value={vendorStatus?.amountPaid ?? "N/A"} />
                   <StatCard title="Active Invoices" value={vendorStatus?.amountRemaining ?? "N/A"} />
-                  <StatCard title="New Customers" value={vendorStatus?.activeInvoices?? "N/A"} />
+                  <StatCard title="New Customers" value={vendorStatus?.activeInvoices ?? "N/A"} />
                 </View>
               </ScrollView>
             )}
