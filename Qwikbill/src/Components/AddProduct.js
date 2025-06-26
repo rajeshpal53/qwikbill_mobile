@@ -18,15 +18,17 @@ const AddProduct = ({ navigation }) => {
   const { userData } = useContext(UserDataContext)
   const [HSNCode, SetHSNCode] = useState();
   const { selectedShop } = useContext(ShopContext);
-  const { showSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar()
+  const [initialValues,setInitialValues]=useState({})
 
   const timeoutId = useRef(null); // useRef to persist timeoutId
 
   console.log("DATA OF HSNCODE IS ", HSNCode);
 
   useEffect(() => {
-    console.log("Edit data is ", EditData);
+    console.log("Edit data is", EditData,"setrefresh="+setRefresh,"is updated"+isUpdated);
     console.log("Isupdated Data is ", isUpdated);
+
   }, [EditData, isUpdated]);
 
   const validationSchema = Yup.object().shape({
@@ -133,7 +135,7 @@ const AddProduct = ({ navigation }) => {
           PurchasePrice: EditData?.costPrice || "",
           SellingPrice: EditData?.sellPrice || "",
           TaxRate: EditData?.taxRate || "",
-          HSNCode: EditData?.hsncode || "",
+          HSNCode: String(EditData?.hsncode ?? ""),
           IsStockData: EditData?.isStock || null,
         }}
         validationSchema={validationSchema}
@@ -154,6 +156,7 @@ const AddProduct = ({ navigation }) => {
             vendorfk: selectedShop.vendor.id,
             hsncode: parseInt(values.HSNCode),
           };
+
           console.log("Data is 15863", ProductData);
 
           if (isUpdated === true) {

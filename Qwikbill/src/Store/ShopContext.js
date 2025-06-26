@@ -10,7 +10,6 @@ export const ShopProvider = ({ children }) => {
   const [allShops, setAllShops] = useState([]);
   const [selectedShop, setSelectedShop] = useState(null);
   const [noItemModal, setNoItemModal] = useState(false);
-
   const { userData } = useContext(UserDataContext);
   const [loader, setloader] = useState(false);
 
@@ -54,10 +53,6 @@ export const ShopProvider = ({ children }) => {
   //     getProductsBYShops();
   //   }
   // }, [userData]);
-
-
-
-
 
   useEffect(() => {
     const checkSelectedShopProducts = async (id) => {
@@ -106,80 +101,95 @@ export const ShopProvider = ({ children }) => {
 
 
 
-  const loadData = async () => {
-    try {
-      setloader(true);
-      if (userData?.token) {
-        await fetchShopsFromServer();
+ const loadData = async () => {
+  try {
+    setloader(true);
 
-        const storedSelectedShop = await AsyncStorage.getItem("selectedShop");
-
-        if (storedSelectedShop) {
-          // console.log("Render this data ", storedSelectedShop);
-          setSelectedShop(JSON.parse(storedSelectedShop));
-        } else if (allShops.length > 0) {
-          // If no selected shop exists in AsyncStorage, select the first shop by default
-          console.log("ALLSHOP IS-------------", allShops[0]);
-          setSelectedShop(allShops[0]);
-          await AsyncStorage.setItem(
-            "selectedShop",
-            JSON.stringify(allShops[0])
-          );
-        }
-      } else {
-        console.log("Token is not available.");
-      }
-    } catch (error) {
-      console.log("Error loading data:", error);
-      setloader(false);
-    } finally {
-      setloader(false);
+    if (!userData?.token) {
+      console.log("User not logged in. Skipping shop loading.");
+      return;
     }
-  };
+
+    await fetchShopsFromServer();
+
+    const storedSelectedShop = await AsyncStorage.getItem("selectedShop");
+
+    if (storedSelectedShop) {
+      setSelectedShop(JSON.parse(storedSelectedShop));
+    } else if (allShops.length > 0) {
+      console.log("No stored shop, defaulting to first in allShops");
+      setSelectedShop(allShops[0]);
+      await AsyncStorage.setItem(
+        "selectedShop",
+        JSON.stringify(allShops[0])
+      );
+    }
+  } catch (error) {
+    console.log("Error loading data:", error);
+  } finally {
+    setloader(false);
+  }
+};
+
 
   const fetchShopsFromServer = async () => {
-    try {
-      setloader(true);
-      // Fetch from backend
-      const response = await readApi(
-        `userRoles/getVendorByUserRolesUserId/${userData?.user?.id}`,
-        {
-          Authorization: `Bearer ${userData?.token}`,
-        }
-      );
-      // console.log("response of getting all shops are", response?.data);
-      if (response?.data) {
-        setAllShops(response?.data);
-        await AsyncStorage.setItem("allShops", JSON.stringify(response?.data));
-      }
+  try {
+    if (!userData?.token || !userData?.user?.id) {
+      console.log("User not authenticated, skipping shop fetch.");
+      return;
+    }
 
-      if (!selectedShop && response?.data.length > 0) {
-        setSelectedShop(response?.data[0]);
+    setloader(true);
+
+    const response = await readApi(
+      `userRoles/getVendorByUserRolesUserId/${userData.user.id}`,
+      {
+        Authorization: `Bearer ${userData.token}`,
+      }
+    );
+
+    if (response?.data) {
+      setAllShops(response.data);
+      await AsyncStorage.setItem("allShops", JSON.stringify(response.data));
+
+      if (!selectedShop && response.data.length > 0) {
+        setSelectedShop(response.data[0]);
         await AsyncStorage.setItem(
           "selectedShop",
-          JSON.stringify(response?.data[0])
+          JSON.stringify(response.data[0])
         );
       }
-    } catch (error) {
-      console.log("error getting shops from server is , ", error);
-      setloader(false);
-    } finally {
-      console.log("Turning off loader12");
-      setloader(false);
     }
-  };
-
+  } catch (error) {
+    console.log("Error getting shops from server:", error);
+  } finally {
+    console.log("Turning off loader");
+    setloader(false);
+  }
+};
   // Function to update selected shop
   const updateSelectedShop = async (shop) => {
-    setSelectedShop(shop);
     console.log("shop to update is:", shop);
 
     if (shop) {
+          setSelectedShop(shop);
       await AsyncStorage.setItem("selectedShop", JSON.stringify(shop));
     } else {
       await AsyncStorage.removeItem("selectedShop");
     }
   };
+  const clearSelectedShop = async () => {
+  try {
+    setSelectedShop(null); // Clear from Context
+    await AsyncStorage.removeItem("selectedShop"); // Remove from Storage
+    console.log("Selected shop cleared.");
+    return true;
+  } catch (error) {
+    console.error("Error clearing selected shop:", error);
+    return false;
+  }
+};
+
 
   return (
     <ShopContext.Provider
@@ -190,6 +200,7 @@ export const ShopProvider = ({ children }) => {
         selectedShop,
         updateSelectedShop,
         fetchShopsFromServer,
+        clearSelectedShop
       }}
     >
       {children}

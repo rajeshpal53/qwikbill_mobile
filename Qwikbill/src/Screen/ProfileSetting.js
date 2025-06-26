@@ -207,7 +207,7 @@ const ProfileSetting = ({
   // const { setCreateuser } = useContext(WalletContext);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { updateSelectedShop, noItemModal, selectedShop } = useContext(ShopContext)
+  const { updateSelectedShop, noItemModal, selectedShop,clearSelectedShop } = useContext(ShopContext)
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchServiceProvider(userData);
@@ -429,48 +429,42 @@ const ProfileSetting = ({
       });
     }
   };
-  const logoutHandler = async () => {
-    try {
-      const response = await createApi(
-        "users/logout",
-        { mobile: userData?.user?.mobile },
-        {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userData.token}`,
-        }
-      );
-      console.log("response1523698", response);
-
-      if (response) {
-        // Handle success, show Snackbar message, and log out
-        showSnackbar("Logged out successfully", "success");
-
-        await clearUserData();
-        await AsyncStorage.clear(); // Clear all AsyncStorage
-        updateSelectedShop(null)
-        await AsyncStorage.removeItem("allShops");
-        await AsyncStorage.removeItem("selectedShop");
-
-        console.log("Successfully logged out");
-
-        setVisible(false);
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: "login" }],
-          })
-        );
-      } else {
-        console.error("Error during logout response:", response);
-        showSnackbar("Error logging out", "error");
+const logoutHandler = async () => {
+  try {
+    const response = await createApi(
+      "users/logout",
+      { mobile: userData?.user?.mobile },
+      {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userData.token}`,
       }
-    } catch (error) {
-      console.error("Error during logout - ", error);
+    );
+
+    if (response) {
+      showSnackbar("Logged out successfully", "success");
+
+      // Clear user + shop
+      await clearUserData();
+      await AsyncStorage.clear(); // clear everything
+      await clearSelectedShop();  // clear selectedShop from context
+      
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: "login" }],
+        })
+      );
+    } else {
       showSnackbar("Error logging out", "error");
-    } finally {
-      setVisible(false);
     }
-  };
+  } catch (error) {
+    console.error("Logout error:", error);
+    showSnackbar("Error logging out", "error");
+  } finally {
+    setVisible(false);
+  }
+};
+
 
   const handleEditPress = () => {
     navigation.navigate("EditProfilePage");

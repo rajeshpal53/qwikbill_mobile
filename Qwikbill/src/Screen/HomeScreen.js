@@ -75,7 +75,7 @@ export default function HomeScreen({ navigation, noItemData }) {
 
   useEffect(() => {
 
-    // console.log(" slected shop  isss ", selectedShop);
+    console.log(" slected shop in HomeSscreen", selectedShop);
 
   }, [selectedShop]);
 
