@@ -177,7 +177,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           type: "gst",
         };
         console.log("after removing someData, payloadData is , ", newPayload);
-        console.log("userData is , ", userData);
+        // console.log("userData is , ", userData);
         console.log("userData token is , ", userData?.token);
 
         const response = await createApi(api, newPayload, {
@@ -197,7 +197,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
         } else if (button == "generate") {
           console.log("Inside a else if condition ");
           console.log("after removing someData, payloadData is debug 1, ", newPayload);
-          console.log("userData is , ", userData);
+          // console.log("userData is , ", userData);
           console.log("userData token is , ", userData?.token);
 
           const response = await createApi(api, newPayload, {
@@ -254,7 +254,7 @@ try {
         } else if (button == "generate") {
           console.log("Inside a else if condition ");
           console.log("after removing someData, payloadData is debug 1, ", newPayload);
-          console.log("userData is , ", userData);
+          // console.log("userData is , ", userData);
           console.log("userData token is , ", userData?.token);
 
           const response = await createApi(api, newPayload, {
@@ -296,7 +296,7 @@ try {
           type: "provisional",
         };
         console.log("after removing someData, payloadData is , ", newPayload);
-        console.log("userData is , ", userData);
+        // console.log("userData is , ", userData);
         console.log("userData token is , ", userData?.token);
 
         const response = await createApi(api, newPayload, {

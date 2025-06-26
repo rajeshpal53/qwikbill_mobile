@@ -118,7 +118,7 @@ export default function StackNavigator() {
       </View>
     );
   }
-  console.log("userData is", userData);
+  // console.log("userData is", userData);
   // console.log(isLoading);
   // console.log(isAuthenticated, "akdskddkfkfkf");
   return (

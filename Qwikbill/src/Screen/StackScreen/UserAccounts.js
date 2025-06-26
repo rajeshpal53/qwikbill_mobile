@@ -14,14 +14,15 @@ import {
 } from 'react-native';
 import { LineChart, PieChart } from 'react-native-chart-kit';
 import UserDataContext from '../../Store/UserDataContext';
+import { readApi } from '../../Util/UtilApi';
 
 const screenWidth = Dimensions.get('window').width;
 
 const UserAccounts = () => {
 
   const { userData } = useContext(UserDataContext);
-   const { allShops, selectedShop, noItemModal, setNoItemModal } =
-      useContext(ShopContext);
+   const { allShops, selectedShop, noItemModal, setNoItemModal } =useContext(ShopContext);
+
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState('2025');
@@ -40,7 +41,7 @@ const UserAccounts = () => {
         try {
           const user = await userData;
           const token = user?.token;
-          const id = selectedShop?.user?.id
+          const id = selectedShop?.vendor?.id
 
           console.log("vendorrr is ", id)
 
@@ -50,23 +51,16 @@ const UserAccounts = () => {
             setLoading(false);
             return;
           }
-
-          const apiUrl = `https://qwikbill.in/qapi/invoice/getVendorStats?year=${selectedYear}&usersfk=${id}${selectedMonth ? `&month=${selectedMonth}` : ''
-            }`;
-
-          const response = await fetch(apiUrl, {
-            headers: {
+          // const apiUrl = `https://qwikbill.in/qapi/`;
+          const response=await  readApi(`invoice/getVendorStats?year=${selectedYear}&vendorfk=${id}${selectedMonth ? `&month=${selectedMonth}` : ''
+            }`,{
               Authorization: `Bearer ${token}`,
-            },
-          });
-
-          const json = await response.json();
-          console.log('API Response:', json);
-
-          if (json.success) {
+            })
+         
+          if (response.success) {
             setStats({
-              ...json,
-              monthlyRevenue: json.monthlyRevenue || [],
+              ...response,
+              monthlyRevenue: response.monthlyRevenue || [],
             });
           } else {
             console.error('API success is false');

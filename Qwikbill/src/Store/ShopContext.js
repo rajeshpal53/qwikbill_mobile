@@ -14,11 +14,11 @@ export const ShopProvider = ({ children }) => {
   const { userData } = useContext(UserDataContext);
   const [loader, setloader] = useState(false);
 
-  console.log("SELECTED SHOP ISSSSS ", selectedShop);
+  // console.log("SELECTED SHOP ISSSSS ", selectedShop);
 
-  console.log("USER DATA IS 1578", userData?.user?.id);
+  // console.log("USER DATA IS 1578", userData?.user?.id);
 
-  console.log("DATA OF ALL SHOP 1000", allShops);
+  // console.log("DATA OF ALL SHOP 1000", allShops);
 
   //Open for Add product modal
   // useEffect(() => {
@@ -71,7 +71,7 @@ export const ShopProvider = ({ children }) => {
           }
         );
 
-        console.log("Fetched selected shop data:", response?.data);
+        // console.log("Fetched selected shop data:", response?.data);
         console.log(`${API_BASE_URL}userRoles/getVendorByUserRolesUserId/${id}`);
 
         const matchedShop = response?.data.find(
@@ -115,7 +115,7 @@ export const ShopProvider = ({ children }) => {
         const storedSelectedShop = await AsyncStorage.getItem("selectedShop");
 
         if (storedSelectedShop) {
-          console.log("Render this data ", storedSelectedShop);
+          // console.log("Render this data ", storedSelectedShop);
           setSelectedShop(JSON.parse(storedSelectedShop));
         } else if (allShops.length > 0) {
           // If no selected shop exists in AsyncStorage, select the first shop by default
@@ -147,7 +147,7 @@ export const ShopProvider = ({ children }) => {
           Authorization: `Bearer ${userData?.token}`,
         }
       );
-      console.log("response of getting all shops are", response?.data);
+      // console.log("response of getting all shops are", response?.data);
       if (response?.data) {
         setAllShops(response?.data);
         await AsyncStorage.setItem("allShops", JSON.stringify(response?.data));

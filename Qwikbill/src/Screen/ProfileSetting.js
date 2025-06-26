@@ -250,7 +250,7 @@ const ProfileSetting = ({
   // const [sameMenuItems, setSameMeuItems] = useState()
   const [menuItems, setMenuItems] = useState();
 
-  console.log("user data in profile ", userData)
+  // console.log("user data in profile ", userData)
 
   useEffect(() => {
     const UpdatemanuItem = () => {
@@ -445,8 +445,6 @@ const ProfileSetting = ({
         // Handle success, show Snackbar message, and log out
         showSnackbar("Logged out successfully", "success");
 
-        // Perform all the logout actions
-        // await auth().signOut();
         await clearUserData();
         await AsyncStorage.clear(); // Clear all AsyncStorage
         updateSelectedShop(null)
@@ -480,7 +478,6 @@ const ProfileSetting = ({
 
   const loginClickHandler = () => {
     setLoginConfirmModalVisible(false);
-
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
