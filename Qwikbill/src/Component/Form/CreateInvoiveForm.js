@@ -21,6 +21,7 @@ import UserDataContext from "../../Store/UserDataContext";
 import { ButtonColor, createApi, fontSize, readApi } from "../../Util/UtilApi";
 import ItemDataTable from "../Cards/ItemDataTable";
 import PriceDetails from "../PriceDetails";
+import ConfirmModal from "../../Components/Modal/ConfirmModal";
 
 const CreateInvoiceForm = ({ selectedButton }) => {
   const dispatch = useDispatch();
@@ -36,6 +37,8 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const timeoutId = useRef(null); // useRef to persist timeoutId
   const { showSnackbar } = useSnackbar();
   const error = useSelector((state) => state.cart.error);
+   const pendingActionRef = useRef(null);
+    const [showModal, setShowModal] = useState(false);
 
   console.log("DATA OF ERROR ", error);
 
@@ -104,6 +107,18 @@ const CreateInvoiceForm = ({ selectedButton }) => {
     }, 300);
   };
 
+  
+  function handleConfirm() {
+    setShowModal(false);                           // close the modal
+    if (pendingActionRef.current) {
+      navigation.dispatch(pendingActionRef.current); // finally go back
+    }
+  }
+
+  function handleCancel() {
+    setShowModal(false);                           // just hide the modal
+  }
+
   useEffect(() => {
     console.log("changed cart is , ", carts);
     console.log("changed cart is , ", selectedButton);
@@ -121,25 +136,29 @@ const CreateInvoiceForm = ({ selectedButton }) => {
       if (hasFilledForm && !submit.current) {
         e.preventDefault();
 
-        Alert.alert(
-          "Warning!",
-          "If you go back, all of your filled form data will be lost. Are you sure you want to go back?",
-          [
-            {
-              text: "Cancel",
-              style: "cancel",
-            },
-            {
-              text: "Yes",
-              style: "destructive",
-              onPress: () => {
-                navigation.dispatch(e.data.action);
-                dispatch(clearCart());
-                return true;
-              },
-            },
-          ]
-        );
+         pendingActionRef.current = e.data.action;    // <— stash the action
+
+        setShowModal(true);
+
+        // Alert.alert(
+        //   "Warning!",
+        //   "If you go back, all of your filled form data will be lost. Are you sure you want to go back?",
+        //   [
+        //     {
+        //       text: "Cancel",
+        //       style: "cancel",
+        //     },
+        //     {
+        //       text: "Yes",
+        //       style: "destructive",
+        //       onPress: () => {
+        //         navigation.dispatch(e.data.action);
+        //         dispatch(clearCart());
+        //         return true;
+        //       },
+        //     },
+        //   ]
+        // );
       }
     });
 
@@ -593,6 +612,14 @@ try {
           )
         }}
       </Formik>
+       <ConfirmModal
+              visible={showModal}
+              setVisible={handleCancel}
+              handlePress={handleConfirm}
+              message="If you go back, all of your Filled Form Data will be lost. Are you sure you want to go back?"
+              heading="Warning"
+              buttonTitle="Go Back"
+            />
     </ScrollView>
   )}
 
