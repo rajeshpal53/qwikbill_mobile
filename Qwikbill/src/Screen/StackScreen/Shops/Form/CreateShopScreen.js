@@ -15,6 +15,7 @@ import {
   List,
   Divider,
   ActivityIndicator,
+  Portal
 } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -27,8 +28,8 @@ import { useIsFocused, useRoute } from "@react-navigation/native";
 // import SelectionDropdown from "../../../../ComponentContainer/SelectionDropdown";
 
 import { API_BASE_URL, createApi, fontSize, NORM_URL, readApi } from "../../../../Util/UtilApi";
+import { getIn } from "formik";
 
-// import UserDataContext from "../../../../Store/UserDataContext";
 import { useSnackbar } from "../../../../Store/SnackbarContext";
 // import { useLocation } from "../../../../Store/LocationContext";
 import * as Location from "expo-location";
@@ -37,16 +38,12 @@ import { useTranslation } from "react-i18next";
 // import ProviderProfileForm from "./ServiceProviderFormSections/ProviderProfileForm";
 import ProviderProfileForm from "./ProviderProfileForm";
 import ProviderServiceForm from "./ProviderServiceForm";
-// import ProviderServiceForm from "./ServiceProviderFormSections/ProviderServiceForm";
-// import ProviderMoreDetails from "./ServiceProviderFormSections/ProviderMoreDetails";
-// import FormStepper from "./ServiceProviderFormSections/FormStepper";
-// import {ProgressStep, ProgressSteps} from "react-native-progress-steps"
 import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
 import Icon from "react-native-vector-icons/AntDesign";
 import axios from "axios";
 import UserDataContext from "../../../../Store/UserDataContext";
-//import ProviderMoreDetails from "./ProviderMoreDetails";
 import { ShopContext } from "../../../../Store/ShopContext";
+import ConfirmModal from "../../../../Components/Modal/ConfirmModal";
 
 // Form validation schema using Yup
 
@@ -77,15 +74,7 @@ const uploadImagesSchema = Yup.object().shape({
     .required("Aadhaar number is required"),
 });
 //
-// const uploadImagesSchema = Yup.object().shape({
-//   aadhaarNumber: Yup.string()
-//     .matches(/^\d{12}$/, "Aadhaar number must be 12 digits")
-//     .required("Aadhaar number is required"),
 
-//   aadharFrontImage: Yup.mixed().required("Aadhar Front image is required"),
-
-//   aadharBackImage: Yup.mixed().required("Aadhar Back image is required"),
-// });
 
 const ShopValidataionSchema = Yup.object().shape({
   shopName: Yup.string()
@@ -114,8 +103,6 @@ const ProfileValidationSchema = Yup.object().shape({
   whatsappNumber: Yup.string()
     .required("WhatsApp number is required")
     .matches(/^[6-9]\d{9}$/, "WhatsApp number must be  10 digits"),
-
-
 
   mobile: Yup.string().required("mobile number is required"),
   // .matches(/^[6-9]\d{9}$/, "Invalid Mobile Number")
@@ -173,18 +160,16 @@ const CreateShopScreen = ({ navigation }) => {
   const routeData = route?.params?.editItem || null;
   const isAdmin = route?.params?.isAdmin ?? false;
   const isFocused = useIsFocused();
-  // console.log("routeLocation = ", routeLocation);
   const { showSnackbar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(false);
-  // const { location } = useLocation();
-  // const { getAddressFrom } = useLocation();
   const submit = useRef(false);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
   const [role, Setrole] = useState("");
   const [roleId, setroleId] = useState(null);
-
+  const [showModal, setShowModal] = useState(false);
   const { t } = useTranslation();
+  const pendingActionRef = useRef(null);          // <—
 
   const { userData, saveUserData } = useContext(UserDataContext);
 
@@ -202,11 +187,6 @@ const CreateShopScreen = ({ navigation }) => {
   const textInputMode = "flat";
   const progressRef = useRef(null);
 
-  // const [genderList, setGenderList] = useState([
-  //   { gender: "Male" },
-  //   { gender: "Female" },
-  //   { gender: "Other" },
-  // ]);
 
   const [selectedGender, setSelectedGender] = useState(() => {
     console.log("routedata is the , ", routeData);
@@ -234,7 +214,6 @@ const CreateShopScreen = ({ navigation }) => {
 
   console.log("route data isssss", routeData)
 
-  // console.log("route data is , ", routeData)
   console.log("userData isefddfd, ", userData);
 
   const [initialData, setInitialData] = useState({
@@ -262,30 +241,33 @@ const CreateShopScreen = ({ navigation }) => {
     profileImage: userData?.user?.profilePicurl || null,
   });
 
-  
+
   useEffect(() => {
     const handleBackPress = navigation.addListener("beforeRemove", (e) => {
       if (!submit.current && !isFormSubmitted) {
         e.preventDefault();
+        pendingActionRef.current = e.data.action;    // <— stash the action
 
-        Alert.alert(
-          "Warning!",
-          "If you go back, all of your Filled Form Data will be lost. Are you sure you want to go back?",
-          [
-            {
-              text: "Cancel",
-              style: "cancel",
-            },
-            {
-              text: "Yes",
-              style: "destructive",
-              onPress: () => {
-                navigation.dispatch(e.data.action);
-                return true;
-              },
-            },
-          ]
-        );
+        setShowModal(true);
+
+        // Alert.alert(
+        //   "Warning!",
+        //   "If you go back, all of your Filled Form Data will be lost. Are you sure you want to go back?",
+        //   [
+        //     {
+        //       text: "Cancel",
+        //       style: "cancel",
+        //     },
+        //     {
+        //       text: "Yes",
+        //       style: "destructive",
+        //       onPress: () => {
+        //         navigation.dispatch(e.data.action);
+        //         return true;
+        //       },
+        //     },
+        //   ]
+        // );
       }
     });
 
@@ -416,20 +398,7 @@ const CreateShopScreen = ({ navigation }) => {
             (routeData?.shopImage &&
               formatUrl(routeData?.shopImage, "shopImage")) ||
             null,
-          // aadharFrontImage:
-          //   (routeData?.user?.aadharCardFronturl &&
-          //     formatUrl(
-          //       routeData?.user?.aadharCardFronturl,
-          //       "aadharCardFronturl"
-          //     )) ||
-          //   null,
-          // aadharBackImage:
-          //   (routeData?.user?.aadharCardBackurl &&
-          //     formatUrl(
-          //       routeData?.user?.aadharCardBackurl,
-          //       "aadharCardBackurl"
-          //     )) ||
-          //   null,
+
           profileImage:
             (routeData?.user?.profilePicurl &&
               formatUrl(routeData?.user?.profilePicurl, "profilePicurl")) ||
@@ -460,21 +429,7 @@ const CreateShopScreen = ({ navigation }) => {
           (userData?.user?.profilePicurl &&
             formatUrl(userData?.user?.profilePicurl, "profilePicurl")) ||
           null,
-        // aadharFrontImage:
-        //   (userData?.user?.aadharCardFronturl &&
-        //     formatUrl(
-        //       userData?.user?.aadharCardFronturl,
-        //       "aadharCardFronturl"
-        //     )) ||
-        //   null,
-        // aadharBackImage:
-        //   (userData?.user?.aadharCardBackurl &&
-        //     formatUrl(
-        //       userData?.user?.aadharCardBackurl,
-        //       "aadharCardBackurl"
-        //     )) ||
-        //   null,
-        // aadhaarNumber: userData?.user?.aadharCard || "",
+
       }));
     } catch (error) {
       console.log("eror is , ", error);
@@ -494,6 +449,19 @@ const CreateShopScreen = ({ navigation }) => {
     console.log("imagefie , ", imageFile);
     return imageFile;
   };
+
+
+  function handleConfirm() {
+    setShowModal(false);                           // close the modal
+    if (pendingActionRef.current) {
+      navigation.dispatch(pendingActionRef.current); // finally go back
+    }
+  }
+
+  function handleCancel() {
+    setShowModal(false);
+  }
+
 
 
 
@@ -555,26 +523,68 @@ const CreateShopScreen = ({ navigation }) => {
     }
   };
 
-  const lastStep = 2;
+  const getFirstError = (errObj) => {
+    for (const key in errObj) {
+      const val = errObj[key];
+
+      if (typeof val === "string") return { key, msg: val };      // flat error
+      if (val && typeof val === "object") {
+        const nested = getFirstError(val);                        // nested error
+        if (nested) return nested;
+      }
+    }
+    return null;
+  };
 
   const handleNextStep = async (validateForm, setFieldTouched) => {
     const errors = await validateForm();
 
-    // Blur (mark as touched) only the fields with errors
-    Object.keys(errors).forEach((field) => {
-      if (errors[field]) {
-        setFieldTouched(field, true); // Mark fields with errors as touched
-      }
-    });
+    if (Object.keys(errors).length) {
+      const firstErr = getFirstError(errors);
 
-    if (Object.keys(errors).length > 0) {
-      console.log("validation failed ", errors);
-      return false;
-    } else if (currentStep < lastStep) {
-      console.log("next step");
+      if (firstErr) {
+        // 1. Mark the field as touched so Formik shows red helper text
+        setFieldTouched(firstErr.key, true, false);
+
+        // 2. Show a snackbar (adjust this for your toast/snackbar system)
+        showSnackbar(firstErr.msg, "error");
+      }
+
+      return; // Don't go to next step if any errors
+    }
+
+    if (currentStep < lastStep) {
       setCurrentStep((prev) => prev + 1);
     }
   };
+
+
+  const lastStep = 2;
+
+  // const handleNextStep = async (validateForm, setFieldTouched) => {
+  //   const errors = await validateForm();
+
+  //   // Blur (mark as touched) only the fields with errors
+  //   Object.keys(errors).forEach((field) => {
+  //     if (errors[field]) {
+  //       setFieldTouched(field, true); // Mark fields with errors as touched
+  //     }
+  //   });
+
+  //   if (Object.keys(errors).length > 0) {
+  //     console.log("validation failed ", errors);
+  //     return false;
+  //   } else if (currentStep < lastStep) {
+  //     console.log("next step");
+  //     setCurrentStep((prev) => prev + 1);
+  //   }
+
+
+  // };
+
+
+
+
 
   const handlePrevStep = () => {
     if (currentStep > 0) {
@@ -592,21 +602,11 @@ const CreateShopScreen = ({ navigation }) => {
     );
   }
 
-  // useEffect(() => {
-  //   console.log(" values are m  ini", initialData);
-  // }, [initialData]);
-
   return (
     <Formik
       initialValues={initialData}
       enableReinitialize={true}
       validationSchema={
-        // currentStep === 0
-        //   ? ProfileValidationSchema
-        //   : currentStep === 1 
-        //     ? ShopValidataionSchema
-        //     : uploadImagesSchema
-
         currentStep === 0 ? ProfileValidationSchema : ShopValidataionSchema
       }
       onSubmit={async (values) => {
@@ -627,28 +627,12 @@ const CreateShopScreen = ({ navigation }) => {
         updateUserPayloadData.append("email", values?.email || "");
         updateUserPayloadData.append("gender", values?.gender);
 
-        // console.log("gender is , ", values?.gender);
         if (values?.profileImage) {
           console.log("profdkdkd 111, ", values?.profileImage);
           updateUserPayloadData.append("profilePicurl", values?.profileImage);
         }
-        // if (values?.aadharFrontImage) {
-        //   updateUserPayloadData.append(
-        //     "aadharCardFronturl",
-        //     values?.aadharFrontImage
-        //   );
-        // }
-
-        // if (values?.aadharBackImage) {
-        //   updateUserPayloadData.append(
-        //     "aadharCardBackurl",
-        //     values?.aadharBackImage
-        //   );
-        // }
 
         updateUserPayloadData.append("password", userData?.user?.password);
-
-        // updateUserPayloadData.append("roles", "admin");
 
         // console.log("router ddd , data is , ", routeData);
         console.log("updateUserPayloadData is the , ", updateUserPayloadData);
@@ -676,18 +660,13 @@ const CreateShopScreen = ({ navigation }) => {
           );
           createdUserId = response?.data?.id;
 
-
-
           if (!isAdmin || routeData?.user?.mobile === userData?.user?.mobile) {
             const saveUser = {
               token: userData?.token,
               user: response?.data,
             };
-
             saveUserData(saveUser);
           }
-
-
 
           showSnackbar(t("Your profile has been updated"), "success");
         } catch (error) {
@@ -696,7 +675,6 @@ const CreateShopScreen = ({ navigation }) => {
         }
 
         const data = new FormData();
-        // data.append("aadharCard", values?.aadhaarNumber);
 
         data.append("whatsappnumber", values?.whatsappNumber || "");
         data.append("shopname", values?.shopName);
@@ -707,8 +685,6 @@ const CreateShopScreen = ({ navigation }) => {
         data.append("shopAddress", values?.shopAddress);
         data.append("latitude", values?.latitude || "213.234");
         data.append("longitude", values?.longitude || "213.234");
-        // data.append("drange", values?.kilometerRadius);
-        // data.append("isOnline", values?.isOnline);
 
         if (isAdmin) {
           // data.append("isVerified", values?.isVerified);
@@ -736,11 +712,7 @@ const CreateShopScreen = ({ navigation }) => {
           data.append("shopImage", values?.shopImage);
         }
 
-        // if (values?.aadharImage) {
-        //   data.append("aadharCardurl", aadharImage);
-        // }
 
-        // console.log("image si , ", shopImage);
         console.log("updateProviderPayload is , ", data);
 
         try {
@@ -842,168 +814,148 @@ const CreateShopScreen = ({ navigation }) => {
         touched,
       }) => {
         return (
-          <View
-            style={{
-              paddingHorizontal: 18,
-
-              //  backgroundColor: "orange",
-              //  padding:5,
-              flex: 1,
-              backgroundColor: "#fff",
-              gap: 10,
-            }}
-          >
-            <ProgressSteps
-              activeStep={currentStep}
-              topOffset={18}
-              marginBottom={5}
-              labelFontSize={50}
+          <>
+            <View
+              style={{
+                paddingHorizontal: 18,
+                //  backgroundColor: "orange",
+                //  padding:5,
+                flex: 1,
+                backgroundColor: "#fff",
+                gap: 10,
+              }}
             >
-              <ProgressStep
-                // label="Profile Details"
-                scrollViewProps={styles.scrollViewProps}
-                removeBtnRow={true}
-                labelStyle={{ fontSize: 50 }}
+              <ProgressSteps
+                activeStep={currentStep}
+                topOffset={18}
+                marginBottom={5}
+                labelFontSize={50}
               >
-                <View>
-                  <ProviderProfileForm
-                    title={"Profile Details"}
-                    handleBlur={handleBlur}
-                    handleChange={handleChange}
-                    setFieldValue={setFieldValue}
-                    values={values}
-                    touched={touched}
-                    errors={errors}
-                    selectedGender={selectedGender}
-                    genderDropDownVisible={genderDropDownVisible}
-                    handleGenderDropDownPress={handleGenderDropDownPress}
-                    genderList={genderList}
-                    setSelectedGender={setSelectedGender}
-                    setGenderDropDownVisible={setGenderDropDownVisible}
-                    textInputMode={textInputMode}
-                    profileImage={profileImage}
-                    routeProfileImageUrl={routeData?.aadharCardurl}
-                    setProfileImage={setProfileImage}
-                    isAdmin={isAdmin}
-                    isRouteDataPresent={routeData ? true : false}
-                    profileImageField="profileImage"
-                  />
-                </View>
-              </ProgressStep>
-
-              <ProgressStep
-                // label="Shop Details"
-                removeBtnRow={true}
-                scrollViewProps={styles.scrollViewProps}
-                onSubmit={handleSubmit}
-
-              // previousBtnTextStyle={{ display: 'none' }}
-              >
-                <View>
-                  <ProviderServiceForm
-                    title={"Shop Details"}
-                    handleBlur={handleBlur}
-                    handleChange={handleChange}
-                    setFieldValue={setFieldValue}
-                    values={values}
-                    touched={touched}
-                    errors={errors}
-                    getLatAndLong={getLatAndLong}
-                    navigation={navigation}
-                    isAdmin={isAdmin}
-                    richText={richText}
-                    editorContent={editorContent}
-                    setEditorContent={setEditorContent}
-                    textInputMode={textInputMode}
-                    shopImageField="shopImage"
-                  />
-                </View>
-              </ProgressStep>
-
-              {/* <ProgressStep
-                // label="Upload Images"
-                onSubmit={handleSubmit}
-                scrollable={true}
-                removeBtnRow={true}
-                scrollViewProps={styles.scrollViewProps}
-              >
-                <View>
-                  <ProviderMoreDetails
-                    title={"Upload Images"}
-                    shopImage={shopImage}
-                    setShopImage={setShopImage}
-                    aadharImage={aadharImage}
-                    setAadharImage={setAadharImage}
-                    profileImage={profileImage}
-                    setProfileImage={setProfileImage}
-                    routeProviderImageUrl={routeData?.shopImage}
-                    routeAadharImageUrl={routeData?.aadharCardurl}
-                    isAdmin={isAdmin}
-                    handleBlur={handleBlur}
-                    handleChange={handleChange}
-                    values={values}
-                    setFieldValue={setFieldValue}
-                    touched={touched}
-                    errors={errors}
-                    textInputMode={textInputMode}
-                    aadharFrontImageField="aadharFrontImage"
-                    aadharBackImageField="aadharBackImage"
-                  />
-                </View>
-              </ProgressStep> */}
-
-            </ProgressSteps>
-
-            {/* --------------------------------------------------------------------------------------------- */}
-
-            <View style={{ gap: 5 }}>
-              <View
-                style={{
-                  // backgroundColor:"orange",
-                  flexDirection: "row",
-                  gap: 5,
-                  // alignSelf:"flex-end"
-                  marginVertical: 10,
-                }}
-              >
-                <Button
-                  mode="contained"
-                  // icon={"arrow-left"}
-                  onPress={handlePrevStep}
-                  disabled={currentStep === 0 ? true : false}
-                // style={{ flex: 1 }}
+                <ProgressStep
+                  // label="Profile Details"
+                  scrollViewProps={styles.scrollViewProps}
+                  removeBtnRow={true}
+                  labelStyle={{ fontSize: 50 }}
                 >
-                  {/* Previous */}
-                  <Icon name="arrowleft" size={20} color="#fff" />
-                </Button>
+                  <View>
+                    <ProviderProfileForm
+                      title={"Profile Details"}
+                      handleBlur={handleBlur}
+                      handleChange={handleChange}
+                      setFieldValue={setFieldValue}
+                      values={values}
+                      touched={touched}
+                      errors={errors}
+                      selectedGender={selectedGender}
+                      genderDropDownVisible={genderDropDownVisible}
+                      handleGenderDropDownPress={handleGenderDropDownPress}
+                      genderList={genderList}
+                      setSelectedGender={setSelectedGender}
+                      setGenderDropDownVisible={setGenderDropDownVisible}
+                      textInputMode={textInputMode}
+                      profileImage={profileImage}
+                      routeProfileImageUrl={routeData?.aadharCardurl}
+                      setProfileImage={setProfileImage}
+                      isAdmin={isAdmin}
+                      isRouteDataPresent={routeData ? true : false}
+                      profileImageField="profileImage"
+                    />
+                  </View>
+                </ProgressStep>
 
-                {currentStep === 0 && (
+                <ProgressStep
+                  // label="Shop Details"
+                  removeBtnRow={true}
+                  scrollViewProps={styles.scrollViewProps}
+                  onSubmit={handleSubmit}
+
+                // previousBtnTextStyle={{ display: 'none' }}
+                >
+                  <View>
+                    <ProviderServiceForm
+                      title={"Shop Details"}
+                      handleBlur={handleBlur}
+                      handleChange={handleChange}
+                      setFieldValue={setFieldValue}
+                      values={values}
+                      touched={touched}
+                      errors={errors}
+                      getLatAndLong={getLatAndLong}
+                      navigation={navigation}
+                      isAdmin={isAdmin}
+                      richText={richText}
+                      editorContent={editorContent}
+                      setEditorContent={setEditorContent}
+                      textInputMode={textInputMode}
+                      shopImageField="shopImage"
+                    />
+                  </View>
+                </ProgressStep>
+
+
+              </ProgressSteps>
+
+              {/* --------------------------------------------------------------------------------------------- */}
+
+              <View style={{ gap: 5 }}>
+                <View
+                  style={{
+                    // backgroundColor:"orange",
+                    flexDirection: "row",
+                    gap: 5,
+                    // alignSelf:"flex-end"
+                    marginVertical: 10,
+                  }}
+                >
                   <Button
                     mode="contained"
-                    // icon={"arrow-right"}
-                    contentStyle={{ flexDirection: "row-reverse" }}
-                    onPress={() =>
-                      handleNextStep(validateForm, setFieldTouched)
-                    }
-                    style={{ flex: 1 }}
+                    // icon={"arrow-left"}
+                    onPress={handlePrevStep}
+                    disabled={currentStep === 0 ? true : false}
+                  // style={{ flex: 1 }}
                   >
-                    Next
+                    {/* Previous */}
+                    <Icon name="arrowleft" size={20} color="#fff" />
                   </Button>
-                )}
 
-                {currentStep === 1 && (
-                  <Button
-                    mode="contained"
-                    onPress={handleSubmit}
-                    style={{ flex: 1 }}
-                  >
-                    {t("Submit")}
-                  </Button>
-                )}
+                  {currentStep === 0 && (
+                    <Button
+                      mode="contained"
+                      // icon={"arrow-right"}
+                      contentStyle={{ flexDirection: "row-reverse" }}
+                      onPress={() =>
+                        handleNextStep(validateForm, setFieldTouched)
+                      }
+                      style={{ flex: 1 }}
+                    >
+                      Next
+                    </Button>
+                  )}
 
+                  {currentStep === 1 && (
+                    <Button
+                      mode="contained"
+                      onPress={handleSubmit}
+                      style={{ flex: 1 }}
+                    >
+                      {t("Submit")}
+                    </Button>
+                  )}
+
+                </View>
               </View>
             </View>
-          </View>
+            <Portal>
+              <ConfirmModal
+                visible={showModal}
+                setVisible={handleCancel}
+                handlePress={handleConfirm}
+                message="If you go back, all of your Filled Form Data will be lost. Are you sure you want to go back?"
+                heading="Warning"
+                buttonTitle="Go Back"
+              />
+            </Portal>
+          </>
         );
       }}
     </Formik>

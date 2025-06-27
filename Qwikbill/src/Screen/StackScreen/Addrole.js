@@ -22,6 +22,7 @@ import { ButtonColor, createApi, fontSize, readApi } from "../../Util/UtilApi";
 //import AddroleDropdown from "../../Component/AddRoleDropdown";
 // import RNPickerSelect from "react-native-picker-select";
 import { Picker } from "@react-native-picker/picker";
+import ConfirmModal from "../../Components/Modal/ConfirmModal";
 
 const AddRole = () => {
   const { userData } = useContext(UserDataContext);
@@ -35,6 +36,9 @@ const AddRole = () => {
   const { showSnackbar } = useSnackbar();
   const timeoutId = useRef(null);
   const [currentUserRole, setcurrentUserRole] = useState("");
+  const pendingActionRef = useRef(null);
+  const [showModal, setShowModal] = useState(false);
+  // <—
 
   // useEffect(() => {
   //   console.log("SELECTED SHOP IS ", editData);
@@ -78,7 +82,7 @@ const AddRole = () => {
         const roleFk = response?.data?.rolesfk;
         console.log("Data of role is ", roleFk);
 
-        if (roleFk){
+        if (roleFk) {
           const roleName = getRoleNameFromFk(roleFk);
           console.log("DATA OF ROLE ID ", roleName);
           setcurrentUserRole(roleName);
@@ -119,6 +123,16 @@ const AddRole = () => {
     }
   };
 
+  function handleConfirm() {
+    setShowModal(false);                           // close the modal
+    if (pendingActionRef.current) {
+      navigation.dispatch(pendingActionRef.current); // finally go back
+    }
+  }
+
+  function handleCancel() {
+    setShowModal(false);                           // just hide the modal
+  }
   // const roleOptions = ["Owner", "Manager", "Employee", "Viewer"];
 
   const getValidationSchema = (currentUserMobile) =>
@@ -177,25 +191,29 @@ const AddRole = () => {
 
       if (hasFilledForm && !submit.current) {
         e.preventDefault();
+        pendingActionRef.current = e.data.action;    // <— stash the action
 
-        Alert.alert(
-          "Warning!",
-          "If you go back, all of your filled form data will be lost. Are you sure you want to go back?",
-          [
-            {
-              text: "Cancel",
-              style: "cancel",
-            },
-            {
-              text: "Yes",
-              style: "destructive",
-              onPress: () => {
-                navigation.dispatch(e.data.action);
-                return true;
-              },
-            },
-          ]
-        );
+        setShowModal(true);
+
+
+        // Alert.alert(
+        //   "Warning!",
+        //   "If you go back, all of your filled form data will be lost. Are you sure you want to go back?",
+        //   [
+        //     {
+        //       text: "Cancel",
+        //       style: "cancel",
+        //     },
+        //     {
+        //       text: "Yes",
+        //       style: "destructive",
+        //       onPress: () => {
+        //         navigation.dispatch(e.data.action);
+        //         return true;
+        //       },
+        //     },
+        //   ]
+        // );
       }
     });
 
@@ -440,6 +458,15 @@ const AddRole = () => {
           );
         }}
       </Formik>
+
+      <ConfirmModal
+        visible={showModal}
+        setVisible={handleCancel}
+        handlePress={handleConfirm}
+        message="If you go back, all of your Filled Form Data will be lost. Are you sure you want to go back?"
+        heading="Warning"
+        buttonTitle="Go Back"
+      />
     </ScrollView>
   );
 };

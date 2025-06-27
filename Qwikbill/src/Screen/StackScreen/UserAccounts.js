@@ -15,13 +15,14 @@ import {
 import { LineChart, PieChart } from 'react-native-chart-kit';
 import UserDataContext from '../../Store/UserDataContext';
 import { readApi } from '../../Util/UtilApi';
+import NoDataFound from '../../Components/NoDataFound';
 
 const screenWidth = Dimensions.get('window').width;
 
 const UserAccounts = () => {
 
   const { userData } = useContext(UserDataContext);
-   const { allShops, selectedShop, noItemModal, setNoItemModal } =useContext(ShopContext);
+  const { allShops, selectedShop, noItemModal, setNoItemModal } = useContext(ShopContext);
 
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -51,11 +52,12 @@ const UserAccounts = () => {
             setLoading(false);
             return;
           }
-          // const apiUrl = `https://qwikbill.in/qapi/`;
           const response=await  readApi(`invoice/getVendorStats?year=${selectedYear}&vendorfk=${id}${selectedMonth ? `&month=${selectedMonth}` : ''
             }`,{
               Authorization: `Bearer ${token}`,
             })
+
+            //console.log("response iss", response)
          
           if (response.success) {
             setStats({
@@ -88,122 +90,126 @@ const UserAccounts = () => {
 
   return (
     <ScrollView style={styles.container}>
-      {/* <View style={styles.headerSection}>
-        <View>
-          <Text style={styles.headerTitle}>Vendor</Text>
-          <Text style={styles.headerTitle}>Financial</Text>
-          <Text style={styles.headerTitle}>Overview</Text>
-        </View>
-        <Image source={require('../../../assets/qwikBill.jpeg')} style={styles.headerImage} />
-      </View> */}
+    {stats.totalRevenue > 0 ? (
+      <>
+        <View style={styles.pickerContainer}>
+          <View style={styles.pickerWrapper}>
+            <Text style={styles.pickerLabel}>Select Year</Text>
+            <Picker
+              selectedValue={selectedYear}
+              onValueChange={(value) => {
+                setSelectedYear(value);
+                setSelectedMonth('');
+              }}>
+              {[2023, 2024, 2025].map((year) => (
+                <Picker.Item key={year} label={String(year)} value={String(year)} />
+              ))}
+            </Picker>
+          </View>
 
-      {/* Year & Month Picker */}
-      <View style={styles.pickerContainer}>
-        <View style={styles.pickerWrapper}>
-          <Text style={styles.pickerLabel}>Select Year</Text>
-          <Picker
-            selectedValue={selectedYear}
-            onValueChange={(value) => {
-              setSelectedYear(value);
-              setSelectedMonth('');
-            }}>
-            {[2023, 2024, 2025].map((year) => (
-              <Picker.Item key={year} label={String(year)} value={String(year)} />
-            ))}
-          </Picker>
-        </View>
-
-        <View style={styles.pickerWrapper}>
-          <Text style={styles.pickerLabel}>Select Month</Text>
-          <Picker selectedValue={selectedMonth} onValueChange={(value) => setSelectedMonth(value)}>
-            <Picker.Item label="All Months" value="" />
-            {[
-              'January', 'February', 'March', 'April', 'May', 'June',
-              'July', 'August', 'September', 'October', 'November', 'December',
-            ].map((month, idx) => (
-              <Picker.Item key={month} label={month} value={String(idx + 1).padStart(2, '0')} />
-            ))}
-          </Picker>
-        </View>
-      </View>
-
-      {/* Cards */}
-      <View style={styles.cardContainer}>
-        <View style={[styles.card, { backgroundColor: '#002B5B' }]}>
-          <Text style={styles.cardTitlefirst}>Total Revenue</Text>
-          <Text style={styles.cardValue}>₹ {stats.totalRevenue || 0}</Text>
+          <View style={styles.pickerWrapper}>
+            <Text style={styles.pickerLabel}>Select Month</Text>
+            <Picker selectedValue={selectedMonth} onValueChange={(value) => setSelectedMonth(value)}>
+              <Picker.Item label="All Months" value="" />
+              {[
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December',
+              ].map((month, idx) => (
+                <Picker.Item key={month} label={month} value={String(idx + 1).padStart(2, '0')} />
+              ))}
+            </Picker>
+          </View>
         </View>
 
-        <View style={[styles.card, { backgroundColor: '#F0F7F4' }]}>
-          <Text style={styles.cardTitle}>Amount Paid</Text>
-          <Text style={styles.cardValueDark}>₹ {stats.amountPaid || 0}</Text>
+        {/* Cards */}
+        <View style={styles.cardContainer}>
+          <View style={[styles.card, { backgroundColor: '#002B5B' }]}>
+            <Text style={styles.cardTitlefirst}>Total Revenue</Text>
+            <Text style={styles.cardValue}>₹ {stats.totalRevenue || 0}</Text>
+          </View>
+
+          <View style={[styles.card, { backgroundColor: '#F0F7F4' }]}>
+            <Text style={styles.cardTitle}>Amount Paid</Text>
+            <Text style={styles.cardValueDark}>₹ {stats.amountPaid || 0}</Text>
+          </View>
+
+          <View style={[styles.card, { backgroundColor: '#FCE8E6' }]}>
+            <Text style={styles.cardTitleRed}>Remaining Amount</Text>
+            <Text style={styles.cardValueRed}>₹ {stats.amountRemaining || 0}</Text>
+          </View>
+
+          <View style={[styles.card, { backgroundColor: '#E8EAF6' }]}>
+            <Text style={styles.cardTitle}>Active Invoices</Text>
+            <Text style={styles.cardValueDark}>{stats.activeInvoices || 0}</Text>
+          </View>
         </View>
 
-        <View style={[styles.card, { backgroundColor: '#FCE8E6' }]}>
-          <Text style={styles.cardTitleRed}>Remaining Amount</Text>
-          <Text style={styles.cardValueRed}>₹ {stats.amountRemaining || 0}</Text>
-        </View>
+        {/* Line Chart - only show when month is not selected */}
+        {!selectedMonth && stats.monthlyRevenue.length > 0 && (
+          <View style={[styles.chartCard, { backgroundColor: '#f9f9fc' }]}>
+            <Text style={styles.sectionTitle}>Revenue Trend</Text>
+            <LineChart
+              data={{
+                labels: monthlyLabels,
+                datasets: [{ data: monthlyData }],
+              }}
+              width={screenWidth - 60}
+              height={220}
+              chartConfig={{
+                backgroundColor: 'transparent',
+                backgroundGradientFrom: '#fff',
+                backgroundGradientTo: '#fff',
+                decimalPlaces: 0,
+                color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
+                labelColor: () => '#000',
+              }}
+              style={styles.chart}
+            />
+          </View>
+        )}
 
-        <View style={[styles.card, { backgroundColor: '#E8EAF6' }]}>
-          <Text style={styles.cardTitle}>Active Invoices</Text>
-          <Text style={styles.cardValueDark}>{stats.activeInvoices || 0}</Text>
-        </View>
-      </View>
-
-      {/* Line Chart - only show when month is not selected */}
-      {!selectedMonth && stats.monthlyRevenue.length > 0 && (
+        {/* Pie Chart */}
         <View style={[styles.chartCard, { backgroundColor: '#f9f9fc' }]}>
-          <Text style={styles.sectionTitle}>Revenue Trend</Text>
-          <LineChart
-            data={{
-              labels: monthlyLabels,
-              datasets: [{ data: monthlyData }],
-            }}
+          <Text style={styles.sectionTitle}>Payment Breakdown</Text>
+          <PieChart
+            data={[
+              {
+                name: 'Paid',
+                population: stats.amountPaid,
+                color: 'green',
+                legendFontColor: '#000',
+                legendFontSize: 12,
+              },
+              {
+                name: 'Unpaid',
+                population: stats.amountRemaining,
+                color: 'red',
+                legendFontColor: '#000',
+                legendFontSize: 12,
+              },
+            ]}
             width={screenWidth - 60}
-            height={220}
-            chartConfig={{
-              backgroundColor: 'transparent',
-              backgroundGradientFrom: '#fff',
-              backgroundGradientTo: '#fff',
-              decimalPlaces: 0,
-              color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
-              labelColor: () => '#000',
-            }}
+            height={200}
+            chartConfig={{ color: () => '#000' }}
+            accessor={'population'}
+            backgroundColor={'transparent'}
+            paddingLeft={'15'}
+            absolute
             style={styles.chart}
           />
         </View>
-      )}
-
-      {/* Pie Chart */}
-      <View style={[styles.chartCard, { backgroundColor: '#f9f9fc' }]}>
-        <Text style={styles.sectionTitle}>Payment Breakdown</Text>
-        <PieChart
-          data={[
-            {
-              name: 'Paid',
-              population: stats.amountPaid,
-              color: 'green',
-              legendFontColor: '#000',
-              legendFontSize: 12,
-            },
-            {
-              name: 'Unpaid',
-              population: stats.amountRemaining,
-              color: 'red',
-              legendFontColor: '#000',
-              legendFontSize: 12,
-            },
-          ]}
-          width={screenWidth - 60}
-          height={200}
-          chartConfig={{ color: () => '#000' }}
-          accessor={'population'}
-          backgroundColor={'transparent'}
-          paddingLeft={'15'}
-          absolute
-          style={styles.chart}
-        />
-      </View>
+      </>
+    ) : (
+     <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: "40%",
+              }}
+            >
+              <NoDataFound textString={"No Data Found"} />
+            </View>
+    )}
     </ScrollView>
   );
 };

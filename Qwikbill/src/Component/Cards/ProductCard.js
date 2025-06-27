@@ -23,6 +23,7 @@ const ProductCardDetails = ({ item }) => {
   const cartItems = useSelector((state) => state.cart.Carts);
   const isInCart = cartItems.some((cartItem) => cartItem.id === item.id);
   //const inCart = cartItems.find((cartItem) => cartItem.id === item.id) || null;
+const cartEntry = cartItems.find(ci => ci.id === item.id); // full object
 
 
   useEffect(() => {
@@ -32,9 +33,9 @@ const ProductCardDetails = ({ item }) => {
     dispatch(addToCart(item));
   };
 
-  const handleDeletetocart = (item) => {
-    dispatch(removeFromCart(item?.id));
-  };
+  // const handleDeletetocart = (item) => {
+  //   dispatch(removeFromCart(item?.id));
+  // };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -51,11 +52,11 @@ const ProductCardDetails = ({ item }) => {
         <View style={styles.inCartActions}>
           <TouchableOpacity
             style={styles.iconButton}
-            onPress={() => handleDeletetocart(item)}
+  onPress={() => dispatch(removeFromCart(cartEntry))}
           >
             <MaterialIcons name="delete" size={24} color="#ff4d4f" />
           </TouchableOpacity>
-          <IncAndDicButton item={isInCart} />
+          <IncAndDicButton item={cartEntry} />
         </View>
       ) : (
         <TouchableOpacity

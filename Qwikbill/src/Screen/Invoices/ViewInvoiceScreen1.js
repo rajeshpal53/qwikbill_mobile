@@ -302,6 +302,8 @@ function ViewInvoiceScreen1({ navigation }) {
   const [transcript, setTranscript] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const [mainLoading, setMainLoading] = useState(true);
+  const vendorId   = selectedShop?.vendor?.id;          // <- **centralised**
+  const authHeader = { Authorization: `Bearer ${userData?.token}` };
 
 
   useEffect(() => {
@@ -335,7 +337,7 @@ function ViewInvoiceScreen1({ navigation }) {
   const buildApiUrl = (pageNum) => {
     const id = selectedShop?.vendor?.id
     console.log(id,"inViewinVoiceScreen")
-    let api = `invoice/getInvoices?vendorfk=${id}&page=${pageNum}&size=10`;
+    let api = `invoice/getInvoices?vendorfk=${vendorId}&page=${pageNum}&size=10`;
     if (sortBy && sortBy != "datewise") api += `&dateWise=${sortBy}`;
     if (sortBy && sortBy == "datewise")
       api += `&startDate=${formatDate(date.startDate)}&endDate=${formatDate(
@@ -356,7 +358,7 @@ function ViewInvoiceScreen1({ navigation }) {
     setIsLoading(true);
     try {
       const api = buildApiUrl(pageNum);
-      const response = await readApi(api);
+      const response = await readApi(api,authHeader);
       if (pageNum === 1) {
         setInvoices(response.invoices);
         console.log(response, "fetchresponse");
