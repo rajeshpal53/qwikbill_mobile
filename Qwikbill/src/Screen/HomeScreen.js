@@ -488,7 +488,7 @@ const styles = StyleSheet.create({
   },
   container: {
     marginHorizontal: responsiveWidth(5),
-
+    
     // height: verticalScale(900),
     flex: 1
   },
@@ -523,12 +523,13 @@ const styles = StyleSheet.create({
     marginTop: 7,
   },
   dropDownContainer: {
-    paddingVertical: "5%",
+    paddingVertical: "6%",
     paddingHorizontal: "7%",
     backgroundColor: "#f6f2f7",
     borderRadius: 10,
     marginTop: "3%",
-    marginHorizontal: 15
+    marginHorizontal: 15,
+    
 
   },
   userDropdown: {
@@ -537,10 +538,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#f6f2f7",
     borderRadius: 10,
     marginTop: "3%",
-    marginHorizontal: 15
-  },
+    marginHorizontal: 15 ,
+ 
+    },
 
   dropdownRow: {
+    
     flexDirection: "row",
     alignItems: "center",
     gap: "5%", // Space between icon and dropdown
@@ -644,11 +647,10 @@ const styles = StyleSheet.create({
   },
   flatListitem: {
     // borderWidth:2,
-    marginTop: 4,
+    marginTop: 10,
     paddingVertical: 8,
     flex: 1,
-    // marginBottom:1,
-    // backgroundColor: "pink"
+    //  backgroundColor: "pink"
   },
   chartContainer: {
     alignItems: "center",

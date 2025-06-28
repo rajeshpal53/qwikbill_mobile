@@ -1,6 +1,6 @@
-import { useContext, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
-import { ActivityIndicator, List } from "react-native-paper";
+import React, { useContext, useState } from "react";
+import { View, StyleSheet, ScrollView } from "react-native";
+import { List, ActivityIndicator } from "react-native-paper";
 import { ShopContext } from "../Store/ShopContext";
 
 function DropDownList({ options, disabled }) {
@@ -54,27 +54,18 @@ function DropDownList({ options, disabled }) {
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
-    top: -16, // adjust based on where you want to show it
-    left: 40,
-    right: 0,
-    zIndex: 999, // 👈 ensures it appears on top
-    // elevation: 10, // Android support
-    // backgroundColor: "#f6f2f7",
-    width: "90%",
-    height: 58,
-    
+    width: "100%",
+    marginVertical: 10,
   },
   accordion: {
-    //backgroundColor: "pink",
+    backgroundColor: "transparent",
     borderBottomWidth: 1,
     borderBottomColor: "rgba(0, 0, 0, 0.3)",
   },
   scrollArea: {
-    maxHeight: 300,
+    maxHeight: 400,
     borderWidth: 1,
     borderColor: "rgba(0, 0, 0, 0.3)",
-    backgroundColor: "#ddd",
   },
   listItem: {
     backgroundColor: "transparent",
@@ -83,6 +74,5 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.1)",
   },
 });
-
 
 export default DropDownList;
