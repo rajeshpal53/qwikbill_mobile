@@ -466,7 +466,6 @@ const StatCard = ({ title, value, change }) => {
     </Card>
   );
 };
-
 const styles = StyleSheet.create({
   safeContainer: {
     flex: 1,
@@ -682,5 +681,6 @@ const styles = StyleSheet.create({
   },
 
 });
+
 
 

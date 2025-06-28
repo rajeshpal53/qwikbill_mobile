@@ -37,18 +37,18 @@ const validationSchema = Yup.object().shape({
   // profileImage: Yup.mixed().required("Profile image is required"),
   name: Yup.string()
     .required("Name is required")
-    .min(2, "Name atleast 2 characters long"),
+    .min(2, "name atleast 2 characters long"),
   mobile: Yup.string()
-    .required("Mobile number is required")
-    .min(10, "Mobile number must be at least 10 digits")
-    .max(15, "Mobile number must be at most 15 digits"),
+    .required("mobile number is required")
+    .min(10, "mobile number must be at least 10 digits")
+    .max(15, "mobile number must be at most 15 digits"),
   // email: Yup.string().email("Invalid email").required("Email is required"),
   gender: Yup.string().required("Gender is required").nullable(),
   address: Yup.string()
     .required("Address is required")
-    .min(4, "Address atleast 4 characters long"),
+    .min(4, "address atleast 4 characters long"),
   dob: Yup.string()
-    .required("Date Of Birth is required")
+    .required("DOB is required")
     .test("min-age", "You must be at least 5 years old", function (value) {
       if (!value) return false;
 
@@ -184,7 +184,7 @@ export default function EditProfileScreen({ navigation }) {
     }
   }, []);
 
-  // console.log("userData is m ", userData);
+  console.log("userData is m ", userData);
 
   useEffect(() => {
     console.log("postData is , ", postData);
@@ -423,7 +423,7 @@ export default function EditProfileScreen({ navigation }) {
 
                       <View>
                         <TextInput
-                          label="Name"
+                          label="Name*"
                           mode="flat"
                           style={styles.input}
                           // placeholder={"Enter Name"}
@@ -438,13 +438,12 @@ export default function EditProfileScreen({ navigation }) {
 
                       <View>
                         <TextInput
-                          label="Mobile Number"
+                          label="Mobile Number*"
                           mode="flat"
                           style={styles.input}
                           onChangeText={handleChange("mobile")}
                           onBlur={handleBlur("mobile")}
                           keyboardType="numeric"
-                          maxLength={10}
                           value={values.mobile}
                           disabled
                         />
@@ -513,7 +512,7 @@ export default function EditProfileScreen({ navigation }) {
 
                       <View style={{ marginTop: 10 }}>
                         <View style={styles.dateTitle}>
-                          <Text style={styles.dateTitleText}>DOB*</Text>
+                          <Text style={styles.dateTitleText}>Date Of Birth*</Text>
 
                           <Pressable
                             onPress={() => setShowDateTimePicker(true)}
@@ -560,7 +559,7 @@ export default function EditProfileScreen({ navigation }) {
                           }}
                         >
                           <TextInput
-                            label="Address"
+                            label="Address*"
                             mode="flat"
                             style={styles.input}
                             onChangeText={handleChange("address")}

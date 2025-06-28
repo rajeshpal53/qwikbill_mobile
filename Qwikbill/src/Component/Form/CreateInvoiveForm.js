@@ -21,7 +21,6 @@ import UserDataContext from "../../Store/UserDataContext";
 import { ButtonColor, createApi, fontSize, readApi } from "../../Util/UtilApi";
 import ItemDataTable from "../Cards/ItemDataTable";
 import PriceDetails from "../PriceDetails";
-import ConfirmModal from "../../Components/Modal/ConfirmModal";
 
 const CreateInvoiceForm = ({ selectedButton }) => {
   const dispatch = useDispatch();
@@ -37,8 +36,6 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const timeoutId = useRef(null); // useRef to persist timeoutId
   const { showSnackbar } = useSnackbar();
   const error = useSelector((state) => state.cart.error);
-   const pendingActionRef = useRef(null);
-    const [showModal, setShowModal] = useState(false);
 
   console.log("DATA OF ERROR ", error);
 
@@ -107,18 +104,6 @@ const CreateInvoiceForm = ({ selectedButton }) => {
     }, 300);
   };
 
-  
-  function handleConfirm() {
-    setShowModal(false);                           // close the modal
-    if (pendingActionRef.current) {
-      navigation.dispatch(pendingActionRef.current); // finally go back
-    }
-  }
-
-  function handleCancel() {
-    setShowModal(false);                           // just hide the modal
-  }
-
   useEffect(() => {
     console.log("changed cart is , ", carts);
     console.log("changed cart is , ", selectedButton);
@@ -136,29 +121,25 @@ const CreateInvoiceForm = ({ selectedButton }) => {
       if (hasFilledForm && !submit.current) {
         e.preventDefault();
 
-         pendingActionRef.current = e.data.action;    // <— stash the action
-
-        setShowModal(true);
-
-        // Alert.alert(
-        //   "Warning!",
-        //   "If you go back, all of your filled form data will be lost. Are you sure you want to go back?",
-        //   [
-        //     {
-        //       text: "Cancel",
-        //       style: "cancel",
-        //     },
-        //     {
-        //       text: "Yes",
-        //       style: "destructive",
-        //       onPress: () => {
-        //         navigation.dispatch(e.data.action);
-        //         dispatch(clearCart());
-        //         return true;
-        //       },
-        //     },
-        //   ]
-        // );
+        Alert.alert(
+          "Warning!",
+          "If you go back, all of your filled form data will be lost. Are you sure you want to go back?",
+          [
+            {
+              text: "Cancel",
+              style: "cancel",
+            },
+            {
+              text: "Yes",
+              style: "destructive",
+              onPress: () => {
+                navigation.dispatch(e.data.action);
+                dispatch(clearCart());
+                return true;
+              },
+            },
+          ]
+        );
       }
     });
 
@@ -176,7 +157,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   };
 
   const handleGenerate = async (button = "download", formData, resetForm) => {
-  
+
     if (selectedButton === "gst") {
       try {
         let api = "invoice/invoices";
@@ -196,7 +177,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           type: "gst",
         };
         console.log("after removing someData, payloadData is , ", newPayload);
-        // console.log("userData is , ", userData);
+        console.log("userData is , ", userData);
         console.log("userData token is , ", userData?.token);
 
         const response = await createApi(api, newPayload, {
@@ -216,7 +197,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
         } else if (button == "generate") {
           console.log("Inside a else if condition ");
           console.log("after removing someData, payloadData is debug 1, ", newPayload);
-          // console.log("userData is , ", userData);
+          console.log("userData is , ", userData);
           console.log("userData token is , ", userData?.token);
 
           const response = await createApi(api, newPayload, {
@@ -237,7 +218,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
 
     }
     else if (selectedButton === "Quatation") {
-try {
+      try {
         let api = "invoice/invoices";
         const { customerData, serviceProviderData, ...payloadData } = formData;
         const newProducts = payloadData?.products?.map((item) => {
@@ -273,7 +254,7 @@ try {
         } else if (button == "generate") {
           console.log("Inside a else if condition ");
           console.log("after removing someData, payloadData is debug 1, ", newPayload);
-          // console.log("userData is , ", userData);
+          console.log("userData is , ", userData);
           console.log("userData token is , ", userData?.token);
 
           const response = await createApi(api, newPayload, {
@@ -315,7 +296,7 @@ try {
           type: "provisional",
         };
         console.log("after removing someData, payloadData is , ", newPayload);
-        // console.log("userData is , ", userData);
+        console.log("userData is , ", userData);
         console.log("userData token is , ", userData?.token);
 
         const response = await createApi(api, newPayload, {
@@ -442,8 +423,6 @@ try {
               <TextInput
                 label="Phone"
                 mode="flat"
-                keyboardType="phone-pad"
-                 maxLength={10}
                 style={styles.input}
                 // onChangeText={handleChange("phone")}
                 onChangeText={async (phoneNumber) => {
@@ -473,7 +452,7 @@ try {
                 </View>
               )}
               <TextInput
-                label="Name"
+                label="Name*"
                 mode="flat"
                 style={styles.input}
                 onChangeText={handleChange("name")}
@@ -509,7 +488,7 @@ try {
 
               {/* Address Field */}
               <TextInput
-                label="Address"
+                label="Address*"
                 mode="flat"
                 style={styles.input}
                 onChangeText={handleChange("address")}
@@ -575,19 +554,21 @@ try {
                 </TouchableOpacity>
               </View>
               {/* Item Data Table */}
-              {carts.length > 0 && (
-                <View style={{ marginTop: 10 }}>
-                  <TouchableOpacity
-                    style={{ marginRight: 10, marginTop: -40, marginBottom: 10, }}
-                    onPress={() => dispatch(clearCart())}
-                  >
-                    <Text style={{ color: "#007BFF" }}>Clear Cart</Text>
-                  </TouchableOpacity>
-                  <ItemDataTable carts={carts} />
-                  <PriceDetails setPaymentStatus={setPaymentStatus} selectedButton={selectedButton} />
-                  
-                </View>
-              )
+             
+                {carts.length > 0 && (
+                  <View style={{ marginTop: 10, }}>
+                    <TouchableOpacity
+                      style={{ marginRight: 180, marginTop: -40, marginBottom: 10, }}
+                      onPress={() => dispatch(clearCart())}
+                    >
+                      <Text style={{ color: "#007BFF", }}>Clear Cart</Text>
+                    </TouchableOpacity>
+                    <ItemDataTable carts={carts} />
+                    <PriceDetails setPaymentStatus={setPaymentStatus} selectedButton={selectedButton} />
+
+                  </View>
+                )
+              
 
               }
 
@@ -612,69 +593,62 @@ try {
           )
         }}
       </Formik>
-       <ConfirmModal
-              visible={showModal}
-              setVisible={handleCancel}
-              handlePress={handleConfirm}
-              message="If you go back, all of your Filled Form Data will be lost. Are you sure you want to go back?"
-              heading="Warning"
-              buttonTitle="Go Back"
-            />
     </ScrollView>
-  )}
+  )
+}
 
 
-  const styles = StyleSheet.create({
-    buttonView: {
-      alignItems: "flex-end",
-      marginTop: 10,
-    },
-    addButton: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: 8,
-      backgroundColor: ButtonColor.SubmitBtn,
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: "#ccc",
+const styles = StyleSheet.create({
+  buttonView: {
+    alignItems: "flex-end",
+    marginTop: 10,
+  },
+  addButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 8,
+    backgroundColor: ButtonColor.SubmitBtn,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
 
-    },
-    addButtonText: {
-      marginLeft: 2,
-      // fontSize: 16,
-      fontWeight: "bold",
-      // color: "black",
-      fontFamily: "Poppins-Medium",
-      fontSize: fontSize.labelLarge,
-      color: "#fff",
-    },
-    input: {
-      flex: 1,
-      backgroundColor: "#f9f9f9",
-      height: 45,
-      marginTop: 10,
-      fontFamily: "Poppins-Medium",
-    },
-    errorText: {
-      color: "red",
-      fontSize: 12,
-      marginTop: 4,
-    },
-    submitButton: {
-      marginTop: 20,
-      // backgroundColor: ButtonColor.SubmitBtn,
-      padding: 10,
-      borderRadius: 8,
-      alignItems: "center",
-    },
-    submitButtonText: {
-      color: "white",
-      // fontWeight: "bold",
-      // fontSize: 16,
-      fontFamily: "Poppins-Regular",
-      fontSize: fontSize.labelLarge,
-    },
-  });
+  },
+  addButtonText: {
+    marginLeft: 2,
+    // fontSize: 16,
+    fontWeight: "bold",
+    // color: "black",
+    fontFamily: "Poppins-Medium",
+    fontSize: fontSize.labelLarge,
+    color: "#fff",
+  },
+  input: {
+    flex: 1,
+    backgroundColor: "#f9f9f9",
+    height: 45,
+    marginTop: 10,
+    fontFamily: "Poppins-Medium",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginTop: 4,
+  },
+  submitButton: {
+    marginTop: 20,
+    // backgroundColor: ButtonColor.SubmitBtn,
+    padding: 10,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  submitButtonText: {
+    color: "white",
+    // fontWeight: "bold",
+    // fontSize: 16,
+    fontFamily: "Poppins-Regular",
+    fontSize: fontSize.labelLarge,
+  },
+});
 
-  export default CreateInvoiceForm;
+export default CreateInvoiceForm;
