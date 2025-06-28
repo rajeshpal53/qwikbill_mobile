@@ -54,18 +54,28 @@ function DropDownList({ options, disabled }) {
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    marginVertical: 10,
+    position: "absolute",
+    top: -18, // adjust based on where you want to show it
+    left: 40,
+    right: 0,
+    zIndex: 999, // 👈 ensures it appears on top
+    // elevation: 10, // Android support
+    backgroundColor: "#f6f2f7",
+    width: "90%",
+    // height: 58,
+    
   },
   accordion: {
-    backgroundColor: "transparent",
+    backgroundColor: "#f6f2f7",
     borderBottomWidth: 1,
     borderBottomColor: "rgba(0, 0, 0, 0.3)",
+    
   },
   scrollArea: {
-    maxHeight: 400,
+    maxHeight: 300,
     borderWidth: 1,
     borderColor: "rgba(0, 0, 0, 0.3)",
+    backgroundColor: "#f6f2f7",
   },
   listItem: {
     backgroundColor: "transparent",
@@ -74,5 +84,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.1)",
   },
 });
+
 
 export default DropDownList;

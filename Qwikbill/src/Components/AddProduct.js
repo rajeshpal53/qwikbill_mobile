@@ -18,17 +18,15 @@ const AddProduct = ({ navigation }) => {
   const { userData } = useContext(UserDataContext)
   const [HSNCode, SetHSNCode] = useState();
   const { selectedShop } = useContext(ShopContext);
-  const { showSnackbar } = useSnackbar()
-  const [initialValues,setInitialValues]=useState({})
+  const { showSnackbar } = useSnackbar();
 
   const timeoutId = useRef(null); // useRef to persist timeoutId
 
   console.log("DATA OF HSNCODE IS ", HSNCode);
 
   useEffect(() => {
-    console.log("Edit data is", EditData,"setrefresh="+setRefresh,"is updated"+isUpdated);
+    console.log("Edit data is ", EditData);
     console.log("Isupdated Data is ", isUpdated);
-
   }, [EditData, isUpdated]);
 
   const validationSchema = Yup.object().shape({
@@ -103,11 +101,9 @@ const AddProduct = ({ navigation }) => {
         const api = `hsn-codes`;
         const response = await readApi(api);
         if (response) {
-
-           const matchedHsnCode = response.find(
-      (item) => item?.code === String(hsncode)
-    );
-    
+          const matchedHsnCode = response.find(
+            (item) => item?.code === hsncode
+          );
           console.log("Matched HSN code is", matchedHsnCode);
           if (matchedHsnCode) {
             setFieldValue("HSNCode", matchedHsnCode?.code);
@@ -135,7 +131,7 @@ const AddProduct = ({ navigation }) => {
           PurchasePrice: EditData?.costPrice || "",
           SellingPrice: EditData?.sellPrice || "",
           TaxRate: EditData?.taxRate || "",
-          HSNCode: String(EditData?.hsncode ?? ""),
+          HSNCode: EditData?.hsncode || "",
           IsStockData: EditData?.isStock || null,
         }}
         validationSchema={validationSchema}
@@ -156,7 +152,6 @@ const AddProduct = ({ navigation }) => {
             vendorfk: selectedShop.vendor.id,
             hsncode: parseInt(values.HSNCode),
           };
-
           console.log("Data is 15863", ProductData);
 
           if (isUpdated === true) {
@@ -220,7 +215,7 @@ const AddProduct = ({ navigation }) => {
           <View style={styles.container}>
 
             <TextInput
-              label="Product Name"
+              label="Product Name*"
               mode="flat"
               style={styles.input}
               onChangeText={handleChange("ProductName")}
@@ -234,7 +229,7 @@ const AddProduct = ({ navigation }) => {
 
             {/* Purchase Price */}
             <TextInput
-              label="Purchase Price"
+              label="Purchase Price*"
               keyboardType="numeric"
               mode="flat"
               style={styles.input}
@@ -249,7 +244,7 @@ const AddProduct = ({ navigation }) => {
 
             {/* Selling Price */}
             <TextInput
-              label="Selling Price"
+              label="Selling Price*"
               keyboardType="numeric"
               mode="flat"
               style={styles.input}
@@ -266,7 +261,6 @@ const AddProduct = ({ navigation }) => {
             <TextInput
               label="HSN Code"
               mode="flat"
-              keyboardType="numeric"
               style={styles.input}
               // onChangeText={handleChange("HSNCode")}
               onChangeText={async (HSNCode) => {
