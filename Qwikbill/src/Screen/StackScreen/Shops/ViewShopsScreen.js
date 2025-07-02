@@ -98,6 +98,7 @@ export default function ViewShopsScreen() {
           },
         });
 
+        console.log(`  ascibaskjcska ${API_BASE_URL}userRoles/getVendorByUserRolesUserId/${userData?.user?.id}`)
         const data = await response.json();
         console.log("dataaaaa",data)
 
