@@ -84,11 +84,11 @@ const ShopValidataionSchema = Yup.object().shape({
   shopAddress: Yup.string()
     .required("Shop Address is required")
     .max(50, "Shop Address cannot be more than 50 characters"),
-  //  gstNumber: Yup.string().matches(
-  //       /^[A-Z]{2}[0-9]{1}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z0-9]{1}[Z]{1}[0-9]{1}$/,
-  //       "Invalid GSTIN format. Example: AB1234567890Z1"
+   gstNumber: Yup.string().matches(
+        /^[A-Z]{2}[0-9]{1}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z0-9]{1}[Z]{1}[0-9]{1}$/,
+        "Invalid GSTIN format. Example: AB1234567890Z1"
 
-  //     ),
+      ),
 
   // location: Yup.string().required("Location is required"),
   // kilometerRadius: Yup.number()

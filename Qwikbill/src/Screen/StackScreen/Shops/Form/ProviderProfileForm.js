@@ -73,11 +73,7 @@ const ProviderProfileForm = ({
               {errors.profileImage}
             </Text>
           )}
-          {
-            !values?.profileImage &&(
-            showSnackbar("Profile image is required.", "error")
-
-          )}
+         
 
         </View>
         {/* </Card> */}
@@ -238,8 +234,8 @@ const ProviderProfileForm = ({
           onBlur={handleBlur("userAddress")}
           value={values.userAddress}
           error={touched.userAddress && errors.userAddress}
-          multiline={true}
-          numberOfLines={4}
+        //  multiline={true}
+         // numberOfLines={4}
         />
         {touched.userAddress && errors.userAddress && (
           <Text style={{ color: "red" }}>{errors.userAddress}</Text>

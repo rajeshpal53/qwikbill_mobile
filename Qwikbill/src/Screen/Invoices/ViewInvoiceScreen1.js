@@ -471,6 +471,7 @@ function ViewInvoiceScreen1({ navigation }) {
               refuser={searchBarRef}
               searchData={onSearch}
               fetchData={fetchInvoices}
+           
             />
             <FilterButtons setSelected={setSelected} selected={selected} />
           </View>

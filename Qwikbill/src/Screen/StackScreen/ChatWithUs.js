@@ -7,6 +7,8 @@ import {
 import { fontFamily } from '../../Util/UtilApi';
 import { FontAwesome } from '@expo/vector-icons';
 import { createApi } from '../../Util/UtilApi';
+ import { useIsFocused } from '@react-navigation/native';
+
 
 export default function ChatWithUs() {
   const [messages, setMessages] = useState([
@@ -14,11 +16,17 @@ export default function ChatWithUs() {
   ]);
   const [input, setInput] = useState('');
   const [recognizing, setRecognizing] = useState(false);
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+if (!isFocused) ExpoSpeechRecognitionModule.stop();
+ }, [isFocused]);
 
   // Voice events
   useSpeechRecognitionEvent("start", () => setRecognizing(true));
   useSpeechRecognitionEvent("end", () => setRecognizing(false));
   useSpeechRecognitionEvent("result", (event) => {
+     if (!isFocused) return;     
     const transcript = event.results[0]?.transcript;
     if (transcript) setInput(transcript);
   });

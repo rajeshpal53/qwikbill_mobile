@@ -13,46 +13,35 @@ export const ShopProvider = ({ children }) => {
   const { userData } = useContext(UserDataContext);
   const [loader, setloader] = useState(false);
 
-  // console.log("SELECTED SHOP ISSSSS ", selectedShop);
 
-  // console.log("USER DATA IS 1578", userData?.user?.id);
+  useEffect(() => {
+    console.log('[Shop] userId ➜', userData?.user?.id, 'token:', !!userData?.token);
+  }, [userData]);
 
-  // console.log("DATA OF ALL SHOP 1000", allShops);
+  useEffect(() => {
+    console.log('[Shop] allShops.length ➜', allShops.length);
+  }, [allShops]);
 
-  //Open for Add product modal
-  // useEffect(() => {
-  //   const getProductsBYShops = async () => {
-  //     const id = userData?.user?.id;
-  //     if (!id) return; // early return if id is undefined
-
-  //     try {
-  //       let response = await readApi(
-  //         `userRoles/getVendorByUserRolesUserId/${id}`,
-  //         {
-  //           Authorization: `Bearer ${userData?.token}`,
-  //         }
-  //       );
-  //       console.log("response of products in shop context is ", response?.data);
+  useEffect(() => {
+    console.log('[Shop] selectedShop ➜', selectedShop?.vendor?.id || null);
+  }, [selectedShop]);
 
 
-  //       const hasProducts = response.some(
-  //         (shop) => Array.isArray(shop.vendor?.product) && shop.vendor.product.length > 0
-  //       );
+  useEffect(() => {
+    if (userData?.token && userData?.user?.id) {
+      fetchShopsFromServer();        // ★ NEW: always call on login
+    }
+  }, [userData?.user?.id, userData?.token]);
 
-  //       if (hasProducts) {
-  //         setNoItemModal(false);
-  //       } else {
-  //         setNoItemModal(true);
-  //       }
-  //     } catch (err) {
-  //       console.log("unable to get products of shops ", err);
-  //     }
-  //   };
 
-  //   if (userData?.user?.id) {
-  //     getProductsBYShops();
-  //   }
-  // }, [userData]);
+  useEffect(() => {
+    if (!userData?.token) {
+      setAllShops([]);
+      setSelectedShop(null);
+      AsyncStorage.multiRemove(['allShops', 'selectedShop']).catch(console.log);
+    }
+  }, [userData?.token]);
+
 
   useEffect(() => {
     const checkSelectedShopProducts = async (id) => {
@@ -77,13 +66,13 @@ export const ShopProvider = ({ children }) => {
 
         setNoItemModal(!hasProducts); // Show modal only if selected shop has no products
 
-        if(response?.data.length === 0) {
+        if (response?.data.length === 0) {
           setNoItemModal(false); // If no shops found, show modal
         }
 
       } catch (err) {
         console.log("Error checking products for selected shop:", err);
-        
+
         setNoItemModal(true); // fallback: show modal
       }
     };
@@ -95,101 +84,108 @@ export const ShopProvider = ({ children }) => {
 
 
 
+  // useEffect(() => {
+  //   loadData();
+  // }, [userData]);
+
   useEffect(() => {
-    loadData();
-  }, [userData]);
-
-
-
- const loadData = async () => {
-  try {
-    setloader(true);
-
-    if (!userData?.token) {
-      console.log("User not logged in. Skipping shop loading.");
-      return;
+    if (userData?.token && userData?.user?.id) {
+      fetchShopsFromServer();         // ← always fetch for the current user
     }
+  }, [userData?.user?.id, userData?.token]);
 
-    // await fetchShopsFromServer();
 
-    const storedSelectedShop = await AsyncStorage.getItem("selectedShop");
 
-    if (storedSelectedShop) {
-      setSelectedShop(JSON.parse(storedSelectedShop));
-    } else if (allShops.length > 0) {
-      console.log("No stored shop, defaulting to first in allShops");
-      setSelectedShop(allShops[0]);
-      await AsyncStorage.setItem(
-        "selectedShop",
-        JSON.stringify(allShops[0])
-      );
+
+  const loadData = async () => {
+    try {
+      setloader(true);
+
+      if (!userData?.token) {
+        console.log("User not logged in. Skipping shop loading.");
+        return;
+      }
+
+      // await fetchShopsFromServer();
+
+      const storedSelectedShop = await AsyncStorage.getItem("selectedShop");
+
+      if (storedSelectedShop) {
+        setSelectedShop(JSON.parse(storedSelectedShop));
+      } else if (allShops.length > 0) {
+        console.log("No stored shop, defaulting to first in allShops");
+        setSelectedShop(allShops[0]);
+        await AsyncStorage.setItem(
+          "selectedShop",
+          JSON.stringify(allShops[0])
+        );
+      }
+    } catch (error) {
+      console.log("Error loading data:", error);
+    } finally {
+      setloader(false);
     }
-  } catch (error) {
-    console.log("Error loading data:", error);
-  } finally {
-    setloader(false);
-  }
-};
+  };
 
 
   const fetchShopsFromServer = async () => {
-  try {
-    if (!userData?.token || !userData?.user?.id) {
-      console.log("User not authenticated, skipping shop fetch.");
-      return;
-    }
-
-    setloader(true);
-
-    const response = await readApi(
-      `userRoles/getVendorByUserRolesUserId/${userData.user.id}`,
-      {
-        Authorization: `Bearer ${userData.token}`,
+    try {
+      if (!userData?.token || !userData?.user?.id) {
+        console.log("User not authenticated, skipping shop fetch.");
+        return;
       }
-    );
 
-    if (response?.data) {
-      setAllShops(response.data);
-      await AsyncStorage.setItem("allShops", JSON.stringify(response.data));
+      setloader(true);
 
-      if (!selectedShop && response.data.length > 0) {
-        setSelectedShop(response.data[0]);
-        await AsyncStorage.setItem(
-          "selectedShop",
-          JSON.stringify(response.data[0])
-        );
+      const response = await readApi(
+        `userRoles/getVendorByUserRolesUserId/${userData.user.id}`,
+        {
+          Authorization: `Bearer ${userData.token}`,
+        }
+      );
+
+      if (response?.data) {
+        setAllShops(response.data);
+        await AsyncStorage.setItem("allShops", JSON.stringify(response.data));
+
+        if (!selectedShop && response.data.length > 0) {
+          setSelectedShop(response.data[0]);
+          await AsyncStorage.setItem(
+            "selectedShop",
+            JSON.stringify(response.data[0])
+          );
+        }
       }
+    } catch (error) {
+      console.log("Error getting shops from server:", error);
+      setSelectedShop(null)
+    } finally {
+      console.log("Turning off loader");
+      setloader(false);
     }
-  } catch (error) {
-    console.log("Error getting shops from server:", error);
-    setSelectedShop(null)
-  } finally {
-    console.log("Turning off loader");
-    setloader(false);
-  }
-};
+  };
   // Function to update selected shop
   const updateSelectedShop = async (shop) => {
     console.log("shop to update is:", shop);
 
     if (shop) {
-          setSelectedShop(shop);
+      setSelectedShop(shop);
       await AsyncStorage.setItem("selectedShop", JSON.stringify(shop));
     } else {
       await AsyncStorage.removeItem("selectedShop");
     }
   };
   const clearSelectedShop = async () => {
-  try {
-    setSelectedShop(null); // Clear from Context
-    await AsyncStorage.removeItem("selectedShop"); // Remove from Storage
-    console.log("Selected shop cleared.");
-    return true;
-  } catch (error) {
-    console.error("Error clearing selected shop:", error);
-    return false;
-  }
-};
+    try {
+      setSelectedShop(null); // Clear from Context
+      await AsyncStorage.removeItem("selectedShop"); // Remove from Storage
+      console.log("Selected shop cleared.");
+      return true;
+    } catch (error) {
+      console.error("Error clearing selected shop:", error);
+      return false;
+    }
+  };
 
 
   return (

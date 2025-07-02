@@ -37,14 +37,14 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const timeoutId = useRef(null); // useRef to persist timeoutId
   const { showSnackbar } = useSnackbar();
   const error = useSelector((state) => state.cart.error);
-   const pendingActionRef = useRef(null);
-    const [showModal, setShowModal] = useState(false);
+  const pendingActionRef = useRef(null);
+  const [showModal, setShowModal] = useState(false);
 
   console.log("DATA OF ERROR ", error);
 
-  useEffect(() => {
-    console.log("selected shop isuser , ", selectedShop);
-  }, [userData]);
+  // useEffect(() => {
+  //   console.log("selected shop isuser , ", selectedShop);
+  // }, [userData]);
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
@@ -107,7 +107,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
     }, 300);
   };
 
-  
+
   function handleConfirm() {
     setShowModal(false);                           // close the modal
     if (pendingActionRef.current) {
@@ -120,7 +120,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   }
 
   useEffect(() => {
-    console.log("changed cart is , ", carts);
+    //console.log("changed cart is , ", carts);
     console.log("changed cart is , ", selectedButton);
   }, [carts, selectedButton]);
 
@@ -136,29 +136,9 @@ const CreateInvoiceForm = ({ selectedButton }) => {
       if (hasFilledForm && !submit.current) {
         e.preventDefault();
 
-         pendingActionRef.current = e.data.action;    // <— stash the action
+        pendingActionRef.current = e.data.action;    // <— stash the action
 
         setShowModal(true);
-
-        // Alert.alert(
-        //   "Warning!",
-        //   "If you go back, all of your filled form data will be lost. Are you sure you want to go back?",
-        //   [
-        //     {
-        //       text: "Cancel",
-        //       style: "cancel",
-        //     },
-        //     {
-        //       text: "Yes",
-        //       style: "destructive",
-        //       onPress: () => {
-        //         navigation.dispatch(e.data.action);
-        //         dispatch(clearCart());
-        //         return true;
-        //       },
-        //     },
-        //   ]
-        // );
       }
     });
 
@@ -175,174 +155,33 @@ const CreateInvoiceForm = ({ selectedButton }) => {
     }
   };
 
-  const handleGenerate = async (button = "download", formData, resetForm) => {
-  
-    if (selectedButton === "gst") {
-      try {
-        let api = "invoice/invoices";
-        const { customerData, serviceProviderData, ...payloadData } = formData;
-        const newProducts = payloadData?.products?.map((item) => {
-          return {
-            id: item?.id,
-            productname: item?.name,
-            price: item?.sellPrice,
-            quantity: item?.quantity,
-          };
-        });
+ // --- fixed handleGenerate (single version) ---
+const handleGenerate = async (button= "download" , formData, resetForm) => {
+  try {
+    const api = "invoice/invoices";
+    const invoiceType =
+      selectedButton === "gst" ? "gst"
+      : selectedButton === "Quatation" ? "quotation"
+      : "provisional";
 
-        const newPayload = {
-          ...payloadData,
-          products: newProducts,
-          type: "gst",
-        };
-        console.log("after removing someData, payloadData is , ", newPayload);
-        // console.log("userData is , ", userData);
-        console.log("userData token is , ", userData?.token);
+    // add/override only what you really need
+    const payload = { ...formData, type: invoiceType };
 
-        const response = await createApi(api, newPayload, {
-          Authorization: `Bearer ${userData?.token}`,
-        });
+    const response = await createApi(api, payload, {
+      Authorization: `Bearer ${userData?.token}`,
+    });
 
-        console.log("response of create invoice is, ", response);
-        showSnackbar("Invoice Created Successfully", "success");
-        // setCreatedInvoice(response?.customer);
-        dispatch(clearCart());
-        resetForm();
-        // invoiceCreated.current = true;
+    showSnackbar("Invoice created successfully", "success");
+    dispatch(clearCart());
+    resetForm();
 
-        if (button == "download") {
-          console.log("Inside a if condition", response.customer);
-          return response;
-        } else if (button == "generate") {
-          console.log("Inside a else if condition ");
-          console.log("after removing someData, payloadData is debug 1, ", newPayload);
-          // console.log("userData is , ", userData);
-          console.log("userData token is , ", userData?.token);
-
-          const response = await createApi(api, newPayload, {
-            Authorization: `Bearer ${userData?.token}`,
-          });
-
-          console.log("response of create invoice is, debug 2 ", response);
-          showSnackbar("Invoice Created Successfully", "success");
-          // setCreatedInvoice(response?.customer);
-          dispatch(clearCart());
-          navigation.pop(2);
-        }
-      } catch (error) {
-        console.log("error creating invoice is , ", error);
-        showSnackbar("Something went wrong creating Invoice is", "error");
-      }
-      console.log("Button pressed");
-
-    }
-    else if (selectedButton === "Quatation") {
-try {
-        let api = "invoice/invoices";
-        const { customerData, serviceProviderData, ...payloadData } = formData;
-        const newProducts = payloadData?.products?.map((item) => {
-          return {
-            id: item?.id,
-            productname: item?.name,
-            price: item?.sellPrice,
-            quantity: item?.quantity,
-          };
-        });
-
-        const newPayload = {
-          ...payloadData,
-          products: newProducts,
-          type: "quotation",
-        };
-        console.log("after removing someData, payloadData is , ", newPayload);
-
-        const response = await createApi(api, newPayload, {
-          Authorization: `Bearer ${userData?.token}`,
-        });
-
-        console.log("response of create invoice is, ", response);
-        showSnackbar("Invoice Created Successfully", "success");
-        // setCreatedInvoice(response?.customer);
-        dispatch(clearCart());
-        resetForm();
-        // invoiceCreated.current = true;
-
-        if (button == "download") {
-          console.log("Inside a if condition", response.customer);
-          return response;
-        } else if (button == "generate") {
-          console.log("Inside a else if condition ");
-          console.log("after removing someData, payloadData is debug 1, ", newPayload);
-          // console.log("userData is , ", userData);
-          console.log("userData token is , ", userData?.token);
-
-          const response = await createApi(api, newPayload, {
-            Authorization: `Bearer ${userData?.token}`,
-          });
-
-          console.log("response of create invoice is, debug 2 ", response);
-          showSnackbar("Invoice Created Successfully", "success");
-          // setCreatedInvoice(response?.customer);
-          dispatch(clearCart());
-          navigation.pop(2);
-        }
-      } catch (error) {
-        console.log("error creating invoice is , ", error);
-        showSnackbar("Something went wrong creating Invoice is", "error");
-      }
-    }
-
-
-    else {
-      console.log("This is from GST PDf ");
-      try {
-        let api = "invoice/invoices";
-
-        const { customerData, serviceProviderData, ...payloadData } = formData;
-
-        const newProducts = payloadData?.products?.map((item) => {
-          return {
-            id: item?.id,
-            productname: item?.name,
-            price: item?.sellPrice,
-            quantity: item?.quantity,
-          };
-        });
-
-        const newPayload = {
-          ...payloadData,
-          products: newProducts,
-          type: "provisional",
-        };
-        console.log("after removing someData, payloadData is , ", newPayload);
-        // console.log("userData is , ", userData);
-        console.log("userData token is , ", userData?.token);
-
-        const response = await createApi(api, newPayload, {
-          Authorization: `Bearer ${userData?.token}`,
-        });
-
-        console.log("response of create invoice is, ", response);
-        showSnackbar("Invoice Created Successfully", "success");
-        // setCreatedInvoice(response?.customer);
-        dispatch(clearCart());
-        resetForm();
-        // invoiceCreated.current = true;
-        if (button == "download") {
-          console.log("Inside a if condition", response.customer);
-          return response;
-        } else if (button == "generate") {
-          console.log("Inside a else if condition ");
-          dispatch(clearCart());
-          navigation.pop(2);
-        }
-      } catch (error) {
-        console.log("error creating invoice is , ", error);
-        showSnackbar("Something went wrong creating Invoice is", "error");
-      }
-    }
-
+    if (button === "download") return response;
+    navigation.pop(2);
+  } catch (err) {
+    console.log("create invoice error →", err?.response?.data || err);
+    showSnackbar("Server rejected the invoice – check required fields", "error");
   }
+};
 
   return (
     <ScrollView>
@@ -389,15 +228,7 @@ try {
             customerData: DataCustomer,
             serviceProviderData: selectedShop,
             products: carts,
-            // Pricedetails: [
-            //   {
-            //     TotalPrice: cartsValue.totalPrice,
-            //     Discount: cartsValue.discount,
-            //     PayAmount: cartsValue.afterdiscount,
-            //     PartiallyAmount: cartsValue.PartiallyAmount,
-            //     PaymentMethod: PaymentStatus,
-            //   },
-            // ],
+
           };
           console.log("Form Submitted Data:", payload?.products);
           console.log("Form Submitted Data:123", payload);
@@ -443,7 +274,7 @@ try {
                 label="Phone"
                 mode="flat"
                 keyboardType="phone-pad"
-                 maxLength={10}
+                maxLength={10}
                 style={styles.input}
                 // onChangeText={handleChange("phone")}
                 onChangeText={async (phoneNumber) => {
@@ -585,7 +416,7 @@ try {
                   </TouchableOpacity>
                   <ItemDataTable carts={carts} />
                   <PriceDetails setPaymentStatus={setPaymentStatus} selectedButton={selectedButton} />
-                  
+
                 </View>
               )
 
@@ -612,69 +443,70 @@ try {
           )
         }}
       </Formik>
-       <ConfirmModal
-              visible={showModal}
-              setVisible={handleCancel}
-              handlePress={handleConfirm}
-              message="If you go back, all of your Filled Form Data will be lost. Are you sure you want to go back?"
-              heading="Warning"
-              buttonTitle="Go Back"
-            />
+      <ConfirmModal
+        visible={showModal}
+        setVisible={handleCancel}
+        handlePress={handleConfirm}
+        message="If you go back, all of your Filled Form Data will be lost. Are you sure you want to go back?"
+        heading="Warning"
+        buttonTitle="Go Back"
+      />
     </ScrollView>
-  )}
+  )
+}
 
 
-  const styles = StyleSheet.create({
-    buttonView: {
-      alignItems: "flex-end",
-      marginTop: 10,
-    },
-    addButton: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: 8,
-      backgroundColor: ButtonColor.SubmitBtn,
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: "#ccc",
+const styles = StyleSheet.create({
+  buttonView: {
+    alignItems: "flex-end",
+    marginTop: 10,
+  },
+  addButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 8,
+    backgroundColor: ButtonColor.SubmitBtn,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
 
-    },
-    addButtonText: {
-      marginLeft: 2,
-      // fontSize: 16,
-      fontWeight: "bold",
-      // color: "black",
-      fontFamily: "Poppins-Medium",
-      fontSize: fontSize.labelLarge,
-      color: "#fff",
-    },
-    input: {
-      flex: 1,
-      backgroundColor: "#f9f9f9",
-      height: 45,
-      marginTop: 10,
-      fontFamily: "Poppins-Medium",
-    },
-    errorText: {
-      color: "red",
-      fontSize: 12,
-      marginTop: 4,
-    },
-    submitButton: {
-      marginTop: 20,
-      // backgroundColor: ButtonColor.SubmitBtn,
-      padding: 10,
-      borderRadius: 8,
-      alignItems: "center",
-    },
-    submitButtonText: {
-      color: "white",
-      // fontWeight: "bold",
-      // fontSize: 16,
-      fontFamily: "Poppins-Regular",
-      fontSize: fontSize.labelLarge,
-    },
-  });
+  },
+  addButtonText: {
+    marginLeft: 2,
+    // fontSize: 16,
+    fontWeight: "bold",
+    // color: "black",
+    fontFamily: "Poppins-Medium",
+    fontSize: fontSize.labelLarge,
+    color: "#fff",
+  },
+  input: {
+    flex: 1,
+    backgroundColor: "#f9f9f9",
+    height: 45,
+    marginTop: 10,
+    fontFamily: "Poppins-Medium",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginTop: 4,
+  },
+  submitButton: {
+    marginTop: 20,
+    // backgroundColor: ButtonColor.SubmitBtn,
+    padding: 10,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  submitButtonText: {
+    color: "white",
+    // fontWeight: "bold",
+    // fontSize: 16,
+    fontFamily: "Poppins-Regular",
+    fontSize: fontSize.labelLarge,
+  },
+});
 
-  export default CreateInvoiceForm;
+export default CreateInvoiceForm;

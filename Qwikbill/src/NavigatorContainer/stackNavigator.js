@@ -553,6 +553,7 @@ export default function StackNavigator() {
           component={ChatWithUs}
           options={{
             headerTitle: "Chat With Us",
+            unmountOnBlur: true
           }}
         />
 

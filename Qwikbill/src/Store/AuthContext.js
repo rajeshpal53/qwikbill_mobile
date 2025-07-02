@@ -27,6 +27,11 @@ export const AuthProvider = ({ children }) => {
   const { userData, saveUserData } = useContext(UserDataContext);
   const { showSnackbar } = useSnackbar();
 
+
+  useEffect(() => {
+    console.log('[Auth] userData ➜', userData);
+  }, [userData]);
+
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
@@ -102,8 +107,12 @@ export const AuthProvider = ({ children }) => {
         setIsLoading(false);
         return;
       }
+
+      await AsyncStorage.setItem("userToken", response.token);
+      await saveUserData(response);
+
       await storeData("loginDetail", response);
-      await AsyncStorage.setItem("firstTimeLogin", "true"); // ✅ Mark first login
+      await AsyncStorage.setItem("firstTimeLogin", "true");
 
       setLoginDetail(response);
       console.log("Saving user data:", response);

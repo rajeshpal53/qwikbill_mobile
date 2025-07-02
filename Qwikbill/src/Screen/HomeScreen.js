@@ -81,9 +81,11 @@ export default function HomeScreen({ navigation, noItemData }) {
 
   useEffect(() => {
 
-    console.log(" slected shop in HomeSscreen", selectedShop);
+   // console.log(" slected shop in HomeSscreen", selectedShop);
+    console.log("all shops  are ",allShops)
 
   }, [selectedShop]);
+
 
   useEffect(() => {
     if (noItemModal) {
@@ -91,33 +93,33 @@ export default function HomeScreen({ navigation, noItemData }) {
     }
   }, [noItemModal]);
 
-  // console.log("jayessssh tokennn ,", userData?.token)
+  console.log("jayessssh tokennn ,", userData?.token)
 
-  useEffect(() => {
-    const validateToken = async () => {
-      try {
-        const token = await AsyncStorage.getItem('userToken');
+  // useEffect(() => {
+  //   const validateToken = async () => {
+  //     try {
+  //       const token = await AsyncStorage.getItem('userToken');
 
-        if (!token) {
-          return navigation.replace('LoginScreen');
-        }
+  //       if (!token) {
+  //         return navigation.replace('LoginScreen');
+  //       }
 
-        // ▸ Decode payload
-        const { exp } = jwtDecode(token);        
+  //       // ▸ Decode payload
+  //       const { exp } = jwtDecode(token);        
 
-        // ▸ Compare with “now” (in seconds)
-        if (exp && exp < Date.now() / 1000) {
-          await AsyncStorage.removeItem('userToken'); 
-          navigation.replace('LoginScreen');          
-        }
-      } catch (err) {
-        console.error('Token validation error', err);
-        navigation.replace('LoginScreen');            
-      }
-    };
+  //       // ▸ Compare with “now” (in seconds)
+  //       if (exp && exp < Date.now() / 1000) {
+  //         await AsyncStorage.removeItem('userToken'); 
+  //         navigation.navigate('LoginScreen');          
+  //       }
+  //     } catch (err) {
+  //       console.error('Token validation error', err);
+  //       navigation.navigate('LoginScreen');            
+  //     }
+  //   };
 
-    validateToken();         
-  }, [navigation]);          
+  //   validateToken();         
+  // }, [navigation]);          
 
 
   useEffect(() => {
@@ -166,68 +168,22 @@ export default function HomeScreen({ navigation, noItemData }) {
   }, []);
 
 
-  const fetchVendorStaus = async () => {
-    setIsLoading(true);
-    try {
-      const id = selectedShop?.vendor?.id
-
-
-      if (!userData?.token) {
-        console.error('Token not found in user data');
-        setIsLoading(false);
-        return;
-      }
-
-      const apiUrl = `https://qwikbill.in/qapi/invoice/getVendorStats?year=${selectedYear}&usersfk=${id}${selectedMonth ? `&month=${selectedMonth}` : ''
-        }`;
-
-      console.log(`API URL: ${apiUrl}`); // Log the API URL for debugging
-
-      const response = await fetch(apiUrl, {
-        headers: {
-          Authorization: `Bearer ${userData?.token}`,
-        },
-      });
-
-      const json = await response.json();
-      console.log('API Response:', json);
-
-      if (json.success) {
-        setVendorStatus({
-          ...json,
-          monthlyRevenue: json.monthlyRevenue || [],
-        });
-      } else {
-        console.error('API success is false');
-      }
-    } catch (error) {
-      console.error('Error fetching stats:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-
-
-  useEffect(() => {
-
-    fetchVendorStaus();
-  }, []);
-
+  
 
 
   // useEffect(() => {
 
-  //   if (selectedShop?.vendor?.id && userData?.user?.mobile) {
-  //     fetchVendorStaus();
-  //   }
-  // }, [userData?.user?.mobile, selectedShop?.vendor?.id, isFocused]);
+  //   fetchVendorStaus();
+  // }, [selectedShop]);
+
+
+
+ 
 
 
   const onRefresh = async () => {
     try {
       setRefreshing(true);
-      await fetchVendorStaus()
     } catch (error) {
       console.error('Refresh Error:', error);
     } finally {
@@ -314,28 +270,22 @@ export default function HomeScreen({ navigation, noItemData }) {
 
           <View style={styles.container}>
 
-            {allShops && allShops.length > 0 && vendorStatus?.numberOfProducts != 0 && (
+            {/* {allShops && allShops.length > 0 && vendorStatus?.numberOfProducts != 0 && (
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View style={{ flexDirection: "row", gap: 7, height: height * 0.09, marginVertical: "4%", }}>
-                  <StatCard title="Total Sales" value={`₹ ${vendorStatus?.totalRevenue ?? "N/A"}`} />
-                  <StatCard title="Total Products" value={vendorStatus?.amountPaid ?? "N/A"} />
-                  <StatCard title="Active Invoices" value={vendorStatus?.amountRemaining ?? "N/A"} />
-                  <StatCard title="New Customers" value={vendorStatus?.activeInvoices ?? "N/A"} />
+                  <StatCard title="Total Revenue" value={`₹ ${vendorStatus?.totalRevenue ?? "N/A"}`} />
+                  <StatCard title="Amount Paid" value={vendorStatus?.amountPaid ?? "N/A"} />
+                  <StatCard title="Remaining Amount" value={vendorStatus?.amountRemaining ?? "N/A"} />
+                  <StatCard title="Active Invoices" value={vendorStatus?.activeInvoices ?? "N/A"} />
                 </View>
               </ScrollView>
-            )}
-
-            {/* {allShops && allShops.length > 0 && vendorStatus != null && total > 0 && (
-              <PieChartComponent
-                key={userData?.user?.mobile}
-                vendorStatus={vendorStatus}
-                t={t}
-              />
             )} */}
 
-            <View style={{ flex: total ? 2 : 7 }}>
+          
+
+            <View style={{marginTop:25}}>
               {allShops?.length > 0 ? (
-                <View style={{ flex: 1, justifyContent: "center", marginTop: "5%" }}>
+                <View style={{ flex: 1, justifyContent: "center", marginTop: "10%"}}>
                   <FlatList
                     style={styles.flatList}
                     data={services.filter(service => {
@@ -437,35 +387,38 @@ export default function HomeScreen({ navigation, noItemData }) {
 
 }
 
-const StatCard = ({ title, value, change }) => {
-  return (
-    <Card style={styles.statCard}>
-      <View style={{ flexDirection: "row" }}>
-        <Text
-          style={{
-            marginRight: 15,
-            fontSize: fontSize.label,
-            fontFamily: fontFamily.medium,
-          }}
-        >
-          {title}
-        </Text>
-        {/* <Text style={[styles.statChange, { color: change.includes("-") ? "red" : "green" }]}>
-          {change}
-        </Text> */}
-      </View>
-      <Text
-        style={{
-          fontSize: fontSize.label,
-          fontFamily: fontFamily.bold,
-          marginLeft: 5,
-        }}
-      >
-        {value ?? "N/A"}
-      </Text>
-    </Card>
-  );
-};
+// const StatCard = ({ title, value, change }) => {
+//   return (
+//     <Card style={styles.statCard}>
+//       <View style={{ flexDirection: "row" }}>
+//         <Text
+
+//          numberOfLines={1}
+//           ellipsizeMode="tail"
+//           style={{
+//             marginRight: 15,
+//             fontSize: fontSize.label,
+//             fontFamily: fontFamily.medium,
+//           }}
+//         >
+//           {title}
+//         </Text>
+//         {/* <Text style={[styles.statChange, { color: change.includes("-") ? "red" : "green" }]}>
+//           {change}
+//         </Text> */}
+//       </View>
+//       <Text
+//         style={{
+//           fontSize: fontSize.label,
+//           fontFamily: fontFamily.bold,
+//           marginLeft: 5,
+//         }}
+//       >
+//         {value ?? "N/A"}
+//       </Text>
+//     </Card>
+//   );
+// };
 
 const styles = StyleSheet.create({
   safeContainer: {

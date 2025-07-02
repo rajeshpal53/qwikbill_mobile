@@ -580,7 +580,9 @@ return (
                         fontSize: fontSize.label,
                         marginHorizontal: 5,
                         color: "#777",
-                        marginTop: -8
+                        marginTop: -8,
+                        marginLeft:10
+
                       }}>
                         {isForgetPassword ? "Enter your registered mobile number to recieve a password reset OTP." : null}
                       </Text>
@@ -632,7 +634,7 @@ return (
                                 {
                                   fontFamily: fontFamily.medium,
                                   fontSize: fontSize.labelMedium,
-                                  marginHorizontal: 5
+                                  marginHorizontal: 10
                                 }
                               }
                             >
@@ -685,6 +687,7 @@ return (
                               />
 
                             </View>
+                            
                             <View style={{ alignSelf: "center" }}>
                               {touched && errors.phone && (
                                 <Text style={styles.errorText}>
@@ -838,13 +841,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     flex: 1,
-    width: 340,
+    width: 335,
     backgroundColor: "#F4F4F4", // Light gray background for the input container
     borderRadius: 8, // Rounded corners for the entire container
     // paddingVertical: 10, // Vertical padding
-    paddingHorizontal: 15, // Horizontal padding
+    paddingHorizontal: 12, // Horizontal padding
     marginBottom: 15, // Margin around the input container
-    marginTop: 5
+    marginTop: 5,
+    marginHorizontal:10
   },
   countryCodeButton: {
     flexDirection: "row",
@@ -885,7 +889,7 @@ const styles = StyleSheet.create({
     //alignSelf: "center",
     color: "rgba(0,0,0,0.7)",
     marginTop: 12,
-    marginHorizontal: 5
+    marginHorizontal: 10
   },
   container1: {
     flex: 1,
