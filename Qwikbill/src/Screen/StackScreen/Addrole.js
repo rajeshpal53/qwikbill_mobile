@@ -2,12 +2,11 @@ import { Formik } from "formik";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { TextInput } from "react-native-paper";
 import * as Yup from "yup";
@@ -405,7 +404,7 @@ const AddRole = () => {
               {/* Shop Dropdown */}
               <View style={{ marginBottom: 10 }}>
                 <Text style={styles.label}>Select Shop</Text>
-                <View>
+                <View style={{ marginBottom: 30,marginLeft:-40, }}>
                   <DropDownList
                     options={allShops}
                     onValueChange={(selectedShop) =>
@@ -416,7 +415,7 @@ const AddRole = () => {
               </View>
 
               {/* User Role Dropdown */}
-              <View style={{ marginBottom: 10 }}>
+              <View style={{ marginBottom: 10,margintop:10, }}>
                 <Text
                   style={{
                     fontSize: fontSize.labelLarge,
@@ -502,7 +501,8 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
     fontWeight: "bold",
     color: "#333",
-    marginBottom: 8,
+    marginBottom: 3,
+    paddingBottom:10,
   },
   input: {
     marginBottom: 15,

@@ -84,6 +84,11 @@ export default function HomeScreen({ navigation, noItemData }) {
     console.log(" slected shop in HomeSscreen", selectedShop);
 
   }, [selectedShop]);
+    useEffect(() => {
+
+    console.log(" slelected vendor ", allShops );
+
+  }, [selectedShop]);
 
   useEffect(() => {
     if (noItemModal) {
@@ -522,9 +527,9 @@ const styles = StyleSheet.create({
     marginTop: 7,
   },
   dropDownContainer: {
-    paddingVertical: "6%",
+    paddingVertical: "5%",
     paddingHorizontal: "7%",
-    backgroundColor: "#f6f2f7",
+    backgroundColor: "white",
     borderRadius: 10,
     marginTop: "3%",
     marginHorizontal: 15,

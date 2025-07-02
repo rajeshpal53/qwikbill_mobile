@@ -295,11 +295,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchContainer: {
-    marginBottom: 2,
+    marginBottom: 10,
+    marginHorizontal:-10,
   },
   dropdownContainer: {
     marginBottom: 5,
-    paddingVertical: 3,
+    paddingVertical: 15,
+    marginLeft:-40,
+    
   },
   flatListContainer: {
     paddingBottom: 70, // Add padding to the bottom of the FlatList content

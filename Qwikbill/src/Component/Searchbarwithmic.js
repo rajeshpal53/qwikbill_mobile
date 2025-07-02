@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
   inputStyle: {
     // textAlignVertical: "center", // Center input text vertically
     // paddingVertical: 10, // Remove additional vertical padding
-    paddingBottom: 9,
+    paddingBottom: 20,
     // borderWidth:2,
     fontWeight: "medium",
     fontFamily: "Poppins-Medium",

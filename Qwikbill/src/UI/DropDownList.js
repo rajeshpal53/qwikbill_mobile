@@ -19,7 +19,7 @@ function DropDownList({ options, disabled }) {
 
   return (
     <View style={styles.container}>
-      {isLoading && <ActivityIndicator size="small" />}
+      {isLoading && <ActivityIndicator size="small " />}
       <List.Accordion
         title={selectedLabel}
         expanded={dropdownVisible}
@@ -55,7 +55,7 @@ function DropDownList({ options, disabled }) {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: -18, // adjust based on where you want to show it
+    top: -20, // adjust based on where you want to show it
     left: 40,
     right: 0,
     zIndex: 999, // 👈 ensures it appears on top
@@ -63,19 +63,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#f6f2f7",
     width: "90%",
     // height: 58,
+    marginTop:10,
     
   },
   accordion: {
-    backgroundColor: "#f6f2f7",
-    borderBottomWidth: 1,
+    backgroundColor: "white",
+    borderBottomWidth: 0,
     borderBottomColor: "rgba(0, 0, 0, 0.3)",
-    
+    paddingVertical:0,
+    borderBottomLeftRadius:10,
   },
   scrollArea: {
     maxHeight: 300,
     borderWidth: 1,
     borderColor: "rgba(0, 0, 0, 0.3)",
     backgroundColor: "#f6f2f7",
+    borderRadius:10,
   },
   listItem: {
     backgroundColor: "transparent",
