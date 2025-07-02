@@ -85,6 +85,11 @@ export default function HomeScreen({ navigation, noItemData }) {
     console.log("all shops  are ",allShops)
 
   }, [selectedShop]);
+    useEffect(() => {
+
+    console.log(" slelected vendor ", allShops );
+
+  }, [selectedShop]);
 
 
   useEffect(() => {
@@ -387,6 +392,7 @@ export default function HomeScreen({ navigation, noItemData }) {
 
 }
 
+
 // const StatCard = ({ title, value, change }) => {
 //   return (
 //     <Card style={styles.statCard}>
@@ -441,7 +447,7 @@ const styles = StyleSheet.create({
   },
   container: {
     marginHorizontal: responsiveWidth(5),
-
+    
     // height: verticalScale(900),
     flex: 1
   },
@@ -478,10 +484,11 @@ const styles = StyleSheet.create({
   dropDownContainer: {
     paddingVertical: "5%",
     paddingHorizontal: "7%",
-    backgroundColor: "#f6f2f7",
+    backgroundColor: "white",
     borderRadius: 10,
     marginTop: "3%",
-    marginHorizontal: 15
+    marginHorizontal: 15,
+    
 
   },
   userDropdown: {
@@ -490,10 +497,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#f6f2f7",
     borderRadius: 10,
     marginTop: "3%",
-    marginHorizontal: 15
-  },
+    marginHorizontal: 15 ,
+ 
+    },
 
   dropdownRow: {
+    
     flexDirection: "row",
     alignItems: "center",
     gap: "5%", // Space between icon and dropdown
@@ -597,11 +606,10 @@ const styles = StyleSheet.create({
   },
   flatListitem: {
     // borderWidth:2,
-    marginTop: 4,
+    marginTop: 10,
     paddingVertical: 8,
     flex: 1,
-    // marginBottom:1,
-    // backgroundColor: "pink"
+    //  backgroundColor: "pink"
   },
   chartContainer: {
     alignItems: "center",
@@ -633,5 +641,6 @@ const styles = StyleSheet.create({
   },
 
 });
+
 
 
