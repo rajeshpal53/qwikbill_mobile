@@ -205,7 +205,9 @@ const EditRoleModal = ({ visible, onClose, selectedRole }) => {
                   style={{
                     backgroundColor: "#f3f3f3",
                     borderRadius: 8,
-                    marginTop: 4,
+                    marginTop: 13,
+                    marginBottom:30,
+                    marginLeft:-50,
                   }}
                 >
                   <DropDownList
@@ -376,6 +378,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
     marginTop: 10,
+    
   },
 
   disabledInput: {

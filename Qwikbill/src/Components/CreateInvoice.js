@@ -1,40 +1,26 @@
-import { React, useRef, useContext, useState, useEffect } from "react";
+import { Entypo } from "@expo/vector-icons";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
-  View,
-  Typography,
-  Text,
-  useWindowDimensions,
   StyleSheet,
-  Image,
   TouchableWithoutFeedback,
-  TouchableOpacity,
+  useWindowDimensions,
+  View
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { AuthContext } from "../Store/AuthContext";
-import { Entypo } from "@expo/vector-icons";
-import { Picker } from "@react-native-picker/picker";
-import { Button } from "react-native-paper";
-import { Ionicons } from "@expo/vector-icons";
-import { Formik } from "formik";
-import * as Yup from "yup";
-import { ToggleButton, TextInput, Card } from "react-native-paper";
 
-import DropDownList from "../UI/DropDownList";
-import { ShopDetailContext } from "../Store/ShopDetailContext";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import ItemDataTable from "../Component/Cards/ItemDataTable";
-import CreateInvoiveForm from "../Component/Form/CreateInvoiveForm";
-import { fontFamily, fontSize, readApi } from "../Util/UtilApi";
-import { ShopContext } from "../Store/ShopContext";
 import CustomToggleButton from "../Component/CustomToggleButton";
+import CreateInvoiveForm from "../Component/Form/CreateInvoiveForm";
+import { ShopContext } from "../Store/ShopContext";
+import DropDownList from "../UI/DropDownList";
+import { fontSize, readApi } from "../Util/UtilApi";
 // import {
 //   TourGuideProvider,
 //   TourGuideZone,
 //   TourGuideZoneByPosition,
 //   useTourGuideController,
 // } from "rn-tourguide";
-import UserDataContext from "../Store/UserDataContext";
 import { useTranslation } from "react-i18next";
+import UserDataContext from "../Store/UserDataContext";
 
 
 export default function CreateInvoice({ navigation, route }) {
@@ -68,9 +54,9 @@ export default function CreateInvoice({ navigation, route }) {
   //   { label: 'Right', value: 'right' },
   // ];
   const toggleOptions = [
-        { value: "Quatation", label: "Quatation" },
-    { value: "provisional", label: "Provisional " },
-    { value: "gst", label: "GST " },
+    { value: "provisional", label: "Prov Invoice" },
+    { value: "gst", label: "GST Invoice" },
+    { value: "Quatation", label: "Quatation" },
   ];
 
   //----------------------------------------------------
@@ -187,9 +173,10 @@ export default function CreateInvoice({ navigation, route }) {
     <ScrollView style={styles.scrollView}>
       <TouchableWithoutFeedback>
         <View style={styles.container}>
-          <View style={styles.logoPickerContainer}>
-            <Entypo name="shop" size={30} color="#0c3b73" />
+          <View >
+            {/* <Entypo name="shop" size={30} color="#0c3b73" marginLeft="20" marginVertical="10" paddingLeft="0" marginHorizontal="0" /> */}
             <View style={styles.pickerContainer}>
+              <Entypo name="shop" size={30} color="#0c3b73" marginLeft="0" marginVertical="0" paddingLeft="0" marginHorizontal="0" />
               {/* {isTourGuideActive && (
                 <TourGuideZone
                   zone={1}
@@ -207,7 +194,7 @@ export default function CreateInvoice({ navigation, route }) {
                 />
               )} */}
 
-              <DropDownList options={allShops} />
+              <DropDownList options={allShops}  />
             </View>
           </View>
           <CustomToggleButton
@@ -248,22 +235,38 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  
   pickerContainer: {
     borderColor: "#0c3b73",
     borderRadius: 10,
-    width: "90%",
+    width: "100%",
+    marginTop:1,
+    marginBottom:5,
+    backgroundColor:"white",
+    marginRight:45,
+    marginLeft:10,
+    justifyContent:"space-around",
+    paddingRight:10,
   },
   logoPickerContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    // alignItems: "center",
+    justifyContent: "space-around",
+    paddingVertical:0,
+    paddingRight:0,
+    backgroundColor:"white",
+    marginLeft:7,
+    marginRight:0,
+    
+    marginTop:-10,
+   borderRadius:10,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
   },
   icon: {
-    padding: 8,
+    padding: 0,
   },
   shopInfo: {
     flexDirection: "row",
