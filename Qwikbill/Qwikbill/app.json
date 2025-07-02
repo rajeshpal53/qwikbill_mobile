@@ -1,0 +1,81 @@
+{
+  "expo": {
+    "name": "QwikBill",
+    "slug": "qwikbill",
+    "version": "1.0.0",
+    "newArchEnabled": true,
+    "orientation": "portrait",
+    "icon": "./assets/qLogo.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/qLogo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "plugins": [
+         "@config-plugins/react-native-blob-util",
+        "@config-plugins/react-native-pdf",
+         "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID."
+        }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Allow ${PRODUCT_NAME} to use the microphone.",
+          "speechRecognitionPermission": "Allow ${PRODUCT_NAME} to use speech recognition.",
+          "androidSpeechServicePackages": [
+            "com.google.android.googlequicksearchbox"
+          ]
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableProguardInReleaseBuilds": false
+          }
+        }
+      ]
+
+    ],
+    "ios": {
+      "buildNumber": "1.0.0",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSSpeechRecognitionUsageDescription": "Allow ${PRODUCT_NAME} to use speech recognition.",
+        "NSMicrophoneUsageDescription": "Allow ${PRODUCT_NAME} to use the microphone."
+      },
+      "bundleIdentifier": "com.wertone.qwikbill"
+    },
+    "android": {
+      "versionCode": 1,
+      "googleServicesFile": "./google-services.json",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/qLogo.png",
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "USE_FINGERPRINT",
+        "USE_BIOMETRIC",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.wertone.qwikbill"
+    },
+    "web": {
+      "favicon": "./assets/qLogo.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "230e4be6-1127-4c5c-a287-888b54ae4faf"
+      }
+    },
+    "owner": "wertone"
+  }
+}

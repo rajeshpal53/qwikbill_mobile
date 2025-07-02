@@ -1,0 +1,17 @@
+export const ProductItem = [
+  { id: 1, Name: "Smartphone", Price: 499, info: "Latest model with cutting-edge features" },
+  { id: 2, Name: "Laptop", Price: 899, info: "High performance laptop for gaming and work" },
+  { id: 3, Name: "Headphones", Price: 129, info: "Noise-canceling over-ear headphones" },
+  { id: 4, Name: "Smartwatch", Price: 199, info: "Track your fitness and notifications with ease" },
+  { id: 5, Name: "Tablet", Price: 349, info: "Portable device for entertainment and productivity" },
+  { id: 6, Name: "Drone", Price: 599, info: "4K camera drone for stunning aerial footage" },
+  { id: 7, Name: "Wireless Charger", Price: 49, info: "Charge your devices wirelessly and quickly" },
+  { id: 8, Name: "Bluetooth Speaker", Price: 79, info: "Portable speaker with excellent sound quality" },
+  { id: 9, Name: "Action Camera", Price: 199, info: "Compact camera for recording your adventures" },
+  { id: 10, Name: "Gaming Console", Price: 499, info: "Play your favorite games with amazing graphics" },
+  { id: 11, Name: "Laptop Stand", Price: 29, info: "Ergonomic stand to improve your work setup" },
+  { id: 12, Name: "Smart Glasses", Price: 249, info: "Wearable glasses with augmented reality features" },
+  { id: 13, Name: "Electric Scooter", Price: 399, info: "Eco-friendly and fast urban transportation" },
+  { id: 14, Name: "VR Headset", Price: 299, info: "Immerse yourself in virtual reality experiences" },
+  { id: 15, Name: "Portable Power Bank", Price: 59, info: "Keep your devices charged on the go" },
+];

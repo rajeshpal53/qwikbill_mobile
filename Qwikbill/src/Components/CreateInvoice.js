@@ -173,9 +173,10 @@ export default function CreateInvoice({ navigation, route }) {
     <ScrollView style={styles.scrollView}>
       <TouchableWithoutFeedback>
         <View style={styles.container}>
-          <View style={styles.logoPickerContainer}>
-            <Entypo name="shop" size={30} color="#0c3b73" marginLeft="20" marginVertical="10" paddingLeft="40" marginHorizontal="-20" />
+          <View >
+            {/* <Entypo name="shop" size={30} color="#0c3b73" marginLeft="20" marginVertical="10" paddingLeft="0" marginHorizontal="0" /> */}
             <View style={styles.pickerContainer}>
+              <Entypo name="shop" size={30} color="#0c3b73" marginLeft="0" marginVertical="0" paddingLeft="0" marginHorizontal="0" />
               {/* {isTourGuideActive && (
                 <TourGuideZone
                   zone={1}
@@ -239,20 +240,24 @@ const styles = StyleSheet.create({
     borderColor: "#0c3b73",
     borderRadius: 10,
     width: "100%",
-    marginTop:12,
-   
-    // marginTop:10,
+    marginTop:1,
+    marginBottom:5,
+    backgroundColor:"white",
+    marginRight:45,
+    marginLeft:10,
+    justifyContent:"space-around",
+    paddingRight:10,
   },
   logoPickerContainer: {
     flexDirection: "row",
     // alignItems: "center",
-    justifyContent: "center",
-    paddingVertical:8,
-    paddingRight:60,
-    backgroundColor:"#f6f2f7",
+    justifyContent: "space-around",
+    paddingVertical:0,
+    paddingRight:0,
+    backgroundColor:"white",
     marginLeft:7,
-    marginRight:10,
-    marginBottom:5,
+    marginRight:0,
+    
     marginTop:-10,
    borderRadius:10,
   },
@@ -261,7 +266,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   icon: {
-    padding: 8,
+    padding: 0,
   },
   shopInfo: {
     flexDirection: "row",

@@ -206,7 +206,7 @@ export default function ViewShopsScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.InnerContainer}>
-        <Searchbarwithmic
+        <Searchbarwithmic 
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           setsearchmodal={setsearchmodal}
@@ -295,7 +295,7 @@ export default function ViewShopsScreen() {
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
   InnerContainer: {
     marginTop: 10,
     flex: 1,
-
+  
   },
   fab: {
     position: "absolute",
