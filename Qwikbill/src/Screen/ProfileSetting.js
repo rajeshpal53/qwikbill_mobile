@@ -271,9 +271,9 @@ const ProfileSetting = ({
               selectedShop ?
                 {
                   icon: "person-add",
-                 // label: roleDetails ? "Edit Role" : "Assign New Role",
                  label:"Add or Edit Role",
-                  value: roleDetails ? "EditRole" : "AssignNewRole",
+                //  value: roleDetails ? "EditRole" : "AssignNewRole",
+                value:"AddOrEditRole"
                 } : null,
               // { icon: "logout", label: "Logout1", value: "Logout1" },
             ].filter(Boolean) // << THIS REMOVES null SAFELY
@@ -397,13 +397,6 @@ const ProfileSetting = ({
         webUri: `${NORM_URL}/privacy-policy?view=mobile`,
         headerTitle: "Privacy and Policies",
       });
-
-      // else if (value == "Become a Vendor") {
-      //   if (userData) {
-      //     navigation.navigate("AddServiceProvidersFormScreen");
-      //   } else {
-      //     setLoginConfirmModalVisible(true);
-      //   }
     } else if (value === "Edit a Vendor") {
       if (userData) {
         navigation.navigate("ViewEditServicesScreen");
@@ -416,11 +409,13 @@ const ProfileSetting = ({
       setVisible(true);
     } else if (value === "AdminSection") {
       navigation.navigate("AdminSection");
-    } else if (value === "AssignNewRole") {
-      navigation.navigate("AddroleScreen");
-    } else if (value === "EditRole") {
-      navigation.navigate("EditRoleScreen", { isAdmin: false, AdminRoleData: null });
-    } else if (value == "ChatWithUs") {
+    } else if (value === "AddOrEditRole") {
+  if (roleDetails) {
+    navigation.navigate("EditRoleScreen", { isAdmin: false, AdminRoleData: null });
+  } else {
+    navigation.navigate("AddroleScreen");
+  }
+}else if (value == "ChatWithUs") {
       navigation.navigate("ChatWithUs");
     } else if (value === "needMoreHelp") {
       navigation.navigate("Policies", {
@@ -430,6 +425,7 @@ const ProfileSetting = ({
     }
   };
 const logoutHandler = async () => {
+  console.log("userData before logout :", userData);
   try {
     const response = await createApi(
       "users/logout",
@@ -448,6 +444,7 @@ const logoutHandler = async () => {
       await AsyncStorage.clear(); // clear everything
       await clearSelectedShop();  // clear selectedShop from context
       
+      console.log("User data after logout:", userData);
       navigation.dispatch(
         CommonActions.reset({
           index: 0,

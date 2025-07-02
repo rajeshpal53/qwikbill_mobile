@@ -143,7 +143,7 @@ const ProviderServiceForm = ({
         )}
 
         <TextInput
-          label={t("Gst Number")}
+          label={t("GST Number")}
           // disabled = { (!values?.latitude || values?.latitude === "") ? true : false}
           mode={textInputMode}
           style={{ backgroundColor: "transparent" }}

@@ -50,14 +50,25 @@ export const UserDataProvider = ({ children }) => {
 
 
   // Function to store data both in state and AsyncStorage
+  // const saveUserData = async (data) => {
+  //   try {
+  //     await AsyncStorage.setItem('userData', JSON.stringify(data));
+  //     setUserData(data);
+  //   } catch (error) {
+  //     console.log('Error saving user data:', error);
+  //   }
+  // };
+
+
   const saveUserData = async (data) => {
-    try {
-      await AsyncStorage.setItem('userData', JSON.stringify(data));
-      setUserData(data);
-    } catch (error) {
-      console.log('Error saving user data:', error);
-    }
-  };
+  if (data) {
+    await AsyncStorage.setItem("userData", JSON.stringify(data));
+  } else {
+    await AsyncStorage.removeItem("userData");   // ← delete when null
+  }
+  setUserData(data);
+};
+
 
   const clearUserData = async () => {
     try {

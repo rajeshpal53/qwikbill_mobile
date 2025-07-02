@@ -57,7 +57,7 @@ const UserAccounts = () => {
               Authorization: `Bearer ${token}`,
             })
 
-            //console.log("response iss", response)
+            console.log("response iss", response)
          
           if (response.success) {
             setStats({
