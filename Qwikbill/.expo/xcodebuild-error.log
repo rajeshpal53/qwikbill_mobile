@@ -1,0 +1,10 @@
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:424C288B-D770-4370-975E-9FB75C59235B, OS:18.5, name:iPhone 16 Plus }
+{ platform:iOS Simulator, arch:x86_64, id:424C288B-D770-4370-975E-9FB75C59235B, OS:18.5, name:iPhone 16 Plus }
+** BUILD FAILED **
+
+
+The following build commands failed:
+	PhaseScriptExecution [CP-User]\ Generate\ Specs /Users/faizan/Library/Developer/Xcode/DerivedData/Qwikbill-awgpbacsqhgdrlhbvdqlojirrdza/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/ReactCodegen.build/Script-46EB2E0002E8E0.sh (in target 'ReactCodegen' from project 'Pods')
+	Building workspace Qwikbill with scheme Qwikbill and configuration Debug
+(2 failures)
