@@ -21,6 +21,7 @@ import UserDataContext from "../../Store/UserDataContext";
 import { ButtonColor, createApi, fontSize, readApi } from "../../Util/UtilApi";
 import ItemDataTable from "../Cards/ItemDataTable";
 import PriceDetails from "../PriceDetails";
+import ConfirmModal from "../../Components/Modal/ConfirmModal";
 
 const CreateInvoiceForm = ({ selectedButton }) => {
   const dispatch = useDispatch();
@@ -38,7 +39,6 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const error = useSelector((state) => state.cart.error);
   const pendingActionRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
-
 
   console.log("DATA OF ERROR ", error);
 
@@ -108,7 +108,6 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   };
 
 
-
   function handleConfirm() {
     setShowModal(false);                           // close the modal
     if (pendingActionRef.current) {
@@ -137,7 +136,6 @@ const CreateInvoiceForm = ({ selectedButton }) => {
       if (hasFilledForm && !submit.current) {
         e.preventDefault();
 
-
         pendingActionRef.current = e.data.action;    // <— stash the action
 
         setShowModal(true);
@@ -157,115 +155,22 @@ const CreateInvoiceForm = ({ selectedButton }) => {
     }
   };
 
-  const handleGenerate = async (button = "download", formData, resetForm) => {
+ // --- fixed handleGenerate (single version) ---
+const handleGenerate = async (button= "download" , formData, resetForm) => {
+  try {
+    const api = "invoice/invoices";
+    const invoiceType =
+      selectedButton === "gst" ? "gst"
+      : selectedButton === "Quatation" ? "quotation"
+      : "provisional";
 
-    if (selectedButton === "gst") {
-      try {
-        let api = "invoice/invoices";
-        const { customerData, serviceProviderData, ...payloadData } = formData;
-        const newProducts = payloadData?.products?.map((item) => {
-          return {
-            id: item?.id,
-            productname: item?.name,
-            price: item?.sellPrice,
-            quantity: item?.quantity,
-          };
-        });
-
-        const newPayload = {
-          ...payloadData,
-          products: newProducts,
-          type: "gst",
-        };
-        console.log("after removing someData, payloadData is , ", newPayload);
-        console.log("userData is , ", userData);
-        console.log("userData token is , ", userData?.token);
-
-        const response = await createApi(api, newPayload, {
-          Authorization: `Bearer ${userData?.token}`,
-        });
-
-        console.log("response of create invoice is, ", response);
-        showSnackbar("Invoice Created Successfully", "success");
-        // setCreatedInvoice(response?.customer);
-        dispatch(clearCart());
-        resetForm();
-        // invoiceCreated.current = true;
-
-        if (button == "download") {
-          console.log("Inside a if condition", response.customer);
-          return response;
-        } else if (button == "generate") {
-          console.log("Inside a else if condition ");
-          console.log("after removing someData, payloadData is debug 1, ", newPayload);
-          console.log("userData is , ", userData);
-          console.log("userData token is , ", userData?.token);
-
-          const response = await createApi(api, newPayload, {
-            Authorization: `Bearer ${userData?.token}`,
-          });
-
-          console.log("response of create invoice is, debug 2 ", response);
-          showSnackbar("Invoice Created Successfully", "success");
-          // setCreatedInvoice(response?.customer);
-          dispatch(clearCart());
-          navigation.pop(2);
-        }
-      } catch (error) {
-        console.log("error creating invoice is , ", error);
-        showSnackbar("Something went wrong creating Invoice is", "error");
-      }
-      console.log("Button pressed");
-
-    }
-    else if (selectedButton === "Quatation") {
-      try {
-        let api = "invoice/invoices";
-        const { customerData, serviceProviderData, ...payloadData } = formData;
-        const newProducts = payloadData?.products?.map((item) => {
-          return {
-            id: item?.id,
-            productname: item?.name,
-            price: item?.sellPrice,
-            quantity: item?.quantity,
-          };
-        });
-
-        const newPayload = {
-          ...payloadData,
-          products: newProducts,
-          type: "quotation",
-        };
-        console.log("after removing someData, payloadData is , ", newPayload);
-
-        const response = await createApi(api, newPayload, {
-          Authorization: `Bearer ${userData?.token}`,
-        });
-
-        console.log("response of create invoice is, ", response);
-        showSnackbar("Invoice Created Successfully", "success");
-        // setCreatedInvoice(response?.customer);
-        dispatch(clearCart());
-        resetForm();
-        // invoiceCreated.current = true;
-
-        if (button == "download") {
-          console.log("Inside a if condition", response.customer);
-          return response;
-        } else if (button == "generate") {
-          console.log("Inside a else if condition ");
-          console.log("after removing someData, payloadData is debug 1, ", newPayload);
-          console.log("userData is , ", userData);
-          console.log("userData token is , ", userData?.token);
-
-          const response = await createApi(api, newPayload, {
-            Authorization: `Bearer ${userData?.token}`,
-          });
-
+    // add/override only what you really need
+    const payload = { ...formData, type: invoiceType };
 
     const response = await createApi(api, payload, {
       Authorization: `Bearer ${userData?.token}`,
     });
+
     showSnackbar("Invoice created successfully", "success");
     dispatch(clearCart());
     resetForm();
@@ -368,7 +273,6 @@ const CreateInvoiceForm = ({ selectedButton }) => {
               <TextInput
                 label="Phone"
                 mode="flat"
-
                 keyboardType="phone-pad"
                 maxLength={10}
                 style={styles.input}
@@ -400,7 +304,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
                 </View>
               )}
               <TextInput
-                label="Name*"
+                label="Name"
                 mode="flat"
                 style={styles.input}
                 onChangeText={handleChange("name")}
@@ -436,7 +340,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
 
               {/* Address Field */}
               <TextInput
-                label="Address*"
+                label="Address"
                 mode="flat"
                 style={styles.input}
                 onChangeText={handleChange("address")}
@@ -502,7 +406,6 @@ const CreateInvoiceForm = ({ selectedButton }) => {
                 </TouchableOpacity>
               </View>
               {/* Item Data Table */}
-
               {carts.length > 0 && (
                 <View style={{ marginTop: 10 }}>
                   <TouchableOpacity
@@ -540,7 +443,6 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           )
         }}
       </Formik>
-
       <ConfirmModal
         visible={showModal}
         setVisible={handleCancel}
