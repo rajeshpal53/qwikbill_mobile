@@ -208,7 +208,7 @@ const EditRole = () => {
               </View>
 
               <View style={styles.dropdownContainer}>
-                <DropDownList options={allShops} />
+                <DropDownList options={allShops}  listContainerStyle={styles.listZFix} />
               </View>
             </>
           }
@@ -256,6 +256,8 @@ const EditRole = () => {
           contentContainerStyle={styles.flatListContainer}
           ListFooterComponent={Loader}
           showsVerticalScrollIndicator={false}
+            ListHeaderComponentStyle={{ zIndex: 100 }}
+
         />
         <FAB
           icon="plus"
@@ -302,7 +304,14 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     paddingVertical: 15,
     marginLeft:-40,
+    zIndex: 1000,       // iOS
+    elevation: 1000,  
     
+  },
+  listZFix: {
+    zIndex: 1100,
+    elevation: 1100,
+    position: 'relative',   // or 'absolute' if the lib expects it
   },
   flatListContainer: {
     paddingBottom: 70, // Add padding to the bottom of the FlatList content

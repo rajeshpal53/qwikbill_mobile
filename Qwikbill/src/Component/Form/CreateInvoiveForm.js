@@ -159,6 +159,18 @@ const CreateInvoiceForm = ({ selectedButton }) => {
     }
   };
 
+
+
+  // ---- utils/transformCart.js (or inside the component) ----
+const mapCartToInvoiceProducts = (carts) =>
+  carts.map(({ id, quantity, sellPrice, name }) => ({
+    id: id,                       // rename id -> productId (adjust to API)
+    quantity,
+    price: Number(sellPrice),            // be sure it's a real number
+    productname: String(name),      // keep if the API wants it
+  }));
+
+
   // --- fixed handleGenerate (single version) ---
   const handleGenerate = async (button = "download", formData, resetForm) => {
     try {
@@ -237,7 +249,9 @@ const CreateInvoiceForm = ({ selectedButton }) => {
             ...extraData,
             customerData: DataCustomer,
             serviceProviderData: selectedShop,
-            products: carts,
+           // products: carts,
+           products: mapCartToInvoiceProducts(carts),
+
 
           };
           console.log("Form Submitted Data:", payload?.customerData);
@@ -275,7 +289,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
         }) => {
           console.log("DATA VALID", isValid)
           console.log("DATA Dirty", dirty)
-          console.log("cart is , ", carts.length);
+         // console.log("cart is , ", carts.length);
           console.log("error is , ", error);
           return (
             <View>

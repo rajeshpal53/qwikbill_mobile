@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     maxHeight: 300,
     borderWidth: 1,
     borderColor: "rgba(0, 0, 0, 0.3)",
-    backgroundColor: "#f6f2f7",
+    backgroundColor: "#fff",
     borderRadius:10,
   },
   listItem: {
