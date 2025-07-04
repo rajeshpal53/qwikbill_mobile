@@ -2,6 +2,8 @@ import React, { useContext, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { List, ActivityIndicator } from "react-native-paper";
 import { ShopContext } from "../Store/ShopContext";
+import { TouchableWithoutFeedback, Keyboard } from "react-native";
+
 
 function DropDownList({ options, disabled }) {
   const { selectedShop, updateSelectedShop } = useContext(ShopContext);
@@ -18,6 +20,14 @@ function DropDownList({ options, disabled }) {
   };
 
   return (
+    <TouchableWithoutFeedback
+    onPress={() => {
+      if (dropdownVisible) {
+        setDropdownVisible(false);
+        Keyboard.dismiss(); // just in case keyboard is open
+      }
+    }}
+  >
     <View style={styles.container}>
       {isLoading && <ActivityIndicator size="small " />}
       <List.Accordion
@@ -49,6 +59,7 @@ function DropDownList({ options, disabled }) {
         </ScrollView>
       </List.Accordion>
     </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -60,14 +71,14 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 999, // 👈 ensures it appears on top
     // elevation: 10, // Android support
-    backgroundColor: "#f6f2f7",
+    backgroundColor: "#fff",
     width: "90%",
     // height: 58,
     marginTop:10,
     
   },
   accordion: {
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     borderBottomWidth: 0,
     borderBottomColor: "rgba(0, 0, 0, 0.3)",
     paddingVertical:0,

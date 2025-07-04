@@ -101,8 +101,10 @@ const CustomerDetails = ({ route, navigation }) => {
 
         {/* Email */}
         <View style={styles.detailRow}>
-          <Text style={styles.label}>Email:</Text>
-          <Text style={styles.value}>{item?.user?.email ?? "N/A"}</Text>
+          <Text style={styles.label} >Email:</Text>
+          <Text style={styles.value}>
+  {item?.user?.email ? `${item.user.email.slice(0, 20)}...` : "N/A"}
+            </Text>
         </View>
 
         {/* Address */}

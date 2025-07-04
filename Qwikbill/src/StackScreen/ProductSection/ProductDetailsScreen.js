@@ -225,13 +225,30 @@ const ProductDetailsScreen = ({ navigation }) => {
 
   //Search Function
   const fetchSearchedData = async () => {
+
+    // setSearchCalled(true);
+    // setloader(true);
+    // const trimmedQuery = searchQuery?.trim();
+    // console.log("trimmedQuery DATA IS ", trimmedQuery);
+
+    const trimmedQuery = searchQuery.trim();
+
+    // ⬇️  1) Skip the call if nothing to search
+    if (!trimmedQuery) {
+      setSearchedData([]);     // clear previous results
+      setSearchCalled(false);  // so FlatList shows full data set
+      return;
+    }
+
     try {
       setSearchCalled(true);
       setloader(true);
-      const trimmedQuery = searchQuery?.trim();
-      console.log("trimmedQuery DATA IS ", trimmedQuery);
 
-      let api = `products/searchProducts?searchTerm=${trimmedQuery}&vendorfk=${selectedShop?.vendor?.id}`;
+
+      //let api = `products/searchProducts?searchTerm=${trimmedQuery}&vendorfk=${selectedShop?.vendor?.id}`;
+      const api = `products/searchProducts?searchTerm=${encodeURIComponent(trimmedQuery)}&vendorfk=${selectedShop.vendor.id}`;
+
+
       const response = await readApi(api, {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userData?.token}`,
