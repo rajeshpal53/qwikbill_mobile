@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 // import { Modal } from "react-native-paper";
+import { useIsFocused } from '@react-navigation/native';
+
 import {
   ExpoSpeechRecognitionModule,
   useSpeechRecognitionEvent,
@@ -40,6 +42,7 @@ const Searchbarwithmic = ({
   const [cancelVisible, setCancelVisible] = useState(false);
   const { showSnackbar } = useSnackbar();
   const [stopPlaceHolder, setStopPlaceHolder] = useState(false);
+   const isFocused = useIsFocused();
   // Request microphone permission
   const requestMicrophonePermission = async () => {
     if (Platform.OS === "android") {
@@ -104,12 +107,14 @@ const Searchbarwithmic = ({
 
   // Listen to speech recognition events
   useSpeechRecognitionEvent("start", () => {
+       if (!isFocused) return;    
     setTranscript("");
     setRecognizing(true);
     console.log("Recognition started");
   });
 
   useSpeechRecognitionEvent("end", () => {
+      if (!isFocused) return;
     setRecognizing(false);
     ExpoSpeechRecognitionModule.stop();
     setsearchmodal(false);
@@ -117,6 +122,7 @@ const Searchbarwithmic = ({
   });
 
   useSpeechRecognitionEvent("result", (event) => {
+     if (!isFocused) return;  
     if (event.results.length > 0) {
       const fullTranscript = event.results[0]?.transcript;
       setTranscript(fullTranscript);
@@ -131,6 +137,10 @@ const Searchbarwithmic = ({
     showSnackbar(event.message, "error"); // Show error message in the search input
     console.log("error message:", event.message);
   });
+
+   useEffect(() => {
+    if (!isFocused) ExpoSpeechRecognitionModule.stop();
+  }, [isFocused]);
 
   // // // Close the modal
   // const handleCloseModal = () => {

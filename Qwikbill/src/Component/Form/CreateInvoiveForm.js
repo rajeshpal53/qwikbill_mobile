@@ -63,6 +63,8 @@ const CreateInvoiceForm = ({ selectedButton }) => {
       .matches(/^\d{10}$/, "Phone must be 10 digits"),
   });
 
+  console.log("user isss ", User)
+
   const fetchUserData = async (phoneNumber, setFieldValue) => {
     if (timeoutId.current) {
       clearTimeout(timeoutId.current);
@@ -82,6 +84,8 @@ const CreateInvoiceForm = ({ selectedButton }) => {
               setFieldValue("name", response?.name);
               setFieldValue("address", response?.address);
               setFieldValue("phone", phoneNumber);
+
+              console
             } else {
               setFieldValue("name", response?.name);
               setFieldValue("address", response?.address);
@@ -155,33 +159,33 @@ const CreateInvoiceForm = ({ selectedButton }) => {
     }
   };
 
- // --- fixed handleGenerate (single version) ---
-const handleGenerate = async (button= "download" , formData, resetForm) => {
-  try {
-    const api = "invoice/invoices";
-    const invoiceType =
-      selectedButton === "gst" ? "gst"
-      : selectedButton === "Quatation" ? "quotation"
-      : "provisional";
+  // --- fixed handleGenerate (single version) ---
+  const handleGenerate = async (button = "download", formData, resetForm) => {
+    try {
+      const api = "invoice/invoices";
+      const invoiceType =
+        selectedButton === "gst" ? "gst"
+          : selectedButton === "Quatation" ? "quotation"
+            : "provisional";
 
-    // add/override only what you really need
-    const payload = { ...formData, type: invoiceType };
+      // add/override only what you really need
+      const payload = { ...formData, type: invoiceType };
 
-    const response = await createApi(api, payload, {
-      Authorization: `Bearer ${userData?.token}`,
-    });
+      const response = await createApi(api, payload, {
+        Authorization: `Bearer ${userData?.token}`,
+      });
 
-    showSnackbar("Invoice created successfully", "success");
-    dispatch(clearCart());
-    resetForm();
+      showSnackbar("Invoice created successfully", "success");
+      dispatch(clearCart());
+      resetForm();
 
-    if (button === "download") return response;
-    navigation.pop(2);
-  } catch (err) {
-    console.log("create invoice error →", err?.response?.data || err);
-    showSnackbar("Server rejected the invoice – check required fields", "error");
-  }
-};
+      if (button === "download") return response;
+      navigation.pop(2);
+    } catch (err) {
+      console.log("create invoice error →", err?.response?.data || err);
+      showSnackbar("Server rejected the invoice – check required fields", "error");
+    }
+  };
 
   return (
     <ScrollView>
@@ -200,7 +204,13 @@ const handleGenerate = async (button= "download" , formData, resetForm) => {
           const DataCustomer = {
             name: values?.name,
             address: values?.address,
-            getNumber: User?.getNumber || values?.gstNumber,
+            gstNumber: User?.gstNumber || values?.gstNumber || null,
+            // ...(          // ← include gstNumber ONLY when you really have one
+            //   selectedButton === 'gst' &&
+            //     (User?.gstNumber || values.gstNumber.trim())
+            //     ? { gstNumber: (User?.gstNumber || values.gstNumber.trim()) }
+            //     : {}
+            // ),
             phone: User?.getNumber || values?.phone,
             userId: User?.id || undefined,
           };
@@ -230,7 +240,7 @@ const handleGenerate = async (button= "download" , formData, resetForm) => {
             products: carts,
 
           };
-          console.log("Form Submitted Data:", payload?.products);
+          console.log("Form Submitted Data:", payload?.customerData);
           console.log("Form Submitted Data:123", payload);
           submit.current = true;
           const customerResponse = await handleGenerate(
@@ -248,8 +258,8 @@ const handleGenerate = async (button= "download" , formData, resetForm) => {
             });
             resetForm();
           }
-          // resetForm();
-          // dispatch(clearCart());
+          resetForm();
+          dispatch(clearCart());
         }}
       >
         {({
