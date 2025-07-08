@@ -36,6 +36,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import NoDataFound from "../../Components/NoDataFound";
 import DeleteModal from "../../UI/DeleteModal";
+import { useSnackbar } from "../../Store/SnackbarContext";
 
 
 const ProductDetailsScreen = ({ navigation }) => {
@@ -55,7 +56,7 @@ const ProductDetailsScreen = ({ navigation }) => {
   const { userData } = useContext(UserDataContext);
   const [searchedData, setSearchedData] = useState([]);
   const [searchCalled, setSearchCalled] = useState(false);
-
+  const {showSnackbar}=useSnackbar();
   const { selectedShop } = useContext(ShopContext);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
@@ -189,23 +190,21 @@ const ProductDetailsScreen = ({ navigation }) => {
     try {
       setloader(true);
       // The following block is the actual delete logic using your deleteApi helper
-      const response = await deleteApi(`products/${ProductId}`, {
-        headers: {
-          Authorization: `Bearer ${userData?.token}`,
-        },
-      });
+      const response = await deleteApi(`products/${ProductId}`, {  Authorization: `Bearer ${userData.token}`,});
 
       console.log("GET ALL DATA IS125 ", response?.data);
       if (response?.data) {
+        showSnackbar(t("Product deleted successfully")),"success";
         await getproductdata();
-
 
         console.log("GET ALL DATA IS response", response.data);
       } else {
         console.log("No data returned from delete API");
+        showSnackbar(t("No data returned from delete API","error"));
       }
     } catch (error) {
       console.log("Unable to delete role data", error);
+      showSnackbar("Unable to delete role data","error")
     } finally {
       setloader(false);
       setVisible(false);
