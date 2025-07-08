@@ -49,10 +49,11 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
     address: Yup.string().required("Address is required"),
-    gstNumber: Yup.string().matches(
-      /^[A-Z]{2}[0-9]{1}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z0-9]{1}[Z]{1}[0-9]{1}$/,
-      "Invalid GSTIN format. Example: AB1234567890Z1"
-    ),
+    gstNumber: Yup.string()
+  .matches(
+    /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1}$/,
+    "Invalid GSTIN format. Example: 23AAMCA6167B1ZW"
+  ),
     // gstNumber: Yup.string().when([], {
     //   is: () => selectedButton === "gst",
     //   then: (schema) => schema.required("GST Number is required"),
