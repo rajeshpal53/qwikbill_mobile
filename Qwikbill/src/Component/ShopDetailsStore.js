@@ -5,10 +5,9 @@ import { useTranslation } from "react-i18next"; // if not already
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Card } from "react-native-paper";
 import { ShopContext } from "../Store/ShopContext";
+import { useSnackbar } from "../Store/SnackbarContext";
 import UserDataContext from "../Store/UserDataContext";
 import { deleteApi, fontSize } from "../Util/UtilApi";
-import { useSnackbar } from "../Store/SnackbarContext";
-
 
 const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => {
   console.log("DATA OF ITEM  jayesh ssssss ", item);
@@ -66,10 +65,13 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
   };
 
   const handleViewProduct = () => {
-    navigation.navigate("wertone", {
-      screen: "Products",
-      params: { item },
-    });
+    // navigation.navigate("wertone", {
+    //   screen: "ShowProductScreen",
+    //   params: { item },
+    // });
+    navigation.navigate(
+      "ShowProductScreen"
+    )
   }
 
   return (

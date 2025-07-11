@@ -1,11 +1,10 @@
-import { View, Text, StyleSheet, TextInput } from "react-native";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { applyDiscount, applyPartiallyAmount } from "../Redux/slices/CartSlice";
-import { useEffect, useState } from "react";
-import { Picker } from "@react-native-picker/picker";
-import CustomDropdown from "./CustomeDropdown";
 import { fontSize } from "../Util/UtilApi";
-import { useTranslation } from "react-i18next";
+import CustomDropdown from "./CustomeDropdown";
 
 
 
@@ -14,7 +13,7 @@ const PriceDetails = ({ setPaymentStatus ,selectedButton }) => {
   const totalPrice = useSelector((state) => state.cart.totalPrice);
   const afterdiscount = useSelector((state) => state.cart.afterdiscount);
   const error = useSelector((state) => state.cart.error);
-
+  
 
   const [discountValue, setDiscountValue] = useState("");
   const [PartiallyAmount, setPartiallyAmount] = useState("");
@@ -65,9 +64,9 @@ const PriceDetails = ({ setPaymentStatus ,selectedButton }) => {
       {/* Price  */}
       <View style={styles.priceView}>
         <Text style={styles.label}>{t("Price")} ({carts.length})</Text>
-        <Text style={styles.value}>{`₹ ${
-          totalPrice?.toFixed(2) || "total"
-        }`}</Text>
+        <Text style={styles.value}>
+          {`₹ ${totalPrice?.toFixed(2) || "total" }`}
+        </Text>
       </View>
 
       {/* Discount  */}
@@ -185,7 +184,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "flex-end",
-
+    marginTop:-10,
+    marginBottom:-10,
   },
   pickerWrapper: {
     flex: 1,
