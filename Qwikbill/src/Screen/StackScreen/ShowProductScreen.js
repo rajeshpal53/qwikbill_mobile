@@ -1,3 +1,15 @@
+// import React from 'react'
+// import { View ,Text} from 'react-native'
+
+// export default function ShowProductScreen() {
+//   return (
+//    <View>
+//     <Text>All Products</Text>
+//    </View>
+//   )
+// }
+
+
 import {
   useCallback,
   useContext,
@@ -30,7 +42,7 @@ import FileUploadModal from "../../Components/BulkUpload/FileUploadModal";
 import OpenmiqModal from "../../Components/Modal/Openmicmodal";
 import { ShopContext } from "../../Store/ShopContext";
 import UserDataContext from "../../Store/UserDataContext";
-import { deleteApi, fontSize, readApi } from "../../Util/UtilApi";
+import { deleteApi , fontSize,readApi } from "../../Util/UtilApi";
 //import CustomeFilterDropDown from "../../Component/CustomFilterDropDown";
 import { useFocusEffect } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
@@ -38,7 +50,7 @@ import NoDataFound from "../../Components/NoDataFound";
 import DeleteModal from "../../UI/DeleteModal";
 
 
-const ProductDetailsScreen = ({ navigation }) => {
+const ShowProductScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchmodal, setsearchmodal] = useState(false); // State for modal visibility
   const [transcript, setTranscript] = useState(""); // State for transcript
@@ -493,7 +505,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProductDetailsScreen;
+export default ShowProductScreen;
 
 // const fetchSearchedData = async () => {
 //   try {

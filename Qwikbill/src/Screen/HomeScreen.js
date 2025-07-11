@@ -3,7 +3,6 @@ import {
   Ionicons
 } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import jwtDecode from 'jwt-decode';
 
 import { useIsFocused } from "@react-navigation/native";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -20,7 +19,7 @@ import {
   View
 } from "react-native";
 import { RefreshControl } from "react-native-gesture-handler";
-import { ActivityIndicator, Card } from "react-native-paper";
+import { ActivityIndicator } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth
@@ -39,7 +38,7 @@ import { ShopContext } from "../Store/ShopContext";
 import UserDataContext from "../Store/UserDataContext";
 import { rolePermissions, services } from "../tempList/ServicesList";
 import DropDownList from "../UI/DropDownList";
-import { API_BASE_URL, ButtonColor, fontFamily, fontSize, readApi } from "../Util/UtilApi";
+import { ButtonColor, fontFamily, fontSize } from "../Util/UtilApi";
 
 
 export default function HomeScreen({ navigation, noItemData }) {
@@ -251,7 +250,7 @@ export default function HomeScreen({ navigation, noItemData }) {
         <View>
           <View style={styles.dropDownContainer}>
             <View style={styles.dropdownRow}>
-              <Ionicons name="storefront-sharp" size={24} color="#0c3b73" />
+              <Ionicons name="storefront-sharp" size={24} color="#0c3b73" marginBottom={1}  />
               <DropDownList options={allShops} />
             </View>
           </View>
@@ -482,7 +481,7 @@ const styles = StyleSheet.create({
     marginTop: 7,
   },
   dropDownContainer: {
-    paddingVertical: "5%",
+    paddingVertical: 11,
     paddingHorizontal: "7%",
     backgroundColor: "white",
     borderRadius: 10,
@@ -492,11 +491,11 @@ const styles = StyleSheet.create({
 
   },
   userDropdown: {
-    paddingVertical: "2.5%",
-    paddingHorizontal: "7%",
+    // paddingVertical: "2.5%",
+    // paddingHorizontal: "7%",
     backgroundColor: "#f6f2f7",
     borderRadius: 10,
-    marginTop: "3%",
+    // marginTop: "3%",
     marginHorizontal: 15 ,
  
     },
@@ -507,6 +506,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: "5%", // Space between icon and dropdown
     // backgroundColor:"yellow"
+    
   },
 
   viewsContainer: {

@@ -164,25 +164,20 @@
 
 // export default CustomerDetail;
 
+import { useIsFocused } from "@react-navigation/native";
+import { useContext, useEffect, useState } from "react";
 import {
-  Text,
-  View,
-  StyleSheet,
-  FlatList,
   ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  View
 } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
-import { FAB } from "react-native-paper";
-import Icon from "react-native-vector-icons/Ionicons";
-import axios from "axios";
 import CustomerDetailsCard from "../../Component/Cards/CustomerDetailsCard";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
-import EditCustomerDetailsModal from "../../Components/Modal/EditCustomerDetailsModal";
-import { API_BASE_URL, readApi } from "../../Util/UtilApi";
-import { ShopContext } from "../../Store/ShopContext";
-import { useIsFocused } from "@react-navigation/native";
-import NoDataFound from "../../Components/NoDataFound";
 import OpenmiqModal from "../../Components/Modal/Openmicmodal";
+import NoDataFound from "../../Components/NoDataFound";
+import { ShopContext } from "../../Store/ShopContext";
+import { readApi } from "../../Util/UtilApi";
 
 const CustomerDetail = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -256,7 +251,7 @@ const CustomerDetail = ({ navigation }) => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1,  backgroundColor:"white"}}>
       <FlatList
         ListHeaderComponent={
           <View style={{ marginTop: 5 }}>
@@ -265,7 +260,7 @@ const CustomerDetail = ({ navigation }) => {
               setSearchQuery={setSearchQuery}
               setsearchmodal={setsearchmodal}
               setTranscript={setTranscript}
-              placeholderText="Search User by name..."
+              placeholderText="Search customers by name..."
               searchData={searchdata}
             />
           </View>
@@ -292,9 +287,10 @@ const CustomerDetail = ({ navigation }) => {
                 alignItems: "center",
                 justifyContent: "center",
                 marginTop: "40%",
+                
               }}
             >
-              <NoDataFound textString={"No Users Found"} />
+              <NoDataFound textString={"no customer found"} />
             </View>
           ) : null
         }

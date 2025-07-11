@@ -66,7 +66,7 @@ function DropDownList({ options, disabled }) {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: -20, // adjust based on where you want to show it
+    top: -22, // adjust based on where you want to show it
     left: 40,
     right: 0,
     zIndex: 999, // 👈 ensures it appears on top
@@ -74,15 +74,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     width: "90%",
     // height: 58,
-    marginTop:10,
+    marginTop:11,
     
   },
   accordion: {
-    backgroundColor: "#fff",
+    backgroundColor: "white",
     borderBottomWidth: 0,
     borderBottomColor: "rgba(0, 0, 0, 0.3)",
     paddingVertical:0,
-    borderBottomLeftRadius:10,
+    
+    
   },
   scrollArea: {
     maxHeight: 300,

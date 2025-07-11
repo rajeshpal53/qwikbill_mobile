@@ -213,13 +213,13 @@ import ProductCardDetails from "../Component/Cards/ProductCard";
 import OpenmiqModal from "../Components/Modal/Openmicmodal";
 import ViewCartOverlay from "../Overlays/ViewCartOverlays";
 
+import { useNavigation } from "@react-navigation/native";
 import { clearCart } from "../Redux/slices/CartSlice";
 import { setProduct } from "../Redux/slices/ProductSlice";
 import { ShopContext } from "../Store/ShopContext";
 import { useSnackbar } from "../Store/SnackbarContext";
 import UserDataContext from "../Store/UserDataContext";
 import { readApi } from "../Util/UtilApi";
-import { useNavigation } from "@react-navigation/native";
 const AllItemProduct= ()=>{
   const [searchQuery, setSearchQuery] = useState("");
   const [searchmodal, setsearchmodal] = useState(false);
@@ -333,7 +333,7 @@ const AllItemProduct= ()=>{
               setSearchQuery={setSearchQuery}
               setsearchmodal={setsearchmodal}
               setTranscript={setTranscript}
-              placeholderText="Search User by name ..."
+              placeholderText=" search product by name ... "
             />
             {carts.length > 0 && (
               <TouchableOpacity
