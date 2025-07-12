@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -18,60 +18,97 @@ import {
 import PriceDetails from "../PriceDetails";
 import { fontSize } from "../../Util/UtilApi";
 
-const ItemDataTable = () => {
+const ItemDataTable = ({discountValue}) => {
   const carts = useSelector((state) => state.cart.Carts);
   const dispatch = useDispatch();
   console.log("carts is " , carts);
   const value = (carts?.sellPrice * carts?.quantity * carts?.taxRate) /
           100;
   console.log("value is " , value);
+  const COLUMN_WIDTHS = {
+  small: 80,
+  medium: 120,
+};
+  const totalPrice = useSelector((state) => state.cart.totalPrice);
+
+const [discountRate,setDiscountRate]=useState(0);
+
+useEffect(() => {
+  const discount = parseFloat(discountValue) || 0;
+  const total = parseFloat(totalPrice) || 0;
+
+  if (total > 0) {
+    const rate = (1 - discount / total) * 100;
+    setDiscountRate(parseFloat(rate.toFixed(2)));
+
+  } else {
+    setDiscountRate(0); // avoid division by zero
+  }
+}, [discountValue, totalPrice]);
+
+console.log("discountRate is ", discountRate,totalPrice);  
+
   return (
-    <>
-    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-      <Card style={styles.card}>
-        {/* Header */}
-        <View style={[styles.row, styles.header]}>
-          <Text style={[styles.cell, styles.smallCell]}>No.</Text>
-          <Text style={[styles.cell, styles.flexCell]}>Items</Text>
-          <Text style={[styles.cell, styles.smallCell]}>Price</Text>
-          <Text style={[styles.cell, styles.smallCell]}>Tax(%)</Text>
-          <Text style={[styles.cell, styles.smallCell]}>Quantity</Text>
-          <Text style={[styles.cell, styles.smallCell]}>Action</Text>
-        </View>
+    <View style={{ flex: 1 }}>
+  <ScrollView
+    horizontal
+    contentContainerStyle={{ padding: 10 }}
+    nestedScrollEnabled={true}
+    keyboardShouldPersistTaps="handled"
+  >
+    <Card style={styles.card}>
+      {/* Header */}
+      <View style={[styles.row, styles.header]}>
+        <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>No.</Text>
+        <Text style={[styles.cell, { width: COLUMN_WIDTHS.medium }]}>Items</Text>
+        <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>Rate</Text>
+        <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>Qty</Text>
+        <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>Amount</Text>
+        <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>Discount %</Text>
+        <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>Discount Amt</Text>
+        <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>Amt After Disc</Text>
+        <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>GST %</Text>
+        <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>GST Amt</Text>
+        <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>Total</Text>
+        <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>Action</Text>
+      </View>
 
-        {/* Items List */}
-        <FlatList
-          data={carts}
-          keyExtractor={(item) => item.id.toString()} // Using a unique `id` as key
-          renderItem={({ item, index }) => (
+      {/* Table Rows */}
+      <FlatList
+        data={carts}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item, index }) => {
+          const amount = item.sellPrice * item.quantity||0;
+          const discountAmt = (amount * discountRate) / 100;
+          const amtAfterDiscount = amount - discountAmt;
+          const gstAmt = (amtAfterDiscount * item.taxRate) / 100;
+          const total = amtAfterDiscount + gstAmt;
+
+          return (
             <View style={styles.row}>
-              <Text style={[styles.cell, styles.smallCell]}>{index + 1}</Text>
-              <Text style={[styles.cell, styles.flexCell]}>{item?.name}</Text>
-              <Text style={[styles.cell, styles.smallCell]}>
-              ₹{(item?.sellPrice * item?.quantity).toFixed(2)}
-              </Text>
-              <Text style={[styles.cell, styles.smallCell]}>
-   (
-  {((item?.sellPrice * item?.quantity * item?.taxRate) / 100).toFixed(2)} )
-</Text>
-
-              <View style={[styles.cell, styles.smallCell]}>
-                <IncAndDicButton item={item} />
-              </View>
-              <View style={[styles.cell, styles.smallCell]}>
-                <TouchableOpacity
-                  onPress={() => dispatch(removeFromCart(item))}
-                >
+              <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>{index + 1}</Text>
+              <Text style={[styles.cell, { width: COLUMN_WIDTHS.medium }]}>{item.name}</Text>
+              <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>₹{item.sellPrice}</Text>
+              <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>{item.quantity}</Text>
+              <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>₹{amount.toFixed(2)}</Text>
+              <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>{discountRate||0}%</Text>
+              <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>₹{discountAmt.toFixed(2)}</Text>
+              <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>₹{amtAfterDiscount.toFixed(2)}</Text>
+              <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>{item.taxRate}%</Text>
+              <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>₹{gstAmt.toFixed(2)}</Text>
+              <Text style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>₹{total.toFixed(2)}</Text>
+              <View style={[styles.cell, { width: COLUMN_WIDTHS.small }]}>
+                <TouchableOpacity onPress={() => dispatch(removeFromCart(item))}>
                   <MaterialIcons name="delete" size={20} color="red" />
                 </TouchableOpacity>
               </View>
             </View>
-          )}
-        />
-      </Card>
-      </ScrollView>
-      {/* <PriceDetails /> */}
-    </>
+          );
+        }}
+      />
+    </Card>
+  </ScrollView>
+</View>
   );
 };
 
@@ -83,6 +120,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     // paddingVertical: 20,
     marginTop: 15,
+    minWidth:200
   },
   row: {
     flexDirection: "row",
@@ -101,7 +139,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 10,
     fontFamily: "Poppins-Regular",
     fontSize: fontSize.labelMedium,
   },
@@ -109,11 +146,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 10,
     
   },
   flexCell: {
-    flex: 1,
+    // flex: 1,
   },
   totalContainer: {
     marginTop: 10,
