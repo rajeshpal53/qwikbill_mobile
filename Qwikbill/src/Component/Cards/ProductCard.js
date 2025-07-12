@@ -1,3 +1,4 @@
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useEffect } from "react";
 import {
   ScrollView,
@@ -9,7 +10,6 @@ import {
 import { Card } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import IncAndDicButton from "../../Redux/IncAndDicButton";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { addToCart, removeFromCart } from "../../Redux/slices/CartSlice";
 import { ButtonColor, fontSize } from "../../Util/UtilApi";
 
@@ -51,12 +51,12 @@ const ProductCardDetails = ({ item }) => {
               </Text>
             </View>
             {/* Conditionally render Final Price only if it exists */}
-            {item?.Price && (
+            {/* {item?.Price && (
               <Text style={styles.finalPrice}>
                 Final Price:{" "}
                 <Text style={styles.finalPriceValue}>₹ {item.Price}</Text>
               </Text>
-            )}
+            )} */}
           </View>
 
           {/* Action Buttons Section (Add/Remove & Quantity) */}
@@ -70,7 +70,7 @@ const ProductCardDetails = ({ item }) => {
                   style={styles.removeButton}
                   onPress={handleRemoveFromCart}
                 >
-                  <MaterialIcons name="delete" size={24} color="#FFFFFF" />
+                  <MaterialIcons name="delete" size={16} color="#FFFFFF" />
                 </TouchableOpacity>
               </View>
             ) : (
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginVertical: 8,
     overflow: "hidden",
-    paddingVertical: 15,
+    paddingVertical: 12,
   },
   productNameContainer: {
     paddingHorizontal: 27,
@@ -124,18 +124,19 @@ const styles = StyleSheet.create({
     flex: 2,
   },
   priceInfoContainer: {
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "space-between",
-    marginBottom: 8,
+    marginBottom: 0,
     flexWrap: 'wrap',
     paddingTop: 15,
   },
   productInfo: {
+    flexDirection:"column",
     color: "#6C757D",
-    fontFamily: "Poppins-Medium", // Apply Poppins-Medium
+    fontFamily: "Poppins-Medium ", // Apply Poppins-Medium
     fontSize: fontSize.labelMedium,
     marginLeft: 7,
-    marginTop: 5,
+    marginTop: 2,
   },
   priceValue: {
     fontWeight: "bold",
@@ -161,48 +162,48 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: ButtonColor.SubmitBtn,
-    paddingVertical: 12,
-    paddingHorizontal: 18,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 4,
-    marginLeft: -30,
-    marginTop: 10,
+    marginLeft: 8,
+    marginTop: 28,
   },
   addButtonText: {
     color: "#FFFFFF",
     fontWeight: "bold",
-    fontSize: fontSize.labelLarge,
+    fontSize: fontSize.labelLarge -3,
     fontFamily: "Poppins-Medium", // Apply Poppins-Medium
   },
   inCartControls: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 20,
+    marginRight: 0,
   },
   removeButton: {
     backgroundColor: "#DC3545",
     borderRadius: 10,
-    width: 30,
-    height: 30,
+    width: 22,
+    height: 22,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 4,
     elevation: 3,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
     marginLeft: 20,
-    marginTop: 30,
+    marginTop: 33,
   },
   quantityControls: {
     marginTop: 30,
-    marginRight: 10,
+    marginRight: -10,
   },
 });
 

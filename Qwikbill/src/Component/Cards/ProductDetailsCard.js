@@ -1,4 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { useContext, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -6,11 +8,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Card, Avatar } from "react-native-paper";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
-import { fontSize } from "../../Util/UtilApi";
+import { Avatar, Card } from "react-native-paper";
 import { ShopContext } from "../../Store/ShopContext";
+import { fontSize } from "../../Util/UtilApi";
 
 
 const ProductDetailsCard = ({ item, setRefresh, setProductId, setVisible }) => {
@@ -61,12 +61,12 @@ const ProductDetailsCard = ({ item, setRefresh, setProductId, setVisible }) => {
                   </TouchableOpacity>
                 </View>
                 <View>
-                  <TouchableOpacity
+                  {/* <TouchableOpacity
                     onPress={() => HandleProductDelete(item)}
                     style={styles.iconButton}
                   >
                     <MaterialIcons name="delete" size={24} color="#E53935" />
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
                 </View>
               </View> 
               )
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "row",
-    paddingVertical: 10,
+    paddingVertical: 5,
     marginVertical: 5,
   },
   ImageView: {
@@ -124,28 +124,34 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginVertical: 2,
     fontFamily: "Poppins-Medium",
-    fontSize: fontSize.labelLarge,
+    fontSize: fontSize.labelLarge +4,
     paddingVertical: 2,
+    marginLeft:10,
   },
   avatar: {
     // backgroundColor: "black",
   },
   avatarPlaceholder: {
+    marginTop:37,
     // backgroundColor: "#ccc",
   },
   iconButton: {
     marginRight: 10, // Adds spacing between buttons
+    marginTop:10,
   },
   priceText: {
     // fontSize: 14,
     color: "#555",
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.label,
+    marginLeft:10,
+    
   },
   sellPrice: {
     color: "#555",
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.label,
+    marginLeft:10,
   },
   inStock: {
     color: "green",
