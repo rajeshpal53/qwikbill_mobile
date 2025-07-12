@@ -131,8 +131,8 @@ const AddProduct = ({ navigation }) => {
           PurchasePrice: EditData?.costPrice || "",
           SellingPrice: EditData?.sellPrice || "",
           TaxRate: EditData?.taxRate || "",
-          HSNCode: EditData?.hsncode || "",
-          IsStockData: EditData?.isStock || null,
+          HSNCode: String(EditData?.hsncode) || "",
+          // IsStockData: EditData?.isStock || null,
         }}
         validationSchema={validationSchema}
 
@@ -148,7 +148,7 @@ const AddProduct = ({ navigation }) => {
             sellPrice: values?.SellingPrice,
             taxRate: values?.TaxRate,
             // hsncodefk: HSNCode?.id,
-            isStock: values?.IsStockData,
+            // isStock: values?.IsStockData,
             vendorfk: selectedShop.vendor.id,
             hsncode: parseInt(values.HSNCode),
           };

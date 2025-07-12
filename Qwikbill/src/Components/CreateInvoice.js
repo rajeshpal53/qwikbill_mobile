@@ -170,7 +170,7 @@ export default function CreateInvoice({ navigation, route }) {
   };
 
   return (
-    <ScrollView style={styles.scrollView}>
+    <ScrollView style={styles.scrollView} nestedScrollEnabled={true} >
       <TouchableWithoutFeedback>
         <View style={styles.container}>
           <View >
@@ -206,11 +206,6 @@ export default function CreateInvoice({ navigation, route }) {
 
           <View style={styles.MainContainer}>
             <View style={styles.TextView}>
-
-                {/*<Text style={styles.headerText}>
-                  {t("Invoice No:")} - {invoiceNumber}
-                </Text> */}
-
               <CreateInvoiveForm selectedButton={selectedValue} />
             </View>
           </View>

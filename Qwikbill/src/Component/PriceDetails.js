@@ -8,14 +8,13 @@ import CustomDropdown from "./CustomeDropdown";
 
 
 
-const PriceDetails = ({ setPaymentStatus ,selectedButton }) => {
+const PriceDetails = ({ setPaymentStatus ,selectedButton,discountValue,setDiscountValue }) => {
   const dispatch = useDispatch();
   const totalPrice = useSelector((state) => state.cart.totalPrice);
   const afterdiscount = useSelector((state) => state.cart.afterdiscount);
   const error = useSelector((state) => state.cart.error);
   
 
-  const [discountValue, setDiscountValue] = useState("");
   const [PartiallyAmount, setPartiallyAmount] = useState("");
   const carts = useSelector((state) => state.cart.Carts);
   const [selectedStatus, setSelectedStatus] = useState("Paid");
