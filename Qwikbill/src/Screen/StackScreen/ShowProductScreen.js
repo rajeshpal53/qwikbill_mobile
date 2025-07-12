@@ -1,3 +1,15 @@
+// import React from 'react'
+// import { View ,Text} from 'react-native'
+
+// export default function ShowProductScreen() {
+//   return (
+//    <View>
+//     <Text>All Products</Text>
+//    </View>
+//   )
+// }
+
+
 import {
   useCallback,
   useContext,
@@ -30,16 +42,15 @@ import FileUploadModal from "../../Components/BulkUpload/FileUploadModal";
 import OpenmiqModal from "../../Components/Modal/Openmicmodal";
 import { ShopContext } from "../../Store/ShopContext";
 import UserDataContext from "../../Store/UserDataContext";
-import { deleteApi, fontSize, readApi } from "../../Util/UtilApi";
+import { deleteApi , fontSize,readApi } from "../../Util/UtilApi";
 //import CustomeFilterDropDown from "../../Component/CustomFilterDropDown";
 import { useFocusEffect } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import NoDataFound from "../../Components/NoDataFound";
 import DeleteModal from "../../UI/DeleteModal";
-import { useSnackbar } from "../../Store/SnackbarContext";
 
 
-const ProductDetailsScreen = ({ navigation }) => {
+const ShowProductScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchmodal, setsearchmodal] = useState(false); // State for modal visibility
   const [transcript, setTranscript] = useState(""); // State for transcript
@@ -56,7 +67,7 @@ const ProductDetailsScreen = ({ navigation }) => {
   const { userData } = useContext(UserDataContext);
   const [searchedData, setSearchedData] = useState([]);
   const [searchCalled, setSearchCalled] = useState(false);
-  const {showSnackbar}=useSnackbar();
+
   const { selectedShop } = useContext(ShopContext);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
@@ -190,21 +201,23 @@ const ProductDetailsScreen = ({ navigation }) => {
     try {
       setloader(true);
       // The following block is the actual delete logic using your deleteApi helper
-      const response = await deleteApi(`products/${ProductId}`, {  Authorization: `Bearer ${userData.token}`,});
+      const response = await deleteApi(`products/${ProductId}`, {
+        headers: {
+          Authorization: `Bearer ${userData?.token}`,
+        },
+      });
 
       console.log("GET ALL DATA IS125 ", response?.data);
       if (response?.data) {
-        showSnackbar(t("Product deleted successfully")),"success";
         await getproductdata();
+
 
         console.log("GET ALL DATA IS response", response.data);
       } else {
         console.log("No data returned from delete API");
-        showSnackbar(t("No data returned from delete API","error"));
       }
     } catch (error) {
       console.log("Unable to delete role data", error);
-      showSnackbar("Unable to delete role data","error")
     } finally {
       setloader(false);
       setVisible(false);
@@ -492,7 +505,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProductDetailsScreen;
+export default ShowProductScreen;
 
 // const fetchSearchedData = async () => {
 //   try {

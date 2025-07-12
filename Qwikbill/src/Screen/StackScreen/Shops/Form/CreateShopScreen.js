@@ -757,7 +757,7 @@ const CreateShopScreen = ({ navigation }) => {
             );
 
             console.log("Service provider Created Successfully ", response);
-            showSnackbar(t("Service provider Created Successfully"), "success");
+            showSnackbar(t("Shop added successfully"), "success");
 
             // navigation.navigate("ViewEditServicesScreen", {
             //   Admin: isAdmin,

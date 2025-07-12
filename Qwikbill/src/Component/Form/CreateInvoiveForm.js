@@ -39,6 +39,8 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const error = useSelector((state) => state.cart.error);
   const pendingActionRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
+    const [discountValue, setDiscountValue] = useState("");
+
 
   console.log("DATA OF ERROR ", error);
 
@@ -201,7 +203,7 @@ const mapCartToInvoiceProducts = (carts) =>
   };
 
   return (
-    <ScrollView>
+    <ScrollView nestedScrollEnabled={true}>
       <Formik
         enableReinitialize={true}
         initialValues={{
@@ -439,8 +441,8 @@ const mapCartToInvoiceProducts = (carts) =>
                   >
                     <Text style={{ color: "#007BFF" }}>Clear Cart</Text>
                   </TouchableOpacity>
-                  <ItemDataTable carts={carts} />
-                  <PriceDetails setPaymentStatus={setPaymentStatus} selectedButton={selectedButton} />
+                  <ItemDataTable carts={carts} discountValue={discountValue} />
+                  <PriceDetails setPaymentStatus={setPaymentStatus} selectedButton={selectedButton} discountValue={discountValue}setDiscountValue={setDiscountValue}/>
 
                 </View>
               )

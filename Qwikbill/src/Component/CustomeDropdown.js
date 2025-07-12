@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
     width: "60%",
+    
   },
 
   dropdownButton: {

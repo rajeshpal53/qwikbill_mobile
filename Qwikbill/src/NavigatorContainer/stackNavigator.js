@@ -52,7 +52,7 @@ import { usePasskey } from "../Store/PasskeyContext.js";
 import UserDataContext from "../Store/UserDataContext.js";
 import { fontSize, readApi } from "../Util/UtilApi.js";
 import BottomNavigator from "./BottomNavigator.js";
-
+import ShowProductScreen from "../Screen/StackScreen/ShowProductScreen.js";
 
 export default function StackNavigator() {
   const Stack = createStackNavigator();
@@ -311,7 +311,7 @@ export default function StackNavigator() {
           component={ViewShopsScreen}
           options={{
             headerRight: () => <HomeHeaderRight />,
-            headerTitle: "View Shop",
+            headerTitle: "View Shops",
             // headerTitleAlign: searchMode ? "left" : "center",
             headerTitleAlign: "center",
 
@@ -469,7 +469,19 @@ export default function StackNavigator() {
           component={ViewShopDetailsScreen}
           options={{
             headerTitle: () => (
-              <Text style={styles.headerTitle}>{"View Shop Details"}</Text>
+              <Text style={styles.headerTitle}>{"Shop Details"}</Text>
+            ),
+            headerTitleAlign: "center",
+            // headerTitle: "View Shop Details",
+          }}
+        />
+
+        <Stack.Screen
+          name="ShowProductScreen"
+          component={ShowProductScreen}
+          options={{
+            headerTitle: () => (
+              <Text style={styles.headerTitle}>{"All Products"}</Text>
             ),
             headerTitleAlign: "center",
             // headerTitle: "View Shop Details",
@@ -506,7 +518,7 @@ export default function StackNavigator() {
               <Icon name="people-outline" color={color} size={size} />
             ),
             headerTitle: () => (
-              <Text style={styles.headerTitle}>{"Product "}</Text>
+              <Text style={styles.headerTitle}>{"Products "}</Text>
             ),
             headerTitleAlign: "center",
             headerStyle: {
