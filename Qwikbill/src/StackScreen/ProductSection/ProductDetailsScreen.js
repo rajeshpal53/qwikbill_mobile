@@ -37,7 +37,6 @@ import { useTranslation } from "react-i18next";
 import NoDataFound from "../../Components/NoDataFound";
 import DeleteModal from "../../UI/DeleteModal";
 import { useSnackbar } from "../../Store/SnackbarContext";
-import { useSnackbar } from "../../Store/SnackbarContext";
 
 
 const ProductDetailsScreen = ({ navigation }) => {
