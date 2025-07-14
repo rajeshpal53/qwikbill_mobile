@@ -55,7 +55,7 @@ const PriceDetails = ({ setPaymentStatus ,selectedButton,discountValue,setDiscou
 
   return (
     <View style={styles.Main}>
-       
+
       {/*<View>
         <Text style={styles.headerText}>{t("Price Details")}</Text>
       </View> */}
@@ -69,20 +69,22 @@ const PriceDetails = ({ setPaymentStatus ,selectedButton,discountValue,setDiscou
       </View>
 
       {/* Discount  */}
-      {  selectedButton !== "Quatation" && (
-      <View style={styles.priceView}>
-        <Text style={styles.label}>{t("Discount")}</Text>
-        <View style={styles.discountInputWrapper}>
-          <TextInput
-            style={styles.input}
-            keyboardType="numeric"
-            placeholder="Enter Discount"
-            value={discountValue}
-            onChangeText={handleDiscountChange} // Update discount state
-          />
+      {selectedButton !== "Quatation" && (
+        <View style={styles.priceView}>
+          <View style={{ marginTop: 7 }}>
+            <Text style={styles.label}>{t("Discount")}</Text>
+          </View>
+          <View style={styles.discountInputWrapper}>
+            <TextInput
+              style={styles.input}
+              keyboardType="numeric"
+              placeholder="Enter Discount"
+              value={discountValue}
+              onChangeText={handleDiscountChange} // Update discount state
+            />
+          </View>
+          {/* Display error message */}
         </View>
-        {/* Display error message */}
-      </View>
       )}
 
       {error && (
@@ -92,19 +94,31 @@ const PriceDetails = ({ setPaymentStatus ,selectedButton,discountValue,setDiscou
           </View>
         </View>
       )}
-   
+
       {/* Payment Status with Border Style */}
-      {  selectedButton !== "Quatation" && (
-      <View style={[styles.priceView]}>
-        <Text style={styles.label}>{t("Status")}</Text>
-        <CustomDropdown
-          paymentStatuses={paymentStatuses}
-          setSelectedStatus={setSelectedStatus}
-          selectedStatus={selectedStatus}
-          t={t}
-        />
-      </View>
-)}
+      {selectedButton !== "Quatation" && (
+
+        <View style={[styles.priceView]}>
+
+          <View style={{ alignItems: "center", marginTop: 10 }}>
+            <Text style={styles.label}>{t("Status")}</Text>
+          </View>
+
+          <View style={styles.pickerWrapper}>
+            <Picker
+              selectedValue={selectedStatus}
+              onValueChange={(itemValue) => setSelectedStatus(itemValue)}
+              style={styles.picker}
+              mode="dropdown"
+            >
+              {paymentStatuses.map((status, index) => (
+                <Picker.Item key={index} label={t(status)} value={status} />
+              ))}
+            </Picker>
+          </View>
+
+        </View>
+      )}
       {/* Partially Paid  */}
       {selectedStatus == "Partially Paid" && (
         <View style={styles.priceView}>
@@ -123,13 +137,13 @@ const PriceDetails = ({ setPaymentStatus ,selectedButton,discountValue,setDiscou
 
       {/* Total Amount  */}
       <View style={styles.priceView}>
-        <Text style={styles.Totallabel}>{t("Total Amount")}</Text>
-        {}
-        <Text
-          style={[styles.value, { fontSize: fontSize.labelLarge }]}
-        >{`₹ ${afterdiscount.toFixed(2)}`}</Text>
+          <Text style={styles.Totallabel}>{t("Total Amount")}</Text>
+          { }
+          <Text
+            style={[styles.value, { fontSize: fontSize.labelLarge }]}
+          >{`₹ ${afterdiscount.toFixed(2)}`}</Text>
       </View>
-     
+
     </View>
   );
 };
@@ -162,7 +176,7 @@ const styles = StyleSheet.create({
     color: "#333",
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.labelMedium,
-    // width:"60%"
+
 
   },
   value: {
@@ -178,10 +192,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.labelLarge,
+    marginVertical:3
   },
   discountInputWrapper: {
     flex: 1,
-    justifyContent: "flex-end",
+    // justifyContent: "flex-end",
     alignItems: "flex-end",
     marginTop:-10,
     marginBottom:-10,
@@ -190,37 +205,30 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "flex-end",
+    marginVertical: -7,
+
   },
   picker: {
-    height: 50, // Ensure the dropdown has height
-    width: "90%", // Make sure it fills the available width
+    height: 55, // Ensure the dropdown has height
+    width: "50%", // Make sure it fills the available width
+    alignItems: "center",
+
+    marginRight: -5
+
   },
- /* paymentStatusContainer: {
-    borderBottomWidth: 1, // Border for the payment status row
-    borderBottomColor: "#ddd",
-  },*/
+  /* paymentStatusContainer: {
+     borderBottomWidth: 1, // Border for the payment status row
+     borderBottomColor: "#ddd",
+   },*/
 
   input: {
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.labelMedium,
   },
-  errorText:{
-    color:"red"
+  errorText: {
+    color: "red"
   }
 });
 
 export default PriceDetails;
 
-{
-  /* <View style={styles.pickerWrapper}>
-          <Picker
-            selectedValue={status}
-            onValueChange={handleDropdown}
-            style={[styles.picker,]}
-          >
-            <Picker.Item label="Unpaid" value="unpaid" />
-            <Picker.Item label="Paid" value="paid" />
-            <Picker.Item label="Partially Paid" value="partially_paid" />
-          </Picker>
-        </View> */
-}

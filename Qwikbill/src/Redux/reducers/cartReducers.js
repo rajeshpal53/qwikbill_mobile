@@ -38,13 +38,34 @@ export const addToCart = (state, action) => {
   }
 };
 
+// export const removeFromCart = (state, action) => {
+//   const cartItem = action.payload;
+//     const itemId = action.payload;
+
+//   console.log("remove payload , ", cartItem);
+//   state.Carts = state.Carts.filter((item) => item.id !== cartItem.id);
+//   if (cartItem) {
+//     state.totalPrice -= cartItem.totalPrice;
+//     state.totalQuantity -= cartItem.quantity;
+//   }
+
+//   state.afterdiscount = state.totalPrice - state.discount;
+//   if (state.PartiallyAmount > 0) {
+//     state.afterdiscount -= state.PartiallyAmount;
+//     state.afterdiscount = Math.max(state.afterdiscount, 0);
+//   }
+// };
+
+
+
 export const removeFromCart = (state, action) => {
-  const cartItem = action.payload;
-  console.log("remove payload , ", cartItem);
-  state.Carts = state.Carts.filter((item) => item.id !== cartItem.id);
-  if (cartItem) {
-    state.totalPrice -= cartItem.totalPrice;
-    state.totalQuantity -= cartItem.quantity;
+  const itemId = action.payload;
+  const itemToRemove = state.Carts.find((item) => item.id === itemId);
+  
+  if (itemToRemove) {
+    state.totalPrice -= itemToRemove.totalPrice;
+    state.totalQuantity -= itemToRemove.quantity;
+    state.Carts = state.Carts.filter((item) => item.id !== itemId);
   }
 
   state.afterdiscount = state.totalPrice - state.discount;
@@ -53,6 +74,7 @@ export const removeFromCart = (state, action) => {
     state.afterdiscount = Math.max(state.afterdiscount, 0);
   }
 };
+
 
 export const applyDiscount = (state, action) => {
   const discountAmount = action.payload;
