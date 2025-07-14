@@ -36,6 +36,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import NoDataFound from "../../Components/NoDataFound";
 import DeleteModal from "../../UI/DeleteModal";
+import { useSnackbar } from "../../Store/SnackbarContext";
 
 
 const ProductDetailsScreen = ({ navigation }) => {
@@ -55,7 +56,7 @@ const ProductDetailsScreen = ({ navigation }) => {
   const { userData } = useContext(UserDataContext);
   const [searchedData, setSearchedData] = useState([]);
   const [searchCalled, setSearchCalled] = useState(false);
-
+  const { showSnackbar } = useSnackbar();
   const { selectedShop } = useContext(ShopContext);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
@@ -81,6 +82,12 @@ const ProductDetailsScreen = ({ navigation }) => {
       // getproductdata()
     }, [])
   );
+
+  useEffect(() => {
+  setPage(1);
+  getproductdata(1); // or whatever your fetch function is
+}, [filterOptionSelect]);
+
 
   useEffect(() => {
     if (searchQuery?.length <= 0) {
@@ -141,14 +148,28 @@ const ProductDetailsScreen = ({ navigation }) => {
         //console.log("API Response ", response);
         console.log("appi response of all productsss ", response);
 
+        // SetProductData((prevData) => {
+        //   if (page === 1) {
+        //     return response?.products || []; // Reset data for first page
+        //   }
+        //   return response?.products?.length > 0
+        //     ? [...prevData, ...response?.products]
+        //     : prevData;
+        // });
+
         SetProductData((prevData) => {
-          if (page === 1) {
-            return response?.products || []; // Reset data for first page
+          const newData = page === 1
+            ? response?.products || []
+            : [...prevData, ...(response?.products || [])];
+
+          if (!filterOptionSelect || filterOptionSelect === "") {
+            return newData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
           }
-          return response?.products?.length > 0
-            ? [...prevData, ...response?.products]
-            : prevData;
+
+          // 🔁 Otherwise, assume backend has already sorted the data
+          return newData;
         });
+
 
         setTotalPages(response?.totalPages || 1);
         setHasMore(response?.products?.length > 0);
@@ -189,23 +210,21 @@ const ProductDetailsScreen = ({ navigation }) => {
     try {
       setloader(true);
       // The following block is the actual delete logic using your deleteApi helper
-      const response = await deleteApi(`products/${ProductId}`, {
-        headers: {
-          Authorization: `Bearer ${userData?.token}`,
-        },
-      });
+      const response = await deleteApi(`products/${ProductId}`, { Authorization: `Bearer ${userData.token}`, });
 
       console.log("GET ALL DATA IS125 ", response?.data);
       if (response?.data) {
+        showSnackbar(t("Product deleted successfully")), "success";
         await getproductdata();
-
 
         console.log("GET ALL DATA IS response", response.data);
       } else {
         console.log("No data returned from delete API");
+        showSnackbar(t("No data returned from delete API", "error"));
       }
     } catch (error) {
       console.log("Unable to delete role data", error);
+      showSnackbar("Unable to delete role data", "error")
     } finally {
       setloader(false);
       setVisible(false);
@@ -474,8 +493,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "white",
     paddingVertical: 5,
-    marginHorizontal: 10,
-    paddingHorizontal: 15,
+    marginHorizontal: 5,
+    paddingHorizontal: 10,
     borderRadius: 8,
     backgroundColor: "gray",
     color: "#fff",

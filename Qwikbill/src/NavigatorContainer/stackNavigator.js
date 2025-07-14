@@ -64,10 +64,10 @@ export default function StackNavigator() {
   const [roleDetails, setroleDetails] = useState(false);
   const [noItemModal, setNoItemModal] = useState(false);
   const [noItemData, setNoItemData] = useState({});
-    const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
 
-  const {passkey}=usePasskey()
-    const{t}=useTranslation()
+  const { passkey } = usePasskey()
+  const { t } = useTranslation()
   const fetchServiceProvider = async (userData) => {
     try {
       if (userData) {
@@ -91,7 +91,7 @@ export default function StackNavigator() {
     } catch (err) {
       console.log("Error is , , - ", err);
       console.log("err.data.status", err.status);
-     
+
     } finally {
       // setIsLoading(false);
     }
@@ -125,15 +125,15 @@ export default function StackNavigator() {
     <>
       <Stack.Navigator
         // initialRouteName={userData ? "Passcode" : "login"}
-       initialRouteName={
-  isForgetPasswordState
-    ? "login"
-    : userData
-      ? passkey === null
-        ? "CreateNewPasscode"
-        : "Passcode"
-      : "login"
-}
+        initialRouteName={
+          isForgetPasswordState
+            ? "login"
+            : userData
+              ? passkey === null
+                ? "CreateNewPasscode"
+                : "Passcode"
+              : "login"
+        }
         screenOptions={
           {
             // headerTitle: "Create Invoice",
@@ -159,7 +159,7 @@ export default function StackNavigator() {
             />
           )}
         </Stack.Screen>
-        
+
         <Stack.Screen
           name="AddProduct"
           component={AddProductScreen}
@@ -171,7 +171,7 @@ export default function StackNavigator() {
             headerTitleAlign: "center",
           }}
         />
-        
+
         <Stack.Screen
           name="EditProfilePage"
           component={EditProfileScreen}
@@ -192,7 +192,7 @@ export default function StackNavigator() {
             headerTitle: "Transaction Details",
           }}
         />
-       
+
         <Stack.Screen
           name="EditProduct"
           component={EditProductScreen}
@@ -200,8 +200,8 @@ export default function StackNavigator() {
             headerTitle: "Edit Product Details",
           }}
         />
-        
-       
+
+
         <Stack.Screen
           name="Passcode"
           component={PasscodeScreen}
@@ -228,7 +228,7 @@ export default function StackNavigator() {
             headerTitleAlign: "center",
           }}
         />
-        
+
         <Stack.Screen
           name="CreateShopScreen"
           component={CreateShopScreen}
@@ -243,7 +243,7 @@ export default function StackNavigator() {
             headerTitle: "Generate Invoice",
           }}
         />
-       
+
         <Stack.Screen
           name="ViewInvoices1"
           component={ViewInvoiceScreen1}
@@ -385,7 +385,7 @@ export default function StackNavigator() {
           }}
         />
 
-       
+
         <Stack.Screen
           name="login"
           component={LoginScreen}
@@ -404,7 +404,7 @@ export default function StackNavigator() {
             />
           )}
         </Stack.Screen>
-       
+
 
         <Stack.Screen
           name="CustomerDetails"
@@ -513,9 +513,10 @@ export default function StackNavigator() {
               // backgroundColor: "transparent",
               // backgroundColor: "#fff"
             },
-            headerLeft: () => <CustomBackButton />,
-          }}
-        />
+           // headerLeft: () => <CustomBackButton />,
+          }}
+        />
+
 
         <Stack.Screen
           name="Customer"
@@ -566,8 +567,8 @@ export default function StackNavigator() {
         />
 
       </Stack.Navigator>
-      
-       <CheckInternet
+
+      <CheckInternet
         isConnected={isConnected}
         setIsConnected={setIsConnected}
       />
