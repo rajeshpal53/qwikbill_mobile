@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, Text, TextInput, View, } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import { useDispatch, useSelector } from "react-redux";
 import { applyDiscount, applyPartiallyAmount } from "../Redux/slices/CartSlice";
 import { fontSize } from "../Util/UtilApi";
 import CustomDropdown from "./CustomeDropdown";
-
 
 
 const PriceDetails = ({ setPaymentStatus ,selectedButton,discountValue,setDiscountValue }) => {

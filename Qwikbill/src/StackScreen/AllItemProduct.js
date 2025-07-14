@@ -220,7 +220,6 @@ import { ShopContext } from "../Store/ShopContext";
 import { useSnackbar } from "../Store/SnackbarContext";
 import UserDataContext from "../Store/UserDataContext";
 import { readApi } from "../Util/UtilApi";
-import { useNavigation } from "@react-navigation/native";
 
 const AllItemProduct= ()=>{
   const [searchQuery, setSearchQuery] = useState("");
