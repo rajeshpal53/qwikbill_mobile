@@ -288,9 +288,9 @@ export default function HomeScreen({ navigation, noItemData }) {
 
           
 
-            <View style={{marginTop:25}}>
+            <View style={{marginTop:5 }}>
               {allShops?.length > 0 ? (
-                <View style={{ flex: 1, justifyContent: "center", marginTop: "10%"}}>
+                <View style={{ flex: 1, justifyContent: "center", marginTop: "5%"}}>
                   <FlatList
                     style={styles.flatList}
                     data={services.filter(service => {
@@ -368,7 +368,7 @@ export default function HomeScreen({ navigation, noItemData }) {
                   navigation.navigate("AddProduct", { editItem: noItemData });
                   setNoItemModal(false);
                 }}
-                message="Hey Provider Please Add Products in your Shop"
+                message="Dear Owner Please Add Products in your Shop"
                 heading="Add Products"
                 buttonTitle="Add Products"
               />
@@ -606,7 +606,7 @@ const styles = StyleSheet.create({
   },
   flatListitem: {
     // borderWidth:2,
-    marginTop: 10,
+    marginTop: 12,
     paddingVertical: 8,
     flex: 1,
     //  backgroundColor: "pink"

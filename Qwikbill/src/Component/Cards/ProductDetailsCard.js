@@ -16,9 +16,9 @@ import { ShopContext } from "../../Store/ShopContext";
 const ProductDetailsCard = ({ item, setRefresh, setProductId, setVisible }) => {
   const [Opendetails, setOpendetails] = useState(false);
   const navigation = useNavigation();
-  const{selectedShop}=useContext(ShopContext)
-  const HandleProductDelete = () =>{
-    console.log("ITEM ID IS ",item?.id)
+  const { selectedShop } = useContext(ShopContext)
+  const HandleProductDelete = () => {
+    console.log("ITEM ID IS ", item?.id)
     setProductId(item?.id)
     setVisible(true);
   }
@@ -37,46 +37,55 @@ const ProductDetailsCard = ({ item, setRefresh, setProductId, setVisible }) => {
               />
             }
           </View>
+
           <View style={styles.TextView}>
             <Text style={styles.itemname}>{item.name}</Text>
-            <Text style={styles.sellPrice}>
-              Selling Price: ₹{item.sellPrice}
-            </Text>
-            <Text style={styles.priceText}>Cost Price: ₹{item.costPrice}</Text>
-            <Text style={styles.priceText}>HSN Code: {item.hsncode}</Text>
-            <Text style={styles.priceText}>Tax Rate: {item.taxRate}</Text>
+
+            <View style={styles.rowContainer}>
+
+              <View style={styles.column}>
+                <Text style={styles.sellPrice}>Selling Price: ₹{item.sellPrice}</Text>
+                <Text style={styles.sellPrice}>Cost Price: ₹{item.costPrice}</Text>
+
+
+              </View>
+
+              <View style={styles.column}>
+                <Text style={styles.priceText}>Tax Rate: {item.taxRate}</Text>
+
+                <Text style={styles.priceText}>HSN Code: {item.hsncode}</Text>
+
+
+              </View>
+            </View>
           </View>
 
           <View style={styles.ButtonTextView}>
             {
-              (selectedShop?.role?.name === "owner" || selectedShop?.role?.name === "manager") &&(
+              (selectedShop?.role?.name === "owner" || selectedShop?.role?.name === "manager") && (
                 <View style={styles.ButtonView}>
-                <View>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("AddProduct", { EditData: item, isUpdated: true, setRefresh:setRefresh })
-                  }
-                    style={styles.iconButton}
-                  >
-                    <MaterialIcons name="edit" size={24} color="#1E88E5" />
-                  </TouchableOpacity>
+                  <View>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("AddProduct", { EditData: item, isUpdated: true, setRefresh: setRefresh })
+                      }
+                      style={styles.iconButton}
+                    >
+                      <MaterialIcons name="edit" size={20} color="#1E88E5" />
+                    </TouchableOpacity>
+                  </View>
+                  <View>
+                    <TouchableOpacity
+                      onPress={() => HandleProductDelete(item)}
+                      style={styles.iconButton}
+                    >
+                      <MaterialIcons name="delete" size={20} color="#E53935" />
+                    </TouchableOpacity>
+                  </View>
                 </View>
-                <View>
-                  <TouchableOpacity
-                    onPress={() => HandleProductDelete(item)}
-                    style={styles.iconButton}
-                  >
-                    <MaterialIcons name="delete" size={24} color="#E53935" />
-                  </TouchableOpacity>
-                </View>
-              </View> 
               )
             }
-           
-            {/* <View style={styles.Availabletext}>
-              <Text style={item.isStock ? styles.inStock : styles.outOfStock}>
-                {item.isStock ? `In Stock` : "Out of Stock"}
-              </Text>
-            </View> */}
+
+          
           </View>
         </View>
       </Card>
@@ -99,21 +108,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "row",
-    paddingVertical: 10,
+    paddingVertical: 8,
     marginVertical: 5,
   },
   ImageView: {
-    paddingHorizontal: 7,
-    marginLeft: 5,
+    paddingHorizontal: 8,
+   // marginLeft: 3,
   },
   TextView: {
     flex: 2,
   },
   ButtonTextView: {
     justifyContent: "space-between",
-    flex: 1,
-    marginRight: 5,
-    // borderWidth: 2,
+   // flex: 1,
+   // marginRight: 5,
+     position:"absolute",
+     top:9,
+     right:0
   },
   ButtonView: {
     flexDirection: "row",
@@ -122,10 +133,11 @@ const styles = StyleSheet.create({
   },
   itemname: {
     fontWeight: "bold",
-    marginVertical: 2,
+    marginVertical: 3,
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.labelLarge,
     paddingVertical: 2,
+    marginLeft:3
   },
   avatar: {
     // backgroundColor: "black",
@@ -134,13 +146,16 @@ const styles = StyleSheet.create({
     // backgroundColor: "#ccc",
   },
   iconButton: {
-    marginRight: 10, // Adds spacing between buttons
+    marginRight: 12, // Adds spacing between buttons
   },
   priceText: {
     // fontSize: 14,
     color: "#555",
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.label,
+    alignSelf:"flex-end",
+    marginRight:6,
+  
   },
   sellPrice: {
     color: "#555",
@@ -161,9 +176,17 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.label,
   },
-  //   Availabletext:{
-  //     marginRight:2
-  //   }
+  rowContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    //backgroundColor:"yellow",
+    marginTop:3
+  },
+   column: {
+    flex: 1,
+    //backgroundColor:"orange",
+   // marginHorizontal:5
+  },
 });
 
 export default ProductDetailsCard;
