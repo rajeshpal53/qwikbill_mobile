@@ -28,6 +28,7 @@ const ProductCardDetails = ({ item }) => {
   };
 
   const handleRemoveFromCart = () => {
+    console.log("cart id is ",item?.id)
     dispatch(removeFromCart(item?.id));
   };
 
