@@ -88,7 +88,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
               setFieldValue("address", response?.address);
               setFieldValue("phone", phoneNumber);
 
-              console
+              
             } else {
               setFieldValue("name", response?.name);
               setFieldValue("address", response?.address);
@@ -165,13 +165,13 @@ const CreateInvoiceForm = ({ selectedButton }) => {
 
 
   // ---- utils/transformCart.js (or inside the component) ----
-const mapCartToInvoiceProducts = (carts) =>
-  carts.map(({ id, quantity, sellPrice, name }) => ({
-    id: id,                       // rename id -> productId (adjust to API)
-    quantity,
-    price: Number(sellPrice),            // be sure it's a real number
-    productname: String(name),      // keep if the API wants it
-  }));
+  const mapCartToInvoiceProducts = (carts) =>
+    carts.map(({ id, quantity, sellPrice, name }) => ({
+      id: id,                       // rename id -> productId (adjust to API)
+      quantity,
+      price: Number(sellPrice),            // be sure it's a real number
+      productname: String(name),      // keep if the API wants it
+    }));
 
 
   // --- fixed handleGenerate (single version) ---
@@ -212,6 +212,8 @@ const mapCartToInvoiceProducts = (carts) =>
           gstNumber: "",
           phone: "",
         }}
+        //  validateOnChange={false}   // ✅ disables noise on typing
+        //validateOnBlur={true}      //
         validationSchema={validationSchema}
         onSubmit={async (values, { resetForm }) => {
           console.log("values are , ", values);
@@ -252,8 +254,8 @@ const mapCartToInvoiceProducts = (carts) =>
             ...extraData,
             customerData: DataCustomer,
             serviceProviderData: selectedShop,
-           // products: carts,
-           products: mapCartToInvoiceProducts(carts),
+            // products: carts,
+            products: mapCartToInvoiceProducts(carts),
 
 
           };
@@ -292,7 +294,7 @@ const mapCartToInvoiceProducts = (carts) =>
         }) => {
           console.log("DATA VALID", isValid)
           console.log("DATA Dirty", dirty)
-         // console.log("cart is , ", carts.length);
+          // console.log("cart is , ", carts.length);
           console.log("error is , ", error);
           return (
             <View>
@@ -441,7 +443,13 @@ const mapCartToInvoiceProducts = (carts) =>
                   >
                     <Text style={{ color: "#007BFF" }}>Clear Cart</Text>
                   </TouchableOpacity>
-                  <ItemDataTable carts={carts} discountValue={discountValue} />
+
+                  {
+                    selectedButton == "gst" ? (
+                      <ItemDataTable carts={carts} discountValue={discountValue} />
+
+                    ) : null
+                  }
                   <PriceDetails setPaymentStatus={setPaymentStatus} selectedButton={selectedButton} discountValue={discountValue}setDiscountValue={setDiscountValue}/>
 
                 </View>

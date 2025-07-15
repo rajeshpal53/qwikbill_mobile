@@ -20,7 +20,7 @@ const SetpasswordModal = ({
   const [strength, setStrength] = useState(0);
   const ValidationSchema = Yup.object().shape({
     password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
+      .min(8, "Password must be at least  8 characters")
       .max(20, "Password must be at most 20 characters")
       .matches(/[A-Z]/, "Must include an uppercase letter")
       .matches(/[0-9]/, "Must include a number")

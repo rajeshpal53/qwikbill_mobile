@@ -131,8 +131,8 @@ const AddProduct = ({ navigation }) => {
           PurchasePrice: EditData?.costPrice || "",
           SellingPrice: EditData?.sellPrice || "",
           TaxRate: EditData?.taxRate || "",
-          HSNCode: String(EditData?.hsncode) || "",
-          // IsStockData: EditData?.isStock || null,
+          // HSNCode: String(EditData?.hsncode) || "",
+          HSNCode: EditData?.hsncode !== undefined ? String(EditData.hsncode) : "",
         }}
         validationSchema={validationSchema}
 
@@ -313,7 +313,7 @@ const AddProduct = ({ navigation }) => {
             <TouchableOpacity
               style={styles.submitButton}
               onPress={handleSubmit}
-          
+
             >
               <Text style={styles.submitButtonText}>Submit</Text>
             </TouchableOpacity>
@@ -383,4 +383,3 @@ const styles = StyleSheet.create({
 });
 
 export default AddProduct;
-

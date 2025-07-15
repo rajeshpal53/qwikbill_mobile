@@ -220,6 +220,7 @@ import { ShopContext } from "../Store/ShopContext";
 import { useSnackbar } from "../Store/SnackbarContext";
 import UserDataContext from "../Store/UserDataContext";
 import { readApi } from "../Util/UtilApi";
+
 const AllItemProduct= ()=>{
   const [searchQuery, setSearchQuery] = useState("");
   const [searchmodal, setsearchmodal] = useState(false);
@@ -238,9 +239,18 @@ const AllItemProduct= ()=>{
   const PAGE_LIMIT = 10;
   const [hasmore, setHasmore] = useState(true);
   const [totalpage, settotalpage] = useState(1);
+ 
+
 
   console.log("PAGE IS SSSS", page);
   console.log("TOTAL PAGE IS ", totalpage);
+  // console.log("Slecred shop is ",sele)
+
+  useEffect(()=>{
+    if (selectedShop?.vendor?.product.length === 0){
+        showSnackbar("No data available for selected shop", "error");
+    }
+  },[])
   
   const fetchProductData = async () => {
     try {
@@ -271,7 +281,7 @@ const AllItemProduct= ()=>{
         setProducts([]);
       }
       console.log("error of getting ", error);
-      showSnackbar("Something went Wrong ", "error");
+     showSnackbar("Something went Wrong ", "error");
     } finally {
       setloader(false);
     }
