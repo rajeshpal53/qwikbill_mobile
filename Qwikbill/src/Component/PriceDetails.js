@@ -99,7 +99,6 @@ const PriceDetails = ({ setPaymentStatus ,selectedButton,discountValue,setDiscou
       {selectedButton !== "Quatation" && (
 
         <View style={[styles.priceView]}>
-
           <View style={{ alignItems: "center", marginTop: 10 }}>
             <Text style={styles.label}>{t("Status")}</Text>
           </View>
@@ -206,16 +205,28 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "flex-end",
     marginVertical: -7,
-
+    paddingHorizontal: 8
   },
   picker: {
-    height: 55, // Ensure the dropdown has height
-    width: "50%", // Make sure it fills the available width
-    alignItems: "center",
-
-    marginRight: -5
-
+    height: 55, 
+    width: "40%", 
+    alignItems: "flex-start",
+    marginRight: -15
   },
+  //    pickerWrapper: {
+  //   borderWidth: 1,
+  //   borderColor: "#ccc",
+  //   borderRadius: 5,
+  //   justifyContent: "center",
+  //   alignItems: "flex-end", // Align picker content to right
+  //   paddingHorizontal: 8,   // Reduce padding for smaller gap
+  //   height: 40,
+  // },
+  // picker: {
+  //   width: "100%",
+  //   color: "#000",
+  //   textAlign: "right", // iOS only
+  // },
   /* paymentStatusContainer: {
      borderBottomWidth: 1, // Border for the payment status row
      borderBottomColor: "#ddd",

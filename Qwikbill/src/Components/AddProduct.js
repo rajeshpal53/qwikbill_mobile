@@ -1,7 +1,7 @@
 import { useRoute } from "@react-navigation/native";
 import { Formik } from "formik";
 import { useContext, useEffect, useRef, useState } from "react";
-import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, TouchableOpacity, View,Image,KeyboardAvoidingView, Platform,Keyboard } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
 import RazorpayCheckout from 'react-native-razorpay';
 import * as Yup from "yup";
@@ -9,6 +9,40 @@ import { ShopContext } from "../Store/ShopContext";
 import { useSnackbar } from "../Store/SnackbarContext";
 import UserDataContext from "../Store/UserDataContext";
 import { createApi, readApi, updateApi } from "../Util/UtilApi";
+import Svg, { Path } from "react-native-svg";
+
+
+
+
+const BlobTopRight = ({top,right,bottom,left}) => (
+  <Svg
+    width={200}
+    height={200}
+    viewBox="0 0 200 200"
+    style={{ position: 'absolute', top: top, right: right, bottom:bottom,left:left, zIndex: -1 }}
+  >
+    <Path
+      fill="#D1E8FF"
+      d="M40,-65.6C53.5,-56.5,66.5,-44.6,71.2,-30.9C75.9,-17.2,72.3,-1.7,66.9,11.9C61.5,25.4,54.3,37.1,44.1,49.3C33.9,61.5,20.6,74.1,4.1,77.3C-12.4,80.4,-24.8,74.2,-37.8,65.4C-50.7,56.6,-64.1,45.2,-71.7,30.7C-79.3,16.2,-81.1,-1.4,-73.9,-14.9C-66.6,-28.4,-50.4,-37.8,-36.5,-47.5C-22.6,-57.2,-11.3,-67.3,2.8,-71.4C17,-75.4,34,-73.6,40,-65.6Z"
+      transform="translate(100 100)"
+    />
+  </Svg>
+);
+
+const BlobBottomLeft = () => (
+  <Svg
+    width={200}
+    height={200}
+    viewBox="0 0 200 200"
+    style={{ position: 'absolute', bottom: -50, left: -50, zIndex: -1}}
+  >
+    <Path
+      fill="#D1E8FF"
+      d="M49.6,-68.2C61.9,-60.1,67.5,-41.6,69.7,-24.9C71.8,-8.2,70.5,6.7,64.8,20.4C59.2,34.1,49.1,46.6,36.9,53.2C24.7,59.8,10.4,60.4,-2.4,63.4C-15.2,66.4,-30.5,71.9,-42.4,66C-54.2,60.1,-62.5,42.7,-66.7,26.1C-70.8,9.5,-70.8,-6.4,-64.7,-19.2C-58.6,-32,-46.4,-41.7,-33.9,-50.5C-21.3,-59.3,-10.6,-67.2,4.2,-73.1C19,-78.9,38.1,-82.2,49.6,-68.2Z"
+      transform="translate(100 100)"
+    />
+  </Svg>
+);
 const AddProduct = ({ navigation }) => {
   // const [options, setOptions] = useState([]);
   // const [showOptions, setShowOptions] = useState(false);
@@ -19,6 +53,7 @@ const AddProduct = ({ navigation }) => {
   const [HSNCode, SetHSNCode] = useState();
   const { selectedShop } = useContext(ShopContext);
   const { showSnackbar } = useSnackbar();
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
   const timeoutId = useRef(null); // useRef to persist timeoutId
 
@@ -28,6 +63,19 @@ const AddProduct = ({ navigation }) => {
     console.log("Edit data is ", EditData);
     console.log("Isupdated Data is ", isUpdated);
   }, [EditData, isUpdated]);
+  useEffect(() => {
+  const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () =>
+    setKeyboardVisible(true)
+  );
+  const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () =>
+    setKeyboardVisible(false)
+  );
+
+  return () => {
+    keyboardDidShowListener.remove();
+    keyboardDidHideListener.remove();
+  };
+}, []);
 
   const validationSchema = Yup.object().shape({
     /* ProductCategory: Yup.string().required("Product category is required"), */
@@ -122,7 +170,16 @@ const AddProduct = ({ navigation }) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={{}}>
+    <KeyboardAvoidingView
+  style={{ flex: 1 }}
+  behavior={Platform.OS === "ios" ? "padding" : "height"}
+  keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} // Adjust if needed
+>
+    <View style={{ flex: 1 }}>
+       <BlobTopRight top={-50} right={-50} />
+    <BlobBottomLeft />
+     <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center',}}
+      keyboardShouldPersistTaps="handled"  showsVerticalScrollIndicator={false} >
       <Formik
         enableReinitialize={true}
         initialValues={{
@@ -213,8 +270,7 @@ const AddProduct = ({ navigation }) => {
           setFieldValue,
         }) => (
           <View style={styles.container}>
-
-            <TextInput
+              <TextInput
               label="Product Name*"
               mode="flat"
               style={styles.input}
@@ -318,23 +374,51 @@ const AddProduct = ({ navigation }) => {
               <Text style={styles.submitButtonText}>Submit</Text>
             </TouchableOpacity>
 
+            
 
             {/* <Button type="submit" > Submit </Button> */}
           </View>
         )}
       </Formik>
-    </ScrollView>
+        </ScrollView>
+     {!isKeyboardVisible && (
+      <Image
+        source={require('../../assets/addp.png')}
+        style={styles.fixedImage}
+        resizeMode="contain"
+      />
+    )}
+   </View>
+    
+</KeyboardAvoidingView>
+    
   );
 };
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+  flexGrow: 1,
+  justifyContent: 'center',
+  paddingBottom: 200, // Enough space above the fixed image
+},
+  fixedImage: {
+  width: 130,
+  height: 130,
+  position: 'absolute',
+  bottom: 20,
+  right: 5,
+  zIndex: 1,
+},
   container: {
     backgroundColor: "#fff",
     margin: 20,
     padding: 20,
+    paddingVertical:30,
     borderRadius: 15,
-    elevation: 5,
+    paddingTop:30,
+    justifyContent:'flex-start',
     flex: 1,
+    // elevation: 5,
   },
   input: {
     marginBottom: 15,

@@ -16,7 +16,7 @@ const FileUploadModal = ({ visible, setBulkUploadModalVisible, navigation }) => 
   const {userData} = useContext(UserDataContext)
   const {showSnackbar}=useSnackbar();
 
-  const{downloadInvoicePressHandler, shareInvoicePressHandler} = useDownloadInvoice()
+  const{downloadExcelHandler} = useDownloadInvoice()
 
   const pickFile = async () => {
     try {
@@ -95,7 +95,7 @@ const FileUploadModal = ({ visible, setBulkUploadModalVisible, navigation }) => 
   const DownloadHandler = async () => {
     try{
       setBulkUploadModalVisible(false);
-      await downloadInvoicePressHandler(`${API_BASE_URL}products/downloadExcel`, "SampleFile")
+      await downloadExcelHandler(`${API_BASE_URL}products/downloadExcel`, "SampleFile")
      console.log(`${API_BASE_URL}products/downloadExcel`, "file urlll isss")
     }catch(error){
       console.log("Error is ", error )

@@ -40,7 +40,8 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const pendingActionRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
     const [discountValue, setDiscountValue] = useState("");
-
+  const [discountRate, setDiscountRate] = useState(0);
+const [finalTotal, setFinalTotal] = useState(0);
 
   console.log("DATA OF ERROR ", error);
 
@@ -56,11 +57,6 @@ const CreateInvoiceForm = ({ selectedButton }) => {
     /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1}$/,
     "Invalid GSTIN format. Example: 23AAMCA6167B1ZW"
   ),
-    // gstNumber: Yup.string().when([], {
-    //   is: () => selectedButton === "gst",
-    //   then: (schema) => schema.required("GST Number is required"),
-    //   otherwise: (schema) => schema.notRequired(),
-    // }),
     phone: Yup.string()
       .required("Phone is required")
       .matches(/^\d{10}$/, "Phone must be 10 digits"),
@@ -131,26 +127,28 @@ const CreateInvoiceForm = ({ selectedButton }) => {
     console.log("changed cart is , ", selectedButton);
   }, [carts, selectedButton]);
 
+
   useEffect(() => {
-    const handleBackPress = navigation.addListener("beforeRemove", (e) => {
-      const hasFilledForm =
-        carts.length > 0 ||
-        User?.name ||
-        User?.address ||
-        User?.gstNumber ||
-        User?.phone;
+  const beforeRemoveListener = navigation.addListener("beforeRemove", (e) => {
+    const hasFilledForm =
+      carts.length > 0 ||
+      User?.name ||
+      User?.address ||
+      User?.gstNumber ||
+      User?.phone ;
+      // formik.values.name ||
+      // formik.values.address ||
+      // formik.values.phone;
 
-      if (hasFilledForm && !submit.current) {
-        e.preventDefault();
+    if (hasFilledForm && !submit.current) {
+      e.preventDefault();
+      pendingActionRef.current = e.data.action;
+      setShowModal(true);
+    }
+  });
 
-        pendingActionRef.current = e.data.action;    // <— stash the action
-
-        setShowModal(true);
-      }
-    });
-
-    return handleBackPress;
-  }, [navigation, carts, User]);
+  return () => beforeRemoveListener();
+}, [navigation]);
 
   const getStatusFk = () => {
     if (PaymentStatus == "Unpaid") {
@@ -166,11 +164,12 @@ const CreateInvoiceForm = ({ selectedButton }) => {
 
   // ---- utils/transformCart.js (or inside the component) ----
   const mapCartToInvoiceProducts = (carts) =>
-    carts.map(({ id, quantity, sellPrice, name }) => ({
+    carts.map(({ id, quantity, sellPrice, name,taxRate}) => ({
       id: id,                       // rename id -> productId (adjust to API)
       quantity,
       price: Number(sellPrice),            // be sure it's a real number
       productname: String(name),      // keep if the API wants it
+      taxRate:Number(taxRate)
     }));
 
 
@@ -185,6 +184,9 @@ const CreateInvoiceForm = ({ selectedButton }) => {
 
       // add/override only what you really need
       const payload = { ...formData, type: invoiceType };
+
+      console.log("payload in handleGenrate ", payload);
+      
 
       const response = await createApi(api, payload, {
         Authorization: `Bearer ${userData?.token}`,
@@ -203,7 +205,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   };
 
   return (
-    <ScrollView nestedScrollEnabled={true}>
+    <ScrollView >
       <Formik
         enableReinitialize={true}
         initialValues={{
@@ -212,8 +214,9 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           gstNumber: "",
           phone: "",
         }}
-        //  validateOnChange={false}   // ✅ disables noise on typing
-        //validateOnBlur={true}      //
+        validateOnChange={true} 
+          // validateOnChange={false}   // ✅ disables noise on typing
+        validateOnBlur={true}      //
         validationSchema={validationSchema}
         onSubmit={async (values, { resetForm }) => {
           console.log("values are , ", values);
@@ -231,7 +234,8 @@ const CreateInvoiceForm = ({ selectedButton }) => {
             phone: User?.getNumber || values?.phone,
             userId: User?.id || undefined,
           };
-          const finalTotal = (parseInt(cartsValue?.totalPrice) || 0) - (parseInt(cartsValue?.discount) || 0);
+          // const finalTotal = (parseInt(cartsValue?.totalPrice) || 0) - (parseInt(cartsValue?.discount) || 0);
+
           const extraData = {
             usersfk: User?.id,
             vendorfk: selectedShop?.vendor?.id,
@@ -246,14 +250,14 @@ const CreateInvoiceForm = ({ selectedButton }) => {
             // ...(selectedButton == "provisional" ? {provisionNumber: "12"} : {}),
           };
 
-          carts?.map((item) => {
-            console.log("single item is , ", item);
-          });
-
+          // carts?.map((item) => {
+          //   console.log("single item is , ", item);
+          // });
           const payload = {
             ...extraData,
-            customerData: DataCustomer,
-            serviceProviderData: selectedShop,
+             ...DataCustomer,
+            // serviceProviderData: selectedShop,
+            discountRates:discountRate,
             // products: carts,
             products: mapCartToInvoiceProducts(carts),
 
@@ -444,12 +448,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
                     <Text style={{ color: "#007BFF" }}>Clear Cart</Text>
                   </TouchableOpacity>
 
-                  {
-                    selectedButton == "gst" ? (
-                      <ItemDataTable carts={carts} discountValue={discountValue} />
-
-                    ) : null
-                  }
+                   <ItemDataTable carts={carts} discountValue={discountValue} setDiscountRate={setDiscountRate} discountRate={discountRate} finalTotal={finalTotal} setFinalTotal={setFinalTotal} />
                   <PriceDetails setPaymentStatus={setPaymentStatus} selectedButton={selectedButton} discountValue={discountValue}setDiscountValue={setDiscountValue}/>
 
                 </View>

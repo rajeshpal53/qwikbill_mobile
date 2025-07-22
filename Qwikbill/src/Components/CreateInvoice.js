@@ -36,23 +36,9 @@ export default function CreateInvoice({ navigation, route }) {
   const [invoiceNumber,setInvoiceNumber]=useState("");
   const { t } = useTranslation();
 
-  // const { shopDetails } = useContext(ShopDetailContext);
-  // const invoiceNumber = 1000 + shopDetails.count + 1;
-  // const [buttonsModes, setButtonsModes] = useState({
-  //   recentButtonMode: false,
-  //   provInvoiceButtonMode: true,
-  //   gstInvoiceButtonMode: false,
-  // });
-  //--------------------------------------------------
-
   const [selectedValue, setSelectedValue] = useState("provisional");
   const{userData}=useContext(UserDataContext)
   const [storeCount,setStoreCount]=useState(0)
-  // const toggleOptions = [
-  //   { label: 'Left', value: 'left' },
-  //   { label: 'Center', value: 'center' },
-  //   { label: 'Right', value: 'right' },
-  // ];
   const toggleOptions = [
     { value: "provisional", label: "Prov Invoice" },
     { value: "gst", label: "GST Invoice" },
@@ -82,19 +68,7 @@ export default function CreateInvoice({ navigation, route }) {
     };
   }, []);
 
-  // useEffect(() => {
-  //   const checkIfTourSeen = async () => {
-  //     try {
-  //       // if (isTourGuideActive && canStart) {
-  //       //   start();
-  //       // }
-  //     } catch (error) {
-  //       console.log("Error checking tour guide status", error);
-  //     }
-  //   };
-
-  //   checkIfTourSeen();
-  // }, [canStart]);
+  
 
   useEffect(()=>{
     fetchCount();
