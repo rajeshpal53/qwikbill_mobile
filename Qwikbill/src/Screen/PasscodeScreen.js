@@ -22,6 +22,7 @@ import {
 import Tooltip from "react-native-walkthrough-tooltip";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { useSnackbar } from "../Store/SnackbarContext";
 import TextBox from "react-native-password-eye";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { Feather, Ionicons } from "@expo/vector-icons";
@@ -55,7 +56,7 @@ export default function PasscodeScreen({ navigation }) {
   const [isBiometricSupported, setIsBiometricSupported] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-
+  const { showSnackbar } = useSnackbar();
 
 
 
@@ -147,7 +148,9 @@ export default function PasscodeScreen({ navigation }) {
         });
       }
     } else {
-      return Alert.alert("failed to login use phone lock or retry");
+         showSnackbar(
+        "failed to login use phone lock or retry",
+        "error")
     }
   };
 
@@ -269,14 +272,15 @@ export default function PasscodeScreen({ navigation }) {
                     </View>
                   )}
 
-                  <View style={{ alignItems: "center", gap: 6 , }}>
-                    <Text variant="titleMedium">Welcome</Text>
-                    <Text
-                      variant="titleMedium"
-                      style={{ color: "#392de0" }}
-                    >{`${loginDetail1?.user?.name}${loginDetail1?.user?.surname || ""}`}</Text>
-                  </View>
+                 <View style={{ alignItems: "center", gap: 6 }}>
+  <Text variant="titleMedium">Welcome</Text>
 
+  {loginDetail1?.user?.name || loginDetail1?.user?.surname ? (
+    <Text variant="titleMedium" style={{ color: "#392de0" }}>
+      {`${loginDetail1?.user?.name ?? ""} ${loginDetail1?.user?.surname ?? ""}`}
+    </Text>
+  ) : null}
+</View>
                   <View style={{ gap: 5 }}>
                     {/* <View style={styles.buttonContainer}>
                       <Button

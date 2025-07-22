@@ -234,6 +234,7 @@ export default function StackNavigator() {
           component={CreateShopScreen}
           options={{
             headerTitle: "Add Shop",
+            headerTitleAlign: "center",
           }}
         />
         <Stack.Screen
@@ -518,7 +519,7 @@ export default function StackNavigator() {
               <Icon name="people-outline" color={color} size={size} />
             ),
             headerTitle: () => (
-              <Text style={styles.headerTitle}>{"Products "}</Text>
+              <Text style={styles.headerTitle}>{"Add Items "}</Text>
             ),
             headerTitleAlign: "center",
             headerStyle: {

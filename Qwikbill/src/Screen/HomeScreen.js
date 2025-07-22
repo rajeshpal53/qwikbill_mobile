@@ -287,7 +287,7 @@ export default function HomeScreen({ navigation, noItemData }) {
 
           
 
-            <View style={{marginTop:5 }}>
+            <View style={{marginTop:15 }}>
               {allShops?.length > 0 ? (
                 <View style={{ flex: 1, justifyContent: "center", marginTop: "5%"}}>
                   <FlatList
@@ -367,7 +367,7 @@ export default function HomeScreen({ navigation, noItemData }) {
                   navigation.navigate("AddProduct", { editItem: noItemData });
                   setNoItemModal(false);
                 }}
-                message="Dear Owner Please Add Products in your Shop"
+                message="Please add products in your seleced shop"
                 heading="Add Products"
                 buttonTitle="Add Products"
               />

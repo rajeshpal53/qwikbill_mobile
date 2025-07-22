@@ -36,19 +36,18 @@ import {
 } from "react-native-paper";
 import * as Yup from "yup";
 // import * as Notifications from "expo-notifications"
-import CountryCodeModal from "../../Component/CountryCodeModal";
-import SetpasswordModal from "../../Components/Modal/SetpasswordModal";
-import { AuthContext } from "../../Store/AuthContext";
-import UserDataContext from "../../Store/UserDataContext";
-import { useSnackbar } from "../../Store/SnackbarContext";
 import { getApp } from "@react-native-firebase/app";
-import { auth } from '../../firebase';
-import { firebaseAuth } from "../../firebase";
 import {
   getAuth,
-  signInWithPhoneNumber,
- signOut,
-onAuthStateChanged } from '@react-native-firebase/auth';
+  onAuthStateChanged,
+  signInWithPhoneNumber
+} from '@react-native-firebase/auth';
+import CountryCodeModal from "../../Component/CountryCodeModal";
+import SetpasswordModal from "../../Components/Modal/SetpasswordModal";
+import { firebaseAuth } from "../../firebase";
+import { AuthContext } from "../../Store/AuthContext";
+import { useSnackbar } from "../../Store/SnackbarContext";
+import UserDataContext from "../../Store/UserDataContext";
 // import { useTranslation } from "react-i18next";
 
 const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
@@ -725,7 +724,7 @@ return (
                                   color: "#fff"
                                 }}>
 
-                                  {isForgetPassword ? "Send OTP" : "Login with OTP"}
+                                  {isForgetPassword ? "Send OTP" : "Sign up"}
                                 </Text>
                               </Button>
                               {/* </TouchableOpacity> */}

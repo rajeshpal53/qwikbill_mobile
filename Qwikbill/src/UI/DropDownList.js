@@ -1,8 +1,7 @@
-import React, { useContext, useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
-import { List, ActivityIndicator } from "react-native-paper";
+import { useContext, useState } from "react";
+import { Keyboard, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from "react-native";
+import { ActivityIndicator, List } from "react-native-paper";
 import { ShopContext } from "../Store/ShopContext";
-import { TouchableWithoutFeedback, Keyboard } from "react-native";
 
 
 function DropDownList({ options, disabled }) {
@@ -12,7 +11,7 @@ function DropDownList({ options, disabled }) {
 
   const selectedLabel = selectedShop
     ? `${selectedShop.vendor.shopname} (by ${selectedShop.role?.name})`
-    : "Select Shop *";
+    : "No shop Added";
 
   const handleSelect = (item) => {
     updateSelectedShop(item);
@@ -29,7 +28,7 @@ function DropDownList({ options, disabled }) {
     }}
   >
     <View style={styles.container}>
-      {isLoading && <ActivityIndicator size="small " />}
+      {isLoading &&  <ActivityIndicator size="small " />}
       <List.Accordion
         title={selectedLabel}
         expanded={dropdownVisible}
@@ -40,11 +39,14 @@ function DropDownList({ options, disabled }) {
         ]}
         disabled={disabled}
       >
+        { selectedShop &&
         <ScrollView
           nestedScrollEnabled
           style={styles.scrollArea}
           contentContainerStyle={{ paddingBottom: 10 }}
+          //scrollEnabled={selectedShop}
         >
+        
           {options?.map((item) => (
             <List.Item
               key={item.vendor.id}
@@ -57,6 +59,7 @@ function DropDownList({ options, disabled }) {
             />
           ))}
         </ScrollView>
+}
       </List.Accordion>
     </View>
     </TouchableWithoutFeedback>
@@ -71,7 +74,7 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 999, // 👈 ensures it appears on top
     // elevation: 10, // Android support
-    backgroundColor: "#fff",
+    backgroundColor: "transparent",
     width: "90%",
     // height: 58,
     marginTop:11,

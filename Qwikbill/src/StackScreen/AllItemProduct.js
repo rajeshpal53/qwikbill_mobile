@@ -343,7 +343,7 @@ const AllItemProduct= ()=>{
               setSearchQuery={setSearchQuery}
               setsearchmodal={setsearchmodal}
               setTranscript={setTranscript}
-              placeholderText=" search product by name ... "
+              placeholderText=" Search product by name ... "
             />
             {carts.length > 0 && (
               <TouchableOpacity

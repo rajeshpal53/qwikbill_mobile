@@ -1,42 +1,33 @@
-import { functions } from "lodash";
 import {
-  View,
-  StyleSheet,
   Alert,
   Image,
-  KeyboardAvoidingView,
   SafeAreaView,
   StatusBar,
-  Keyboard,
-  ScrollView,
+  StyleSheet,
+  TextInput,
   useWindowDimensions,
+  View
 } from "react-native";
 import {
-  Provider as PaperProvider,
-  Text,
   Button,
   Card,
+  Text
 } from "react-native-paper";
-import { TextInput, } from "react-native";
 
-import { useContext, useState, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Store/AuthContext";
-import { createApi } from "../../Util/UtilApi";
-import OTPInputView from "react-native-otp-entry";
-import { fontSize, fontFamily } from "../../Util/UtilApi";
 import { useSnackbar } from "../../Store/SnackbarContext";
+import { fontFamily, fontSize } from "../../Util/UtilApi";
 //import { usePhoneOtp } from "../../Components/phoneOtp";
-import { OtpInput } from "react-native-otp-entry"; // Updated dependency
 import { useNavigation } from "@react-navigation/native";
+import { OtpInput } from "react-native-otp-entry"; // Updated dependency
 //import { auth } from '../../firebase';
 //import { firebaseAuth } from "../../firebase";
 import { getApp } from '@react-native-firebase/app';
 
 import {
   getAuth,
-  signInWithPhoneNumber,
-  signOut,
-  onAuthStateChanged
+  signInWithPhoneNumber
 } from '@react-native-firebase/auth';
 
 function CustomerVerification({ loginDetail1 }) {
@@ -120,8 +111,8 @@ function CustomerVerification({ loginDetail1 }) {
               />
             </View>
             <View style={{ alignItems: "center", gap: 30 }}>
-              <Text variant="headlineMedium" style={{ color: "rgba(0,0,0,0.8)", fontFamily: fontFamily.regular }}>
-                Customer Verification
+              <Text variant="headlineMedium" style={{ color: "rgba(0,0,0,0.8)", fontFamily: fontFamily.regular,fontSize:25 }}>
+                Set Passcode
               </Text>
               <Text variant="labelSmall" style={{ color: "grey", textAlign: "center", fontFamily: fontFamily.medium }}>
                 We will send you a one-time password on this registered mobile {loginDetail1 && loginDetail1.email} number.

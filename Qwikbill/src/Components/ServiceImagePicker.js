@@ -342,92 +342,54 @@ export default function ServiceImagePicker({
         </View>
       )}
 
-      <Modal
+     <Modal
         visible={modalVisibel}
-        style={styles.modal}
         onBackdropPress={closeModal}
+        animationType="fade"
+        transparent
       >
-        <View style={styles.modalContent}>
-          <View style={{ padding: 10, gap: 10 }}>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-
-              <Text
-                style={{
-                  fontSize: fontSize.headingSmall,
-                  fontFamily: "Poppins-SemiBold",
-                  color: "rgba(0, 0, 0, 0.7)",
-                }}
-              >
-                Select Option
-              </Text>
-              <TouchableOpacity onPress={closeModal} style={{ padding: 3 ,backgroundColor:"rgba(0, 0, 0, 0.1)", borderRadius:10}}>
-              <Ionicons name="close" size={30} color="gray" />
+        <View style={styles.backdrop}>
+          <View style={styles.modalContainer}>
+            <View style={styles.header}>
+              <Text style={styles.title}>Select Option</Text>
+              <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
+                <Ionicons name="close" size={22} color="#555" />
               </TouchableOpacity>
-
             </View>
 
-            <View>
-              {camera &&
-                <TouchableOpacity
-                  style={{ minHeight: 48, justifyContent: "center" }}
-                  onPress={() => {
+            <View style={styles.optionList}>
+              {camera && (
+                <>
+                  <TouchableOpacity style={styles.optionButton} onPress={() => {
                     closeModal();
                     pickCameraImage();
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontFamily: "Poppins-Regular",
-                      color: "rgba(0, 0, 0, 0.7)",
-                    }}
-                  >
-                    1. Camera
-                  </Text>
-                </TouchableOpacity>
-              }
+                  }}>
+                    <Text style={styles.optionText}>📷 Take Photo</Text>
+                  </TouchableOpacity>
+                  <View style={styles.divider} />
+                </>
+              )}
 
-              <Divider />
-
-              {gallary &&
-                <TouchableOpacity
-                  style={{ minHeight: 48, justifyContent: "center" }}
-                  onPress={() => {
+              {gallary && (
+                <>
+                  <TouchableOpacity style={styles.optionButton} onPress={() => {
                     closeModal();
                     pickGallaryImage();
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontFamily: "Poppins-Regular",
-                      color: "rgba(0, 0, 0, 0.7)",
-                    }}
-                  >
-                    2. Upload From Gallary
-                  </Text>
+                  }}>
+                    <Text style={styles.optionText}>🖼️ Upload from Gallery</Text>
+                  </TouchableOpacity>
+                  <View style={styles.divider} />
+                </>
+              )}
+
+              {imageUrl && (
+                <TouchableOpacity style={styles.optionButton} onPress={() => {
+                  closeModal();
+                  removeImage();
+                }}>
+                  <Text style={[styles.optionText, { color: "#d9534f" }]}>🗑️ Remove Image</Text>
                 </TouchableOpacity>
-              }
-
-              <Divider />
-
-
-              {imageUrl &&
-                <TouchableOpacity
-                  style={{ minHeight: 48, justifyContent: "center" }}
-                  onPress={() => {
-                    closeModal();
-                    removeImage();
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontFamily: "Poppins-Regular",
-                      color: "rgba(0, 0, 0, 0.7)",
-                    }}
-                  >
-                    3. Remove Image
-                  </Text>
-                </TouchableOpacity>
-              }
+              )}
             </View>
           </View>
         </View>
