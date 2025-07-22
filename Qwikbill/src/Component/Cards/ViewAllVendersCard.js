@@ -15,9 +15,9 @@ import { useNavigation } from "@react-navigation/native";
 const ViewAllVendersCard = ({ item }) => {
   const [selectedModal, setSelectedModal] = useState(null);
   const navigation = useNavigation();
+  
 
-
-  console.log("selected shop item is ", item)
+  console.log("selected shop item is ",item)
 
   const handleModal = (id) => {
     setSelectedModal(selectedModal === id ? null : id);
@@ -30,8 +30,8 @@ const ViewAllVendersCard = ({ item }) => {
   };
 
   const handleAddProduct = () => {
-
-    // setSelectedModal(null);
+  
+   // setSelectedModal(null);
     navigation.navigate("AddProduct", {
       addressDetails: item,
       isUpdateAddress: true,
@@ -49,26 +49,26 @@ const ViewAllVendersCard = ({ item }) => {
   };
 
   return (
-
-    <Card style={styles.card}>
-      <View style={styles.container}>
-        <View style={styles.ImageView}>
-          <View>
-            {
-              <Avatar.Text
-                size={40}
-                label={item?.vendor?.shopname.charAt(0)}
-                style={styles.avatarPlaceholder}
-              />
-            }
-          </View>
-          <View style={styles.shopnameView}>
-
-            <View style={styles.InnershopnameView}>
-              <Text style={styles.shopnameText}>{item?.vendor?.shopname}</Text>
+  
+      <Card style={styles.card}>
+        <View style={styles.container}>
+          <View style={styles.ImageView}>
+            <View>
+              {
+                <Avatar.Text
+                  size={40}
+                  label={item?.vendor?.shopname.charAt(0)}
+                  style={styles.avatarPlaceholder}
+                />
+              }
             </View>
+            <View style={styles.shopnameView}>
 
-            {/* <View style={{ width: "20%" }}>
+              <View style={styles.InnershopnameView}>
+                <Text style={styles.shopnameText}>{item?.vendor?.shopname}</Text>
+              </View>
+
+              {/* <View style={{ width: "20%" }}>
                 <Menu
                   visible={selectedModal === item?.id}
                   onDismiss={() => setSelectedModal(null)}
@@ -99,56 +99,94 @@ const ViewAllVendersCard = ({ item }) => {
                 </Menu>
               </View> 
                */}
-          </View>
-        </View>
-
-        <View style={styles.detailsContainer}>
-          <View style={styles.row}>
-            <View style={styles.detailItem}>
-              <MaterialCommunityIcons name="phone" size={18} color="rgba(0,0,0,0.6)" />
-              <Text style={styles.detailsText}>{item?.user?.mobile}</Text>
-            </View>
-            <View style={styles.detailItem}>
-              <MaterialCommunityIcons name="map-marker" size={18} color="rgba(0,0,0,0.6)" />
-              <Text style={styles.detailsText}>{item?.vendor?.shopAddress}</Text>
             </View>
           </View>
 
-          <View style={styles.row}>
-            <View style={styles.detailItem}>
-              <MaterialIcons name="person" size={18} color="rgba(0,0,0,0.6)" />
-              <Text style={styles.detailsText}>{item?.role?.name}</Text>
+          <View style={styles.detailscontainerView}>
+            <View style={styles.InnerDetailsView}>
+              <View>
+                <MaterialCommunityIcons
+                  name="phone"
+                  size={18}
+                  color="rgba(0, 0, 0, 0.6)"
+                  style={styles.icon} // Custom style
+                />
+              </View>
+              <View>
+                <Text style={styles.detailsText}>{item?.user?.mobile}</Text>
+              </View>
             </View>
-            <View style={styles.detailItem}>
-              <MaterialIcons name="description" size={18} color="rgba(0,0,0,0.6)" />
-              <Text style={styles.detailsText}>{item?.role?.description}</Text>
+            
+            <View style={styles.InnerDetailsView}>
+              <View>
+                <MaterialCommunityIcons
+                  name="map-marker"
+                  size={18}
+                  color="rgba(0, 0, 0, 0.6)"
+                  style={styles.icon} // Custom style
+                />
+              </View>
+              <View>
+                <Text style={styles.detailsText}>{item?.vendor?.shopAddress}</Text>
+              </View>
             </View>
+
+
+            <View style={styles.InnerDetailsView}>
+              <View>
+                <MaterialIcons
+                  name="person"
+                  size={18}
+                  color="rgba(0, 0, 0, 0.6)"
+                  style={styles.icon} // Custom style
+                />
+              </View>
+              <View>
+                <Text style={styles.detailsText}>{item?.role?.name}</Text>
+              </View>
+            </View>
+           
+
+
+            <View style={styles.InnerDetailsView}>
+              <View>
+                <MaterialIcons
+                  name="description"
+                  size={18}
+                  color="rgba(0, 0, 0, 0.6)"
+                  style={styles.icon} // Custom style
+                />
+              </View>
+              <View>
+                <Text style={styles.detailsText}>{item?.role?.description}</Text>
+              </View>
+            </View>
+            
+            
+          </View>
+          <View style={styles.StatusandRatingView}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("ViewShopDetailsScreen", { item: item })
+              }
+              style={{ flexDirection: "row", alignItems: "center" }}
+            >
+              <View>
+                <Text style={styles.Approvedtext}>View Details</Text>
+              </View>
+              <View>
+                <MaterialCommunityIcons
+                  name="arrow-right"
+                  size={15}
+                  color="#2196F3"
+                  style={styles.icon}
+                />
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
-
-        <View style={styles.StatusandRatingView}>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("ViewShopDetailsScreen", { item: item })
-            }
-            style={{ flexDirection: "row", alignItems: "center" }}
-          >
-            <View>
-              <Text style={styles.Approvedtext}>View Details</Text>
-            </View>
-            <View>
-              <MaterialCommunityIcons
-                name="arrow-right"
-                size={15}
-                color="#2196F3"
-                style={styles.icon}
-              />
-            </View>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Card>
-
+      </Card>
+  
   );
 };
 
@@ -161,8 +199,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     paddingHorizontal: 5,
-    // shadowOffset:2,
-    // shadowColor:"#ddd"
+   // shadowOffset:2,
+   // shadowColor:"#ddd"
 
     // alignContent:"center"
   },
@@ -170,41 +208,15 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 5,
     marginVertical: 6,
-
+  
   },
   ImageView: {
     paddingHorizontal: 5,
     marginLeft: 5,
     flexDirection: "row",
-
-    marginVertical: 2
+  
+  marginVertical:2
   },
-  detailsContainer: {
-    marginHorizontal: 5,
-    marginTop: 10,
-    marginLeft:12,
-  },
-
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 6,
-  },
-
-  detailItem: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    marginRight: 5,
-  },
-
-  detailsText: {
-    fontSize: fontSize.label,
-    fontFamily: "Poppins-Medium",
-    marginLeft: 4,
-    flexShrink: 1, // Handles overflow gracefully
-  },
-
   detailscontainerView: {
     // marginVertical: 5,
     marginHorizontal: 10,
@@ -222,7 +234,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     marginRight: 20,
     flex: 1,
-    marginVertical: 3,
+    marginVertical:3,
   },
 
   shopnameView: {
@@ -232,16 +244,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   InnershopnameView: {
-    flex: 1,
-    alignSelf: "center"
+    flex: 1,  
+    alignSelf:"center"
   },
   InnerDetailsView: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
 
-    marginBottom: 5,
-    marginLeft: 6
+    marginBottom:5,
+    marginLeft:6
   },
   statusView: {},
   shopnameText: {
@@ -253,10 +265,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     fontSize: fontSize.label,
     fontFamily: "Poppins-Medium",
-    marginHorizontal: 2
+    marginHorizontal:2
   },
   avatarPlaceholder: {
-    borderRadius: 15,
+     borderRadius: 15,
     width: 45,
     height: 45,
     justifyContent: "center",

@@ -8,7 +8,6 @@ import { fontSize } from "../Util/UtilApi";
 const UserDetailsStore = ({ item }) => {
   const { userData } = useContext(UserDataContext);
   console.log("DATA OF USE IS SSSSSSSSSSSSSSS", userData);
-  
 
   return (
     <Card style={styles.UserCard}>

@@ -18,11 +18,13 @@ Notifications.setNotificationHandler({
   }),
 });
 
+// ... All your imports remain unchanged
+
 export const useDownloadInvoice = () => {
   const { saveFolderUri, setSaveFolderUri, setSaveFileUri } = useStorageLocationContext();
   const [isLoading, setIsLoading] = useState(false);
-  const{userData}=useContext(UserDataContext)
-  // Setup Notification Category and Response Listener
+  const { userData } = useContext(UserDataContext);
+
   useEffect(() => {
     Notifications.setNotificationCategoryAsync("DOWNLOAD_CATEGORY", [
       {
@@ -42,7 +44,6 @@ export const useDownloadInvoice = () => {
     return () => subscription.remove();
   }, []);
 
-  // Function to open a file
   const openFile = async (fileUri, fileType) => {
     try {
       console.log("Opening file: debug 5", fileUri);
@@ -67,7 +68,6 @@ export const useDownloadInvoice = () => {
     }
   };
 
-  // Check Notification Permissions
   async function checkNotificationPermission() {
     const { status } = await Notifications.getPermissionsAsync();
     if (status !== "granted") {
@@ -77,37 +77,63 @@ export const useDownloadInvoice = () => {
     return true;
   }
 
-  // Download and Save Invoice
   const downloadInvoicePressHandler = async (api, name) => {
     await checkNotificationPermission();
     console.log("Downloading invoice:", api, name);
     let result;
-    const extension = name === "SampleFile" ? ".xlsx" : ".pdf";
-    const fileType = name === "SampleFile" ? "xlsx" : "pdf";
-    console.log("Using token:", token);
+    const extension = ".pdf";
+    const fileType = "pdf";
     try {
       setIsLoading(true);
       result = await FileSystem.downloadAsync(
         api,
         FileSystem.documentDirectory + `${name}${extension}`,
         {
-        headers: {
-          Authorization: `Bearer ${userData?.token}`,
-        },
-      }
+          headers: {
+            Authorization: `Bearer ${userData?.token}`,
+          },
+        }
       );
 
-      console.log("Downloaded debug 1:", result?.uri);
-      await saveFile(result?.uri, `${name}${extension}`, result.headers["Content-Type"], fileType);
+      console.log("Downloaded PDF: debug 1:", result?.uri);
+      await saveFile(result?.uri, `${name}${extension}`, "application/pdf", fileType);
     } catch (error) {
-      console.error("Download/Save error:", error);
+      console.error("PDF Download/Save error:", error);
       Alert.alert("Download Failed", "Unable to download the invoice.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Save File to External Directory
+  const downloadExcelHandler = async (api, name = "SampleFile") => {
+    await checkNotificationPermission();
+    console.log("Downloading Excel:", api, name);
+    let result;
+    const extension = ".xlsx";
+    const fileType = "xlsx";
+    const mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    try {
+      setIsLoading(true);
+      result = await FileSystem.downloadAsync(
+        api,
+        FileSystem.documentDirectory + `${name}${extension}`,
+        {
+          headers: {
+            Authorization: `Bearer ${userData?.token}`,
+          },
+        }
+      );
+
+      console.log("Downloaded XLSX: debug 1:", result?.uri);
+      await saveFile(result?.uri, `${name}${extension}`, mimeType, fileType);
+    } catch (error) {
+      console.error("Excel Download/Save error:", error);
+      Alert.alert("Download Failed", "Unable to download the Excel file.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const saveFile = async (uri, filename, mimetype, fileType) => {
     try {
       let directoryUri = saveFolderUri;
@@ -122,8 +148,6 @@ export const useDownloadInvoice = () => {
 
       const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
       const fileUri = await FileSystem.StorageAccessFramework.createFileAsync(directoryUri, filename, mimetype);
-
-
       await FileSystem.writeAsStringAsync(fileUri, base64, { encoding: FileSystem.EncodingType.Base64 });
       console.log("File saved at: debug 3", fileUri);
       await setSaveFileUri(fileUri);
@@ -142,7 +166,6 @@ export const useDownloadInvoice = () => {
         trigger: null,
       });
 
-      console.log("File saved: debug 4", fileUri);
       await openFile(fileUri, fileType);
     } catch (error) {
       console.error("Error saving file:", error);
@@ -150,7 +173,6 @@ export const useDownloadInvoice = () => {
     }
   };
 
-  // Share Invoice (General)
   const shareInvoicePressHandler = async (api, orderId = 1) => {
     try {
       const result = await FileSystem.downloadAsync(
@@ -168,7 +190,6 @@ export const useDownloadInvoice = () => {
     }
   };
 
-  // Share Invoice on WhatsApp
   const shareInvoiceOnWhatsApp = async (api, orderId = 1) => {
     try {
       const result = await FileSystem.downloadAsync(
@@ -190,6 +211,7 @@ export const useDownloadInvoice = () => {
 
   return {
     downloadInvoicePressHandler,
+    downloadExcelHandler,
     shareInvoicePressHandler,
     shareInvoiceOnWhatsApp,
     isLoading,

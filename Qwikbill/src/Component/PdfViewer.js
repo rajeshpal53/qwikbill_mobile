@@ -266,7 +266,7 @@ const PdfScreen = ({ navigation }) => {
   return (
     <View style={{ flex: 1 }}>
       <Pdf
-        style={{ height: "80%" }}
+        style={{ height: "70%" }}
         trustAllCerts={false}
         source={pdfSource}
         onLoadComplete={(numberOfPages) => {
@@ -282,18 +282,6 @@ const PdfScreen = ({ navigation }) => {
         }}
 
       />
-      {/* <WebView
-      source={{ uri: pdfUri }}
-      style={{ flex: 1}}
-      originWhitelist={['*']}
-    /> */}
-
-      {/* <WebView
-  source={{
-    uri: `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(`${API_BASE_URL}invoice/downloadInvoice/${createdInvoice?.id}`)}`
-  }}
-  style={{ flex: 1 }}
-/> */}
       <Card style={styles.card}>
         {/* Customer Name and Amount Section */}
         <View style={styles.headerContainer}>
@@ -324,8 +312,6 @@ const PdfScreen = ({ navigation }) => {
             <Text style={styles.buttonText}>  Share Link</Text>
           </TouchableOpacity>
         </View>
-
-        {/* Print, Download, Share Buttons */}
         <View style={styles.bottomButtons}>
           <TouchableOpacity style={[styles.iconButton, { opacity: 0.5 }]} disabled={true}>
             <Feather name="printer" size={22} color="#4CAF50" />
