@@ -328,28 +328,34 @@ const ProductDetailsScreen = ({ navigation }) => {
       <FlatList
         ListHeaderComponent={() => (
           <>
-            <View style={styles.allbuttonView}>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {[
-                  "Sort By Name",
-                  "Low to High Price",
-                  "High to Low Price",
-                  "Clear All",
-                ].map((suggestbtn, key) => (
-                  <TouchableOpacity
-                    key={key}
-                    style={[
-                      styles.suggestionButton,
-                      filterOptionSelect === suggestbtn &&
-                      styles.selectedSuggestionButton,
-                    ]}
-                    onPress={() => handleFilterChange(suggestbtn)}
-                  >
-                    <Text style={styles.suggestbtnText}>{t(suggestbtn)}</Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
+            {
+              Productdata.length > 0 ? (
+                <View style={styles.allbuttonView}>
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    {[
+                      "Sort By Name",
+                      "Low to High Price",
+                      "High to Low Price",
+                      "Clear All",
+                    ].map((suggestbtn, key) => (
+                      <TouchableOpacity
+                        key={key}
+                        style={[
+                          styles.suggestionButton,
+                          filterOptionSelect === suggestbtn &&
+                          styles.selectedSuggestionButton,
+                        ]}
+                        onPress={() => handleFilterChange(suggestbtn)}
+                      >
+                        <Text style={styles.suggestbtnText}>{t(suggestbtn)}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
+              ) : (
+                null
+              )
+            }
           </>
         )}
         data={
@@ -383,7 +389,7 @@ const ProductDetailsScreen = ({ navigation }) => {
         ListFooterComponent={Loader}
         contentContainerStyle={styles.flatListContainer}
         ListEmptyComponent={() => (
-          <View style={{ flex: 1, marginTop: "40%" }}>
+          <View style={{ flex: 1, marginTop: "27%" }}>
             <NoDataFound textString={"No Products Found"} />
           </View>
         )}

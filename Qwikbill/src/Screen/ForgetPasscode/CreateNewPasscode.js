@@ -1,20 +1,18 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  SafeAreaView,
-  StatusBar,
-  KeyboardAvoidingView,
-  Image,
-  ScrollView
-} from "react-native";
 import { Formik } from "formik";
+import { useEffect, useState } from "react";
+import {
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  useWindowDimensions,
+  View
+} from "react-native";
+import { Button, Card, HelperText, Text, TextInput } from "react-native-paper";
 import * as Yup from "yup";
-import { HelperText, Button, Card, Text, TextInput } from "react-native-paper";
-import { useSnackbar } from "../../Store/SnackbarContext";
 import { usePasskey } from "../../Store/PasskeyContext";
-import { useWindowDimensions } from "react-native";
+import { useSnackbar } from "../../Store/SnackbarContext";
 
 const PasscodeSchema = Yup.object().shape({
   passcode: Yup.string()
@@ -60,7 +58,7 @@ const CreateNewPasscode = ({ navigation }) => {
                   style={styles.img}
                 />
               </View>
-              <View
+              {/* <View
                 style={{
                   // backgroundColor:"pink",
                   alignItems: "center",
@@ -72,7 +70,7 @@ const CreateNewPasscode = ({ navigation }) => {
                 <Text style={{ color: "white", letterSpacing: 3 }}>
                   Biling Software
                 </Text>
-              </View>
+              </View> */}
             </View>
             <View style={styles.cardContainer}>
               <Card style={styles.card}>
@@ -246,8 +244,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   img: {
-    height: 100,
-    width: 100,
+    height: 180,
+    width: 180,
     elevation: 2,
     alignSelf: "center",
     marginVertical: 10,

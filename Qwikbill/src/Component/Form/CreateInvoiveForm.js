@@ -116,6 +116,7 @@ const [finalTotal, setFinalTotal] = useState(0);
     if (pendingActionRef.current) {
       navigation.dispatch(pendingActionRef.current); // finally go back
     }
+    dispatch(clearCart());
   }
 
   function handleCancel() {

@@ -473,7 +473,15 @@ function ViewInvoiceScreen1({ navigation }) {
               fetchData={fetchInvoices}
            
             />
-            <FilterButtons setSelected={setSelected} selected={selected} />
+            
+           {
+              invoices.length >= 1 ? (
+                <FilterButtons setSelected={setSelected} selected={selected} />
+
+              ) : (
+                null
+              )
+            }
           </View>
         }
         refreshControl={
@@ -499,7 +507,8 @@ function ViewInvoiceScreen1({ navigation }) {
               style={{
                 alignItems: "center",
                 justifyContent: "center",
-                marginTop: "40%",
+                marginTop: "27%",
+                
               }}
             >
               <NoDataFound textString={"No Invoice Found"} />
@@ -508,7 +517,10 @@ function ViewInvoiceScreen1({ navigation }) {
         }
       />
 
-      <FAB
+      {
+      invoices.length >= 1 && (
+
+        <FAB
         style={{
           position: "absolute",
           margin: 16,
@@ -520,6 +532,8 @@ function ViewInvoiceScreen1({ navigation }) {
         onPress={() => setModalVisible(true)}
         color="#fff"
       />
+      )
+     }
       {searchModal && (
         <OpenmiqModal
           modalVisible={searchModal}
