@@ -142,53 +142,6 @@ const Searchbarwithmic = ({
     if (!isFocused) ExpoSpeechRecognitionModule.stop();
   }, [isFocused]);
 
-  // // // Close the modal
-  // const handleCloseModal = () => {
-  //   setModalVisible(false);
-  //   ExpoSpeechRecognitionModule.stop(); // Stop speech recognition when modal is closed
-  // };
-
-  // Toggle language between English and Hindi
-  // const toggleLanguage = () => {
-  //   setLanguage(language === "en-US" ? "hi-IN" : "en-US"); // Toggle between English and Hindi
-  // };
-
-  // useEffect(() => {
-  //   const getPlaceHolders = () => {
-  //     const placeHoldersArray = data?.map((item) => item?.subServiceName);
-
-  //     setSearchPlaceHolders(placeHoldersArray);
-  //   };
-
-  //   getPlaceHolders();
-  // }, [data]);
-
-  // useEffect(() => {
-  //   const currentPlaceholder = placeholders[placeholderIndex];
-
-  //   if (charIndex < currentPlaceholder?.length) {
-  //     // Add the next character after a small delay to simulate typing
-  //     const timeout = setTimeout(() => {
-  //       setSelectedPlaceholderText(
-  //         (prev) => prev + currentPlaceholder[charIndex]
-  //       );
-  //       setCharIndex((prev) => prev + 1);
-  //     }, 50); // Adjust the delay for typing speed (100ms here)
-
-  //     return () => clearTimeout(timeout);
-  //   } else {
-  //     // After typing out the whole placeholder, wait before moving to the next one
-  //     const waitBeforeNext = setTimeout(() => {
-  //       setSelectedPlaceholderText("");
-  //       setCharIndex(0);
-  //       setPlaceholderIndex(
-  //         (prevIndex) => (prevIndex + 1) % placeholders?.length
-  //       );
-  //     }, 2000); // Wait for 2 seconds before resetting to the next placeholder
-
-  //     return () => clearTimeout(waitBeforeNext);
-  //   }
-  // }, [charIndex, placeholderIndex, placeholders]);
   const isArray = Array.isArray(placeholderText);
 
   // If placeholderText is an array, set up the typing effect

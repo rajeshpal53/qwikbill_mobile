@@ -1,7 +1,7 @@
 import { useRoute } from "@react-navigation/native";
-import { Formik } from "formik";
+import { Formik, useFormikContext } from "formik";
 import { useContext, useEffect, useRef, useState } from "react";
-import { Alert, ScrollView, StyleSheet, TouchableOpacity, View,Image,KeyboardAvoidingView, Platform,Keyboard } from "react-native";
+import { Alert, ScrollView, StyleSheet, TouchableOpacity, View, Image, KeyboardAvoidingView, Platform, Keyboard } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
 import RazorpayCheckout from 'react-native-razorpay';
 import * as Yup from "yup";
@@ -14,12 +14,14 @@ import Svg, { Path } from "react-native-svg";
 
 
 
-const BlobTopRight = ({top,right,bottom,left}) => (
+
+
+const BlobTopRight = ({ top, right, bottom, left }) => (
   <Svg
     width={200}
     height={200}
     viewBox="0 0 200 200"
-    style={{ position: 'absolute', top: top, right: right, bottom:bottom,left:left, zIndex: -1 }}
+    style={{ position: 'absolute', top: top, right: right, bottom: bottom, left: left, zIndex: -1 }}
   >
     <Path
       fill="#D1E8FF"
@@ -34,7 +36,7 @@ const BlobBottomLeft = () => (
     width={200}
     height={200}
     viewBox="0 0 200 200"
-    style={{ position: 'absolute', bottom: -50, left: -50, zIndex: -1}}
+    style={{ position: 'absolute', bottom: -50, left: -50, zIndex: -1 }}
   >
     <Path
       fill="#D1E8FF"
@@ -43,6 +45,8 @@ const BlobBottomLeft = () => (
     />
   </Svg>
 );
+
+
 const AddProduct = ({ navigation }) => {
   // const [options, setOptions] = useState([]);
   // const [showOptions, setShowOptions] = useState(false);
@@ -59,23 +63,35 @@ const AddProduct = ({ navigation }) => {
 
   console.log("DATA OF HSNCODE IS ", HSNCode);
 
+  // const TaxRateWatcher = ({ showSnackbar }) => {
+  //   const { errors, touched } = useFormikContext();
+
+  //   useEffect(() => {
+  //     if (errors.TaxRate && touched.TaxRate) {
+  //       showSnackbar(errors.TaxRate, 'error');
+  //     }
+  //   }, [errors.TaxRate, touched.TaxRate]);
+
+  //   return null;
+  // };
+
   useEffect(() => {
     console.log("Edit data is ", EditData);
     console.log("Isupdated Data is ", isUpdated);
   }, [EditData, isUpdated]);
   useEffect(() => {
-  const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () =>
-    setKeyboardVisible(true)
-  );
-  const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () =>
-    setKeyboardVisible(false)
-  );
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () =>
+      setKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () =>
+      setKeyboardVisible(false)
+    );
 
-  return () => {
-    keyboardDidShowListener.remove();
-    keyboardDidHideListener.remove();
-  };
-}, []);
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   const validationSchema = Yup.object().shape({
     /* ProductCategory: Yup.string().required("Product category is required"), */
@@ -83,8 +99,16 @@ const AddProduct = ({ navigation }) => {
     SellingPrice: Yup.number()
       .required("Selling price is required")
       .typeError("Selling price must be a number"),
-    TaxRate: Yup.number().typeError("Tax value must be a number"),
-    HSNCode: Yup.string().matches(/^\d{4}(\d{2})?(\d{2})?$/, 'Enter a valid 4, 6, or 8-digit HSN code'),
+    TaxRate: Yup.number()
+      .typeError("Tax value must be a number")
+      .max(100, "Tax rate cannot greater than 100%")
+    //   .when("HSNCode", {
+    //     is: (val) => val && val.trim() !== "",
+    //     then: (schema) => schema.required("Tax rate is required if HSN code is entered"),
+    //     otherwise: (schema) => schema.notRequired(),
+    //   })
+    ,
+     HSNCode: Yup.string().matches(/^\d{4}(\d{2})?(\d{2})?$/, 'Enter a valid 4, 6, or 8-digit HSN code'),
     PurchasePrice: Yup.number()
       .required("Purchase price is required")
       .typeError("Purchase price must be a number")
@@ -171,252 +195,243 @@ const AddProduct = ({ navigation }) => {
 
   return (
     <KeyboardAvoidingView
-  style={{ flex: 1 }}
-  behavior={Platform.OS === "ios" ? "padding" : "height"}
-  keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} // Adjust if needed
->
-    <View style={{ flex: 1 }}>
-       <BlobTopRight top={-50} right={-50} />
-    <BlobBottomLeft />
-     <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center',}}
-      keyboardShouldPersistTaps="handled"  showsVerticalScrollIndicator={false} >
-      <Formik
-        enableReinitialize={true}
-        initialValues={{
-          /* ProductCategory: EditData?.productcategoryfk || "", */
-          ProductName: EditData?.name || "",
-          PurchasePrice: EditData?.costPrice || "",
-          SellingPrice: EditData?.sellPrice || "",
-          TaxRate: EditData?.taxRate || "",
-          // HSNCode: String(EditData?.hsncode) || "",
-          HSNCode: EditData?.hsncode !== undefined ? String(EditData.hsncode) : "",
-        }}
-        validationSchema={validationSchema}
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} // Adjust if needed
+    >
+      <View style={{ flex: 1 }}>
+        <BlobTopRight top={-50} right={-50} />
+        <BlobBottomLeft />
+        <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', }}
+          keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} >
+          <Formik
+            enableReinitialize={true}
 
-        onSubmit={async (values, { resetForm }) => {
-          console.log("Before handlePayment");
+            initialValues={{
+              /* ProductCategory: EditData?.productcategoryfk || "", */
+              ProductName: EditData?.name || "",
+              PurchasePrice: EditData?.costPrice || "",
+              SellingPrice: EditData?.sellPrice || "",
+              TaxRate: EditData?.taxRate || "",
+              // HSNCode: String(EditData?.hsncode) || "",
+              HSNCode: EditData?.hsncode !== undefined ? String(EditData.hsncode) : "",
+            }}
+            validationSchema={validationSchema}
 
-          // await handlePayment(20);
-          console.log("Values areeee ", values);
-          const ProductData = {
-            /* productcategoryfk: values?.ProductCategory, */
-            name: values?.ProductName,
-            costPrice: values?.PurchasePrice,
-            sellPrice: values?.SellingPrice,
-            taxRate: values?.TaxRate,
-            // hsncodefk: HSNCode?.id,
-            // isStock: values?.IsStockData,
-            vendorfk: selectedShop.vendor.id,
-            hsncode: parseInt(values.HSNCode),
-          };
-          console.log("Data is 15863", ProductData);
+            onSubmit={async (values, { resetForm }) => {
+              console.log("Before handlePayment");
 
-          if (isUpdated === true) {
-            console.log(" issss update ", isUpdated)
-
-            console.log("Edit field is ", ProductData);
-            try {
-              // Pass ProductData to the update API request
-              const response = await updateApi(
-                `products/${EditData?.id}`,
-                ProductData
-              );
-              console.log("Updated data is ", response)
-              if (response) {
-                showSnackbar("Product Updated Successfully", "success");
-                setRefresh((prev) => !prev);
-                navigation.goBack();
-              } else {
-                showSnackbar("Failed to update the product", "error");
+              if (values.HSNCode && (!values.TaxRate || values.TaxRate === "")) {
+                showSnackbar("Please enter Tax Rate when HSN Code is entered", "error");
+                return;
               }
-            } catch (error) {
-              console.log("Unable to edit data ", error);
-              showSnackbar("Error updating product", "error");
-            }
-          } else {
-            console.log(" issss update ", isUpdated)
-            try {
-              // Create a new product
-              const response = await createApi(`products/`, ProductData, {
-                headers: {
-                  Authorization: `Bearer ${userData?.token}`
+
+
+              // await handlePayment(20);
+              console.log("Values areeee ", values);
+              const ProductData = {
+                /* productcategoryfk: values?.ProductCategory, */
+                name: values?.ProductName,
+                costPrice: values?.PurchasePrice,
+                sellPrice: values?.SellingPrice,
+                taxRate: values?.TaxRate,
+                // hsncodefk: HSNCode?.id,
+                // isStock: values?.IsStockData,
+                vendorfk: selectedShop.vendor.id,
+                hsncode: parseInt(values.HSNCode),
+              };
+              console.log("Data is 15863", ProductData);
+
+              if (isUpdated === true) {
+                console.log(" issss update ", isUpdated)
+
+                console.log("Edit field is ", ProductData);
+                try {
+                  // Pass ProductData to the update API request
+                  const response = await updateApi(
+                    `products/${EditData?.id}`,
+                    ProductData
+                  );
+                  console.log("Updated data is ", response)
+                  if (response) {
+                    showSnackbar("Product Updated Successfully", "success");
+                    setRefresh((prev) => !prev);
+                    navigation.goBack();
+                  } else {
+                    showSnackbar("Failed to update the product", "error");
+                  }
+                } catch (error) {
+                  console.log("Unable to edit data ", error);
+                  showSnackbar("Error updating product", "error");
                 }
-              });
-
-              console.log("Full response from createApi:", response);
-
-              if (response) {
-                showSnackbar("Product Added Successfully", "success");
-                resetForm();
-                navigation.goBack();
               } else {
-                showSnackbar("Failed to add product", "error");
+                console.log(" issss update ", isUpdated)
+                try {
+                  // Create a new product
+                  const response = await createApi(`products/`, ProductData, {
+                    headers: {
+                      Authorization: `Bearer ${userData?.token}`
+                    }
+                  });
+
+                  console.log("Full response from createApi:", response);
+
+                  if (response) {
+                    showSnackbar("Product Added Successfully", "success");
+                    resetForm();
+                    navigation.goBack();
+                  } else {
+                    showSnackbar("Failed to add product", "error");
+                  }
+                } catch (error) {
+                  showSnackbar("Error creating product", "error");
+                  console.log("Unable to Upload data ", error);
+                }
+
               }
-            } catch (error) {
-              showSnackbar("Error creating product", "error");
-              console.log("Unable to Upload data ", error);
-            }
+            }}
+          >
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              values,
+              errors,
+              touched,
+              setFieldValue,
+            }) => (
 
-          }
-        }}
-      >
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          values,
-          errors,
-          touched,
-          setFieldValue,
-        }) => (
-          <View style={styles.container}>
-              <TextInput
-              label="Product Name*"
-              mode="flat"
-              style={styles.input}
-              onChangeText={handleChange("ProductName")}
-              onBlur={handleBlur("ProductName")}
-              value={values.ProductName}
-              error={touched.ProductName && !!errors.ProductName}
-            />
-            {touched.ProductName && errors.ProductName && (
-              <Text style={styles.errorText}>{errors.ProductName}</Text>
-            )}
+              <>
 
-            {/* Purchase Price */}
-            <TextInput
-              label="Purchase Price*"
-              keyboardType="numeric"
-              mode="flat"
-              style={styles.input}
-              onChangeText={handleChange("PurchasePrice")}
-              onBlur={handleBlur("PurchasePrice")}
-              value={values.PurchasePrice}
-              error={touched.PurchasePrice && !!errors.PurchasePrice}
-            />
-            {touched.PurchasePrice && errors.PurchasePrice && (
-              <Text style={styles.errorText}>{errors.PurchasePrice}</Text>
-            )}
+                {/* <TaxRateWatcher showSnackbar={showSnackbar} /> */}
 
-            {/* Selling Price */}
-            <TextInput
-              label="Selling Price*"
-              keyboardType="numeric"
-              mode="flat"
-              style={styles.input}
-              onChangeText={handleChange("SellingPrice")}
-              onBlur={handleBlur("SellingPrice")}
-              value={values.SellingPrice}
-              error={touched.SellingPrice && !!errors.SellingPrice}
-            />
-            {touched.SellingPrice && errors.SellingPrice && (
-              <Text style={styles.errorText}>{errors.SellingPrice}</Text>
-            )}
+                <View style={styles.container}>
+                  <TextInput
+                    label="Product Name*"
+                    mode="flat"
+                    style={styles.input}
+                    onChangeText={handleChange("ProductName")}
+                    onBlur={handleBlur("ProductName")}
+                    value={values.ProductName}
+                    error={touched.ProductName && !!errors.ProductName}
+                  />
+                  {touched.ProductName && errors.ProductName && (
+                    <Text style={styles.errorText}>{errors.ProductName}</Text>
+                  )}
 
-            {/* HSN Code */}
-            <TextInput
-              label="HSN Code"
-              mode="flat"
-              style={styles.input}
-              // onChangeText={handleChange("HSNCode")}
-              onChangeText={async (HSNCode) => {
-                setFieldValue("HSNCode", HSNCode);
-                await HandleHsnCode(HSNCode, setFieldValue);
-              }}
-              // onBlur={() => HandleHsnCode(values?.HSNCode, setFieldValue)}
-              value={values.HSNCode}
-              error={touched.HSNCode && !!errors.HSNCode}
-            />
-            {touched.HSNCode && errors.HSNCode && (
-              <Text style={styles.errorText}>{errors.HSNCode}</Text>
-            )}
+                  {/* Purchase Price */}
+                  <TextInput
+                    label="Purchase Price*"
+                    keyboardType="numeric"
+                    mode="flat"
+                    style={styles.input}
+                    onChangeText={handleChange("PurchasePrice")}
+                    onBlur={handleBlur("PurchasePrice")}
+                    value={values.PurchasePrice}
+                    error={touched.PurchasePrice && !!errors.PurchasePrice}
+                  />
+                  {touched.PurchasePrice && errors.PurchasePrice && (
+                    <Text style={styles.errorText}>{errors.PurchasePrice}</Text>
+                  )}
 
-            {/* Tax Value */}
-            <TextInput
-              label="Tax Rate(%)"
-              keyboardType="numeric"
-              mode="flat"
-              style={styles.input}
-              onChangeText={handleChange("TaxRate")}
-              value={values.TaxRate || ""}
-              error={touched.taxValue && !!errors.taxValue}
-            />
+                  {/* Selling Price */}
+                  <TextInput
+                    label="Selling Price*"
+                    keyboardType="numeric"
+                    mode="flat"
+                    style={styles.input}
+                    onChangeText={handleChange("SellingPrice")}
+                    onBlur={handleBlur("SellingPrice")}
+                    value={values.SellingPrice}
+                    error={touched.SellingPrice && !!errors.SellingPrice}
+                  />
+                  {touched.SellingPrice && errors.SellingPrice && (
+                    <Text style={styles.errorText}>{errors.SellingPrice}</Text>
+                  )}
 
-            {/* Stock Status (Radio Button) */}
-            {/*<View style={styles.radioGroup}>
-              <Text>Is in Stock?</Text>
-              <RadioButton.Group
-                onValueChange={(value) => handleChange("IsStockData")(value)}
-                value={values.IsStockData}
-              >
-                <View style={styles.radioButton}>
-                  <RadioButton value={"true"} />
-                  <Text>Yes</Text>
+                  {/* HSN Code */}
+                  <TextInput
+                    label="HSN Code"
+                    mode="flat"
+                    style={styles.input}
+                    // onChangeText={handleChange("HSNCode")}
+                    onChangeText={async (HSNCode) => {
+                      setFieldValue("HSNCode", HSNCode);
+                      await HandleHsnCode(HSNCode, setFieldValue);
+                    }}
+                    // onBlur={() => HandleHsnCode(values?.HSNCode, setFieldValue)}
+                    value={values.HSNCode}
+                    error={touched.HSNCode && !!errors.HSNCode}
+                  />
+                  {touched.HSNCode && errors.HSNCode && (
+                    <Text style={styles.errorText}>{errors.HSNCode}</Text>
+                  )}
+
+                  {/* Tax Value */}
+                  <TextInput
+                    label="Tax Rate(%)"
+                    keyboardType="numeric"
+                    mode="flat"
+                    style={styles.input}
+                    onChangeText={handleChange("TaxRate")}
+                    value={values.TaxRate || ""}
+                    error={touched.TaxRate && !!errors.TaxRate}
+                  />
+                  {touched.TaxRate && errors.TaxRate && (
+                    <Text style={styles.errorText}>{errors.TaxRate}</Text>
+                  )}
+
+
+                  {/* Submit Button */}
+                  <TouchableOpacity
+                    style={styles.submitButton}
+                    onPress={handleSubmit}
+                  >
+                    <Text style={styles.submitButtonText}>Submit</Text>
+                  </TouchableOpacity>
+
+                  {/* <Button type="submit" > Submit </Button> */}
                 </View>
-                <View style={styles.radioButton}>
-                  <RadioButton value={"false"} />
-                  <Text>No</Text>
-                </View>
-              </RadioButton.Group>
-              {touched.IsStockData &&
-                errors.IsStockData && ( // Ensure to use IsStockData here
-                  <Text style={styles.errorText}>{errors.IsStockData}</Text>
-                )}
-            </View> */}
-
-
-            {/* Submit Button */}
-            <TouchableOpacity
-              style={styles.submitButton}
-              onPress={handleSubmit}
-
-            >
-              <Text style={styles.submitButtonText}>Submit</Text>
-            </TouchableOpacity>
-
-            
-
-            {/* <Button type="submit" > Submit </Button> */}
-          </View>
-        )}
-      </Formik>
+              </>
+            )}
+          </Formik>
         </ScrollView>
-     {!isKeyboardVisible && (
-      <Image
-        source={require('../../assets/addp.png')}
-        style={styles.fixedImage}
-        resizeMode="contain"
-      />
-    )}
-   </View>
-    
-</KeyboardAvoidingView>
-    
+        {!isKeyboardVisible && (
+          <Image
+            source={require('../../assets/addp.png')}
+            style={styles.fixedImage}
+            resizeMode="contain"
+          />
+        )}
+      </View>
+
+    </KeyboardAvoidingView>
+
   );
 };
 
 const styles = StyleSheet.create({
   scrollContainer: {
-  flexGrow: 1,
-  justifyContent: 'center',
-  paddingBottom: 200, // Enough space above the fixed image
-},
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingBottom: 200, // Enough space above the fixed image
+  },
   fixedImage: {
-  width: 130,
-  height: 130,
-  position: 'absolute',
-  bottom: 20,
-  right: 5,
-  zIndex: 1,
-},
+    width: 130,
+    height: 130,
+    position: 'absolute',
+    bottom: 20,
+    right: 5,
+    zIndex: 1,
+  },
   container: {
     backgroundColor: "#fff",
     margin: 20,
     padding: 20,
-    paddingVertical:30,
+    paddingVertical: 30,
     borderRadius: 15,
-    paddingTop:30,
-    justifyContent:'flex-start',
+    paddingTop: 30,
+    justifyContent: 'flex-start',
     flex: 1,
     // elevation: 5,
   },

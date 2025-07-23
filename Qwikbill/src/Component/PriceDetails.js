@@ -4,16 +4,16 @@ import { StyleSheet, Text, TextInput, View, } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useDispatch, useSelector } from "react-redux";
 import { applyDiscount, applyPartiallyAmount } from "../Redux/slices/CartSlice";
-import { fontSize } from "../Util/UtilApi";
+import { fontFamily, fontSize } from "../Util/UtilApi";
 import CustomDropdown from "./CustomeDropdown";
 
 
-const PriceDetails = ({ setPaymentStatus ,selectedButton,discountValue,setDiscountValue }) => {
+const PriceDetails = ({ setPaymentStatus, selectedButton, discountValue, setDiscountValue }) => {
   const dispatch = useDispatch();
   const totalPrice = useSelector((state) => state.cart.totalPrice);
   const afterdiscount = useSelector((state) => state.cart.afterdiscount);
   const error = useSelector((state) => state.cart.error);
-  
+
 
   const [PartiallyAmount, setPartiallyAmount] = useState("");
   const carts = useSelector((state) => state.cart.Carts);
@@ -64,7 +64,7 @@ const PriceDetails = ({ setPaymentStatus ,selectedButton,discountValue,setDiscou
       <View style={styles.priceView}>
         <Text style={styles.label}>{t("Price")} ({carts.length})</Text>
         <Text style={styles.value}>
-          {`₹ ${totalPrice?.toFixed(2) || "total" }`}
+          {`₹ ${totalPrice?.toFixed(2) || "total"}`}
         </Text>
       </View>
 
@@ -118,29 +118,40 @@ const PriceDetails = ({ setPaymentStatus ,selectedButton,discountValue,setDiscou
 
         </View>
       )}
-      {/* Partially Paid  */}
-      {selectedStatus == "Partially Paid" && (
-        <View style={styles.priceView}>
-          <Text style={styles.label}>{t("Partially Paid")}</Text>
-          <View style={styles.discountInputWrapper}>
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              placeholder="Enter Amount"
-              value={PartiallyAmount}
-              onChangeText={handlePartiallyAmount} // Update discount state
-            />
+      {selectedStatus === "Partially Paid" && (
+        <>
+          <View style={styles.priceView}>
+            <Text style={[styles.label ,{marginTop: 5}]}>{t("Partially Paid")}</Text>
+            <View style={styles.discountInputWrapper}>
+              <TextInput
+                style={styles.input}
+                keyboardType="numeric"
+                placeholder="Enter Amount"
+                value={PartiallyAmount}
+                onChangeText={handlePartiallyAmount}
+              />
+            </View>
           </View>
-        </View>
+
+          {/* Remaining Amount after partial payment */}
+          {PartiallyAmount !== "" && !isNaN(PartiallyAmount) && (
+            <View style={styles.priceView}>
+              <Text style={styles.label}>{t("Remaining Amount")}</Text>
+              <Text style={[styles.value, { fontSize: fontSize.labelLarge ,fontFamily:fontFamily.medium }]}>
+                ₹ {(afterdiscount).toFixed(2)}
+              </Text>
+            </View>
+          )}
+        </>
       )}
 
       {/* Total Amount  */}
       <View style={styles.priceView}>
-          <Text style={styles.Totallabel}>{t("Total Amount")}</Text>
-          { }
-          <Text
-            style={[styles.value, { fontSize: fontSize.labelLarge }]}
-          >{`₹ ${afterdiscount.toFixed(2)}`}</Text>
+        <Text style={styles.Totallabel}>{t("Total Amount")}</Text>
+        { }
+        <Text
+          style={[styles.value, { fontSize: fontSize.labelLarge }]}
+        >{`₹ ${totalPrice.toFixed(2)}`}</Text>
       </View>
 
     </View>
@@ -191,46 +202,28 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.labelLarge,
-    marginVertical:3
+    marginVertical: 3
   },
   discountInputWrapper: {
     flex: 1,
     // justifyContent: "flex-end",
     alignItems: "flex-end",
-    marginTop:-10,
-    marginBottom:-10,
+    marginTop: -4,
+    marginBottom: -10,
   },
   pickerWrapper: {
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "flex-end",
     marginVertical: -7,
-    paddingHorizontal: 8
+    paddingHorizontal: 8,
   },
   picker: {
-    height: 55, 
-    width: "40%", 
+    height: 55,
+    width: "60%",
     alignItems: "flex-start",
-    marginRight: -15
+    marginRight: -25,
   },
-  //    pickerWrapper: {
-  //   borderWidth: 1,
-  //   borderColor: "#ccc",
-  //   borderRadius: 5,
-  //   justifyContent: "center",
-  //   alignItems: "flex-end", // Align picker content to right
-  //   paddingHorizontal: 8,   // Reduce padding for smaller gap
-  //   height: 40,
-  // },
-  // picker: {
-  //   width: "100%",
-  //   color: "#000",
-  //   textAlign: "right", // iOS only
-  // },
-  /* paymentStatusContainer: {
-     borderBottomWidth: 1, // Border for the payment status row
-     borderBottomColor: "#ddd",
-   },*/
 
   input: {
     fontFamily: "Poppins-Medium",

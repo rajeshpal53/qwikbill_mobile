@@ -442,12 +442,12 @@ const [finalTotal, setFinalTotal] = useState(0);
               {/* Item Data Table */}
               {carts.length > 0 && (
                 <View style={{ marginTop: 10 }}>
-                  <TouchableOpacity
+                  {/* <TouchableOpacity
                     style={{ marginRight: 10, marginTop: -40, marginBottom: 10, }}
                     onPress={() => dispatch(clearCart())}
                   >
                     <Text style={{ color: "#007BFF" }}>Clear Cart</Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
 
                    <ItemDataTable carts={carts} discountValue={discountValue} setDiscountRate={setDiscountRate} discountRate={discountRate} finalTotal={finalTotal} setFinalTotal={setFinalTotal} />
                   <PriceDetails setPaymentStatus={setPaymentStatus} selectedButton={selectedButton} discountValue={discountValue}setDiscountValue={setDiscountValue}/>

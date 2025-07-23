@@ -817,7 +817,7 @@ const CreateShopScreen = ({ navigation }) => {
           <>
             <View
               style={{
-                paddingHorizontal: 18,
+                paddingHorizontal: 15,
                 //  backgroundColor: "orange",
                 //  padding:5,
                 flex: 1,
@@ -828,8 +828,9 @@ const CreateShopScreen = ({ navigation }) => {
               <ProgressSteps
                 activeStep={currentStep}
                 topOffset={18}
-                marginBottom={5}
                 labelFontSize={50}
+                marginBottom={-40}
+                
               >
                 <ProgressStep
                   // label="Profile Details"
