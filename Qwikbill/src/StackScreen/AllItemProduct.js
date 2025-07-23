@@ -220,11 +220,18 @@ import { ShopContext } from "../Store/ShopContext";
 import { useSnackbar } from "../Store/SnackbarContext";
 import UserDataContext from "../Store/UserDataContext";
 import { readApi } from "../Util/UtilApi";
+import { debounce } from "lodash";
+
+
 
 const AllItemProduct= ()=>{
   const [searchQuery, setSearchQuery] = useState("");
   const [searchmodal, setsearchmodal] = useState(false);
   const [transcript, setTranscript] = useState("");
+    const [searchedData, setSearchedData] = useState([]);
+      const [searchCalled, setSearchCalled] = useState(false);
+    
+  
   const [showOverlay, setshowOverlay] = useState(false);
   const dispatch = useDispatch();
   const navigation=useNavigation();
@@ -239,8 +246,8 @@ const AllItemProduct= ()=>{
   const PAGE_LIMIT = 10;
   const [hasmore, setHasmore] = useState(true);
   const [totalpage, settotalpage] = useState(1);
+    const [localQuery, setLocalQuery] = useState(searchQuery);
  
-
 
   console.log("PAGE IS SSSS", page);
   console.log("TOTAL PAGE IS ", totalpage);
@@ -322,6 +329,33 @@ const AllItemProduct= ()=>{
   //     </View>
   //   );
   // }
+ useEffect(() => {
+    const debounced = debounce(() => {
+      setSearchQuery(localQuery); // this will update parent's state AFTER 500ms
+    }, 500);
+
+    debounced();
+
+    return () => {
+      debounced.cancel();
+    };
+  }, [localQuery]);
+
+
+
+   const searchdata = () => {
+    if (searchQuery?.length > 0) {
+      const found = products.filter(
+        (item) => item?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSearchedData(found);
+      setSearchCalled(true);
+    } else {
+      setSearchedData([]);
+      setSearchCalled(false);
+    }
+  };
+ 
 
   const Loader = () => {
     if (!loader) return null;
@@ -335,7 +369,7 @@ const AllItemProduct= ()=>{
   return (
     <View>
       <FlatList
-        data={products}
+        data={searchCalled ? searchedData : products}
         ListHeaderComponent={() => (
           <View style={{ marginTop: 5 }}>
             <Searchbarwithmic
@@ -343,7 +377,8 @@ const AllItemProduct= ()=>{
               setSearchQuery={setSearchQuery}
               setsearchmodal={setsearchmodal}
               setTranscript={setTranscript}
-              placeholderText=" Search product by name ... "
+              placeholderText=" Search Product by name ... "
+              searchData={searchdata}
             />
             {carts.length > 0 && (
               <TouchableOpacity

@@ -1,15 +1,30 @@
 import { useTranslation } from "react-i18next";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useRef } from "react";
 import { Text } from "react-native-paper";
+import { clearCart } from "../Redux/reducers/cartReducers";
+import { useDispatch, useSelector } from "react-redux";
+
+
 
 const ViewCartOverlay = ({navigation, carts}) => {
   const {t} = useTranslation();
+    const pendingActionRef = useRef(null);
+  
   // const [selectedTypes, setSelectedTypes] = useState(0);
 
   // useEffect(() => {
   //     console.log("cart data is , ", cartData)
   //     setSelectedTypes(cartData?.totalUniqueItems || 0);
   // }, [cartData])
+  function handleConfirm() {
+      setShowModal(false);                           // close the modal
+      if (pendingActionRef.current) {
+        navigation.dispatch(pendingActionRef.current); // finally go back
+      }
+      dispatch(clearCart());
+    }
+  
 
   return (
     <View style={styles.container}>
@@ -61,7 +76,9 @@ const ViewCartOverlay = ({navigation, carts}) => {
             </Text>
           </TouchableOpacity>
         </View>
+        
       </View>
+      
     </View>
   );
 };
