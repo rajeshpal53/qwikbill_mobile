@@ -6,14 +6,14 @@ import {
   useState,
 } from "react";
 import {
+  Alert,
   FlatList,
   RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  Alert
+  View
 } from "react-native";
 import {
   ActivityIndicator,
@@ -35,8 +35,8 @@ import { deleteApi, fontSize, readApi } from "../../Util/UtilApi";
 import { useFocusEffect } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import NoDataFound from "../../Components/NoDataFound";
-import DeleteModal from "../../UI/DeleteModal";
 import { useSnackbar } from "../../Store/SnackbarContext";
+import DeleteModal from "../../UI/DeleteModal";
 
 
 const ProductDetailsScreen = ({ navigation }) => {
@@ -84,9 +84,9 @@ const ProductDetailsScreen = ({ navigation }) => {
   );
 
   useEffect(() => {
-  setPage(1);
-  getproductdata(1); // or whatever your fetch function is
-}, [filterOptionSelect]);
+    setPage(1);
+    getproductdata(1); // or whatever your fetch function is
+  }, [filterOptionSelect]);
 
 
   useEffect(() => {
@@ -311,7 +311,7 @@ const ProductDetailsScreen = ({ navigation }) => {
           marginTop: 5,
         }}
       >
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, marginTop:3 }}>
           <Searchbarwithmic
             // refuser={searchbarRef}
             searchQuery={searchQuery}
@@ -327,28 +327,35 @@ const ProductDetailsScreen = ({ navigation }) => {
       <FlatList
         ListHeaderComponent={() => (
           <>
-            <View style={styles.allbuttonView}>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {[
-                  "Sort By Name",
-                  "Low to High Price",
-                  "High to Low Price",
-                  "Clear All",
-                ].map((suggestbtn, key) => (
-                  <TouchableOpacity
-                    key={key}
-                    style={[
-                      styles.suggestionButton,
-                      filterOptionSelect === suggestbtn &&
-                      styles.selectedSuggestionButton,
-                    ]}
-                    onPress={() => handleFilterChange(suggestbtn)}
-                  >
-                    <Text style={styles.suggestbtnText}>{t(suggestbtn)}</Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
+            {
+              Productdata.length > 0 ? (
+                <View style={styles.allbuttonView}>
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    {[
+                      "Sort By Name",
+                      "Low to High Price",
+                      "High to Low Price",
+                      "Clear All",
+                    ].map((suggestbtn, key) => (
+                      <TouchableOpacity
+                        key={key}
+                        style={[
+                          styles.suggestionButton,
+                          filterOptionSelect === suggestbtn &&
+                          styles.selectedSuggestionButton,
+                        ]}
+                        onPress={() => handleFilterChange(suggestbtn)}
+                      >
+                        <Text style={styles.suggestbtnText}>{t(suggestbtn)}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
+              ) : (
+                null
+              )
+            }
+
           </>
         )}
         data={

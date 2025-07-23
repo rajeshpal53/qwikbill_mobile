@@ -4,16 +4,16 @@ import { Formik } from "formik";
 import { useContext, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { TextInput } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
+import ConfirmModal from "../../Components/Modal/ConfirmModal";
 import { clearCart } from "../../Redux/slices/CartSlice";
 import { ShopContext } from "../../Store/ShopContext";
 import { useSnackbar } from "../../Store/SnackbarContext";
@@ -21,7 +21,6 @@ import UserDataContext from "../../Store/UserDataContext";
 import { ButtonColor, createApi, fontSize, readApi } from "../../Util/UtilApi";
 import ItemDataTable from "../Cards/ItemDataTable";
 import PriceDetails from "../PriceDetails";
-import ConfirmModal from "../../Components/Modal/ConfirmModal";
 
 const CreateInvoiceForm = ({ selectedButton }) => {
   const dispatch = useDispatch();
@@ -85,7 +84,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
               setFieldValue("address", response?.address);
               setFieldValue("phone", phoneNumber);
 
-              
+
             } else {
               setFieldValue("name", response?.name);
               setFieldValue("address", response?.address);
@@ -117,6 +116,8 @@ const CreateInvoiceForm = ({ selectedButton }) => {
     if (pendingActionRef.current) {
       navigation.dispatch(pendingActionRef.current); // finally go back
     }
+            dispatch(clearCart());
+
   }
 
   function handleCancel() {
@@ -143,7 +144,10 @@ const CreateInvoiceForm = ({ selectedButton }) => {
         pendingActionRef.current = e.data.action;    // <— stash the action
 
         setShowModal(true);
+
       }
+
+
     });
 
     return handleBackPress;

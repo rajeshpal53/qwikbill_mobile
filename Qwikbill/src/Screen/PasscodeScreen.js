@@ -1,39 +1,33 @@
+import { Feather, Ionicons } from "@expo/vector-icons";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import * as LocalAuthentication from "expo-local-authentication";
+import { Formik } from "formik";
+import { useContext, useEffect, useState } from "react";
 import {
-  View,
-  StyleSheet,
   Alert,
   Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  ScrollViewComponent,
-  ScrollViewBase,
-  SafeAreaView,
-  StatusBar,
   Keyboard,
+  KeyboardAvoidingView,
+  Linking,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  useWindowDimensions,
+  View
 } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import {
-  Provider as PaperProvider,
-  Text,
-  TextInput,
   Button,
   Card,
+  Text,
+  TextInput
 } from "react-native-paper";
 import Tooltip from "react-native-walkthrough-tooltip";
-import { Formik } from "formik";
-import * as Yup from "yup";
-import TextBox from "react-native-password-eye";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import { Feather, Ionicons } from "@expo/vector-icons";
-import { useContext, useState, useEffect } from "react";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { AuthContext } from "../Store/AuthContext";
-import * as LocalAuthentication from "expo-local-authentication";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Linking } from "react-native";
-import { usePasskey } from "../Store/PasskeyContext";
 import { LoginTimeContext } from "../Store/LoginTimeContext";
-import { useWindowDimensions } from "react-native";
+import { usePasskey } from "../Store/PasskeyContext";
+import { useSnackbar } from "../Store/SnackbarContext";
 export default function PasscodeScreen({ navigation }) {
   // const navigation = useNavigation();
   const { lastLoginTime, storeCurrentTime,
@@ -55,11 +49,11 @@ export default function PasscodeScreen({ navigation }) {
   const [isBiometricSupported, setIsBiometricSupported] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const { showSnackbar } = useSnackbar();
 
 
 
-
-  console.log("passkey in passCode screen",passkey)
+  console.log("passkey in passCode screen", passkey)
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -85,13 +79,13 @@ export default function PasscodeScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
-    console.log("login details are ",loginDetail)
+    console.log("login details are ", loginDetail)
     async function loginDetailHandler() {
       try {
         const newValue = (await getData("loginDetail")) || "";
 
         setLoginDetail1(newValue);
-        console.log("login detail 1 isss",loginDetail1)
+        console.log("login detail 1 isss", loginDetail1)
 
       } catch {
         console.log("failed get data ");
@@ -125,7 +119,7 @@ export default function PasscodeScreen({ navigation }) {
     // const {previousLoginTime} = await storeTime();
     // storeTime();
 
-    if (enteredPasscode.length !== 4){
+    if (enteredPasscode.length !== 4) {
       return Alert.alert("Invalid Passcode", "Passcode must be 4 digits.");
 
     }
@@ -147,7 +141,11 @@ export default function PasscodeScreen({ navigation }) {
         });
       }
     } else {
-      return Alert.alert("failed to login use phone lock or retry");
+       showSnackbar(
+        "failed to login use phone lock or retry",
+        "error"
+      );
+     // return Alert.alert("failed to login use phone lock or retry");
     }
   };
 
@@ -255,7 +253,7 @@ export default function PasscodeScreen({ navigation }) {
                     Billing Software
                   </Text>
                 </View> */}
-                
+
               </View>
 
               <Card style={styles.card}>
@@ -269,12 +267,17 @@ export default function PasscodeScreen({ navigation }) {
                     </View>
                   )}
 
-                  <View style={{ alignItems: "center", gap: 6 , }}>
+                  <View style={{ alignItems: "center", gap: 6 }}>
                     <Text variant="titleMedium">Welcome</Text>
-                    <Text
-                      variant="titleMedium"
-                      style={{ color: "#392de0" }}
-                    >{`${loginDetail1?.user?.name}${loginDetail1?.user?.surname || ""}`}</Text>
+
+                    {loginDetail1?.user?.name || loginDetail1?.user?.surname ? (
+                      <Text
+                        variant="titleMedium"
+                        style={{ color: "#392de0" }}
+                      >
+                        {`${loginDetail1?.user?.name ?? ""} ${loginDetail1?.user?.surname ?? ""}`}
+                      </Text>
+                    ) : null}
                   </View>
 
                   <View style={{ gap: 5 }}>
@@ -408,12 +411,12 @@ export default function PasscodeScreen({ navigation }) {
                             <View />
                           </View>
 
-                          <View style={{ width: "100%",marginTop:5 }}>
+                          <View style={{ width: "100%", marginTop: 5 }}>
                             <Button
                               textColor="white"
-                             // buttonColor="grey"
-                            // buttonColor={enteredPasscode.length === 4 ? "grey" : "#26a0df"}
-                             style={[{ backgroundColor:enteredPasscode.length === 4 ? "#26a0df" : "rgba(0,0,0,0.3)",}]}
+                              // buttonColor="grey"
+                              // buttonColor={enteredPasscode.length === 4 ? "grey" : "#26a0df"}
+                              style={[{ backgroundColor: enteredPasscode.length === 4 ? "#26a0df" : "rgba(0,0,0,0.3)", }]}
                               onPress={handleOnLoginPress}
                               disabled={enteredPasscode.length !== 4}
                             >
@@ -427,7 +430,7 @@ export default function PasscodeScreen({ navigation }) {
                   <TouchableOpacity
                     onPress={() => navigation.navigate("forgetPasscode")}
                   >
-                    <Text variant="titleSmall" style={{ color: "#6dbbc7" ,marginTop:8}}>
+                    <Text variant="titleSmall" style={{ color: "#6dbbc7", marginTop: 8 }}>
                       Forgot app passcode?
                     </Text>
                   </TouchableOpacity>
@@ -475,9 +478,9 @@ const styles = StyleSheet.create({
   img: {
     height: 175,
     width: 200,
-   // elevation: 2,
+    // elevation: 2,
     alignSelf: "center",
-   
+
   },
   tooltip: {
     backgroundColor: "white",

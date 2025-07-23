@@ -95,7 +95,7 @@
 //     if (!isLoading && hasMore) {
 //       const nextPage = page + 1;
 //       setPage(nextPage);
-  
+
 //       if (searchQuery?.length > 0 && searchCalled) {
 //         fetchSearchedData(searchQuery, nextPage);
 //       } else {
@@ -110,8 +110,8 @@
 //     setHasMore(true);
 //     fetchSearchedData(query, 1);
 //   };
-  
-  
+
+
 
 //   useEffect(() => {
 //     if (page > 1) fetchInvoices(page);
@@ -264,18 +264,18 @@
 
 
 
-import React, { useEffect, useContext, useState, useRef } from "react";
-import { View, Text, FlatList, RefreshControl } from "react-native";
-import { readApi } from "../../Util/UtilApi";
-import { ShopContext } from "../../Store/ShopContext";
+import { useContext, useEffect, useRef, useState } from "react";
+import { FlatList, RefreshControl, View } from "react-native";
 import { ActivityIndicator, FAB } from "react-native-paper";
-import ViewInvoiceCard from "../../Components/ViewInvoiceCard";
 import Searchbarwithmic from "../../Component/Searchbarwithmic";
-import OpenmiqModal from "../../Components/Modal/Openmicmodal";
 import FilterButtons from "../../Components/FilterButtons";
 import FilterModal from "../../Components/Modal/FilterModal";
-import UserDataContext from "../../Store/UserDataContext";
+import OpenmiqModal from "../../Components/Modal/Openmicmodal";
 import NoDataFound from "../../Components/NoDataFound";
+import ViewInvoiceCard from "../../Components/ViewInvoiceCard";
+import { ShopContext } from "../../Store/ShopContext";
+import UserDataContext from "../../Store/UserDataContext";
+import { readApi } from "../../Util/UtilApi";
 
 function ViewInvoiceScreen1({ navigation }) {
   const [invoices, setInvoices] = useState([]);
@@ -289,7 +289,7 @@ function ViewInvoiceScreen1({ navigation }) {
   const [searchModal, setSearchmodal] = useState(false);
   const [selected, setSelected] = useState("All");
   const [sortBy, setSortBy] = useState("");
-  const[dateRange,setDateRange]=useState({});
+  const [dateRange, setDateRange] = useState({});
   const [date, setDate] = useState({
     startDate: new Date(),
     endDate: new Date(),
@@ -302,7 +302,7 @@ function ViewInvoiceScreen1({ navigation }) {
   const [transcript, setTranscript] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const [mainLoading, setMainLoading] = useState(true);
-  const vendorId   = selectedShop?.vendor?.id;          // <- **centralised**
+  const vendorId = selectedShop?.vendor?.id;          // <- **centralised**
   const authHeader = { Authorization: `Bearer ${userData?.token}` };
 
 
@@ -319,7 +319,7 @@ function ViewInvoiceScreen1({ navigation }) {
       fetchInvoices(page);
     }
   }, [page]);
-      console.log(" slected shop in invoiceScreen1", selectedShop);
+  console.log(" slected shop in invoiceScreen1", selectedShop);
 
 
 
@@ -336,7 +336,7 @@ function ViewInvoiceScreen1({ navigation }) {
 
   const buildApiUrl = (pageNum) => {
     const id = selectedShop?.vendor?.id
-    console.log(id,"inViewinVoiceScreen")
+    console.log(id, "inViewinVoiceScreen")
     let api = `invoice/getInvoices?vendorfk=${vendorId}&page=${pageNum}&size=10`;
     if (sortBy && sortBy != "datewise") api += `&dateWise=${sortBy}`;
     if (sortBy && sortBy == "datewise")
@@ -353,12 +353,12 @@ function ViewInvoiceScreen1({ navigation }) {
   const fetchInvoices = async (pageNum = 1) => {
     if (pageNum === 1) {
       setHasMore(true);
-       setMainLoading(true);
+      setMainLoading(true);
     }
     setIsLoading(true);
     try {
       const api = buildApiUrl(pageNum);
-      const response = await readApi(api,authHeader);
+      const response = await readApi(api, authHeader);
       if (pageNum === 1) {
         setInvoices(response.invoices);
         console.log(response, "fetchresponse");
@@ -371,7 +371,7 @@ function ViewInvoiceScreen1({ navigation }) {
       if (pageNum === 1) setInvoices([]);
     } finally {
       setIsLoading(false);
-       setMainLoading(false);
+      setMainLoading(false);
     }
   };
 
@@ -471,9 +471,16 @@ function ViewInvoiceScreen1({ navigation }) {
               refuser={searchBarRef}
               searchData={onSearch}
               fetchData={fetchInvoices}
-           
+
             />
-            <FilterButtons setSelected={setSelected} selected={selected} />
+            {
+              invoices.length >= 1 ? (
+                <FilterButtons setSelected={setSelected} selected={selected} />
+
+              ) : (
+                null
+              )
+            }
           </View>
         }
         refreshControl={
@@ -508,7 +515,10 @@ function ViewInvoiceScreen1({ navigation }) {
         }
       />
 
-      <FAB
+     {
+      invoices.length >= 1 && (
+
+        <FAB
         style={{
           position: "absolute",
           margin: 16,
@@ -520,6 +530,8 @@ function ViewInvoiceScreen1({ navigation }) {
         onPress={() => setModalVisible(true)}
         color="#fff"
       />
+      )
+     } 
       {searchModal && (
         <OpenmiqModal
           modalVisible={searchModal}

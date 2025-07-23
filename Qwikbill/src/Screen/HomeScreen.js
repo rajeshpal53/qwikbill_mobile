@@ -3,7 +3,6 @@ import {
   Ionicons
 } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import jwtDecode from 'jwt-decode';
 
 import { useIsFocused } from "@react-navigation/native";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -20,7 +19,7 @@ import {
   View
 } from "react-native";
 import { RefreshControl } from "react-native-gesture-handler";
-import { ActivityIndicator, Card } from "react-native-paper";
+import { ActivityIndicator } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth
@@ -39,7 +38,7 @@ import { ShopContext } from "../Store/ShopContext";
 import UserDataContext from "../Store/UserDataContext";
 import { rolePermissions, services } from "../tempList/ServicesList";
 import DropDownList from "../UI/DropDownList";
-import { API_BASE_URL, ButtonColor, fontFamily, fontSize, readApi } from "../Util/UtilApi";
+import { ButtonColor, fontFamily, fontSize } from "../Util/UtilApi";
 
 
 export default function HomeScreen({ navigation, noItemData }) {
@@ -368,7 +367,7 @@ export default function HomeScreen({ navigation, noItemData }) {
                   navigation.navigate("AddProduct", { editItem: noItemData });
                   setNoItemModal(false);
                 }}
-                message="Dear Owner Please Add Products in your Shop"
+                message="Please add products in your seleced shop"
                 heading="Add Products"
                 buttonTitle="Add Products"
               />

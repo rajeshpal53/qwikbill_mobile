@@ -1,23 +1,16 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import { Formik } from "formik";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Text,
-  Pressable,
-  Linking,
   Alert,
+  Linking,
+  StyleSheet,
+  View
 } from "react-native";
 import {
-  TextInput,
-  Button,
-  Checkbox,
-  List,
-  Divider,
   ActivityIndicator,
+  Button,
   Portal
 } from "react-native-paper";
-import { Formik } from "formik";
 import * as Yup from "yup";
 // import {
 //   RichEditor,
@@ -27,23 +20,21 @@ import * as Yup from "yup";
 import { useIsFocused, useRoute } from "@react-navigation/native";
 // import SelectionDropdown from "../../../../ComponentContainer/SelectionDropdown";
 
-import { API_BASE_URL, createApi, fontSize, NORM_URL, readApi } from "../../../../Util/UtilApi";
-import { getIn } from "formik";
+import { API_BASE_URL, NORM_URL, readApi } from "../../../../Util/UtilApi";
 
 import { useSnackbar } from "../../../../Store/SnackbarContext";
 // import { useLocation } from "../../../../Store/LocationContext";
 import * as Location from "expo-location";
-import ServiceImagePicker from "../../../../Components/ServiceImagePicker";
 import { useTranslation } from "react-i18next";
 // import ProviderProfileForm from "./ServiceProviderFormSections/ProviderProfileForm";
+import axios from "axios";
+import { ProgressStep, ProgressSteps } from "react-native-progress-steps";
+import Icon from "react-native-vector-icons/AntDesign";
+import ConfirmModal from "../../../../Components/Modal/ConfirmModal";
+import { ShopContext } from "../../../../Store/ShopContext";
+import UserDataContext from "../../../../Store/UserDataContext";
 import ProviderProfileForm from "./ProviderProfileForm";
 import ProviderServiceForm from "./ProviderServiceForm";
-import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
-import Icon from "react-native-vector-icons/AntDesign";
-import axios from "axios";
-import UserDataContext from "../../../../Store/UserDataContext";
-import { ShopContext } from "../../../../Store/ShopContext";
-import ConfirmModal from "../../../../Components/Modal/ConfirmModal";
 
 // Form validation schema using Yup
 
@@ -97,7 +88,7 @@ const ShopValidataionSchema = Yup.object().shape({
 });
 
 const ProfileValidationSchema = Yup.object().shape({
-  profileImage: Yup.mixed().required("profile image is required"),
+  //profileImage: Yup.mixed().required("profile image is required"),
   name: Yup.string().required("Name is required")
     .max(50, "Name cannot be more than 50 characters"),
   whatsappNumber: Yup.string()
@@ -830,12 +821,14 @@ const CreateShopScreen = ({ navigation }) => {
                 topOffset={18}
                 marginBottom={5}
                 labelFontSize={50}
+                
               >
                 <ProgressStep
                   // label="Profile Details"
                   scrollViewProps={styles.scrollViewProps}
                   removeBtnRow={true}
                   labelStyle={{ fontSize: 50 }}
+                  
                 >
                   <View>
                     <ProviderProfileForm

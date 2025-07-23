@@ -12,7 +12,6 @@ import { ActivityIndicator } from "react-native-paper";
 import AllQueryAndSupport from "../../src/Screen/StackScreen/QueriesScreens/AllQueryAndSupport.js";
 import PdfScreen from "../Component/PdfViewer.js";
 import CreateInvoice from "../Components/CreateInvoice.js";
-import CustomBackButton from "../Components/HeaderComponents/CustomBackButton.js";
 import HomeHeaderRight from "../Components/HeaderComponents/HomeHeaderRight.js";
 import RotateBtn from "../Components/HeaderComponents/RotateBtn.js";
 import AddProductScreen from "../Screen/AddProductScreen.js";
@@ -234,6 +233,7 @@ export default function StackNavigator() {
           component={CreateShopScreen}
           options={{
             headerTitle: "Add Shop",
+            headerTitleAlign: "center",
           }}
         />
         <Stack.Screen

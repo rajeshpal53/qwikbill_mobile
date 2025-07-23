@@ -1,12 +1,12 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
-import React, { useState } from "react";
-import { Card, Checkbox, Divider, List, TextInput } from "react-native-paper";
-import { useTranslation } from "react-i18next";
-import GenericDropdown from "../../../../UI/DropDown/GenericDropDown";
-import ServiceImagePicker from "../../../../Components/ServiceImagePicker";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Checkbox, TextInput } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import ServiceImagePicker from "../../../../Components/ServiceImagePicker";
 import { useSnackbar } from "../../../../Store/SnackbarContext";
+import GenericDropdown from "../../../../UI/DropDown/GenericDropDown";
 
 const ProviderProfileForm = ({
   title,
@@ -56,7 +56,7 @@ const ProviderProfileForm = ({
       <View>
         {/* <Card style={{ backgroundColor:"#fff", padding:10}}> */}
         {console.log("proiileImage is , ", values?.profileImage)}
-        <View style={{ marginBottom: 12, marginTop: 5 }}>
+        <View style={{ marginBottom: 15}}>
           <ServiceImagePicker
             image={values?.profileImage}
             label="Profile Image"
