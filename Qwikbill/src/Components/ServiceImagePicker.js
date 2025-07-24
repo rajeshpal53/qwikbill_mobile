@@ -478,4 +478,50 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     borderRadius: 12
   },
+    backdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    backgroundColor: "#fff",
+    width: "85%",
+    borderRadius: 12,
+    paddingVertical: 18,
+    paddingHorizontal: 16,
+    elevation: 5,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  closeButton: {
+    padding: 6,
+    backgroundColor:"#f0f0f0",
+    borderRadius: 20,
+  },
+  optionList: {
+    marginTop: 7,
+  },
+  optionButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+  },
+  optionText: {
+    fontSize: 16,
+    color: "#333",
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#ddd",
+    marginVertical: 6,
+  },
 });

@@ -39,9 +39,9 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const error = useSelector((state) => state.cart.error);
   const pendingActionRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
-    const [discountValue, setDiscountValue] = useState("");
+  const [discountValue, setDiscountValue] = useState("");
   const [discountRate, setDiscountRate] = useState(0);
-const [finalTotal, setFinalTotal] = useState(0);
+  const [finalTotal, setFinalTotal] = useState(0);
 
   console.log("DATA OF ERROR ", error);
 
@@ -53,10 +53,10 @@ const [finalTotal, setFinalTotal] = useState(0);
     name: Yup.string().required("Name is required"),
     address: Yup.string().required("Address is required"),
     gstNumber: Yup.string()
-  .matches(
-    /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1}$/,
-    "Invalid GSTIN format. Example: 23AAMCA6167B1ZW"
-  ),
+      .matches(
+        /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1}$/,
+        "Invalid GSTIN format. Example: 23AAMCA6167B1ZW"
+      ),
     phone: Yup.string()
       .required("Phone is required")
       .matches(/^\d{10}$/, "Phone must be 10 digits"),
@@ -84,7 +84,7 @@ const [finalTotal, setFinalTotal] = useState(0);
               setFieldValue("address", response?.address);
               setFieldValue("phone", phoneNumber);
 
-              
+
             } else {
               setFieldValue("name", response?.name);
               setFieldValue("address", response?.address);
@@ -130,26 +130,29 @@ const [finalTotal, setFinalTotal] = useState(0);
 
 
   useEffect(() => {
-  const beforeRemoveListener = navigation.addListener("beforeRemove", (e) => {
-    const hasFilledForm =
-      carts.length > 0 ||
-      User?.name ||
-      User?.address ||
-      User?.gstNumber ||
-      User?.phone ;
+    const beforeRemoveListener = navigation.addListener("beforeRemove", (e) => {
+      const hasFilledForm =
+        carts.length > 0 ||
+        User?.name ||
+        User?.address ||
+        User?.gstNumber ||
+        User?.phone;
       // formik.values.name ||
       // formik.values.address ||
       // formik.values.phone;
 
-    if (hasFilledForm && !submit.current) {
-      e.preventDefault();
-      pendingActionRef.current = e.data.action;
-      setShowModal(true);
-    }
-  });
+      if (hasFilledForm && !submit.current) {
+        e.preventDefault();
+        pendingActionRef.current = e.data.action;
+        setShowModal(true);
+      }
+      dispatch(clearCart());
 
-  return () => beforeRemoveListener();
-}, [navigation]);
+
+    });
+
+    return () => beforeRemoveListener();
+  }, [navigation]);
 
   const getStatusFk = () => {
     if (PaymentStatus == "Unpaid") {
@@ -165,12 +168,12 @@ const [finalTotal, setFinalTotal] = useState(0);
 
   // ---- utils/transformCart.js (or inside the component) ----
   const mapCartToInvoiceProducts = (carts) =>
-    carts.map(({ id, quantity, sellPrice, name,taxRate}) => ({
+    carts.map(({ id, quantity, sellPrice, name, taxRate }) => ({
       id: id,                       // rename id -> productId (adjust to API)
       quantity,
       price: Number(sellPrice),            // be sure it's a real number
       productname: String(name),      // keep if the API wants it
-      taxRate:Number(taxRate)
+      taxRate: Number(taxRate)
     }));
 
 
@@ -187,7 +190,7 @@ const [finalTotal, setFinalTotal] = useState(0);
       const payload = { ...formData, type: invoiceType };
 
       console.log("payload in handleGenrate ", payload);
-      
+
 
       const response = await createApi(api, payload, {
         Authorization: `Bearer ${userData?.token}`,
@@ -215,8 +218,8 @@ const [finalTotal, setFinalTotal] = useState(0);
           gstNumber: "",
           phone: "",
         }}
-        validateOnChange={true} 
-          // validateOnChange={false}   // ✅ disables noise on typing
+        validateOnChange={true}
+        // validateOnChange={false}   // ✅ disables noise on typing
         validateOnBlur={true}      //
         validationSchema={validationSchema}
         onSubmit={async (values, { resetForm }) => {
@@ -256,9 +259,9 @@ const [finalTotal, setFinalTotal] = useState(0);
           // });
           const payload = {
             ...extraData,
-             ...DataCustomer,
+            ...DataCustomer,
             // serviceProviderData: selectedShop,
-            discountRates:discountRate,
+            discountRates: discountRate,
             // products: carts,
             products: mapCartToInvoiceProducts(carts),
 
@@ -449,8 +452,8 @@ const [finalTotal, setFinalTotal] = useState(0);
                     <Text style={{ color: "#007BFF" }}>Clear Cart</Text>
                   </TouchableOpacity> */}
 
-                   <ItemDataTable carts={carts} discountValue={discountValue} setDiscountRate={setDiscountRate} discountRate={discountRate} finalTotal={finalTotal} setFinalTotal={setFinalTotal} />
-                  <PriceDetails setPaymentStatus={setPaymentStatus} selectedButton={selectedButton} discountValue={discountValue}setDiscountValue={setDiscountValue}/>
+                  <ItemDataTable carts={carts} discountValue={discountValue} setDiscountRate={setDiscountRate} discountRate={discountRate} finalTotal={finalTotal} setFinalTotal={setFinalTotal} />
+                  <PriceDetails setPaymentStatus={setPaymentStatus} selectedButton={selectedButton} discountValue={discountValue} setDiscountValue={setDiscountValue} />
 
                 </View>
               )
