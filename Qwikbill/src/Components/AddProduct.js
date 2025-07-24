@@ -1,15 +1,15 @@
 import { useRoute } from "@react-navigation/native";
-import { Formik, useFormikContext } from "formik";
+import { Formik } from "formik";
 import { useContext, useEffect, useRef, useState } from "react";
-import { Alert, ScrollView, StyleSheet, TouchableOpacity, View, Image, KeyboardAvoidingView, Platform, Keyboard } from "react-native";
-import { Button, Text, TextInput } from "react-native-paper";
+import { Alert, Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Text, TextInput } from "react-native-paper";
 import RazorpayCheckout from 'react-native-razorpay';
+import Svg, { Path } from "react-native-svg";
 import * as Yup from "yup";
 import { ShopContext } from "../Store/ShopContext";
 import { useSnackbar } from "../Store/SnackbarContext";
 import UserDataContext from "../Store/UserDataContext";
 import { createApi, readApi, updateApi } from "../Util/UtilApi";
-import Svg, { Path } from "react-native-svg";
 
 
 
@@ -398,7 +398,7 @@ const AddProduct = ({ navigation }) => {
         </ScrollView>
         {!isKeyboardVisible && (
           <Image
-            source={require('../../assets/addp.png')}
+            source={require('../../assets/addproduct.png')}
             style={styles.fixedImage}
             resizeMode="contain"
           />
@@ -417,11 +417,11 @@ const styles = StyleSheet.create({
     paddingBottom: 200, // Enough space above the fixed image
   },
   fixedImage: {
-    width: 130,
-    height: 130,
+    width: 235,
+    height: 205,
     position: 'absolute',
     bottom: 20,
-    right: 5,
+    right: 60,
     zIndex: 1,
   },
   container: {
