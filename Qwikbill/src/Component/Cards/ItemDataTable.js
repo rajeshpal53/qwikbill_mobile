@@ -4,6 +4,7 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Dimensions,
   FlatList,
 } from "react-native";
 import { ScrollView } from "react-native";
@@ -15,7 +16,11 @@ import { applyDiscount, removeFromCart } from "../../Redux/slices/CartSlice";
 import PriceDetails from "../PriceDetails";
 import { fontSize } from "../../Util/UtilApi";
 
+
+
+
 const ItemDataTable = ({ discountValue,discountRate,setDiscountRate,finalTotal,setFinalTotal }) => {
+  const screenWidth = Dimensions.get("window").width;
   const carts = useSelector((state) => state.cart.Carts);
   const dispatch = useDispatch();
   console.log("carts is ", carts);
@@ -46,6 +51,7 @@ useEffect(() => {
 
   carts.forEach((item) => {
    const amount = +(item.sellPrice * item.quantity || 0).toFixed(2);
+   
 const discountAmt = +((amount * discountRate) / 100).toFixed(2);
 const amtAfterDiscount = +(amount - discountAmt).toFixed(2);
 const gstAmt = +((amtAfterDiscount * item.taxRate) / 100).toFixed(2);
