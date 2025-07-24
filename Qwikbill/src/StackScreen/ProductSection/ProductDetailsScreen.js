@@ -389,7 +389,7 @@ const ProductDetailsScreen = ({ navigation }) => {
         ListFooterComponent={Loader}
         contentContainerStyle={styles.flatListContainer}
         ListEmptyComponent={() => (
-          <View style={{ flex: 1, marginTop: "27%" }}>
+          <View style={{ flex: 1, marginTop: "38%" }}>
             <NoDataFound textString={"No Products Found"} />
           </View>
         )}
