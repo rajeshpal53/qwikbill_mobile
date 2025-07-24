@@ -31,7 +31,7 @@ const ProductDetailsCard = ({ item, setRefresh, setProductId, setVisible }) => {
           <View style={styles.ImageView}>
             {
               <Avatar.Text
-                size={55}
+                size={50}
                 label={item?.name?.charAt(0)?.toUpperCase()}
                 style={styles.avatarPlaceholder}
               />
@@ -43,20 +43,13 @@ const ProductDetailsCard = ({ item, setRefresh, setProductId, setVisible }) => {
             <Text style={styles.itemname}>{item.name}</Text>
 
             <View style={styles.rowContainer}>
-
               <View style={styles.column}>
                 <Text style={styles.sellPrice}>Selling Price: ₹{item.sellPrice}</Text>
                 <Text style={styles.sellPrice}>Cost Price: ₹{item.costPrice}</Text>
-
-
               </View>
-
               <View style={styles.column}>
                 <Text style={styles.priceText}>Tax Rate: {item.taxRate}</Text>
-
                 <Text style={styles.priceText}>HSN Code: {item.hsncode}</Text>
-
-
               </View>
             </View>
           </View>
@@ -71,7 +64,7 @@ const ProductDetailsCard = ({ item, setRefresh, setProductId, setVisible }) => {
                       }
                       style={styles.iconButton}
                     >
-                      <MaterialIcons name="edit" size={20} color="#1E88E5" />
+                      <MaterialIcons name="edit" size={24} color="#1E88E5" />
                     </TouchableOpacity>
                   </View>
                   <View>
@@ -79,7 +72,7 @@ const ProductDetailsCard = ({ item, setRefresh, setProductId, setVisible }) => {
                       onPress={() => HandleProductDelete(item)}
                       style={styles.iconButton}
                     >
-                      <MaterialIcons name="delete" size={20} color="#E53935" />
+                      <MaterialIcons name="delete" size={24} color="#E53935" />
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -96,7 +89,7 @@ const ProductDetailsCard = ({ item, setRefresh, setProductId, setVisible }) => {
 
 const styles = StyleSheet.create({
   card: {
-    marginVertical: 5,
+    marginVertical: 10,
     marginHorizontal: 10,
     // paddingVertical: 15,
     borderRadius: 8,
@@ -108,8 +101,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    flexDirection: "row",
-    paddingVertical: 15,
+    flexDirection: "column",
+    paddingVertical: 12,
     marginVertical: 5,
   },
   ImageView: {
@@ -118,6 +111,7 @@ const styles = StyleSheet.create({
   },
   TextView: {
     flex: 2,
+    marginTop:-33,
   },
   ButtonTextView: {
     justifyContent: "space-between",
@@ -132,20 +126,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-end",
     marginTop: 7,
+    marginRight:12,
   },
   itemname: {
     fontWeight: "bold",
-    marginVertical: 3,
+    marginTop: -7,
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.labelLarge + 4,
-    paddingVertical: 2,
-    marginLeft: 10
+    paddingBottom: 15,
+    marginLeft: 70,
   },
   avatar: {
     // backgroundColor: "black",
   },
   avatarPlaceholder: {
-    marginTop: 10,
+    marginTop: -8,
+    marginLeft:5,
+
     // backgroundColor: "#ccc",
   },
   iconButton: {
@@ -155,16 +152,16 @@ const styles = StyleSheet.create({
     // fontSize: 14,
     color: "#555",
     fontFamily: "Poppins-Medium",
-    fontSize: fontSize.label,
-    alignSelf: "flex-end",
-    marginRight: 6,
+    fontSize: fontSize.label+2,
+    alignSelf: "auto",
+    marginLeft: 30,
 
   },
   sellPrice: {
     color: "#555",
     fontFamily: "Poppins-Medium",
-    fontSize: fontSize.label+1,
-    marginLeft: 10,
+    fontSize: fontSize.label + 2,
+    marginLeft: 15,
   },
   inStock: {
     color: "green",
@@ -184,9 +181,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     //backgroundColor:"yellow",
-    marginTop: 7,
+    marginTop: 10,
     marginRight: 10,
-    
+
   },
   column: {
     flex: 1,

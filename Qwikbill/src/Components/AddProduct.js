@@ -108,7 +108,7 @@ const AddProduct = ({ navigation }) => {
     //     otherwise: (schema) => schema.notRequired(),
     //   })
     ,
-     HSNCode: Yup.string().matches(/^\d{4}(\d{2})?(\d{2})?$/, 'Enter a valid 4, 6, or 8-digit HSN code'),
+    HSNCode: Yup.string().matches(/^\d{4}(\d{2})?(\d{2})?$/, 'Enter a valid 4, 6, or 8-digit HSN code'),
     PurchasePrice: Yup.number()
       .required("Purchase price is required")
       .typeError("Purchase price must be a number")
@@ -389,6 +389,13 @@ const AddProduct = ({ navigation }) => {
                   >
                     <Text style={styles.submitButtonText}>Submit</Text>
                   </TouchableOpacity>
+                 
+                    <Image
+                      source={require('../../assets/addproduct.png')}
+                      style={styles.fixedImage}
+                      resizeMode="contain"
+                    />
+                  
 
                   {/* <Button type="submit" > Submit </Button> */}
                 </View>
@@ -396,13 +403,7 @@ const AddProduct = ({ navigation }) => {
             )}
           </Formik>
         </ScrollView>
-        {!isKeyboardVisible && (
-          <Image
-            source={require('../../assets/addproduct.png')}
-            style={styles.fixedImage}
-            resizeMode="contain"
-          />
-        )}
+        
       </View>
 
     </KeyboardAvoidingView>
@@ -419,10 +420,11 @@ const styles = StyleSheet.create({
   fixedImage: {
     width: 235,
     height: 205,
-    position: 'absolute',
-    bottom: 20,
-    right: 60,
+    // position: 'absolute',
+    // bottom: 20,
+    // right: 60,
     zIndex: 1,
+    marginLeft:20,
   },
   container: {
     backgroundColor: "#fff",
