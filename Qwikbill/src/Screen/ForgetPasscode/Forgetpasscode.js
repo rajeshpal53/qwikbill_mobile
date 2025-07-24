@@ -39,6 +39,8 @@ function CustomerVerification({ loginDetail1 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [confirm, setConfirm] = useState(null);
   const [phone, setPhone] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -47,15 +49,17 @@ function CustomerVerification({ loginDetail1 }) {
 
 
   const handleGenerateOtp = async () => {
+
     if (phone.length !== 10) {
       Alert.alert('Invalid Input', 'Enter a valid 10-digit mobile number.');
       return;
     }
+    setIsLoading(true);
 
     const fullPhoneNumber = `+91${phone.trim()}`;
     console.log("Full Phone Number:", fullPhoneNumber);
     try {
-      setIsLoading(true);
+      // setIsLoading(true);
 
       const auth = getAuth(getApp());
       const confirmation = await signInWithPhoneNumber(auth, fullPhoneNumber);
@@ -111,7 +115,7 @@ function CustomerVerification({ loginDetail1 }) {
               />
             </View>
             <View style={{ alignItems: "center", gap: 30 }}>
-              <Text variant="headlineMedium" style={{ color: "rgba(0,0,0,0.8)", fontFamily: fontFamily.regular,fontSize:25 }}>
+              <Text variant="headlineMedium" style={{ color: "rgba(0,0,0,0.8)", fontFamily: fontFamily.regular, fontSize: 25 }}>
                 Set Passcode
               </Text>
               <Text variant="labelSmall" style={{ color: "grey", textAlign: "center", fontFamily: fontFamily.medium }}>
@@ -193,9 +197,21 @@ function CustomerVerification({ loginDetail1 }) {
                   marginVertical: 5
                 }}
                 onPress={isOtpSent ? handleValidateOtp : handleGenerateOtp}
-
+                disabled={loading}
               >
-                <Text style={{ color: "#fff", fontSize: fontSize.labelMedium, fontFamily: fontFamily.medium }}>{isOtpSent ? "Validate OTP" : "Generate OTP"}</Text>
+                {loading ? (
+                  <ActivityIndicator color="#fff" size="small" />
+                ) : (
+                  <Text
+                    style={{
+                      color: "#fff",
+                      fontSize: fontSize.labelMedium,
+                      fontFamily: fontFamily.medium
+                    }}
+                  >
+                    {isOtpSent ? "Validate OTP" : "Generate OTP"}
+                  </Text>
+                )}
               </Button>
             </View>
           </Card.Content>

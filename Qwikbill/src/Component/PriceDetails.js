@@ -121,7 +121,7 @@ const PriceDetails = ({ setPaymentStatus, selectedButton, discountValue, setDisc
       {selectedStatus === "Partially Paid" && (
         <>
           <View style={styles.priceView}>
-            <Text style={[styles.label ,{marginTop: 5}]}>{t("Partially Paid")}</Text>
+            <Text style={[styles.label, { marginTop: 5 }]}>{t("Partially Paid")}</Text>
             <View style={styles.discountInputWrapper}>
               <TextInput
                 style={styles.input}
@@ -137,7 +137,7 @@ const PriceDetails = ({ setPaymentStatus, selectedButton, discountValue, setDisc
           {PartiallyAmount !== "" && !isNaN(PartiallyAmount) && (
             <View style={styles.priceView}>
               <Text style={styles.label}>{t("Remaining Amount")}</Text>
-              <Text style={[styles.value, { fontSize: fontSize.labelLarge ,fontFamily:fontFamily.medium }]}>
+              <Text style={[styles.value, { fontSize: fontSize.labelLarge, fontFamily: fontFamily.medium }]}>
                 ₹ {(afterdiscount).toFixed(2)}
               </Text>
             </View>
@@ -150,8 +150,14 @@ const PriceDetails = ({ setPaymentStatus, selectedButton, discountValue, setDisc
         <Text style={styles.Totallabel}>{t("Total Amount")}</Text>
         { }
         <Text
-          style={[styles.value, { fontSize: fontSize.labelLarge }]}
-        >{`₹ ${totalPrice.toFixed(2)}`}</Text>
+          style={[styles.value, { fontSize: fontSize.labelLarge }]}>
+
+          ₹ {
+            selectedStatus === "Partially Paid"
+              ? totalPrice.toFixed(2) // Show full price
+              : afterdiscount.toFixed(2) // Show discounted price
+          }
+        </Text>
       </View>
 
     </View>
@@ -202,7 +208,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.labelLarge,
-    marginVertical: 3
+    marginVertical: 3,
+    marginLeft: 6,
   },
   discountInputWrapper: {
     flex: 1,

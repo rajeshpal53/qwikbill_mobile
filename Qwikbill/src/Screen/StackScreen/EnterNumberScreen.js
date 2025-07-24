@@ -44,7 +44,7 @@ import {
 } from '@react-native-firebase/auth';
 import CountryCodeModal from "../../Component/CountryCodeModal";
 import SetpasswordModal from "../../Components/Modal/SetpasswordModal";
-import { firebaseAuth } from "../../firebase";
+//import { firebaseAuth } from "../../firebase";
 import { AuthContext } from "../../Store/AuthContext";
 import { useSnackbar } from "../../Store/SnackbarContext";
 import UserDataContext from "../../Store/UserDataContext";
@@ -213,9 +213,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
     // Firebase Auth State Listener
 
     console.log("debugg111");
-    // log.info("debugg111");
-    //const subscriber = auth().onAuthStateChanged(async (user) => {
-    const subscriber = onAuthStateChanged(firebaseAuth, async (user) => {
+    const subscriber = onAuthStateChanged(auth, async (user) => {
       // handle user state changes here if needed
     });
     return () => subscriber(); // Unsubscribe on cleanup
@@ -310,13 +308,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       // log.info("debugg22222");
       console.log(phoneNumber)
       startTimer(30); // Start the timer
-      // const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
-      // console.log("confirmation", JSON.stringify(confirmation));
-      // setConfirm(confirmation);
-      // //   setConfirm(true);
-      // setAutoVerification(true); // Set auto-verification flags
-      // console.log("debugg33333");
-      // setAutoVerification(false); // Reset auto-verification flag
+      
 
       const confirmation = await signInWithPhoneNumber(auth, phoneNumber);
       console.log("confirmation", confirmation);
