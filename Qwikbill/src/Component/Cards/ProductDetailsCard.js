@@ -32,9 +32,10 @@ const ProductDetailsCard = ({ item, setRefresh, setProductId, setVisible }) => {
             {
               <Avatar.Text
                 size={55}
-                label={item?.name.charAt(0)}
+                label={item?.name?.charAt(0)?.toUpperCase()}
                 style={styles.avatarPlaceholder}
               />
+
             }
           </View>
 
@@ -85,7 +86,7 @@ const ProductDetailsCard = ({ item, setRefresh, setProductId, setVisible }) => {
               )
             }
 
-          
+
           </View>
         </View>
       </Card>
@@ -108,42 +109,43 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "row",
-    paddingVertical: 8,
+    paddingVertical: 15,
     marginVertical: 5,
   },
   ImageView: {
     paddingHorizontal: 8,
-   // marginLeft: 3,
+    // marginLeft: 3,
   },
   TextView: {
     flex: 2,
   },
   ButtonTextView: {
     justifyContent: "space-between",
-   // flex: 1,
-   // marginRight: 5,
-     position:"absolute",
-     top:9,
-     right:0
+    // flex: 1,
+    // marginRight: 5,
+    position: "absolute",
+    top: 9,
+    right: 0
   },
   ButtonView: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
+    marginTop: 7,
   },
   itemname: {
     fontWeight: "bold",
     marginVertical: 3,
     fontFamily: "Poppins-Medium",
-    fontSize: fontSize.labelLarge +4,
+    fontSize: fontSize.labelLarge + 4,
     paddingVertical: 2,
-    marginLeft:3
+    marginLeft: 10
   },
   avatar: {
     // backgroundColor: "black",
   },
   avatarPlaceholder: {
-    marginTop:37,
+    marginTop: 10,
     // backgroundColor: "#ccc",
   },
   iconButton: {
@@ -154,15 +156,15 @@ const styles = StyleSheet.create({
     color: "#555",
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.label,
-    alignSelf:"flex-end",
-    marginRight:6,
-  
+    alignSelf: "flex-end",
+    marginRight: 6,
+
   },
   sellPrice: {
     color: "#555",
     fontFamily: "Poppins-Medium",
-    fontSize: fontSize.label,
-    marginLeft:10,
+    fontSize: fontSize.label+1,
+    marginLeft: 10,
   },
   inStock: {
     color: "green",
@@ -182,12 +184,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     //backgroundColor:"yellow",
-    marginTop:3
+    marginTop: 7,
+    marginRight: 10,
+    
   },
-   column: {
+  column: {
     flex: 1,
     //backgroundColor:"orange",
-   // marginHorizontal:5
+    // marginHorizontal:5
   },
 });
 
