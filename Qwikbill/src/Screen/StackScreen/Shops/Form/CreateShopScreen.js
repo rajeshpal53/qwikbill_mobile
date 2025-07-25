@@ -97,7 +97,7 @@ const ShopValidataionSchema = Yup.object().shape({
 });
 
 const ProfileValidationSchema = Yup.object().shape({
-  profileImage: Yup.mixed().required("Profile image is required"),
+ // profileImage: Yup.mixed().required("Profile image is required"),
   name: Yup.string().required("Name is required")
     .max(50, "Name cannot be more than 50 characters"),
   whatsappNumber: Yup.string()

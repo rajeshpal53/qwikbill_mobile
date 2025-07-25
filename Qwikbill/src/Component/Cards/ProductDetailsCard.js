@@ -1,200 +1,135 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { useContext, useState } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { useContext } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Avatar, Card } from "react-native-paper";
 import { ShopContext } from "../../Store/ShopContext";
 import { fontSize } from "../../Util/UtilApi";
 
-
 const ProductDetailsCard = ({ item, setRefresh, setProductId, setVisible }) => {
-  const [Opendetails, setOpendetails] = useState(false);
   const navigation = useNavigation();
-  const { selectedShop } = useContext(ShopContext)
-  const HandleProductDelete = () => {
-    console.log("ITEM ID IS ", item?.id)
-    setProductId(item?.id)
-    setVisible(true);
-  }
+  const { selectedShop } = useContext(ShopContext);
 
+  const HandleProductDelete = () => {
+    setProductId(item?.id);
+    setVisible(true);
+  };
 
   return (
-    <ScrollView>
-      <Card style={styles.card}>
-        <View style={styles.container}>
-          <View style={styles.ImageView}>
-            {
-              <Avatar.Text
-                size={55}
-                label={item?.name?.charAt(0)?.toUpperCase()}
-                style={styles.avatarPlaceholder}
-              />
+    <Card style={styles.card}>
+      <View style={styles.contentContainer}>
+        {/* Avatar and Product Name */}
+        <View style={styles.headerRow}>
+          <Avatar.Text
+            size={40}
+            label={item?.name?.charAt(0)?.toUpperCase()}
+            style={styles.avatar}
+          />
+          <Text style={styles.productName}>{item.name}</Text>
 
-            }
-          </View>
-
-          <View style={styles.TextView}>
-            <Text style={styles.itemname}>{item.name}</Text>
-
-            <View style={styles.rowContainer}>
-
-              <View style={styles.column}>
-                <Text style={styles.sellPrice}>Selling Price: ₹{item.sellPrice}</Text>
-                <Text style={styles.sellPrice}>Cost Price: ₹{item.costPrice}</Text>
-
-
-              </View>
-
-              <View style={styles.column}>
-                <Text style={styles.priceText}>Tax Rate: {item.taxRate}</Text>
-
-                <Text style={styles.priceText}>HSN Code: {item.hsncode}</Text>
-
-
-              </View>
+          {/* Action Buttons */}
+          {(selectedShop?.role?.name === "owner" || selectedShop?.role?.name === "manager") && (
+            <View style={styles.actionButtons}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("AddProduct", {
+                    EditData: item,
+                    isUpdated: true,
+                    setRefresh: setRefresh,
+                  })
+                }
+              >
+                <MaterialIcons name="edit" size={22} color="#1E88E5" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={HandleProductDelete}>
+                <MaterialIcons name="delete" size={22} color="#E53935" />
+              </TouchableOpacity>
             </View>
+          )}
+        </View>
+
+        {/* Price and HSN details */}
+        <View style={styles.detailsRow}>
+          <View style={styles.detailColumn}>
+            <Text style={styles.label}>Selling Price:</Text>
+            <Text style={styles.value}>₹{item.sellPrice}</Text>
           </View>
-
-          <View style={styles.ButtonTextView}>
-            {
-              (selectedShop?.role?.name === "owner" || selectedShop?.role?.name === "manager") && (
-                <View style={styles.ButtonView}>
-                  <View>
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("AddProduct", { EditData: item, isUpdated: true, setRefresh: setRefresh })
-                      }
-                      style={styles.iconButton}
-                    >
-                      <MaterialIcons name="edit" size={20} color="#1E88E5" />
-                    </TouchableOpacity>
-                  </View>
-                  <View>
-                    <TouchableOpacity
-                      onPress={() => HandleProductDelete(item)}
-                      style={styles.iconButton}
-                    >
-                      <MaterialIcons name="delete" size={20} color="#E53935" />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              )
-            }
-
-
+          <View style={styles.detailColumn}>
+            <Text style={styles.label}>Tax Rate:</Text>
+            <Text style={styles.value}>{item.taxRate}</Text>
           </View>
         </View>
-      </Card>
-    </ScrollView>
+
+        <View style={styles.detailsRow}>
+          <View style={styles.detailColumn}>
+            <Text style={styles.label}>Cost Price:</Text>
+            <Text style={styles.value}>₹{item.costPrice}</Text>
+          </View>
+          <View style={styles.detailColumn}>
+            <Text style={styles.label}>HSN Code:</Text>
+            <Text style={styles.value}>{item.hsncode}</Text>
+          </View>
+        </View>
+      </View>
+    </Card>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
-    marginVertical: 5,
-    marginHorizontal: 10,
-    // paddingVertical: 15,
-    borderRadius: 8,
-    elevation: 3,
-    flex: 1,
+    marginHorizontal: 28,
+    marginVertical: 10,
+    borderRadius: 12,
+    elevation: 2,
+    padding: 15,
     backgroundColor: "#fff",
-
-    // alignContent:"center"
   },
-  container: {
-    flex: 1,
-    flexDirection: "row",
-    paddingVertical: 15,
-    marginVertical: 5,
+  contentContainer: {
+    flexDirection: "column",
   },
-  ImageView: {
-    paddingHorizontal: 8,
-    // marginLeft: 3,
-  },
-  TextView: {
-    flex: 2,
-  },
-  ButtonTextView: {
-    justifyContent: "space-between",
-    // flex: 1,
-    // marginRight: 5,
-    position: "absolute",
-    top: 9,
-    right: 0
-  },
-  ButtonView: {
+  headerRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-end",
-    marginTop: 7,
-  },
-  itemname: {
-    fontWeight: "bold",
-    marginVertical: 3,
-    fontFamily: "Poppins-Medium",
-    fontSize: fontSize.labelLarge + 4,
-    paddingVertical: 2,
-    marginLeft: 10
+    marginBottom: 12,
+    marginHorizontal:0,
   },
   avatar: {
-    // backgroundColor: "black",
+    backgroundColor: "#0D47A1",
+    marginLeft: 16,
   },
-  avatarPlaceholder: {
-    marginTop: 10,
-    // backgroundColor: "#ccc",
-  },
-  iconButton: {
-    marginRight: 12, // Adds spacing between buttons
-  },
-  priceText: {
-    // fontSize: 14,
-    color: "#555",
+  productName: {
+    fontSize: fontSize.labelLarge + 2,
     fontFamily: "Poppins-Medium",
-    fontSize: fontSize.label,
-    alignSelf: "flex-end",
-    marginRight: 6,
-
+    marginLeft: 15,
+    flex: 1,
   },
-  sellPrice: {
-    color: "#555",
-    fontFamily: "Poppins-Medium",
-    fontSize: fontSize.label+1,
-    marginLeft: 10,
+  actionButtons: {
+    flexDirection: "row",
+    gap: 15,
+    marginRight:25,
+    marginTop:-5,
   },
-  inStock: {
-    color: "green",
-    // fontSize: 12,
-    textAlign: "right",
-    marginRight: 8,
-    fontFamily: "Poppins-Medium",
-    fontSize: fontSize.label,
+  detailsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 5,
+    gap: "30%",
+    marginLeft:20,
   },
-  outOfStock: {
-    color: "red",
-    // fontSize: 12,
-    fontFamily: "Poppins-Medium",
-    fontSize: fontSize.label,
-  },
-  rowContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    //backgroundColor:"yellow",
-    marginTop: 7,
-    marginRight: 10,
+  detailColumn: {
+    flex: 1,
     
   },
-  column: {
-    flex: 1,
-    //backgroundColor:"orange",
-    // marginHorizontal:5
+  label: {
+    fontFamily: "Poppins-Regular",
+    fontSize: fontSize.label+2,
+    color: "#555",
+  },
+  value: {
+    fontFamily: "Poppins-Medium",
+    fontSize: fontSize.label + 2,
+    color: "#000",
   },
 });
 
 export default ProductDetailsCard;
-
-// (₹{item.numberOfProducts})
