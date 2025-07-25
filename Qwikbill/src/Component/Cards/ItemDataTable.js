@@ -130,7 +130,7 @@ total += +(amtAfterDiscount + gstAmt).toFixed(2);
                 <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>₹{total.toFixed(2)}</DataTable.Cell>
                 <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>
 
-                  <TouchableOpacity onPress={() => { dispatch(removeFromCart(item.id)); }}>
+                  <TouchableOpacity onPress={() => dispatch(removeFromCart(item.id))}>
                     <MaterialIcons name="delete" size={20} color="red" />
                   </TouchableOpacity>
                 </DataTable.Cell>

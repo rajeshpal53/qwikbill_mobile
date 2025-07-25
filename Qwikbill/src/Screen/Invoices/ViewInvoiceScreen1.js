@@ -507,7 +507,7 @@ function ViewInvoiceScreen1({ navigation }) {
               style={{
                 alignItems: "center",
                 justifyContent: "center",
-                marginTop: "27%",
+                marginTop: "38%",
                 
               }}
             >
