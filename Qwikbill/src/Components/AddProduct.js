@@ -411,14 +411,15 @@ const AddProduct = ({ navigation }) => {
                   >
                     <Text style={styles.submitButtonText}>Submit</Text>
                   </TouchableOpacity>
+                 
+                    <Image
+                      source={require('../../assets/addproduct.png')}
+                      style={styles.fixedImage}
+                      resizeMode="contain"
+                    />
+                  
 
-                  <Image
-                    source={require('../../assets/addproduct.png')}
-                    style={styles.fixedImage}
-                    resizeMode="contain"
-                  />
-
-
+                 
                   {/* <Button type="submit" > Submit </Button> */}
                 </View>
               </>
@@ -426,6 +427,7 @@ const AddProduct = ({ navigation }) => {
           </Formik>
         </ScrollView>
 
+        
       </View>
 
     </KeyboardAvoidingView>
@@ -447,6 +449,7 @@ const styles = StyleSheet.create({
     // right: 60,
     zIndex: 1,
     marginLeft: 20,
+    marginLeft:20,
   },
   container: {
     backgroundColor: "#fff",
