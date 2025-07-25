@@ -116,17 +116,19 @@ export const AuthProvider = ({ children }) => {
 
       setLoginDetail(response);
       console.log("Saving user data:", response);
-
+       console.log("hellooooooooooooo")
       await saveUserData(response);
+
+      if (isPasskey) {
+        navigation.reset({ index: 0, routes: [{ name: "Passcode" }] });
+      } else {
+        navigation.reset({ index: 0, routes: [{ name: "CreateNewPasscode" }] });
+      }
+      showSnackbar("Login successful", "success");
       return true;
-      // if (isPasskey === false) {
-      //   console.log("isPasskey is explicitly false");
-      //   return true;
-      // } else {
-      //   console.log("isPasskey is true, null, or undefined");
-      //   return true;
-      //   // navigation.reset({ index: 0, routes: [{ name: "passcode" }] });
-      // }
+     
+
+      
     } catch (error) {
       //console.error("Login error:", error);
       showSnackbar(`${error.data.message}`, "error");

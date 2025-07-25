@@ -342,7 +342,7 @@ export default function ServiceImagePicker({
         </View>
       )}
 
-     <Modal
+      <Modal
         visible={modalVisibel}
         onBackdropPress={closeModal}
         animationType="fade"
@@ -364,7 +364,10 @@ export default function ServiceImagePicker({
                     closeModal();
                     pickCameraImage();
                   }}>
-                    <Text style={styles.optionText}>📷 Take Photo</Text>
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                      <Ionicons style={{ marginRight: 5, marginTop: 7 }} name="camera" size={22} color="#333" />
+                      <Text style={styles.optionText}> Take Photo</Text>
+                    </View>
                   </TouchableOpacity>
                   <View style={styles.divider} />
                 </>
@@ -376,7 +379,10 @@ export default function ServiceImagePicker({
                     closeModal();
                     pickGallaryImage();
                   }}>
-                    <Text style={styles.optionText}>🖼️ Upload from Gallery</Text>
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                      <Ionicons style={{ marginRight: 5, marginTop: 7 }} name="image" size={22} color="#333" />
+                      <Text style={styles.optionText}>  Upload from Gallery</Text>
+                    </View>
                   </TouchableOpacity>
                   <View style={styles.divider} />
                 </>
@@ -387,7 +393,10 @@ export default function ServiceImagePicker({
                   closeModal();
                   removeImage();
                 }}>
-                  <Text style={[styles.optionText, { color: "#d9534f" }]}>🗑️ Remove Image</Text>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Ionicons style={{ marginRight: 5, marginTop: 7 }} name="trash" size={22} color="#333" />
+                    <Text style={styles.optionText}>  Remove Image</Text>
+                  </View>
                 </TouchableOpacity>
               )}
             </View>
@@ -478,7 +487,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     borderRadius: 12
   },
-    backdrop: {
+  backdrop: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
@@ -486,9 +495,9 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     backgroundColor: "#fff",
-    width: "85%",
+    width: "80%",
     borderRadius: 12,
-    paddingVertical: 18,
+    paddingVertical: 16,
     paddingHorizontal: 16,
     elevation: 5,
   },
@@ -505,7 +514,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     padding: 6,
-    backgroundColor:"#f0f0f0",
+    backgroundColor: "#f0f0f0",
     borderRadius: 20,
   },
   optionList: {

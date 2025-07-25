@@ -107,8 +107,12 @@ const PriceDetails = ({ setPaymentStatus, selectedButton, discountValue, setDisc
             <Picker
               selectedValue={selectedStatus}
               onValueChange={(itemValue) => setSelectedStatus(itemValue)}
-              style={styles.picker}
-              mode="dropdown"
+              style={[
+                styles.picker,
+                {
+                  width: selectedStatus === "Partially Paid" ? "71%" :  selectedStatus === "Paid" ? "45%" : "51%",
+                },
+              ]} mode="dropdown"
             >
               {paymentStatuses.map((status, index) => (
                 <Picker.Item key={index} label={t(status)} value={status} />
@@ -227,7 +231,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     height: 55,
-    width: "60%",
+   // width: "72%",
     alignItems: "flex-start",
     marginRight: -25,
   },

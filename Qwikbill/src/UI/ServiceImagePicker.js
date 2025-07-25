@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 import Modal from "react-native-modal";
 import { Divider, Text } from "react-native-paper";
 import { fontSize } from "../Util/UtilApi";
-// import ImageResizer from "react-native-imageresizer"; // Import the package
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 // import * as ImageManipulator from 'expo-image-manipulator';
 export default function ServiceImagePicker({
@@ -165,8 +165,8 @@ export default function ServiceImagePicker({
       setFieldValue(uploadFieldName, {
         // uri: pickerResult.assets[0].uri,
         uri: compressedUri,
-        name: pickerResult.assets[0].fileName ,
-        type: pickerResult.assets[0].mimeType ,
+        name: pickerResult.assets[0].fileName,
+        type: pickerResult.assets[0].mimeType,
       });
 
       // setImage({
@@ -240,8 +240,8 @@ export default function ServiceImagePicker({
                   imageUrl ||
                   "https://servicediary.online/assets/mobile/male.png", // Replace with your image URL
                 headers: { Accept: "*/*" },
-               // priority: FastImage.priority.high,
-               // cache: FastImage.cacheControl.web,
+                // priority: FastImage.priority.high,
+                // cache: FastImage.cacheControl.web,
               }}
               style={styles.avatar}
               onLoadStart={() => console.log("🟡 Image loading started...")}
@@ -287,8 +287,8 @@ export default function ServiceImagePicker({
                   source={{
                     uri: imageUrl || "https://via.placeholder.com/150" || "",
                     headers: { Accept: "*/*" },
-                  //  priority: FastImage.priority.high,
-                   // cache: FastImage.cacheControl.web,
+                    //  priority: FastImage.priority.high,
+                    // cache: FastImage.cacheControl.web,
                   }}
                   style={[styles.imagePreview, imageSize]}
                 />
@@ -349,61 +349,61 @@ export default function ServiceImagePicker({
 
       <Modal
         visible={modalVisibel}
-        style={styles.modal}
         onBackdropPress={closeModal}
+        animationType="fade"
+        transparent
       >
-        <View style={styles.modalContent}>
-          <View style={{ padding: 10, gap: 10 }}>
-            <Text
-              style={{
-                fontSize: fontSize.headingSmall,
-                fontFamily: "Poppins-SemiBold",
-                color: "rgba(0, 0, 0, 0.7)",
-              }}
-            >
-              Select Option
-            </Text>
+        <View style={styles.backdrop}>
+          <View style={styles.modalContainer}>
+            <View style={styles.header}>
+              <Text style={styles.title}>Select Option</Text>
+              <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
+                <Ionicons name="close" size={22} color="#555" />
+              </TouchableOpacity>
+            </View>
 
-            <View>
-              {camera &&
-                <TouchableOpacity
-                  style={{ minHeight: 48, justifyContent: "center" }}
-                  onPress={() => {
+            <View style={styles.optionList}>
+              {camera && (
+                <>
+                  <TouchableOpacity style={styles.optionButton} onPress={() => {
                     closeModal();
                     pickCameraImage();
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontFamily: "Poppins-Regular",
-                      color: "rgba(0, 0, 0, 0.7)",
-                    }}
-                  >
-                    1. Camera
-                  </Text>
-                </TouchableOpacity>
-              }
+                  }}>
+                      <View style={{ flexDirection: "row", alignItems: "center" }}>
+                      <Ionicons style={{ marginRight: 5, marginTop: 7 }} name="camera" size={22} color="#333" />
+                      <Text style={styles.optionText}> Take Photo</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <View style={styles.divider} />
+                </>
+              )}
 
-              <Divider />
-
-              {gallary &&
-                <TouchableOpacity
-                  style={{ minHeight: 48, justifyContent: "center" }}
-                  onPress={() => {
+              {gallary && (
+                <>
+                  <TouchableOpacity style={styles.optionButton} onPress={() => {
                     closeModal();
                     pickGallaryImage();
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontFamily: "Poppins-Regular",
-                      color: "rgba(0, 0, 0, 0.7)",
-                    }}
-                  >
-                    2. Upload From Gallary
-                  </Text>
+                  }}>
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                      <Ionicons style={{ marginRight: 5, marginTop: 7 }} name="image" size={22} color="#333" />
+                      <Text style={styles.optionText}>  Upload from Gallery</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <View style={styles.divider} />
+                </>
+              )}
+
+              {imageUrl && (
+                <TouchableOpacity style={styles.optionButton} onPress={() => {
+                  closeModal();
+                  removeImage();
+                }}>
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                      <Ionicons style={{ marginRight: 5, marginTop: 7 }} name="trash" size={22} color="#333" />
+                      <Text style={styles.optionText}>  Remove Image</Text>
+                    </View>
                 </TouchableOpacity>
-              }
+              )}
             </View>
           </View>
         </View>
@@ -490,5 +490,52 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     elevation: 5,
     marginHorizontal: 10,
+  },
+  backdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    backgroundColor: "#fff",
+    width: "80%",
+    borderRadius: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    elevation: 5,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  closeButton: {
+    padding: 6,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 20,
+  },
+  optionList: {
+    marginTop: 7,
+  },
+  optionButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+  },
+  optionText: {
+    fontSize: 16,
+    color: "#333",
+    marginTop: 5
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#ddd",
+    marginVertical: 6,
   },
 });

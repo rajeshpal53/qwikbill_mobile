@@ -108,7 +108,7 @@ const AddProduct = ({ navigation }) => {
     //     otherwise: (schema) => schema.notRequired(),
     //   })
     ,
-     HSNCode: Yup.string().matches(/^\d{4}(\d{2})?(\d{2})?$/, 'Enter a valid 4, 6, or 8-digit HSN code'),
+    HSNCode: Yup.string().matches(/^\d{4}(\d{2})?(\d{2})?$/, 'Enter a valid 4, 6, or 8-digit HSN code'),
     PurchasePrice: Yup.number()
       .required("Purchase price is required")
       .typeError("Purchase price must be a number")
@@ -310,14 +310,20 @@ const AddProduct = ({ navigation }) => {
                     label="Product Name*"
                     mode="flat"
                     style={styles.input}
-                    onChangeText={handleChange("ProductName")}
+                    onChangeText={(text) => {
+                      // Allow only alphabets and numbers
+                      const cleanedText = text.replace(/[^a-zA-Z0-9 ]/g, "");
+                      handleChange("ProductName")(cleanedText);
+                    }}
                     onBlur={handleBlur("ProductName")}
                     value={values.ProductName}
                     error={touched.ProductName && !!errors.ProductName}
                   />
+
                   {touched.ProductName && errors.ProductName && (
                     <Text style={styles.errorText}>{errors.ProductName}</Text>
                   )}
+
 
                   {/* Purchase Price */}
                   <TextInput
@@ -367,16 +373,32 @@ const AddProduct = ({ navigation }) => {
                     <Text style={styles.errorText}>{errors.HSNCode}</Text>
                   )}
 
-                  {/* Tax Value */}
                   <TextInput
-                    label="Tax Rate(%)"
+                    label="Tax Rate (%)"
                     keyboardType="numeric"
                     mode="flat"
                     style={styles.input}
-                    onChangeText={handleChange("TaxRate")}
+                    onChangeText={(text) => {
+                      let value = parseFloat(text);
+
+                      // Allow empty input (for editing)
+                      if (text === "") {
+                        handleChange("TaxRate")("");
+                        return;
+                      }
+
+                      // Reject non-numeric input
+                      if (isNaN(value)) return;
+
+                      // Clamp the value between 0 and 100
+                      if (value >= 0 && value <= 100) {
+                        handleChange("TaxRate")(text);
+                      }
+                    }}
                     value={values.TaxRate || ""}
                     error={touched.TaxRate && !!errors.TaxRate}
                   />
+
                   {touched.TaxRate && errors.TaxRate && (
                     <Text style={styles.errorText}>{errors.TaxRate}</Text>
                   )}
@@ -390,19 +412,20 @@ const AddProduct = ({ navigation }) => {
                     <Text style={styles.submitButtonText}>Submit</Text>
                   </TouchableOpacity>
 
+                  <Image
+                    source={require('../../assets/addproduct.png')}
+                    style={styles.fixedImage}
+                    resizeMode="contain"
+                  />
+
+
                   {/* <Button type="submit" > Submit </Button> */}
                 </View>
               </>
             )}
           </Formik>
         </ScrollView>
-        {!isKeyboardVisible && (
-          <Image
-            source={require('../../assets/addproduct.png')}
-            style={styles.fixedImage}
-            resizeMode="contain"
-          />
-        )}
+
       </View>
 
     </KeyboardAvoidingView>
@@ -419,10 +442,11 @@ const styles = StyleSheet.create({
   fixedImage: {
     width: 235,
     height: 205,
-    position: 'absolute',
-    bottom: 20,
-    right: 60,
+    // position: 'absolute',
+    // bottom: 20,
+    // right: 60,
     zIndex: 1,
+    marginLeft: 20,
   },
   container: {
     backgroundColor: "#fff",

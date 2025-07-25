@@ -42,6 +42,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const [discountValue, setDiscountValue] = useState("");
   const [discountRate, setDiscountRate] = useState(0);
   const [finalTotal, setFinalTotal] = useState(0);
+const [formFilled, setFormFilled] = useState(false);
 
   console.log("DATA OF ERROR ", error);
 
@@ -136,7 +137,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
         User?.name ||
         User?.address ||
         User?.gstNumber ||
-        User?.phone;
+        User?.phone || formFilled
       // formik.values.name ||
       // formik.values.address ||
       // formik.values.phone;
@@ -145,14 +146,16 @@ const CreateInvoiceForm = ({ selectedButton }) => {
         e.preventDefault();
         pendingActionRef.current = e.data.action;
         setShowModal(true);
-      }
+
+      }else {
       dispatch(clearCart());
+    }
 
 
     });
 
     return () => beforeRemoveListener();
-  }, [navigation]);
+  }, [navigation ,carts.length , formFilled]);
 
   const getStatusFk = () => {
     if (PaymentStatus == "Unpaid") {
@@ -314,7 +317,8 @@ const CreateInvoiceForm = ({ selectedButton }) => {
                 maxLength={10}
                 style={styles.input}
                 // onChangeText={handleChange("phone")}
-                onChangeText={async (phoneNumber) => {
+                onChangeText={
+                  async (phoneNumber) => {
                   setFieldValue("phone", phoneNumber);
                   await fetchUserData(phoneNumber, setFieldValue);
                 }}
@@ -344,7 +348,10 @@ const CreateInvoiceForm = ({ selectedButton }) => {
                 label="Name"
                 mode="flat"
                 style={styles.input}
-                onChangeText={handleChange("name")}
+                onChangeText={(text) => {
+                  if (text.trim()) setFormFilled(true);
+                  handleChange("name")(text); // still pass to Formik
+                }}
                 onBlur={handleBlur("name")}
                 value={values.name}
                 editable={!loading}
@@ -380,7 +387,10 @@ const CreateInvoiceForm = ({ selectedButton }) => {
                 label="Address"
                 mode="flat"
                 style={styles.input}
-                onChangeText={handleChange("address")}
+                onChangeText={(text) => {
+                  if (text.trim()) setFormFilled(true);
+                  handleChange("address")(text);
+                }}
                 onBlur={handleBlur("address")}
                 value={values.address}
                 editable={!loading}
@@ -442,15 +452,11 @@ const CreateInvoiceForm = ({ selectedButton }) => {
                   <Text style={styles.addButtonText}>Add Items</Text>
                 </TouchableOpacity>
               </View>
+
               {/* Item Data Table */}
               {carts.length > 0 && (
                 <View style={{ marginTop: 10 }}>
-                  {/* <TouchableOpacity
-                    style={{ marginRight: 10, marginTop: -40, marginBottom: 10, }}
-                    onPress={() => dispatch(clearCart())}
-                  >
-                    <Text style={{ color: "#007BFF" }}>Clear Cart</Text>
-                  </TouchableOpacity> */}
+
 
                   <ItemDataTable carts={carts} discountValue={discountValue} setDiscountRate={setDiscountRate} discountRate={discountRate} finalTotal={finalTotal} setFinalTotal={setFinalTotal} />
                   <PriceDetails setPaymentStatus={setPaymentStatus} selectedButton={selectedButton} discountValue={discountValue} setDiscountValue={setDiscountValue} />
@@ -478,17 +484,24 @@ const CreateInvoiceForm = ({ selectedButton }) => {
                 <Text style={styles.submitButtonText}>Submit</Text>
               </TouchableOpacity>
             </View>
-          )
+          );
         }}
       </Formik>
-      <ConfirmModal
-        visible={showModal}
-        setVisible={handleCancel}
-        handlePress={handleConfirm}
-        message="If you go back, all of your Filled Form Data will be lost. Are you sure you want to go back?"
-        heading="Warning"
-        buttonTitle="Go Back"
-      />
+
+      {
+        showModal && (
+          <ConfirmModal
+            visible={showModal}
+            setVisible={handleCancel}
+            handlePress={handleConfirm}
+            message="If you go back, all of your Filled Form Data will be lost. Are you sure you want to go back?"
+            heading="Warning"
+            buttonTitle="Go Back"
+          />
+        )
+
+      }
+
     </ScrollView>
   )
 }
