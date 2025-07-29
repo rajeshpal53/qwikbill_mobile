@@ -194,9 +194,16 @@ const [formFilled, setFormFilled] = useState(false);
 
       console.log("payload in handleGenrate ", payload);
 
+      const cleanedPayload = Object.fromEntries(
+  Object.entries(payload).filter(([_, v]) => v !== null && v !== undefined)
+);
 
-      const response = await createApi(api, payload, {
+console.log("Final Payload:", JSON.stringify(cleanedPayload, null, 2));
+
+      const response = await createApi(api, cleanedPayload, {
         Authorization: `Bearer ${userData?.token}`,
+          "Content-Type": "application/json", // optional but safe
+
       });
 
       showSnackbar("Invoice created successfully", "success");
@@ -206,7 +213,7 @@ const [formFilled, setFormFilled] = useState(false);
       if (button === "download") return response;
       navigation.pop(2);
     } catch (err) {
-      console.log("create invoice error →", err?.response?.data || err);
+    console.log("create invoice error →", err?.response?.data || err.message || err);
       showSnackbar("Server rejected the invoice – check required fields", "error");
     }
   };
