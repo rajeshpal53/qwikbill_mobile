@@ -5,6 +5,7 @@ import {
   StatusBar,
   StyleSheet,
   TextInput,
+  TouchableOpacity,
   useWindowDimensions,
   View
 } from "react-native";
@@ -185,19 +186,19 @@ function CustomerVerification({ loginDetail1 }) {
 
               )}
 
-
-              <Button
+               
+              <TouchableOpacity
                 mode="contained"
                 style={{
-                  width: "50%",
-                  borderRadius: 12,
-                  paddingVertical: 3,
+                  width: "100%",
+                  borderRadius: 13,
+                  padding: 10,
                   backgroundColor: "#14447d",
                   fontFamily: fontFamily.thin,
                   marginVertical: 5
                 }}
                 onPress={isOtpSent ? handleValidateOtp : handleGenerateOtp}
-                disabled={loading}
+              //  disabled={!loading}
               >
                 {loading ? (
                   <ActivityIndicator color="#fff" size="small" />
@@ -212,7 +213,7 @@ function CustomerVerification({ loginDetail1 }) {
                     {isOtpSent ? "Validate OTP" : "Generate OTP"}
                   </Text>
                 )}
-              </Button>
+              </TouchableOpacity>
             </View>
           </Card.Content>
         </Card>

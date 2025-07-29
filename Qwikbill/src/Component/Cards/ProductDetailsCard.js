@@ -21,7 +21,7 @@ const ProductDetailsCard = ({ item, setRefresh, setProductId, setVisible }) => {
         {/* Avatar and Product Name */}
         <View style={styles.headerRow}>
           <Avatar.Text
-            size={40}
+            size={42}
             label={item?.name?.charAt(0)?.toUpperCase()}
             style={styles.avatar}
           />
@@ -77,11 +77,11 @@ const ProductDetailsCard = ({ item, setRefresh, setProductId, setVisible }) => {
 
 const styles = StyleSheet.create({
   card: {
-    marginHorizontal: 28,
+    marginHorizontal: 20,
     marginVertical: 10,
     borderRadius: 12,
-    elevation: 2,
-    padding: 15,
+    elevation: 3,
+    padding: 13,
     backgroundColor: "#fff",
   },
   contentContainer: {
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: 10,
     marginHorizontal:0,
   },
   avatar: {
@@ -105,15 +105,15 @@ const styles = StyleSheet.create({
   },
   actionButtons: {
     flexDirection: "row",
-    gap: 10,
-    marginRight:20,
+    gap: 15,
+    marginRight:25,
     marginTop:-5,
   },
   detailsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 5,
-    gap: "30%",
+    gap: "33%",
     marginLeft:20,
   },
   detailColumn: {

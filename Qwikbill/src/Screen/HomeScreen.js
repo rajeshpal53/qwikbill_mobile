@@ -386,44 +386,9 @@ export default function HomeScreen({ navigation, noItemData }) {
       </ScrollView>
     </SafeAreaView>
   );
-
-
-
 }
 
 
-// const StatCard = ({ title, value, change }) => {
-//   return (
-//     <Card style={styles.statCard}>
-//       <View style={{ flexDirection: "row" }}>
-//         <Text
-
-//          numberOfLines={1}
-//           ellipsizeMode="tail"
-//           style={{
-//             marginRight: 15,
-//             fontSize: fontSize.label,
-//             fontFamily: fontFamily.medium,
-//           }}
-//         >
-//           {title}
-//         </Text>
-//         {/* <Text style={[styles.statChange, { color: change.includes("-") ? "red" : "green" }]}>
-//           {change}
-//         </Text> */}
-//       </View>
-//       <Text
-//         style={{
-//           fontSize: fontSize.label,
-//           fontFamily: fontFamily.bold,
-//           marginLeft: 5,
-//         }}
-//       >
-//         {value ?? "N/A"}
-//       </Text>
-//     </Card>
-//   );
-// };
 
 const styles = StyleSheet.create({
   safeContainer: {

@@ -37,7 +37,7 @@
 //               console.log(response,"of Transaction")
 //               showSnackbar("transaction create successfully","success")
 //     //   Alert.alert("Success", "Transaction saved successfully!");
- 
+
 //     }
 //     }catch(err){
 //       console.log(err.data.message,"error response")
@@ -46,7 +46,7 @@
 //     }finally{
 //         onClose();
 //     }
-    
+
 //   };
 
 //   return (
@@ -168,7 +168,7 @@
 // };
 
 // export default TransactionModal;
-import React, { useState,useContext } from "react";
+import React, { useState, useContext } from "react";
 import {
   View,
   Text,
@@ -181,39 +181,41 @@ import { createApi } from "../../Util/UtilApi";
 import UserDataContext from "../../Store/UserDataContext";
 import { useSnackbar } from "../../Store/SnackbarContext";
 
-const TransactionModal = ({ visible, onClose,invoices }) => {
+const TransactionModal = ({ visible, onClose, invoices }) => {
   const [amount, setAmount] = useState("");
   const totalBill = 2450; // Example total amount
   const paidAmount = 1200;
-const {userData}= useContext(UserDataContext)
-const{showSnackbar}=useSnackbar()
-  const handleSave =async () => {
-    try{
-        const enteredAmount = parseFloat(amount);
-    if (isNaN(enteredAmount) || enteredAmount <= 0) {
-      Alert.alert("Invalid Input", "Please enter a valid amount.");
-    } else if (enteredAmount > invoices?.finaltotal) {
-      Alert.alert("Error", "Amount cannot be greater than the total bill.");
-    } else {
-        const payload={vendorfk:invoices?.vendorfk ,
-            invoicefk:invoices?.invoicefk ,
-            userfk: invoices?.userfk,
-            amount: amount}
-            console.log(payload)
-        const response =await createApi("transaction/transactions",payload, {
-                Authorization: `Bearer ${userData.token}`,
-              })
-              console.log(response,"of Transaction")
-              showSnackbar("transaction create successfully","success")
-    //   Alert.alert("Success", "Transaction saved successfully!");
+  const { userData } = useContext(UserDataContext)
+  const { showSnackbar } = useSnackbar()
+  const handleSave = async () => {
+    try {
+      const enteredAmount = parseFloat(amount);
+      if (isNaN(enteredAmount) || enteredAmount <= 0) {
+        Alert.alert("Invalid Input", "Please enter a valid amount.");
+      } else if (enteredAmount > invoices?.finaltotal) {
+        Alert.alert("Error", "Amount cannot be greater than the total bill.");
+      } else {
+        const payload = {
+          vendorfk: invoices?.vendorfk,
+          invoicefk: invoices?.invoicefk,
+          userfk: invoices?.userfk,
+          amount: amount
+        }
+        console.log(payload)
+        const response = await createApi("transaction/transactions", payload, {
+          Authorization: `Bearer ${userData.token}`,
+        })
+        console.log(response, "of Transaction")
+        showSnackbar("transaction create successfully", "success")
+        //   Alert.alert("Success", "Transaction saved successfully!");
 
-    }
-    }catch(err){
-      console.log(err.data.message,"error response")
-        showSnackbar(`${err.data.message}`,"error")
+      }
+    } catch (err) {
+      console.log(err.data.message, "error response")
+      showSnackbar(`${err.data.message}`, "error")
 
-    }finally{
-        onClose();
+    } finally {
+      onClose();
     }
 
   };
@@ -239,7 +241,12 @@ const{showSnackbar}=useSnackbar()
           {/* Total Bill */}
           <Text style={styles.label}>Total Bill</Text>
           <View style={styles.disabledInput}>
-            <Text>₹{invoices?.finaltotal.toFixed(2)}</Text>
+            <Text>
+              ₹
+              {typeof invoices?.finaltotal === 'number'
+                ? invoices.finaltotal.toFixed(2)
+                : invoices?.finaltotal || "0.00"}
+            </Text>
           </View>
 
           {/* Paid Amount */}

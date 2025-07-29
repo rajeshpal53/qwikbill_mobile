@@ -8,7 +8,7 @@ import {
 } from "react-native";
 // import ImageResizer from "react-native-image-resizer";
 //import ImageResizer from "react-native-image-resizer";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons"; // For icons
+import { Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons"; // For icons
 import Entypo from "@expo/vector-icons/Entypo";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 import Modal from "react-native-modal";
 import { Divider, Text } from "react-native-paper";
 import { fontSize } from "../Util/UtilApi";
-import Ionicons from "@expo/vector-icons/Ionicons";
+// import ImageResizer from "react-native-imageresizer"; // Import the package
 
 // import * as ImageManipulator from 'expo-image-manipulator';
 export default function ServiceImagePicker({
@@ -30,8 +30,6 @@ export default function ServiceImagePicker({
   format = "JPEG",
   camera = true,
   gallary = true,
-  fieldsDisabled = false, // ✅ Add this line
-
 }) {
   console.log("profile image is the , ", image);
   console.log("format is , ", format);
@@ -47,13 +45,14 @@ export default function ServiceImagePicker({
   useEffect(() => {
     const setImageUrlfunc = () => {
       console.log("pratham y image , ", image);
+
       setImageUrl(image?.uri);
-      console.log("image url in image picker", imageUrl)
     };
+
+    // if(image){
     setImageUrlfunc();
+    // }
   }, [image]);
-
-
 
   const closeModal = () => {
     setModalVisible(false);
@@ -70,44 +69,45 @@ export default function ServiceImagePicker({
   }, []);
 
   // Function to compress the image without changing the dimensions
-  // const compressImageToTargetSize = async (
-  //   uri,
-  //   targetSizeMB,
-  //   initialQuality = 100
-  // ) => {
-  //   try {
-  //     let quality = initialQuality; // Start with high quality
-  //     let compressedUri = uri;
-  //     let fileSize = await getImageFileSizeInMB(compressedUri);
 
-  //     console.log("file size one time is ", fileSize);
+  const compressImageToTargetSize = async (
+    uri,
+    targetSizeMB,
+    initialQuality = 100
+  ) => {
+    try {
+      let quality = initialQuality; // Start with high quality
+      let compressedUri = uri;
+      let fileSize = await getImageFileSizeInMB(compressedUri);
 
-  //     // Keep reducing the quality until we reach the target size or quality becomes too low
-  //     while (fileSize > targetSizeMB && quality > 10) {
-  //       const resizedImage = await ImageResizer.createResizedImage(
-  //         compressedUri,
-  //         // Keep original dimensions (no resizing)
-  //         800, // a large number for width, to maintain the original dimensions
-  //         800, // a large number for height, to maintain the original dimensions
-  //         format, // Use JPEG format for compression
-  //         quality - 10, // Adjust compression quality
-  //         0, // No rotation
-  //         null // No specific path, use default location
-  //       );
+      console.log("file size one time is ", fileSize);
 
-  //       compressedUri = resizedImage.uri;
-  //       fileSize = await getImageFileSizeInMB(compressedUri);
-  //       console.log("fileSize is, ", fileSize);
-  //       //
-  //       quality -= 10; // Reduce quality by 10 each time
-  //     }
+      // Keep reducing the quality until we reach the target size or quality becomes too low
+      while (fileSize > targetSizeMB && quality > 10) {
+        const resizedImage = await ImageResizer.createResizedImage(
+          compressedUri,
+          // Keep original dimensions (no resizing)
+          800, // a large number for width, to maintain the original dimensions
+          800, // a large number for height, to maintain the original dimensions
+          format, // Use JPEG format for compression
+          quality - 10, // Adjust compression quality
+          0, // No rotation
+          null // No specific path, use default location
+        );
 
-  //     return compressedUri; // Return the compressed image URI
-  //   } catch (error) {
-  //     console.error("Error compressing image:", error);
-  //     return uri; // Return the original URI if compression fails
-  //   }
-  // };
+        compressedUri = resizedImage.uri;
+        fileSize = await getImageFileSizeInMB(compressedUri);
+        console.log("fileSize is, ", fileSize);
+        //
+        quality -= 10; // Reduce quality by 10 each time
+      }
+
+      return compressedUri; // Return the compressed image URI
+    } catch (error) {
+      console.error("Error compressing image:", error);
+      return uri; // Return the original URI if compression fails
+    }
+  };
 
   // Helper function to calculate file size in MB
   const getImageFileSizeInMB = async (uri) => {
@@ -179,6 +179,12 @@ export default function ServiceImagePicker({
     }
   };
 
+
+  const removeImage = () => {
+    setFieldValue(uploadFieldName, null);
+    setImageUrl("");
+  };
+
   const pickCameraImage = async () => {
     const permission = await ImagePicker.getCameraPermissionsAsync();
 
@@ -244,28 +250,21 @@ export default function ServiceImagePicker({
                 // cache: FastImage.cacheControl.web,
               }}
               style={styles.avatar}
-              onLoadStart={() => console.log("🟡 Image loading started...")}
-              onLoad={() => console.log("✅ Image loaded successfully")}
-              onError={(error) => console.log("❌ Image Load Error:", error)}
             />
 
             {/* Edit Icon */}
-            {!fieldsDisabled && (
-              <TouchableOpacity
-                style={styles.editIcon}
-                onPress={() => {
-                  if (!fieldsDisabled) {
-                    openModal();
-                  }
-                }}
-              >
-                {label === "Profile Image" && !isAdmin ? (
-                  <Entypo name="camera" size={20} color="#fff" />
-                ) : (
-                  <MaterialIcons name="edit" size={20} color="#fff" />
-                )}
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              style={styles.editIcon}
+              onPress={() => {
+                openModal();
+              }}
+            >
+              {label === "Profile Image" && !isAdmin ? (
+                <Entypo name="camera" size={20} color="#fff" />
+              ) : (
+                <MaterialIcons name="edit" size={20} color="#fff" />
+              )}
+            </TouchableOpacity>
           </View>
         </View>
       ) : (
@@ -287,7 +286,7 @@ export default function ServiceImagePicker({
                   source={{
                     uri: imageUrl || "https://via.placeholder.com/150" || "",
                     headers: { Accept: "*/*" },
-                    //  priority: FastImage.priority.high,
+                    // priority: FastImage.priority.high,
                     // cache: FastImage.cacheControl.web,
                   }}
                   style={[styles.imagePreview, imageSize]}
@@ -297,9 +296,7 @@ export default function ServiceImagePicker({
 
             <Pressable
               onPress={() => {
-                if (!fieldsDisabled) {
-                  openModal();
-                }
+                openModal();
               }}
               style={{
                 minHeight: 48,
@@ -326,9 +323,7 @@ export default function ServiceImagePicker({
                     textAlign: "center",
                   }}
                 >
-                  {fieldsDisabled
-                    ? ""
-                    : `Click to update ${label?.toLowerCase()}`}
+                  Click to update {label?.toLowerCase()}
                 </Text>
               ) : (
                 <Text
@@ -369,7 +364,7 @@ export default function ServiceImagePicker({
                     closeModal();
                     pickCameraImage();
                   }}>
-                      <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
                       <Ionicons style={{ marginRight: 5, marginTop: 7 }} name="camera" size={22} color="#333" />
                       <Text style={styles.optionText}> Take Photo</Text>
                     </View>
@@ -398,10 +393,10 @@ export default function ServiceImagePicker({
                   closeModal();
                   removeImage();
                 }}>
-                    <View style={{ flexDirection: "row", alignItems: "center" }}>
-                      <Ionicons style={{ marginRight: 5, marginTop: 7 }} name="trash" size={22} color="#333" />
-                      <Text style={styles.optionText}>  Remove Image</Text>
-                    </View>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Ionicons style={{ marginRight: 5, marginTop: 7 }} name="trash" size={22} color="#333" />
+                    <Text style={styles.optionText}>  Remove Image</Text>
+                  </View>
                 </TouchableOpacity>
               )}
             </View>
@@ -490,6 +485,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     elevation: 5,
     marginHorizontal: 10,
+    borderRadius: 12
   },
   backdrop: {
     flex: 1,
@@ -531,7 +527,6 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 16,
     color: "#333",
-    marginTop: 5
   },
   divider: {
     height: 1,
