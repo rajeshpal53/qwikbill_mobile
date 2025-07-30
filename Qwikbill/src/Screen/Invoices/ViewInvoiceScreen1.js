@@ -1,6 +1,4 @@
 
-
-
 import React, { useEffect, useContext, useState, useRef } from "react";
 import { View, Text, FlatList, RefreshControl } from "react-native";
 import { readApi } from "../../Util/UtilApi";

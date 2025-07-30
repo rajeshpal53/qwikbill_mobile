@@ -96,15 +96,25 @@ const AllVenderDataCard = ({
               />
             )}
           </View> */}
-            {isImageLoaded ? ( // Conditionally render the image after it has loaded
-              <Avatar.Image
-                size={60}
-                source={{ uri: imageurl }}
-                style={{ marginRight: width * 0.02 }} // Inline style for margin
-              />
-            ) : (
-              <ActivityIndicator size="small" color="#0000ff" /> // Show loading indicator while the image is loading
-            )}
+            {imageurl ? (
+  <Avatar.Image
+    size={60}
+    source={{ uri: imageurl }}
+    onLoadEnd={() => setIsImageLoaded(true)}
+    onError={() => {
+      console.log("Image failed to load, falling back to text avatar");
+      setImageUrl(""); // Fallback to Avatar.Text if image fails
+    }}
+    style={{ marginRight: width * 0.02 }}
+  />
+) : (
+  <Avatar.Text
+    size={60}
+    label={item?.shopname ? item.shopname.charAt(0).toUpperCase() : "S"}
+    style={{ backgroundColor: "#0D47A1", marginRight: width * 0.02 }}
+  />
+)}
+
           </View>
 
           <View style={styles.shopInfoContainer}>

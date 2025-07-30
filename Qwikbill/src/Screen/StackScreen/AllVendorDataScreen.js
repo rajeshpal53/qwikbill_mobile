@@ -7,7 +7,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useContext, useEffect, useState } from "react";
-import { ButtonColor, fontSize,getRandomImage,NORM_URL } from "../../Util/UtilApi";
+import { ButtonColor, fontSize, getRandomImage, NORM_URL } from "../../Util/UtilApi";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useWindowDimensions } from "react-native"; // Import the hook
 import { Avatar, Card, Icon } from "react-native-paper";
@@ -37,30 +37,28 @@ const AllVendorDataScreen = () => {
   const { userData } = useContext(UserDataContext);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-   const { showSnackbar } = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
-   console.log("DATA OF ITEM IS ------------", item?.id);
+  console.log("DATA OF ITEM IS ------------", item?.id);
 
- const onDeletePress = () => {
+  const onDeletePress = () => {
     // console.log("item is edit 123, ", item?.id);
     //setDeleteItemId(item?.id);
     setDeleteModal(true);
   };
 
-    const handleDeleteService = () => {
+  const handleDeleteService = () => {
     try {
-      const response = deleteApi(`vendors/${item?.id}`,{
+      const response = deleteApi(`vendors/${item?.id}`, {
         //"Content-Type": "application/json",
         Authorization: `Bearer ${userData?.token}`,
-      }
+      } );
+         console.log("vebdor id isssss",item?.id)
 
-      
-      );
       if (response) {
         console.log("Item deleted successfully");
         showSnackbar("Vendor deleted successfully", "Success");
         setDeleteModal(false);
-        navigation.goBack(); // Navigate back after deletion
       } else {
         console.log("Failed to delete item");
         showSnackbar("Failed to delete Vendor", "Error");
@@ -115,7 +113,7 @@ const AllVendorDataScreen = () => {
     }
   };
 
- // console.log("DATA OF ITEM IS ------------", item);
+  // console.log("DATA OF ITEM IS ------------", item);
 
   // Set the shop name in the header dynamically when the component loads
   useEffect(() => {
@@ -136,41 +134,41 @@ const AllVendorDataScreen = () => {
   }, [navigation, item?.shopname]);
 
 
-   useEffect(() => {
-      if (item?.shopImage) {
-        const tempUrl = `${NORM_URL}/${item?.shopImage}?${new Date().getTime()}`;
-        updateImageUrl(tempUrl);
-      } else {
-        const tempUrl = getRandomImage();
-        updateImageUrl(tempUrl);
-      }
-    }, []);
+  useEffect(() => {
+    if (item?.shopImage) {
+      const tempUrl = `${NORM_URL}/${item?.shopImage}?${new Date().getTime()}`;
+      updateImageUrl(tempUrl);
+    } else {
+      const tempUrl = getRandomImage();
+      updateImageUrl(tempUrl);
+    }
+  }, []);
 
-    const updateImageUrl = debounce((imageurl) => {
-      setImageUrl(imageurl);
-      setIsImageLoaded(true); // Set image loaded state to true once the image URL is set
-    }, 100);
+  const updateImageUrl = debounce((imageurl) => {
+    setImageUrl(imageurl);
+    setIsImageLoaded(true); // Set image loaded state to true once the image URL is set
+  }, 100);
 
 
-    useEffect(() => {
+  useEffect(() => {
 
-      const setImages = () => {
-        let tempImage = item.imageurl?.trim()
+    const setImages = () => {
+      let tempImage = item.imageurl?.trim()
         ? `${NORM_URL}${item.imageurl}?${new Date()?.getTime()}`
         : getRandomImage();
 
-        setImageUrl(tempImage);
+      setImageUrl(tempImage);
 
-        tempImage = item?.user?.profilePicurl?.trim()
+      tempImage = item?.user?.profilePicurl?.trim()
         ? `${NORM_URL}${item?.user?.profilePicurl}?${new Date()?.getTime()}`
         : getRandomImage();
 
-        setProfilePicurl(tempImage);
+      setProfilePicurl(tempImage);
 
 
-      }
-      setImages()
-    }, [])
+    }
+    setImages()
+  }, [])
 
 
   return (
@@ -411,16 +409,16 @@ const AllVendorDataScreen = () => {
         )} */}
       </View>
 
-       {deleteModal && (
-              <ConfirmModal
-                visible={deleteModal}
-                message="Confirm Delete This Service"
-                heading={"Confirmation Message"}
-                setVisible={setDeleteModal}
-                handlePress={handleDeleteService}
-                buttonTitle="Delete Now"
-              />
-            )}
+      {deleteModal && (
+        <ConfirmModal
+          visible={deleteModal}
+          message="Confirm Delete This Service"
+          heading={"Confirmation Message"}
+          setVisible={setDeleteModal}
+          handlePress={handleDeleteService}
+          buttonTitle="Delete Now"
+        />
+      )}
     </ScrollView>
   );
 };
