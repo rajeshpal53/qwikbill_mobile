@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchContainer: {
-    marginBottom: 10,
+    marginBottom: 25,
     marginHorizontal:-10,
   },
   dropdownContainer: {

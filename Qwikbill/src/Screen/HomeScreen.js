@@ -16,7 +16,7 @@ import {
   Text,
   TouchableOpacity,
   useWindowDimensions,
-  View
+  View,
 } from "react-native";
 import { RefreshControl } from "react-native-gesture-handler";
 import { ActivityIndicator } from "react-native-paper";
@@ -60,7 +60,7 @@ export default function HomeScreen({ navigation, noItemData }) {
   // console.log(verticalScale(700), "    --- verticalscale");
   const [vendorStatus, setVendorStatus] = useState({});
   const { userData } = useContext(UserDataContext);
-  const { allShops, selectedShop, noItemModal, setNoItemModal,fetchShopsFromServer} =
+  const { allShops, selectedShop, noItemModal, setNoItemModal, fetchShopsFromServer } =
     useContext(ShopContext);
   const isFocused = useIsFocused();
   const [currentStep, setCurrentStep] = useState(0);
@@ -74,19 +74,19 @@ export default function HomeScreen({ navigation, noItemData }) {
   const [selectedMonth, setSelectedMonth] = useState('');
 
 
-  useEffect(()=>{
-      fetchShopsFromServer()
-  },[])
+  useEffect(() => {
+    fetchShopsFromServer()
+  }, [])
 
   useEffect(() => {
 
-   // console.log(" slected shop in HomeSscreen", selectedShop);
-    console.log("all shops  are ",allShops)
+    // console.log(" slected shop in HomeSscreen", selectedShop);
+    console.log("all shops  are ", allShops)
 
   }, [selectedShop]);
-    useEffect(() => {
+  useEffect(() => {
 
-    console.log(" slelected vendor ", allShops );
+    console.log(" slelected vendor ", allShops);
 
   }, [selectedShop]);
 
@@ -172,7 +172,7 @@ export default function HomeScreen({ navigation, noItemData }) {
   }, []);
 
 
-  
+
 
 
   // useEffect(() => {
@@ -182,7 +182,7 @@ export default function HomeScreen({ navigation, noItemData }) {
 
 
 
- 
+
 
 
   const onRefresh = async () => {
@@ -250,7 +250,7 @@ export default function HomeScreen({ navigation, noItemData }) {
         <View>
           <View style={styles.dropDownContainer}>
             <View style={styles.dropdownRow}>
-              <Ionicons name="storefront-sharp" size={24} color="#0c3b73" marginBottom={1}  />
+              <Ionicons name="storefront-sharp" size={24} color="#0c3b73" marginBottom={1} />
               <DropDownList options={allShops} />
             </View>
           </View>
@@ -285,11 +285,11 @@ export default function HomeScreen({ navigation, noItemData }) {
               </ScrollView>
             )} */}
 
-          
 
-            <View style={{marginTop:15 }}>
+
+            <View style={{ marginTop: 15 }}>
               {allShops?.length > 0 ? (
-                <View style={{ flex: 1, justifyContent: "center", marginTop: "5%"}}>
+                <View style={{ flex: 1, justifyContent: "center", marginTop: "5%" }}>
                   <FlatList
                     style={styles.flatList}
                     data={services.filter(service => {
@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
   },
   container: {
     marginHorizontal: responsiveWidth(5),
-    
+
     // height: verticalScale(900),
     flex: 1
   },
@@ -452,7 +452,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: "3%",
     marginHorizontal: 15,
-    
+
 
   },
   userDropdown: {
@@ -461,17 +461,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#f6f2f7",
     borderRadius: 10,
     // marginTop: "3%",
-    marginHorizontal: 15 ,
- 
-    },
+    marginHorizontal: 15,
+
+  },
 
   dropdownRow: {
-    
+
     flexDirection: "row",
     alignItems: "center",
     gap: "5%", // Space between icon and dropdown
     // backgroundColor:"yellow"
-    
+
   },
 
   viewsContainer: {

@@ -45,7 +45,7 @@ const AllInvoiceScreen = () => {
   }, [selected, sortBy]);
 
   useEffect(() => {
-    console.log("SET SELECTED VALUE152 ", selectedShop?. vendor?.id);
+    console.log("SET SELECTED VALUE152 ", selectedShop?.vendor?.id);
   }, [selectedShop]);
 
   // useEffect(() => {
@@ -114,7 +114,7 @@ const AllInvoiceScreen = () => {
 
       let api = `invoice/searchInvoices?searchTerm=${trimmedQuery}`;
 
-      console.log("api serach ",api )
+      console.log("api serach ", api)
 
       const response = await readApi(api, {
         "Content-Type": "application/json",
@@ -192,12 +192,12 @@ const AllInvoiceScreen = () => {
         onEndReachedThreshold={0.5}
         ListFooterComponent={Loader}
         ListEmptyComponent={() =>
-          !loader && InvoiceData.length ? (
+          !loader && InvoiceData.length <= 0 ? (
             <View
               style={{
                 alignItems: "center",
                 justifyContent: "center",
-                marginTop: "40%",
+                marginTop: "30%",
               }}
             >
               <NoDataFound textString={"No Users Found"} />
