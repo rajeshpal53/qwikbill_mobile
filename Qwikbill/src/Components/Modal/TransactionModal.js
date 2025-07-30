@@ -168,18 +168,18 @@
 // };
 
 // export default TransactionModal;
-import React, { useState, useContext } from "react";
+import { useContext, useState } from "react";
 import {
-  View,
+  Alert,
+  Modal,
   Text,
   TextInput,
   TouchableOpacity,
-  Modal,
-  Alert,
+  View,
 } from "react-native";
-import { createApi } from "../../Util/UtilApi";
-import UserDataContext from "../../Store/UserDataContext";
 import { useSnackbar } from "../../Store/SnackbarContext";
+import UserDataContext from "../../Store/UserDataContext";
+import { createApi } from "../../Util/UtilApi";
 
 const TransactionModal = ({ visible, onClose, invoices }) => {
   const [amount, setAmount] = useState("");
