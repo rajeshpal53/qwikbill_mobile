@@ -14,8 +14,10 @@ import { Avatar, Card, Icon } from "react-native-paper";
 import UserDataContext from "../../Store/UserDataContext";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { debounce } from "lodash";
-
+import ConfirmModal from "../../Components/Modal/ConfirmModal";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { deleteApi } from "../../Util/UtilApi";
+import { useSnackbar } from "../../Store/SnackbarContext";
 
 const AllVendorDataScreen = () => {
   const route = useRoute();
@@ -34,6 +36,40 @@ const AllVendorDataScreen = () => {
   const [profilePicurl, setProfilePicurl] = useState(null);
   const { userData } = useContext(UserDataContext);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
+   const { showSnackbar } = useSnackbar();
+
+   console.log("DATA OF ITEM IS ------------", item?.id);
+
+ const onDeletePress = () => {
+    // console.log("item is edit 123, ", item?.id);
+    //setDeleteItemId(item?.id);
+    setDeleteModal(true);
+  };
+
+    const handleDeleteService = () => {
+    try {
+      const response = deleteApi(`vendors/${item?.id}`,{
+        //"Content-Type": "application/json",
+        Authorization: `Bearer ${userData?.token}`,
+      }
+
+      
+      );
+      if (response) {
+        console.log("Item deleted successfully");
+        showSnackbar("Vendor deleted successfully", "Success");
+        setDeleteModal(false);
+        navigation.goBack(); // Navigate back after deletion
+      } else {
+        console.log("Failed to delete item");
+        showSnackbar("Failed to delete Vendor", "Error");
+      }
+    } catch (err) {
+      console.log("Error in handleDeletePress:", err);
+    }
+
+  }
 
 
   const [ManuButton, SetManuButton] = useState([
@@ -66,7 +102,7 @@ const AllVendorDataScreen = () => {
       } else if (btn?.value == "Items") {
         onEditItems(item);
       } else if (btn?.value == "Delete") {
-        onDelete(item);
+        onDeletePress();
       }
       else if (btn?.value == "Role") {
         onRole(item);
@@ -79,7 +115,7 @@ const AllVendorDataScreen = () => {
     }
   };
 
-  console.log("DATA OF ITEM IS ------------", item);
+ // console.log("DATA OF ITEM IS ------------", item);
 
   // Set the shop name in the header dynamically when the component loads
   useEffect(() => {
@@ -374,6 +410,17 @@ const AllVendorDataScreen = () => {
           />
         )} */}
       </View>
+
+       {deleteModal && (
+              <ConfirmModal
+                visible={deleteModal}
+                message="Confirm Delete This Service"
+                heading={"Confirmation Message"}
+                setVisible={setDeleteModal}
+                handlePress={handleDeleteService}
+                buttonTitle="Delete Now"
+              />
+            )}
     </ScrollView>
   );
 };

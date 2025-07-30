@@ -58,7 +58,15 @@ const ProviderProfileForm = ({
         {console.log("proiileImage is , ", values?.profileImage)}
         <View style={{ marginBottom: 12, marginTop: 5 }}>
           <ServiceImagePicker
-            image={values?.profileImage}
+            //image={values?.profileImage}
+            image={
+              values?.profileImage?.uri
+                ? {
+                  ...values.profileImage,
+                  uri: `${values.profileImage.uri}?t=${Date.now()}`, // 👈 cache-busting URL
+                }
+                : null
+            }
             label="Profile Image"
             isAdmin={isAdmin}
             setFieldValue={setFieldValue}
@@ -73,7 +81,7 @@ const ProviderProfileForm = ({
               {errors.profileImage}
             </Text>
           )}
-         
+
 
         </View>
         {/* </Card> */}
@@ -235,7 +243,7 @@ const ProviderProfileForm = ({
           value={values.userAddress}
           error={touched.userAddress && errors.userAddress}
         //  multiline={true}
-         // numberOfLines={4}
+        // numberOfLines={4}
         />
         {touched.userAddress && errors.userAddress && (
           <Text style={{ color: "red" }}>{errors.userAddress}</Text>

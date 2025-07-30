@@ -207,7 +207,9 @@ const ProfileSetting = ({
   // const { setCreateuser } = useContext(WalletContext);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { updateSelectedShop, noItemModal, selectedShop,clearSelectedShop } = useContext(ShopContext)
+  const [modalImageUrl, setModalImageUrl] = useState(null);
+
+  const { updateSelectedShop, noItemModal, selectedShop, clearSelectedShop } = useContext(ShopContext)
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchServiceProvider(userData);
@@ -271,9 +273,9 @@ const ProfileSetting = ({
               selectedShop ?
                 {
                   icon: "person-add",
-                 label:"Add or Edit Role",
-                //  value: roleDetails ? "EditRole" : "AssignNewRole",
-                value:"AddOrEditRole"
+                  label: "Add or Edit Role",
+                  //  value: roleDetails ? "EditRole" : "AssignNewRole",
+                  value: "AddOrEditRole"
                 } : null,
               // { icon: "logout", label: "Logout1", value: "Logout1" },
             ].filter(Boolean) // << THIS REMOVES null SAFELY
@@ -301,44 +303,6 @@ const ProfileSetting = ({
     };
     UpdatemanuItem();
   }, [roleDetails, isFocused, userData]);
-
-  // if (roleDetails) {
-  //   setMenuItems([
-  //     {
-  //       icon: "language",
-  //       label: "Change Language",
-  //       value: "changeLanguage",
-  //     },
-  //     ...(userData?.user?.roles === null ? AdminOption : []),
-
-  //     { icon: "policy", label: "Policies", value: "Policies" },
-  //     ...(userData
-  //       ? [{ icon: "logout", label: "Logout", value: "Logout" }]
-  //       : []),
-  //   ]);
-  // } else {
-  //   setMenuItems([
-  //     {
-  //       icon: "language",
-  //       label: "Change Language",
-  //       value: "changeLanguage",
-  //     },
-  //     ...(userData?.user?.roles === null ? AdminOption : []),
-
-  //     { icon: "policy", label: "Policies", value: "Policies" },
-  //     ...(userData
-  //       ? [
-  //           {
-  //             icon: "person-add",
-  //             label: roleDetails ? "Edit Role" : "Assign New Role",
-  //             value: roleDetails ? "Edit Role" : "Assign New Role",
-  //           },
-  //           { icon: "logout", label: "Logout", value: "Logout" },
-  //           // { icon: "logout", label: "Logout1", value: "Logout1" },
-  //         ]
-  //       : []),
-  //   ]);
-  // }
 
 
 
@@ -377,6 +341,7 @@ const ProfileSetting = ({
 
   const openImageModal = (uri) => {
     setSelectedImageUri(uri);
+    console.log("Opening image modal for:", uri);
     setIsFullImageModalVisible(true);
   };
 
@@ -410,12 +375,12 @@ const ProfileSetting = ({
     } else if (value === "AdminSection") {
       navigation.navigate("AdminSection");
     } else if (value === "AddOrEditRole") {
-  if (roleDetails) {
-    navigation.navigate("EditRoleScreen", { isAdmin: false, AdminRoleData: null });
-  } else {
-    navigation.navigate("AddroleScreen");
-  }
-}else if (value == "ChatWithUs") {
+      if (roleDetails) {
+        navigation.navigate("EditRoleScreen", { isAdmin: false, AdminRoleData: null });
+      } else {
+        navigation.navigate("AddroleScreen");
+      }
+    } else if (value == "ChatWithUs") {
       navigation.navigate("ChatWithUs");
     } else if (value === "needMoreHelp") {
       navigation.navigate("Policies", {
@@ -424,43 +389,43 @@ const ProfileSetting = ({
       });
     }
   };
-const logoutHandler = async () => {
-  console.log("userData before logout :", userData);
-  try {
-    const response = await createApi(
-      "users/logout",
-      { mobile: userData?.user?.mobile },
-      {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userData.token}`,
-      }
-    );
-
-    if (response) {
-      showSnackbar("Logged out successfully", "success");
-
-      // Clear user + shop
-      await clearUserData();
-      await AsyncStorage.clear(); // clear everything
-      await clearSelectedShop();  // clear selectedShop from context
-      
-      console.log("User data after logout:", userData);
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: "login" }],
-        })
+  const logoutHandler = async () => {
+    console.log("userData before logout :", userData);
+    try {
+      const response = await createApi(
+        "users/logout",
+        { mobile: userData?.user?.mobile },
+        {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userData.token}`,
+        }
       );
-    } else {
+
+      if (response) {
+        showSnackbar("Logged out successfully", "success");
+
+        // Clear user + shop
+        await clearUserData();
+        await AsyncStorage.clear(); // clear everything
+        await clearSelectedShop();  // clear selectedShop from context
+
+        console.log("User data after logout:", userData);
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "login" }],
+          })
+        );
+      } else {
+        showSnackbar("Error logging out", "error");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
       showSnackbar("Error logging out", "error");
+    } finally {
+      setVisible(false);
     }
-  } catch (error) {
-    console.error("Logout error:", error);
-    showSnackbar("Error logging out", "error");
-  } finally {
-    setVisible(false);
-  }
-};
+  };
 
 
   const handleEditPress = () => {
@@ -506,13 +471,13 @@ const logoutHandler = async () => {
                 <TouchableOpacity
                   onPress={() => {
                     if (userData?.user?.profilePicurl) {
-                      openImageModal(
-                        `${NORM_URL}/${userData?.user?.profilePicurl
-                        }?${new Date().getTime()}`
-                      );
+                      const freshUrl = `${NORM_URL}/${userData?.user?.profilePicurl}?${new Date().getTime()}`;
+                      setModalImageUrl(freshUrl);
+                      openImageModal(freshUrl);
                     }
                   }}
                 >
+
                   <Image
                     source={{
                       uri: `${imageUrl}?${new Date().getTime()}`,
@@ -678,13 +643,15 @@ const logoutHandler = async () => {
               style={styles.fullImage}
             /> */}
             <Image
+              key={selectedImageUri} // 👈 force re-render
               source={
-                userData?.user?.profilePicurl
-                  ? { uri: `${NORM_URL}/${userData?.user?.profilePicurl}` }
+                selectedImageUri
+                  ? { uri: selectedImageUri, cache: 'reload' }
                   : { uri: "https://dailysabji.com/assets/mobile/neutral.png" }
               }
               style={styles.fullImage}
             />
+
 
           </View>
         </Modal>

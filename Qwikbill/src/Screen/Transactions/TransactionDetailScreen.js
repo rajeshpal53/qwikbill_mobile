@@ -136,29 +136,18 @@ const TransactionDetailScreen = ({ item }) => {
         detailData.map((item) => (
           <Card key={item.id} style={styles.card}>
             <Text style={styles.amount}>₹{amount}</Text>
-            <View
-              style={
-                [styles.statusView,
-                {
-                  borderColor: transactionStatus === "complete" ? "green" : "red",
-                }]}
-            >
-              {transactionStatus === "complete" ? (<AntDesign name="checkcircleo" size={16} color="green" style={{ marginRight: 5 }} />)
-                : (<AntDesign name="closecircleo" size={16} color="red" style={{ marginRight: 5 }} />)}
-
-              <Text
-                style={[
-                  { fontSize: 16, textAlign: "center" },
-                  transactionStatus === "complete" ? { color: "green" } : { color: "red" },
-                ]}
-              >
+            <View style={[styles.statusView, { borderColor: transactionStatus === "complete" ? "green" : "red" }]}>
+              {transactionStatus === "complete"
+                ? <AntDesign name="checkcircleo" size={16} color="green" style={{ marginRight: 5 }} />
+                : <AntDesign name="closecircleo" size={16} color="red" style={{ marginRight: 5 }} />}
+              <Text style={[styles.statusText, { color: transactionStatus === "complete" ? "green" : "red" }]}>
                 {transactionStatus}
               </Text>
             </View>
 
             <Text style={styles.date}>{new Date(createdAt)?.toLocaleString()}</Text>
 
-            <View style={styles.section}>
+            <View style={[styles.section, { marginBottom: 12, borderRadius: 10, elevation: 3 }]}>
               <View style={styles.row}>
                 <View style={styles.preRow}>
                   <FontAwesome name="credit-card" size={16} color="gray" />
@@ -184,13 +173,13 @@ const TransactionDetailScreen = ({ item }) => {
               </View>
             </View>
 
-            <View style={styles.section}>
+            <View style={[styles.section, { marginBottom: 12, borderRadius: 10, elevation: 3 }]}>
               <View style={styles.userRow}>
-                <Avatar.Text size={70} label={userName ? userName?.charAt(0)?.toUpperCase() :
+                <Avatar.Text size={50} label={userName ? userName?.charAt(0)?.toUpperCase() :
                   <Feather name="arrow-down-right" size={20} color={"white"} />
 
                 } />
-                <View style={{ marginLeft: 15, gap: 3 }}>
+                <View style={{ marginLeft: 10, gap: 3, paddingBottom: 5 }}>
 
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <MaterialIcons name="person" size={16} color="gray" style={{ marginHorizontal: 6 }} />
@@ -198,27 +187,26 @@ const TransactionDetailScreen = ({ item }) => {
                   </View>
 
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <MaterialIcons name="phone" size={16} color="gray" style={{ marginHorizontal: 6 }} />
-                    <Text style={styles.label}>{user?.mobile || "N/A"}</Text>
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                      <MaterialIcons name="phone" size={16} color="gray" style={{ marginHorizontal: 6 }} />
+                      <Text style={styles.label}>{user?.mobile || "N/A"}</Text>
+                    </View>
+
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                      <MaterialIcons name="location-on" size={16} color="gray" style={{ marginLeft: 12 }} />
+                      <Text style={styles.address}>
+                        {user.address
+                          ? user.address.length > 18
+                            ? user.address.slice(0, 18) + "..."
+                            : user.address
+                          : "N/A"}
+                      </Text>
+                    </View>
                   </View>
 
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <MaterialIcons name="location-on" size={16} color="gray" style={{ marginHorizontal: 5 }} />
-                    <Text style={styles.address}>
-                      {user.address
-                        ? user.address.length > 20
-                          ? user.address.slice(0, 20) + "..."
-                          : user.address
-                        : "N/A"}
-                    </Text>
-                  </View>
                 </View>
-
-
               </View>
-            </View>
 
-            <View style={styles.section}>
               <View style={styles.row}>
                 <View style={styles.preRow}>
                   <FontAwesome name="id-card" size={16} color="gray" />
@@ -300,7 +288,7 @@ const styles = StyleSheet.create({
     padding: 3,
   },
   card: {
-    padding: 16,
+    padding: 12,
     margin: 8,
     borderWidth: 1,
     borderColor: "#ccc",
@@ -308,10 +296,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   amount: {
-    fontSize: fontSize.headingLarge,
-    fontFamily: fontFamily.bold,
+    fontSize: 28,
+    fontWeight: "bold",
     textAlign: "center",
-    marginVertical: 5
+    marginVertical: 6,
   },
   status: {
     textAlign: "center",
@@ -323,25 +311,25 @@ const styles = StyleSheet.create({
   },
   buttonView: {
     flexDirection: "row",
-    justifyContent: "space-evenly",
-    marginVertical: 10,
-    gap: 6,
-
-    width: "100%"
+    justifyContent: "space-between",
+    gap: 8,
+    marginTop: 12,
   },
   statusPending: {
     color: "red",
   },
   date: {
-    color: "gray",
     textAlign: "center",
-    marginBottom: 8,
+    color: "gray",
+    fontSize: 14,
+    marginBottom: 10,
   },
   section: {
-    backgroundColor: "#f5f5f5",
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 8,
+    backgroundColor: "#f9f9f9",
+    padding: 14,
+    // borderRadius: 10,
+    // marginBottom: 10,
+    // elevation: 2,
   },
   row: {
     flexDirection: "row",
@@ -362,10 +350,11 @@ const styles = StyleSheet.create({
   userRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 10
+    marginVertical: 5,
+    // gap: 
   },
   address: {
-    marginLeft: 8,
+    marginLeft: 3,
     color: "gray",
   },
   button: {
@@ -373,8 +362,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#007bff",
   },
   supportButton: {
-    marginTop: 8,
-    padding: 12,
+    marginTop: 12,
+    padding: 14,
     borderWidth: 1,
     borderColor: "#007bff",
     borderRadius: 8,
@@ -382,8 +371,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  statusView:
-  {
+
+  statusView: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
@@ -392,11 +381,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    marginBottom: 10
+    marginBottom: 8,
   },
   supportText: {
     marginLeft: 8,
     color: "#007bff",
+    fontSize: 14,
+    fontWeight: "600",
   },
   errorText: {
     color: "red",
@@ -410,7 +401,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     fontFamily: fontFamily.medium,
     marginVertical: 8
-  }
+  },
+  statusText: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
 });
 
 export default TransactionDetailScreen;
