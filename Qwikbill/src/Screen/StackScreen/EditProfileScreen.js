@@ -404,7 +404,16 @@ export default function EditProfileScreen({ navigation }) {
                       )}
                       <View>
                         <ServiceImagePicker
-                          image={values?.profileImage}
+                          //image={values?.profileImage}
+                          image={
+                            values?.profileImage?.uri
+                              ? {
+                                ...values.profileImage,
+                                uri: `${values.profileImage.uri}?t=${Date.now()}`, // 👈 cache-busting URL
+                              }
+                              : null
+                          }
+
                           label="Profile Image"
                           isAdmin={true}
                           setFieldValue={setFieldValue}

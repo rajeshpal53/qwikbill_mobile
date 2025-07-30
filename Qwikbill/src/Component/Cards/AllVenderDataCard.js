@@ -23,8 +23,7 @@ const AllVenderDataCard = ({
   const navigation = useNavigation();
   const [imageurl, setImageUrl] = useState("");
 
-  console.log("Data of item 12341458", item);
-  console.log("Data of item 1234", selectedShop);
+  //console.log("Data of item 1234", selectedShop);
 
   // useEffect(() => {
   //   if (item?.shopImage) {

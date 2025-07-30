@@ -9,6 +9,8 @@ import OpenmiqModal from "../../Components/Modal/Openmicmodal";
 import NoDataFound from "../../Components/NoDataFound";
 import UserDataContext from "../../Store/UserDataContext";
 import { readApi } from "../../Util/UtilApi";
+import { useSnackbar } from "../../Store/SnackbarContext";
+import { deleteApi } from "../../Util/UtilApi";
 
 const AllVenderScreen = () => {
   const { userData } = useContext(UserDataContext);
@@ -22,13 +24,13 @@ const AllVenderScreen = () => {
   const [page, setpage] = useState(1);
   const PAGE_SIZE = 10;
   const [totalpage, SetTotalpage] = useState(1);
-  const [deleteModal, setDeleteModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState(null);
   const navigation = useNavigation();
   const searchbarRef = useRef(null);
   const [searchedData, setSearchedData] = useState([]);
   const [searchCalled, setSearchCalled] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const { showSnackbar } = useSnackbar();
 
   console.log("Data of user", userData);
 
@@ -75,17 +77,15 @@ const AllVenderScreen = () => {
   };
 
   //Delete API
-  const handleDeleteService = (item) => {
-    console.log("item is edit 123, ", item);
-    // setDeleteItemId(item?.id);
-    // setDeleteModal(true);
-  };
+  // const handleDeleteService = (item) => {
+  //   console.log("item is edit 123, ", item);
+  //   // setDeleteItemId(item?.id);
+  //   // setDeleteModal(true);
+  // };
 
-  const onDelete = (item) => {
-    console.log("item is edit 123, ", item);
-    setDeleteItemId(item?.id);
-    setDeleteModal(true);
-  };
+
+ 
+ 
 
   const onRole = (item) => {
     console.log("ITEM in a data ", item);
@@ -180,7 +180,7 @@ const AllVenderScreen = () => {
         renderItem={({ item, index }) => (
           <AllVenderDataCard
             item={item}
-            onDelete={onDelete}
+           // onDelete={onDelete}
             onEditDetails={handleEditDetails}
             onEditItems={handleProductItems}
             onRole={onRole}
@@ -223,16 +223,7 @@ const AllVenderScreen = () => {
         />
       )}
 
-      {deleteModal && (
-        <ConfirmModal
-          visible={deleteModal}
-          message="Confirm Delete This Service"
-          heading={"Confirmation Message"}
-          setVisible={setDeleteModal}
-          handlePress={handleDeleteService}
-          buttonTitle="Delete Now"
-        />
-      )}
+     
     </View>
   );
 };
