@@ -24,6 +24,7 @@ import PriceDetails from "../PriceDetails";
 import ConfirmModal from "../../Components/Modal/ConfirmModal";
 
 const CreateInvoiceForm = ({ selectedButton }) => {
+  const [isHorizontalScrolling, setIsHorizontalScrolling] = useState(false);
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const carts = useSelector((state) => state.cart.Carts);
@@ -219,7 +220,16 @@ console.log("Final Payload:", JSON.stringify(cleanedPayload, null, 2));
   };
 
   return (
-    <ScrollView >
+    
+
+<ScrollView
+  scrollEnabled={!isHorizontalScrolling}
+  keyboardShouldPersistTaps="handled"
+  nestedScrollEnabled={true}
+  contentContainerStyle={{ paddingBottom: 20 }}
+>
+
+
       <Formik
         enableReinitialize={true}
         initialValues={{
@@ -465,7 +475,17 @@ console.log("Final Payload:", JSON.stringify(cleanedPayload, null, 2));
                 <View style={{ marginTop: 10 }}>
 
 
-                  <ItemDataTable carts={carts} discountValue={discountValue} setDiscountRate={setDiscountRate} discountRate={discountRate} finalTotal={finalTotal} setFinalTotal={setFinalTotal} />
+                  <ItemDataTable
+  carts={carts}
+  discountValue={discountValue}
+  setDiscountRate={setDiscountRate}
+  discountRate={discountRate}
+  finalTotal={finalTotal}
+  setFinalTotal={setFinalTotal}
+  onHorizontalScrollStart={() => setIsHorizontalScrolling(true)}
+  onHorizontalScrollEnd={() => setIsHorizontalScrolling(false)}
+/>
+
                   <PriceDetails setPaymentStatus={setPaymentStatus} selectedButton={selectedButton} discountValue={discountValue} setDiscountValue={setDiscountValue} />
 
                 </View>

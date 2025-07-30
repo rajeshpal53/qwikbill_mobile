@@ -404,7 +404,7 @@ const AddRole = () => {
               {/* Shop Dropdown */}
               <View style={{ marginBottom: 10 }}>
                 <Text style={styles.label}>Select Shop</Text>
-                <View style={{ marginBottom: 30,marginLeft:-40, }}>
+                <View style={{ margin:20,marginLeft:-40,marginRight:0 }}>
                   <DropDownList
                     options={allShops}
                     onValueChange={(selectedShop) =>
