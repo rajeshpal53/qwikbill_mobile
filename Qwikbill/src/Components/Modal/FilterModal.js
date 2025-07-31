@@ -10,7 +10,8 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTranslation } from "react-i18next";
-
+import { Picker } from "@react-native-picker/picker";
+import { fontFamily } from "../../Util/UtilApi";
 
 const FilterModal = ({
   isModalVisible,
@@ -19,36 +20,40 @@ const FilterModal = ({
   sortBy,
   dateRange,
   setDateRange,
-  formatDate
+  formatDate,
+  setTypeFilter,
 }) => {
+  const { t } = useTranslation();
+  const [selectedValue, setSelectedValue] = useState(sortBy || "");
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
-  const [showDateWise, setShowDateWise] = useState(false);
-  const { t } = useTranslation();
 
-
-  const filterOptions = [
+  const dateFilters = [
     { label: "1 Month", value: "1months" },
     { label: "3 Months", value: "3months" },
     { label: "6 Months", value: "6months" },
     { label: "Date Wise", value: "datewise" },
   ];
 
-  const handlePress = (item) => {
-    if (item.value === "datewise") {
-      setShowDateWise(true);
-      setShowStartDatePicker(true);
-    } else {
-      setSortBy(item.value);
-      setModalVisible(false);
+  const typeFilters = [
+    { label: "Gst", value: "gst" },
+    { label: "Provisional", value: "provisional" },
+    { label: "Quotation", value: "quotation" },
+  ];
+
+  const handleSubmit = () => {
+    if (selectedValue === "datewise") {
+      setSortBy("datewise");
+      setTypeFilter("");
     }
+    setModalVisible(false);
   };
 
   const handleDateChange = (event, selectedDate, type) => {
     if (selectedDate) {
       setDateRange((prev) => ({
         ...prev,
-        [type]: selectedDate, // Keep as a Date object
+        [type]: selectedDate,
       }));
     }
     if (type === "startDate") {
@@ -57,14 +62,6 @@ const FilterModal = ({
     } else {
       setShowEndDatePicker(false);
     }
-  };
-
-
-
-  const handleSubmit = () => {
-    setSortBy("datewise");
-    setModalVisible(false);
-    setShowDateWise(false)
   };
 
   return (
@@ -88,63 +85,116 @@ const FilterModal = ({
 
               <Text style={styles.modalTitle}>{t("Select Filter")}</Text>
 
-              {filterOptions.map((item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => handlePress(item)}
-                  style={[
-                    styles.optionButton,
-                    sortBy === item.value && styles.selectedOption,
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.optionText,
-                      sortBy === item.value && styles.selectedText,
-                    ]}
+              {/* Date Filters as List */}
+              <View style={styles.optionList}>
+                {dateFilters.map((option, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.optionItem}
+                    onPress={() => {
+                      setSelectedValue(option.value);
+                      if (option.value === "datewise") {
+                        setShowStartDatePicker(true);
+                      } else {
+                        setSortBy(option.value);
+                        setTypeFilter("");
+                        setModalVisible(false);
+                      }
+                    }}
                   >
-                   {t(item.label)}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+                    <Text
+                      style={[
+                        styles.optionText,
+                        selectedValue === option.value && {
+                          fontWeight: "bold",
+                          color: "#6200EA",
+                        },
+                      ]}
+                    >
+                      {t(option.label)}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
 
-              {/* Start Date Picker */}
-              {showStartDatePicker && (
-                <DateTimePicker
-                  value={dateRange.startDate ? new Date(dateRange.startDate) : new Date()}
-                  mode="date"
-                  display="default"
-                  onChange={(event, date) => handleDateChange(event, date, "startDate")}
-                />
-              )}
+              {/* Type Filters as Picker */}
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={
+                    ["gst", "provisional", "quotation"].includes(selectedValue)
+                      ? selectedValue
+                      : ""
+                  }
+                  onValueChange={(itemValue) => {
+                    if (itemValue !== "") {
+                      setSelectedValue(itemValue);
+                      setTypeFilter(itemValue);
+                      setSortBy("");
+                      setModalVisible(false);
+                    }
+                  }}
+                >
+                  <Picker.Item label={t("Select Type")} value="" />
+                  {typeFilters.map((option, index) => (
+                    <Picker.Item
+                      key={index}
+                      label={t(option.label)}
+                      value={option.value}
+                    />
+                  ))}
+                </Picker>
+              </View>
 
-              {/* End Date Picker */}
-              {showEndDatePicker && (
-                <DateTimePicker
-                  value={dateRange.endDate ? new Date(dateRange.endDate) : new Date()}
-                  mode="date"
-                  display="default"
-                  onChange={(event, date) => handleDateChange(event, date, "endDate")}
-                />
-              )}
+              {/* Date Pickers */}
+              {selectedValue === "datewise" && (
+                <>
+                  {showStartDatePicker && (
+                    <DateTimePicker
+                      value={
+                        dateRange.startDate
+                          ? new Date(dateRange.startDate)
+                          : new Date()
+                      }
+                      mode="date"
+                      display="default"
+                      onChange={(e, date) =>
+                        handleDateChange(e, date, "startDate")
+                      }
+                    />
+                  )}
+                  {showEndDatePicker && (
+                    <DateTimePicker
+                      value={
+                        dateRange.endDate
+                          ? new Date(dateRange.endDate)
+                          : new Date()
+                      }
+                      mode="date"
+                      display="default"
+                      onChange={(e, date) =>
+                        handleDateChange(e, date, "endDate")
+                      }
+                    />
+                  )}
 
-              {/* Display Selected Dates */}
-              {showDateWise && dateRange?.startDate && dateRange?.endDate && (
-                <View style={styles.dateDisplayContainer}>
-                  <Text style={styles.dateText}>
-                    Start Date: {formatDate(dateRange.startDate)}
-                  </Text>
-                  <Text style={styles.dateText}>
-                    End Date: {formatDate(dateRange.endDate)}
-                  </Text>
-                </View>
-              )}
+                  {dateRange.startDate && dateRange.endDate && (
+                    <View style={styles.dateDisplayContainer}>
+                      <Text style={styles.dateText}>
+                        Start Date: {formatDate(dateRange.startDate)}
+                      </Text>
+                      <Text style={styles.dateText}>
+                        End Date: {formatDate(dateRange.endDate)}
+                      </Text>
+                    </View>
+                  )}
 
-              {/* Submit Button */}
-              {showDateWise && (
-                <TouchableOpacity style={styles.okayButton} onPress={handleSubmit}>
-                  <Text style={styles.okayButtonText}>OK</Text>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.okayButton}
+                    onPress={handleSubmit}
+                  >
+                    <Text style={styles.okayButtonText}>OK</Text>
+                  </TouchableOpacity>
+                </>
               )}
             </View>
           </TouchableWithoutFeedback>
@@ -165,7 +215,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    minHeight: 300,
+    minHeight: 250,
     alignItems: "center",
     position: "relative",
   },
@@ -177,26 +227,33 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 10,
   },
-  optionButton: {
+  optionList: {
     width: "100%",
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: "#f0f0f0",
-    alignItems: "center",
-    marginVertical: 5,
+    marginBottom: 10,
+  },
+  optionItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+  
+   backgroundColor:"#f0f0f0",
+   marginBottom:5,
+   borderRadius:12,
+   textAlign:"center",
+   alignItems:"center",
+   fontFamily:fontFamily.medium
   },
   optionText: {
     fontSize: 16,
-    color: "#333",
   },
-  selectedOption: {
-    backgroundColor: "#6200EA",
-  },
-  selectedText: {
-    color: "white",
-    fontWeight: "bold",
+  pickerContainer: {
+    width: "100%",
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 10,
+    overflow: "hidden",
   },
   dateDisplayContainer: {
     marginTop: 10,

@@ -446,7 +446,7 @@ const styles = StyleSheet.create({
     marginTop: 7,
   },
   dropDownContainer: {
-    paddingVertical: 11,
+    paddingVertical: 12,
     paddingHorizontal: "7%",
     backgroundColor: "white",
     borderRadius: 10,
@@ -455,15 +455,7 @@ const styles = StyleSheet.create({
 
 
   },
-  userDropdown: {
-    // paddingVertical: "2.5%",
-    // paddingHorizontal: "7%",
-    backgroundColor: "#f6f2f7",
-    borderRadius: 10,
-    // marginTop: "3%",
-    marginHorizontal: 15,
-
-  },
+ 
 
   dropdownRow: {
 
