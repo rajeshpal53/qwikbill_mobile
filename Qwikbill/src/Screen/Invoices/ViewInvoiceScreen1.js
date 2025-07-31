@@ -11,6 +11,7 @@ import FilterButtons from "../../Components/FilterButtons";
 import FilterModal from "../../Components/Modal/FilterModal";
 import UserDataContext from "../../Store/UserDataContext";
 import NoDataFound from "../../Components/NoDataFound";
+import { Filter } from "react-native-svg";
 
 function ViewInvoiceScreen1({ navigation }) {
   const [invoices, setInvoices] = useState([]);
@@ -39,6 +40,7 @@ function ViewInvoiceScreen1({ navigation }) {
   const [mainLoading, setMainLoading] = useState(true);
   const vendorId = selectedShop?.vendor?.id;          // <- **centralised**
   const authHeader = { Authorization: `Bearer ${userData?.token}` };
+  const [typeFilter, setTypeFilter] = useState("");
 
 
   // useEffect(() => {
@@ -59,34 +61,34 @@ function ViewInvoiceScreen1({ navigation }) {
 
 
   // Unified effect for filters and selected shop
-useEffect(() => {
-  if (selectedShop?.vendor?.id) {
-    setPage(1); // Reset page on filter/shop change
-    setSearchQuery(""); // Reset search on filter change
-    setSearchCalled(false);
-    setHasMore(true);
-    fetchInvoices(1, true); // force reload
-  }
-}, [selected, sortBy, selectedShop?.vendor?.id]);
-
-// Only used for pagination
-useEffect(() => {
-  if (page > 1) {
-    if (searchQuery?.length > 0 && searchCalled) {
-      fetchSearchedData(searchQuery, page);
-    } else {
-      fetchInvoices(page);
+  useEffect(() => {
+    if (selectedShop?.vendor?.id) {
+      setPage(1); // Reset page on filter/shop change
+      setSearchQuery(""); // Reset search on filter change
+      setSearchCalled(false);
+      setHasMore(true);
+      fetchInvoices(1, true); // force reload
     }
-  }
-}, [page]);
+  }, [selected, sortBy, typeFilter, selectedShop?.vendor?.id]);
+
+  // Only used for pagination
+  useEffect(() => {
+    if (page > 1) {
+      if (searchQuery?.length > 0 && searchCalled) {
+        fetchSearchedData(searchQuery, page);
+      } else {
+        fetchInvoices(page);
+      }
+    }
+  }, [page]);
 
 
-  
+
 
   const onRefresh = async () => {
-    setRefreshing(true); 
-  await fetchInvoices(1, true);
-    setRefreshing(false); 
+    setRefreshing(true);
+    await fetchInvoices(1, true);
+    setRefreshing(false);
   };
 
   const buildApiUrl = (pageNum) => {
@@ -101,43 +103,44 @@ useEffect(() => {
     if (selected === "Partially Paid") api += "&statusfk=3";
     if (selected === "Unpaid") api += "&statusfk=1";
     if (selected === "Paid") api += "&statusfk=2";
-    if (selected === "Gst") api += "&type=gst";
-    if (selected === "Provisional") api += "&type=provisional";
-    if (selected === "Quotation") api += "&type=quotation";
+
+    if (typeFilter) {
+      api += `&type=${typeFilter}`;
+    }
     console.log(api, "api ssss");
     return api;
   };
 
- const fetchInvoices = async (pageNum = 1, force = false) => {
-  if (!force && pageNum === 1 && !mainLoading) return;
-
-  if (pageNum === 1) {
-    setMainLoading(true);
-    setHasMore(true);
-  }
-
-  setIsLoading(true);
-
-  try {
-    const api = buildApiUrl(pageNum);
-    const response = await readApi(api, authHeader);
+  const fetchInvoices = async (pageNum = 1, force = false) => {
+    if (!force && pageNum === 1 && !mainLoading) return;
 
     if (pageNum === 1) {
-      setInvoices(response.invoices || []);
-    } else if (response?.invoices?.length > 0) {
-      setInvoices(prev => [...prev, ...response.invoices]);
-    } else {
-      setHasMore(false);
+      setMainLoading(true);
+      setHasMore(true);
     }
-  } catch (err) {
-    if (pageNum === 1) setInvoices([]);
-  } finally {
-    setIsLoading(false);
-    setMainLoading(false);
-  }
-};
 
-  
+    setIsLoading(true);
+
+    try {
+      const api = buildApiUrl(pageNum);
+      const response = await readApi(api, authHeader);
+
+      if (pageNum === 1) {
+        setInvoices(response.invoices || []);
+      } else if (response?.invoices?.length > 0) {
+        setInvoices(prev => [...prev, ...response.invoices]);
+      } else {
+        setHasMore(false);
+      }
+    } catch (err) {
+      if (pageNum === 1) setInvoices([]);
+    } finally {
+      setIsLoading(false);
+      setMainLoading(false);
+    }
+  };
+
+
 
   const loadMoreData = () => {
     if (!isLoading && hasMore) {
@@ -164,7 +167,7 @@ useEffect(() => {
   // useEffect(() => {
   //   if (page > 1) fetchInvoices(page);
   // }, [page, selectedShop]);
-
+  console.log("type  filterisss ", typeFilter)
 
 
 
@@ -208,7 +211,7 @@ useEffect(() => {
   }
 
   const Loader = () => {
-   // if (!isLoading) return null;
+    // if (!isLoading) return null;
     return (
       <View style={{ flex: 1, justifyContent: "center" }}>
         <ActivityIndicator size={"large"}></ActivityIndicator>
@@ -216,10 +219,10 @@ useEffect(() => {
     );
   };
 
-const handleFilterChange = (filterType) => {
-  setSelected(filterType);
-  
-};
+  const handleFilterChange = (filterType) => {
+    setSelected(filterType);
+
+  };
 
 
 
@@ -240,8 +243,16 @@ const handleFilterChange = (filterType) => {
 
             />
 
-            <FilterButtons onFilterChange={handleFilterChange} selected={selected} />
-
+            {(invoices.length > 0 ||
+              selected !== "All" ||
+              sortBy !== "" ||
+              typeFilter !== "" ||
+              Object.keys(dateRange).length > 0 ||
+              !(date.startDate.toDateString() === new Date().toDateString() &&
+                date.endDate.toDateString() === new Date().toDateString())
+            ) && (
+                <FilterButtons onFilterChange={handleFilterChange} selected={selected} />
+              )}
 
 
           </View>
@@ -279,7 +290,7 @@ const handleFilterChange = (filterType) => {
         }
       />
 
-      {
+      {/* {
         invoices.length >= 1 && (
 
           <FAB
@@ -295,7 +306,32 @@ const handleFilterChange = (filterType) => {
             color="#fff"
           />
         )
-      }
+      } */}
+
+
+
+      {(invoices.length > 0 ||
+        selected !== "All" ||
+        sortBy !== "" ||
+        typeFilter !== "" ||
+        Object.keys(dateRange).length > 0 ||
+        !(date.startDate.toDateString() === new Date().toDateString() &&
+          date.endDate.toDateString() === new Date().toDateString())
+      ) && (
+          <FAB
+            style={{
+              position: "absolute",
+              margin: 16,
+              right: 5,
+              bottom: 10,
+              backgroundColor: "#26a0df",
+            }}
+            icon="filter"
+            onPress={() => setModalVisible(true)}
+            color="#fff"
+          />)}
+
+
       {searchModal && (
         <OpenmiqModal
           modalVisible={searchModal}
@@ -312,6 +348,8 @@ const handleFilterChange = (filterType) => {
           dateRange={dateRange}
           setDateRange={setDateRange}
           formatDate={formatDate}
+          setTypeFilter={setTypeFilter}
+
         />
       )}
     </View>
