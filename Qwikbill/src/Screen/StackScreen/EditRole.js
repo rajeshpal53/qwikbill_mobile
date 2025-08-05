@@ -300,14 +300,15 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     marginHorizontal:-10,
   },
-  dropdownContainer: {
-    marginBottom: 5,
-    paddingVertical: 15,
-    marginLeft:-40,
-    zIndex: 1000,       // iOS
-    elevation: 1000,  
-    
-  },
+ dropdownContainer: {
+  zIndex: 10,
+  elevation: 1000,
+  marginBottom: 5,
+  marginLeft: -40,
+  paddingVertical: 15,
+  backgroundColor: '#fff', // ensure dropdown doesn't inherit FlatList background
+},
+
   listZFix: {
     zIndex: 1100,
     elevation: 1100,
