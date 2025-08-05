@@ -391,7 +391,7 @@ const AddRole = () => {
               )}
 
               {/* Shop Description */}
-              <View style={{ marginBottom: 10 }}>
+              <View style={{ marginBottom: 6 }}>
                 <Text style={styles.label}>Shop Description</Text>
                 <View style={styles.TextShopDes}>
                   <Text style={styles.TextShop}>
@@ -404,7 +404,7 @@ const AddRole = () => {
               {/* Shop Dropdown */}
               <View style={{ marginBottom: 10 }}>
                 <Text style={styles.label}>Select Shop</Text>
-                <View style={{ margin:20,marginLeft:-40,marginRight:0 }}>
+                <View style={{ margin:20,marginLeft:-40,marginBottom:30 }}>
                   <DropDownList
                     options={allShops}
                     onValueChange={(selectedShop) =>
@@ -422,6 +422,7 @@ const AddRole = () => {
                     fontFamily: "Poppins-Regular",
                     fontWeight: "bold",
                     color: "#333",
+                    marginTop:8
                   }}
                 >
                   User Role
@@ -501,7 +502,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
     fontWeight: "bold",
     color: "#333",
-    marginBottom: 3,
+   // marginBottom: 3,
     paddingBottom:10,
   },
   input: {
