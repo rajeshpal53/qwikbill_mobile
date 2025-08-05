@@ -359,7 +359,7 @@ const ProfileSetting = ({
 
     if (value == "Policies") {
       navigation.navigate("Policies", {
-        webUri: `${NORM_URL}/privacy-policy?view=mobile`,
+        webUri: `${NORM_URL}qapp/privacy-policy?view=mobile`,
         headerTitle: "Privacy and Policies",
       });
     } else if (value === "Edit a Vendor") {
@@ -384,7 +384,7 @@ const ProfileSetting = ({
       navigation.navigate("ChatWithUs");
     } else if (value === "needMoreHelp") {
       navigation.navigate("Policies", {
-        webUri: `${NORM_URL}/helpandsupport?view=mobile`,
+        webUri: `${NORM_URL}qapp/helpandsupport?view=mobile`,
         headerTitle: "Help & Support",
       });
     }
