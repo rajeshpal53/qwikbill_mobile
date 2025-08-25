@@ -13,13 +13,11 @@ const initialState = {
   Carts: [],
   totalPrice: 0,
   totalQuantity: 0,
-
+  gstAmount:0,
   discount: 0,
   afterdiscount: 0,
-
   PartiallyAmount: 0,
   PartiallyAmountValue: 0,
-
   error : false
 };
 

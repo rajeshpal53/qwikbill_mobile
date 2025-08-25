@@ -3,14 +3,14 @@ import { Keyboard, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from
 import { ActivityIndicator, List } from "react-native-paper";
 import { ShopContext } from "../Store/ShopContext";
 
-
+import { capitalizeFirstLetter } from "../Util/UtilApi";
 function DropDownList({ options, disabled }) {
   const { selectedShop, updateSelectedShop } = useContext(ShopContext);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const selectedLabel = selectedShop
-    ? `${selectedShop.vendor.shopname} (by ${selectedShop.role?.name})`
+    ? `${selectedShop.vendor.shopname} (${capitalizeFirstLetter(selectedShop.role?.name)})`
     : "Select Shop *";
 
   const handleSelect = (item) => {
@@ -42,12 +42,12 @@ function DropDownList({ options, disabled }) {
         <ScrollView
           nestedScrollEnabled
           style={styles.scrollArea}
-          contentContainerStyle={{ paddingBottom: 10 }}
+          contentContainerStyle={{ }}
         >
           {options?.map((item) => (
             <List.Item
               key={item.vendor.id}
-              title={`${item.vendor.shopname ?? "Unnamed"} (by ${item.role?.name})`}
+              title={`${item.vendor.shopname ?? "Unnamed"} (${capitalizeFirstLetter(item.role?.name)})`}
               onPress={() => handleSelect(item)}
               style={[
                 styles.listItem,

@@ -168,7 +168,7 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { Button, Card, Text } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -180,12 +180,11 @@ import UserDataContext from "../Store/UserDataContext";
 import { createApi, fontSize, NORM_URL, readApi } from "../Util/UtilApi";
 // import { WalletContext } from "../Store/WalletContext";
 //import FastImage from "react-native-fast-image";
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ChangeLanguageModal from "../Components/Modal/ChangeLanguageModal";
 import { ShopContext } from "../Store/ShopContext";
 import { useSnackbar } from "../Store/SnackbarContext";
-
 
 const ProfileSetting = ({
   navigation,
@@ -199,7 +198,7 @@ const ProfileSetting = ({
     useState(false);
   const [languageModalvisible, setLanguageModalVisible] = useState(false);
   const [language, setLanguage] = useState("English"); // Default language
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
   const [imageUrl, setImageUrl] = useState(`${NORM_URL}assets/mobile/male.png`);
 
   const { showSnackbar } = useSnackbar();
@@ -209,35 +208,33 @@ const ProfileSetting = ({
   const [isLoading, setIsLoading] = useState(false);
   const [modalImageUrl, setModalImageUrl] = useState(null);
 
-  const { updateSelectedShop, noItemModal, selectedShop, clearSelectedShop } = useContext(ShopContext)
+  const { updateSelectedShop, noItemModal, selectedShop, clearSelectedShop } =
+    useContext(ShopContext);
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchServiceProvider(userData);
     setRefreshing(false);
     await fetchUser(setRefreshing);
-
   };
   const fetchUser = async (setRefreshing) => {
     try {
-      const response = await readApi(`users/getUserByMobile/${userData?.user?.mobile}`)
+      const response = await readApi(
+        `users/getUserByMobile/${userData?.user?.mobile}`
+      );
       const updatedresponse = {
         user: response,
-        token: userData.token
-      }
-      console.log(response, "setrefreshresponse")
-      saveUserData(updatedresponse)
+        token: userData.token,
+      };
+      console.log(response, "setrefreshresponse");
+      saveUserData(updatedresponse);
       return true;
     } catch (err) {
-      console.error("error in fetching user data", err)
-    }
-    finally {
-      setRefreshing(false)
+      console.error("error in fetching user data", err);
+    } finally {
+      setRefreshing(false);
       return false;
     }
-
-
-  }
-
+  };
 
   const { t, i18n } = useTranslation();
   const isFocused = useIsFocused();
@@ -265,33 +262,29 @@ const ProfileSetting = ({
             value: "changeLanguage",
           },
 
-          ...(userData?.user?.roles === 'admin' ? AdminOption : []),
+          ...(userData?.user?.roles === "admin" ? AdminOption : []),
           { icon: "policy", label: " Terms and Policy ", value: "Policies" },
 
           ...(userData
             ? [
-              selectedShop ?
-                {
-                  icon: "person-add",
-                  label: "Add or Edit Role",
-                  //  value: roleDetails ? "EditRole" : "AssignNewRole",
-                  value: "AddOrEditRole"
-                } : null,
-              // { icon: "logout", label: "Logout1", value: "Logout1" },
-            ].filter(Boolean) // << THIS REMOVES null SAFELY
-
+                selectedShop
+                  ? {
+                      icon: "person-add",
+                      label: "Add or Edit Role",
+                      //  value: roleDetails ? "EditRole" : "AssignNewRole",
+                      value: "AddOrEditRole",
+                    }
+                  : null,
+                // { icon: "logout", label: "Logout1", value: "Logout1" },
+              ].filter(Boolean) // << THIS REMOVES null SAFELY
             : []),
           { icon: "chat", label: "QwikBill Assistant", value: "ChatWithUs" },
-
 
           ...(userData
             ? [{ icon: "logout", label: "Logout", value: "Logout" }]
             : []),
 
-
           { label: "Need more help?", value: "needMoreHelp" },
-
-
         ];
 
         setMenuItems(baseItem);
@@ -304,13 +297,11 @@ const ProfileSetting = ({
     UpdatemanuItem();
   }, [roleDetails, isFocused, userData]);
 
-
-
   useEffect(() => {
     if (userData) {
       if (userData?.user?.profilePicurl) {
         const nevVar = `${NORM_URL}/${userData?.user?.profilePicurl}`;
-        console.log("profile image issss", nevVar)
+        console.log("profile image issss", nevVar);
         setImageUrl(nevVar);
       } else if (userData?.user?.gender == null) {
         setImageUrl("https://dailysabji.com/assets/mobile/neutral.png");
@@ -326,10 +317,8 @@ const ProfileSetting = ({
       }
     } else {
       setImageUrl("https://dailysabji.com/assets/mobile/neutral.png");
-
     }
   }, [isFocused, userData]); // Removed imageUrl from dependency array
-
 
   const languageModalOpen = () => {
     setLanguageModalVisible(true);
@@ -376,7 +365,10 @@ const ProfileSetting = ({
       navigation.navigate("AdminSection");
     } else if (value === "AddOrEditRole") {
       if (roleDetails) {
-        navigation.navigate("EditRoleScreen", { isAdmin: false, AdminRoleData: null });
+        navigation.navigate("EditRoleScreen", {
+          isAdmin: false,
+          AdminRoleData: null,
+        });
       } else {
         navigation.navigate("AddroleScreen");
       }
@@ -407,7 +399,7 @@ const ProfileSetting = ({
         // Clear user + shop
         await clearUserData();
         await AsyncStorage.clear(); // clear everything
-        await clearSelectedShop();  // clear selectedShop from context
+        await clearSelectedShop(); // clear selectedShop from context
 
         console.log("User data after logout:", userData);
         navigation.dispatch(
@@ -426,7 +418,6 @@ const ProfileSetting = ({
       setVisible(false);
     }
   };
-
 
   const handleEditPress = () => {
     navigation.navigate("EditProfilePage");
@@ -471,17 +462,18 @@ const ProfileSetting = ({
                 <TouchableOpacity
                   onPress={() => {
                     if (userData?.user?.profilePicurl) {
-                      const freshUrl = `${NORM_URL}/${userData?.user?.profilePicurl}?${new Date().getTime()}`;
+                      const freshUrl = `${NORM_URL}${
+                        userData?.user?.profilePicurl
+                      }?${new Date().getTime()}`;
+                      console.log("Opening image modal with URL:", freshUrl);
                       setModalImageUrl(freshUrl);
                       openImageModal(freshUrl);
                     }
                   }}
                 >
-
                   <Image
                     source={{
                       uri: `${imageUrl}?${new Date().getTime()}`,
-
                     }}
                     style={styles.avatar}
                   />
@@ -536,57 +528,83 @@ const ProfileSetting = ({
               <Card.Content style={{ backgroundColor: "#fff" }}>
                 {menuItems?.map((item, index) =>
                   item?.value === "needMoreHelp" ? (
-                    <Pressable onPress={() => { handlePress("needMoreHelp") }} key={index}>
+                    <Pressable
+                      onPress={() => {
+                        handlePress("needMoreHelp");
+                      }}
+                      key={index}
+                    >
                       <View>
                         <Text style={{ fontFamily: "Poppins-Medium" }}>
                           {t(item?.label)}
                         </Text>
                         <View style={styles.helpItem}>
-                          <View style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            gap: 5
-                          }}>
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              alignItems: "center",
+                              gap: 5,
+                            }}
+                          >
                             {/* <MaterialCommunityIcons
                             name="message-reply"
                             size={24}
                             color="black"
                           /> */}
-                            <MaterialIcons name="support-agent" size={24} color="black" />
+                            <MaterialIcons
+                              name="support-agent"
+                              size={24}
+                              color="black"
+                            />
                             <View style={{ flex: 1 }}>
-                              <Text style={{ fontFamily: "Poppins-Medium" }}>{t("Feedback and Help")}</Text>
-                              <Text style={{ fontFamily: "Poppins-Regular", color: "rgba(0, 0, 0, 0.5)", fontSize: fontSize.label }}>{t("Contact us for your query and support")}</Text>
+                              <Text style={{ fontFamily: "Poppins-Medium" }}>
+                                {t("Feedback and Help")}
+                              </Text>
+                              <Text
+                                style={{
+                                  fontFamily: "Poppins-Regular",
+                                  color: "rgba(0, 0, 0, 0.5)",
+                                  fontSize: fontSize.label,
+                                }}
+                              >
+                                {t("Contact us for your query and support")}
+                              </Text>
                             </View>
 
-                            <Text style={{ fontFamily: "Poppins-Medium", color: "#007BFF" }}>{t("Support")}</Text>
-
+                            <Text
+                              style={{
+                                fontFamily: "Poppins-Medium",
+                                color: "#007BFF",
+                              }}
+                            >
+                              {t("Support")}
+                            </Text>
                           </View>
                         </View>
                       </View>
                     </Pressable>
+                  ) : (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => handlePress(item.value)}
+                      style={styles.item}
+                    >
+                      <Icon
+                        name={item.icon}
+                        size={24}
+                        color="#26a0df"
+                        // #26a0df
+                        style={styles.icon}
+                      />
+                      <Text style={styles.label}>{t(item.label)}</Text>
+                      <Icon
+                        name="chevron-right"
+                        size={24}
+                        color="#000"
+                        style={styles.chevron}
+                      />
+                    </TouchableOpacity>
                   )
-                    : (
-                      <TouchableOpacity
-                        key={index}
-                        onPress={() => handlePress(item.value)}
-                        style={styles.item}
-                      >
-                        <Icon
-                          name={item.icon}
-                          size={24}
-                          color="#26a0df"
-                          // #26a0df
-                          style={styles.icon}
-                        />
-                        <Text style={styles.label}>{t(item.label)}</Text>
-                        <Icon
-                          name="chevron-right"
-                          size={24}
-                          color="#000"
-                          style={styles.chevron}
-                        />
-                      </TouchableOpacity>
-                    )
                 )}
               </Card.Content>
             </Card>
@@ -646,13 +664,11 @@ const ProfileSetting = ({
               key={selectedImageUri} // 👈 force re-render
               source={
                 selectedImageUri
-                  ? { uri: selectedImageUri, cache: 'reload' }
+                  ? { uri: selectedImageUri, cache: "reload" }
                   : { uri: "https://dailysabji.com/assets/mobile/neutral.png" }
               }
               style={styles.fullImage}
             />
-
-
           </View>
         </Modal>
       )}

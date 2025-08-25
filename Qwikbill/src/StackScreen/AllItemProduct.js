@@ -107,6 +107,19 @@ const AllItemProduct = () => {
     }
   }, [debouncedSearchQuery]);
 
+  const SearchHandler = (text) => {
+    if (text.trim().length > 0) {
+      const found = products?.filter((item) =>
+        item?.name?.toLowerCase().includes(text.toLowerCase())
+      );
+      setSearchedData(found);
+      setSearchCalled(true);
+    } else {
+      setSearchedData([]);
+      setSearchCalled(false);
+    }
+  }
+
   const loadmore = () => {
     if (hasmore && !loader && page < totalpage) {
       setpage((prev) => prev + 1);
@@ -131,6 +144,7 @@ const AllItemProduct = () => {
           setsearchmodal={setsearchmodal}
           setTranscript={setTranscript}
           placeholderText="Search Product by name..."
+          searchData={SearchHandler}
         />
       </View>
 

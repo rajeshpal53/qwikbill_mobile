@@ -137,20 +137,19 @@ export default function PasscodeScreen({ navigation }) {
         // navigation.navigate("CreateShopScreen", {
         //   isHome: true,
         // });
-        navigation.navigate("wertone", {
+        navigation.replace("wertone", {
           screen: "Home",
           // params : {previousLoginTime}
         });
       } else {
-        navigation.navigate("wertone", {
+        navigation.replace("wertone", {
           screen: "Home",
           // params : {previousLoginTime}
         });
       }
     } else {
          showSnackbar(
-        "failed to login use phone lock or retry",
-        "error")
+        "failed to login please check credentials","error")
     }
   };
 

@@ -53,18 +53,23 @@ const styles = StyleSheet.create({
   quantityButton: {
     backgroundColor: "#f0f0f0",
     paddingHorizontal: 8,
+    width: 30,
+    height: 30,
     // paddingVertical: 5,
     borderRadius: 20,
     marginHorizontal: 5,
+    justifyContent: "center",
+    alignItems: "center",
   },
   quantityButtonText: {
-    fontSize: 15,
+    fontSize: 20,
     fontWeight: "bold",
   },
   quantityText: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#333",
+    marginHorizontal: 3
   },
 });
 

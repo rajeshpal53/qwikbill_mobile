@@ -63,10 +63,12 @@ const ProviderProfileForm = ({
               values?.profileImage?.uri
                 ? {
                   ...values.profileImage,
-                  uri: `${values.profileImage.uri}?t=${Date.now()}`, // 👈 cache-busting URL
+                  uri: `${values.profileImage.uri}`, // 👈 cache-busting URL
+                  //  uri: `${values.profileImage.uri}?t=${Date.now()}`,
                 }
                 : null
             }
+
             label="Profile Image"
             isAdmin={isAdmin}
             setFieldValue={setFieldValue}
@@ -96,7 +98,10 @@ const ProviderProfileForm = ({
           underlineStyle={styles.inputUnderline}
           mode={textInputMode}
           style={styles.input}
-          onChangeText={handleChange("name")}
+         onChangeText={(text) => {
+    const filtered = text.replace(/[^A-Za-z\s]/g, ""); // remove special characters
+    handleChange("name")(filtered);
+  }}
           onBlur={handleBlur("name")}
           value={values.name}
           error={touched.name && errors.name}
@@ -147,7 +152,12 @@ const ProviderProfileForm = ({
           label={t("WhatsApp Number *")}
           mode={textInputMode}
           keyboardType="numeric"
-          onChangeText={handleChange("whatsappNumber")}
+            onChangeText={(text) => {
+    // Block non-numeric input at the input level
+    if (/^\d{0,10}$/.test(text)) {
+      setFieldValue("whatsappNumber", text); // Formik or manual state
+    }
+  }}
           onBlur={handleBlur("whatsappNumber")}
           value={values.whatsappNumber}
           maxLength={10}
