@@ -136,6 +136,7 @@ const LoginScreen = ({ navigation }) => {
           touched,
           isValid,
           dirty,
+          setFieldValue
         }) => (
           <ScrollView
             contentContainerStyle={{ flexGrow: 1 }}
@@ -204,31 +205,35 @@ const LoginScreen = ({ navigation }) => {
                         // padding:10
                       }}
                     >
-                      <TextInput
-                        label="Mobile Number"
-                        style={styles.input}
-                        mode="flat"
-                        onChangeText={handleChange("mobile")}
-                        onBlur={handleBlur("mobile")}
-                        value={values.mobile}
-                        keyboardType="phone-pad"
-                        maxLength={10}
-                        right={
-                          <TextInput.Icon
-                            icon={() => (
-                              <MaterialCommunityIcons
-                                name="phone-outline"
-                                size={24}
-                                color="gray"
-                              />
-                            )}
-                          />
-                        }
-                        // autoCapitalize="none"
-                      />
-                      {touched.mobile && errors.mobile && (
-                        <Text style={styles.error}>{errors.mobile}</Text>
-                      )}
+                    <TextInput
+  label="Mobile Number"
+  style={styles.input}
+  mode="flat"
+  keyboardType="number-pad"
+  maxLength={10}
+  value={values.mobile}
+  onChangeText={(text) => {
+    // Block non-numeric input at the input level
+    if (/^\d{0,10}$/.test(text)) {
+      setFieldValue("mobile", text); // Formik or manual state
+    }
+  }}
+  onBlur={handleBlur("mobile")}
+  right={
+    <TextInput.Icon
+      icon={() => (
+        <MaterialCommunityIcons
+          name="phone-outline"
+          size={24}
+          color="gray"
+        />
+      )}
+    />
+  }
+/>
+{touched.mobile && errors.mobile && (
+  <Text style={styles.error}>{errors.mobile}</Text>
+)}
 
                       <TextInput
                         mode="flat"

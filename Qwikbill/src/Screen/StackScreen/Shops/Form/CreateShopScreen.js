@@ -85,10 +85,9 @@ const ShopValidataionSchema = Yup.object().shape({
     .required("Shop Address is required")
     .max(50, "Shop Address cannot be more than 50 characters"),
    gstNumber: Yup.string().matches(
-        /^[A-Z]{2}[0-9]{1}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z0-9]{1}[Z]{1}[0-9]{1}$/,
-        "Invalid GSTIN format. Example: AB1234567890Z1"
-
-      ),
+  /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+  "Invalid GSTIN format. Example: 27AAAPL1234C1Z1"
+)
 
   // location: Yup.string().required("Location is required"),
   // kilometerRadius: Yup.number()
@@ -99,7 +98,7 @@ const ShopValidataionSchema = Yup.object().shape({
 const ProfileValidationSchema = Yup.object().shape({
  // profileImage: Yup.mixed().required("Profile image is required"),
   name: Yup.string().required("Name is required")
-    .max(50, "Name cannot be more than 50 characters"),
+    .max(50, "Name cannot be more than 50 characters").matches(/^[A-Za-z\s]+$/, "Special characters are not allowed"),
   whatsappNumber: Yup.string()
     .required("WhatsApp number is required")
     .matches(/^[6-9]\d{9}$/, "WhatsApp number must be  10 digits"),
@@ -109,7 +108,13 @@ const ProfileValidationSchema = Yup.object().shape({
   email: Yup.string()
     .email("Invalid email format")
     .notRequired(),
-
+pincode: Yup.string()
+  .matches(/^[1-9][0-9]{5}$/, "Enter a valid 6-digit Indian pincode")
+  .test("is-valid-pincode", "Invalid Indian pincode", (value) => {
+    if (!value) return false;
+    const pincodeInt = parseInt(value, 10);
+    return pincodeInt >= 110001 && pincodeInt <= 999999;
+  }),
   gender: Yup.string().required("Gender is required"),
   dob: Yup.date()
     .nullable()
@@ -122,7 +127,6 @@ const ProfileValidationSchema = Yup.object().shape({
     }),
 
   //------------------------------------------------
-
   // userAddress : Yup.string()
   // .required("address is required"),
   // age: Yup.number()
@@ -231,6 +235,7 @@ const CreateShopScreen = ({ navigation }) => {
     longitude: routeData?.longitude || "",
     isApproved: routeData?.shopname || false,
     gstNumber: routeData?.gstNumber || "",
+    cinNumber: routeData?.cinNumber || "",
     // isOnline: false,
     // isVerified: false,
     // homeDelivery: false,
@@ -239,6 +244,7 @@ const CreateShopScreen = ({ navigation }) => {
     aadharFrontImage: userData?.user?.aadharCardFronturl || null,
     aadharBackImage: userData?.user?.aadharCardBackurl || null,
     profileImage: userData?.user?.profilePicurl || null,
+
   });
 
 
@@ -385,7 +391,7 @@ const CreateShopScreen = ({ navigation }) => {
           whatsappNumber: routeData?.whatsappnumber || "",
           // aadhaarNumber:
           //   routeData?.aadharCard || routeData?.user?.aadharCard || "",
-
+                    cinNumber: routeData?.cinNumber || "",
           kilometerRadius: routeData?.drange || "",
           latitude: routeData?.latitude || "",
           longitude: routeData?.longitude || "",
@@ -707,12 +713,19 @@ const CreateShopScreen = ({ navigation }) => {
           data.append("id", routeData?.id);
         }
 
+
         // If the image is a local file, include it as a binary file
         if (values?.shopImage) {
           data.append("shopImage", values?.shopImage);
         }
 
+        if(values?.gstNumber){
+            data.append("gstNumber", values?.gstNumber);
+        }
+        if (values?.cinNumber) {
+          data.append("cinNumber", values?.cinNumber);
 
+        }
         console.log("updateProviderPayload is , ", data);
 
         try {

@@ -10,7 +10,7 @@ export const API_BASE_URL = "https://qwikbill.in/qapi/";
 // for development:> eas build --platform android  --profile development
 // for production:> eas build --platform android  --profile production
 
-export const NORM_URL="https://qwikbill.in/"
+export const NORM_URL="https://qwikbill.in/qapp/"
 const apiRequest = async (method, url, data = null, customHeaders = {}) => {
   try {
     const userDataString = await AsyncStorage.getItem('userData');
@@ -352,4 +352,10 @@ export const generatePDF = (values) => {
     </html>
   `;
   return htmlContent;
+};
+
+
+export const capitalizeFirstLetter = (str) => {
+  if (!str || typeof str !== "string") return "";
+  return str.charAt(0).toUpperCase() + str.slice(1);
 };

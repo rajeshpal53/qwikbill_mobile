@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
   View,
@@ -8,7 +8,7 @@ import {
   FlatList,
 } from "react-native";
 import { ScrollView } from "react-native";
-import { Card, TextInput,DataTable } from "react-native-paper";
+import { Card, TextInput, DataTable } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import IncAndDicButton from "../../Redux/IncAndDicButton";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,54 +16,113 @@ import { applyDiscount, removeFromCart } from "../../Redux/slices/CartSlice";
 import PriceDetails from "../PriceDetails";
 import { fontSize } from "../../Util/UtilApi";
 
-
-
-
-const ItemDataTable = ({ discountValue,discountRate,setDiscountRate,finalTotal,setFinalTotal }) => {
+const ItemDataTable = ({
+  discountValue,
+  discountRate,
+  setDiscountRate,
+  finalTotal,
+  setFinalTotal,
+  selectedButton,
+  finalAmountValue,
+  setFinalAmountValue,
+  setDiscountValue,
+}) => {
   const screenWidth = Dimensions.get("window").width;
   const carts = useSelector((state) => state.cart.Carts);
   const dispatch = useDispatch();
+  const gstAmount = useSelector((state) => state.cart.gstAmount);
+
   console.log("carts is ", carts);
   const value = (carts?.sellPrice * carts?.quantity * carts?.taxRate) / 100;
   console.log("value is ", value);
+
   const COLUMN_WIDTHS = {
     small: 80,
     medium: 120,
   };
   const totalPrice = useSelector((state) => state.cart.totalPrice);
 
- const scrollRef = useRef(null);
+  const scrollRef = useRef(null);
   const [showScrollHint, setShowScrollHint] = useState(true);
   useEffect(() => {
   const discount = parseFloat(discountValue) || 0;
   const total = parseFloat(totalPrice) || 0;
 
   if (total > 0) {
-    const percentage = (discount / total) * 100;
-    setDiscountRate(parseFloat(percentage.toFixed(3))); // Set as percentage (e.g. 25.00)
+    // If finalAmountValue is empty, null, or zero → reset discountValue & discountRate
+    if (!finalAmountValue) {
+      if (selectedButton === "gst") {
+        setFinalTotal(totalPrice +gstAmount)
+      }else if(selectedButton === "provisional") {
+        setFinalTotal(totalPrice)
+      }
+      // setFinalTotal(totalPrice +gstAmount)
+      setDiscountValue(0);
+      setDiscountRate(0);
+      return;
+    }
+
+    let percentage;
+    if (selectedButton === "gst") {
+      // GST bill → include GST in total for percentage calculation
+      percentage = (1 - finalAmountValue / (total + gstAmount)) * 100;
+      setDiscountValue(total + gstAmount - finalAmountValue);
+    } else {
+      // Provisional bill → exclude GST from total
+      percentage = (1 - finalAmountValue / total) * 100;
+      setDiscountValue(total - finalAmountValue);
+    }
+
+    console.log("percentage is ", percentage);
+    setDiscountRate(parseFloat(percentage.toFixed(3)));
   } else {
+    setFinalTotal(totalPrice+gstAmount)
     setDiscountRate(0); // Avoid division by zero
+    setDiscountValue(0);
   }
-}, [discountValue, totalPrice]);
+}, [
+  discountValue,
+  totalPrice,
+  finalAmountValue,
+  carts,
+  gstAmount,
+  selectedButton
+]);
 
-useEffect(() => {
+  useEffect(() => {
+
   let total = 0;
+  if (finalAmountValue > 0) {
+      carts.forEach((item) => {
+    const amount = (item.sellPrice * item.quantity) || 0;
+    const discountAmt = (amount * discountRate) / 100;
+    const amtAfterDiscount = amount - discountAmt;
+    const gstAmt = (amtAfterDiscount * item.taxRate) / 100;
 
-  carts.forEach((item) => {
-   const amount = +(item.sellPrice * item.quantity || 0).toFixed(2);
-   
-const discountAmt = +((amount * discountRate) / 100).toFixed(2);
-const amtAfterDiscount = +(amount - discountAmt).toFixed(2);
-const gstAmt = +((amtAfterDiscount * item.taxRate) / 100).toFixed(2);
-total += +(amtAfterDiscount + gstAmt).toFixed(2);
+    if (selectedButton === "gst") {
+      total += amtAfterDiscount + gstAmt; // accumulate without rounding yet
+    } else {
+      total += amtAfterDiscount;
+    }
+      console.log("Total calculated:", "total "+total,"amount "+amount,"discountRate "+discountRate,"discountAmt"+discountAmt,"amtAfterDiscount"+amtAfterDiscount);
   });
-  setFinalTotal(parseFloat(total.toFixed(2)));
-}, [carts, discountRate,]);
+  setFinalTotal(total.toFixed(2)); // round to 2 decimal places
+  console.log("selectedButton", selectedButton);
+  console.log("Final total before rounding:", total);
+  }
+
+}, [
+  carts,
+  discountRate,
+  selectedButton,
+  finalAmountValue,
+  totalPrice,
+  gstAmount,
+]);
   console.log("discountRate is ", discountRate, totalPrice);
-    console.log("finalTotal calculated is", finalTotal);
+  console.log("finalTotal calculated is", finalTotal);
 
-
-   const handleScroll = (event) => {
+  const handleScroll = (event) => {
     const contentWidth = event.nativeEvent.contentSize.width;
     const scrollX = event.nativeEvent.contentOffset.x;
 
@@ -74,83 +133,140 @@ total += +(amtAfterDiscount + gstAmt).toFixed(2);
     }
   };
 
-
   return (
-    <View  style={styles.container}>
-
-    
-    <ScrollView horizontal
-    ref={scrollRef}
+    <View style={styles.container}>
+      <ScrollView
+        horizontal
+        ref={scrollRef}
         onScroll={handleScroll}
         scrollEventThrottle={16}
         showsHorizontalScrollIndicator={true}
-        contentContainerStyle={styles.scrollContainer} 
->
-      <Card style={styles.card}>
-        <DataTable>
-          {/* Header */}
-          <DataTable.Header style={styles.row}>
-            <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>No.</DataTable.Title>
-            <DataTable.Title style={{ width: COLUMN_WIDTHS.medium }}>Items</DataTable.Title>
-            <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>Rate</DataTable.Title>
-            <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>Qty</DataTable.Title>
-            <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>Amount</DataTable.Title>
-            <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>Discount %</DataTable.Title>
-            <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>Discount Amt</DataTable.Title>
-            <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>Amt after Disc</DataTable.Title>
-            <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>    GST %</DataTable.Title>
-            <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>GST Amt</DataTable.Title>
-            <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>Total</DataTable.Title>
-            <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>Action</DataTable.Title>
-          </DataTable.Header>
+        contentContainerStyle={styles.scrollContainer}
+      >
+        <Card style={styles.card}>
+          <DataTable>
+            {/* Header */}
+            <DataTable.Header style={styles.row}>
+              <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>
+                No.
+              </DataTable.Title>
+              <DataTable.Title style={{ width: COLUMN_WIDTHS.medium }}>
+                Items
+              </DataTable.Title>
+              <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>
+                Rate
+              </DataTable.Title>
+              <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>
+                Qty
+              </DataTable.Title>
+              <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>
+                Amount
+              </DataTable.Title>
+              <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>
+                Discount %
+              </DataTable.Title>
+              <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>
+                Discount Amt
+              </DataTable.Title>
+              <DataTable.Title style={{ width: COLUMN_WIDTHS.medium  }}>
+                Amt after Disc
+              </DataTable.Title>
+              {selectedButton === "gst" && (
+  <>
+    <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>
+      GST %
+    </DataTable.Title>
+    <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>
+      GST Amt
+    </DataTable.Title>
+  </>
+)}
+              <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>
+                 Total
+              </DataTable.Title>
+              <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>
+                Action
+              </DataTable.Title>
+            </DataTable.Header>
 
-          {/* Rows */}
-          {carts.map((item, index) => {
-            const amount = item.sellPrice * item.quantity || 0;
-            const discountAmt = (amount * discountRate) / 100;
-            const amtAfterDiscount = amount - discountAmt;
-            const gstAmt = (amtAfterDiscount * item.taxRate) / 100;
-            const total = amtAfterDiscount + gstAmt;
-            // let finalTotal =finalTotal+ total || 0;
-            // setFinalTotal((prevTotal) => prevTotal + total);
-            // console.log("finalTotal is ", finalTotal);
+            {/* Rows */}
+            {carts.map((item, index) => {
+  const amount = item.sellPrice * item.quantity || 0;
+  const discountAmt = (amount * discountRate) / 100;
+  const amtAfterDiscount = amount - discountAmt;
+  const gstAmt = (amtAfterDiscount * item.taxRate) / 100;
 
-            return (
-              <DataTable.Row key={item.id} style={styles.row}>
-                <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>{index + 1}</DataTable.Cell>
-                <DataTable.Cell style={{ width: COLUMN_WIDTHS.medium }}>{item.name}</DataTable.Cell>
-                <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>₹{item.sellPrice}</DataTable.Cell>
-                <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>{item.quantity}</DataTable.Cell>
-                <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>₹{amount.toFixed(2)}</DataTable.Cell>
-                <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>{discountRate || 0}%</DataTable.Cell>
-                <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>₹{discountAmt.toFixed(2)}</DataTable.Cell>
-                <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>₹{amtAfterDiscount.toFixed(2)}</DataTable.Cell>
-                <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>{item.taxRate}%</DataTable.Cell>
-                <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>₹{gstAmt.toFixed(2)}</DataTable.Cell>
-                <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>₹{total.toFixed(2)}</DataTable.Cell>
-                <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>
+  // Decide total based on bill type
+  const total =
+    selectedButton === "gst"
+      ? amtAfterDiscount + gstAmt
+      : amtAfterDiscount;
 
-                  <TouchableOpacity onPress={() => dispatch(removeFromCart(item.id))}>
-                    <MaterialIcons name="delete" size={20} color="red" />
-                  </TouchableOpacity>
-                </DataTable.Cell>
-              </DataTable.Row>
-            );
-          })}
-        </DataTable>
-      </Card>
-    </ScrollView>
-    {/* {showScrollHint && (
-        <View style={styles.scrollIndicator}>
-          <MaterialIcons name="arrow_forward_ios" size={16} color="#999" />
-        </View>
-      )} */}
+  return (
+    <DataTable.Row key={item.id} style={styles.row}>
+      <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>
+        {index + 1}
+      </DataTable.Cell>
+      <DataTable.Cell style={{ width: COLUMN_WIDTHS.medium }}>
+        {item.name}
+      </DataTable.Cell>
+      <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>
+        ₹{item.sellPrice}
+      </DataTable.Cell>
+      <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>
+        {item.quantity}
+      </DataTable.Cell>
+      <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>
+        ₹{amount.toFixed(2)}
+      </DataTable.Cell>
+      <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>
+        {discountRate || 0}%
+      </DataTable.Cell>
+      <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>
+        ₹{discountAmt.toFixed(2)}
+      </DataTable.Cell>
+      <DataTable.Cell style={{ width: COLUMN_WIDTHS.medium }}>
+        ₹{amtAfterDiscount.toFixed(2)}
+      </DataTable.Cell>
+      {
+        selectedButton === "gst" && (
+          <>
+          <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>
+        {item.taxRate}%
+      </DataTable.Cell>
+      {/* GST amount cell */}
+      <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>
+        ₹{selectedButton === "gst" ? gstAmt.toFixed(2) : "0.00"}
+      </DataTable.Cell>
+          </>
+        )
+      }
+      {/* Total cell */}
+      <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>
+        ₹{total.toFixed(2)}
+      </DataTable.Cell>
+
+      {/* Delete action */}
+      <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>
+        <TouchableOpacity
+          onPress={() => dispatch(removeFromCart(item.id))}
+        >
+          <MaterialIcons name="delete" size={20} color="red" />
+        </TouchableOpacity>
+      </DataTable.Cell>
+    </DataTable.Row>
+  );
+})}
+
+          </DataTable>
+        </Card>
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-   container: {
+  container: {
     position: "relative",
     flex: 1,
     marginVertical: 10,
@@ -225,7 +341,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
-   scrollIndicator: {
+  scrollIndicator: {
     position: "absolute",
     right: 4,
     top: "50%",

@@ -40,13 +40,16 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const error = useSelector((state) => state.cart.error);
   const pendingActionRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
-  const [discountValue, setDiscountValue] = useState("");
+  const totalPrice = useSelector((state) => state.cart.totalPrice);
+
+  const [discountValue, setDiscountValue] = useState(0);
   const [discountRate, setDiscountRate] = useState(0);
   const [finalTotal, setFinalTotal] = useState(0);
-const [formFilled, setFormFilled] = useState(false);
+  const [formFilled, setFormFilled] = useState(false);
+  const [finalAmountValue, setFinalAmountValue] = useState(0);
+  const [finalAmountError, setFinalAmountAError] = useState("");
 
-  console.log("DATA OF ERROR ", error);
-
+  console.log("DATA OF ERROR ", error, discountValue);
   // useEffect(() => {
   //   console.log("selected shop isuser , ", selectedShop);
   // }, [userData]);
@@ -54,17 +57,16 @@ const [formFilled, setFormFilled] = useState(false);
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
     address: Yup.string().required("Address is required"),
-    gstNumber: Yup.string()
-      .matches(
-        /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1}$/,
-        "Invalid GSTIN format. Example: 23AAMCA6167B1ZW"
-      ),
+    gstNumber: Yup.string().matches(
+      /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1}$/,
+      "Invalid GSTIN format. Example: 23AAMCA6167B1ZW"
+    ),
     phone: Yup.string()
       .required("Phone is required")
       .matches(/^\d{10}$/, "Phone must be 10 digits"),
   });
 
-  console.log("user isss ", User)
+  console.log("user isss ", User);
 
   const fetchUserData = async (phoneNumber, setFieldValue) => {
     if (timeoutId.current) {
@@ -85,8 +87,6 @@ const [formFilled, setFormFilled] = useState(false);
               setFieldValue("name", response?.name);
               setFieldValue("address", response?.address);
               setFieldValue("phone", phoneNumber);
-
-
             } else {
               setFieldValue("name", response?.name);
               setFieldValue("address", response?.address);
@@ -112,9 +112,8 @@ const [formFilled, setFormFilled] = useState(false);
     }, 300);
   };
 
-
   function handleConfirm() {
-    setShowModal(false);                           // close the modal
+    setShowModal(false); // close the modal
     if (pendingActionRef.current) {
       navigation.dispatch(pendingActionRef.current); // finally go back
     }
@@ -122,14 +121,13 @@ const [formFilled, setFormFilled] = useState(false);
   }
 
   function handleCancel() {
-    setShowModal(false);                           // just hide the modal
+    setShowModal(false); // just hide the modal
   }
 
   useEffect(() => {
     //console.log("changed cart is , ", carts);
     console.log("changed cart is , ", selectedButton);
   }, [carts, selectedButton]);
-
 
   useEffect(() => {
     const beforeRemoveListener = navigation.addListener("beforeRemove", (e) => {
@@ -138,7 +136,8 @@ const [formFilled, setFormFilled] = useState(false);
         User?.name ||
         User?.address ||
         User?.gstNumber ||
-        User?.phone || formFilled
+        User?.phone ||
+        formFilled;
       // formik.values.name ||
       // formik.values.address ||
       // formik.values.phone;
@@ -147,16 +146,13 @@ const [formFilled, setFormFilled] = useState(false);
         e.preventDefault();
         pendingActionRef.current = e.data.action;
         setShowModal(true);
-
-      }else {
-      dispatch(clearCart());
-    }
-
-
+      } else {
+        dispatch(clearCart());
+      }
     });
 
     return () => beforeRemoveListener();
-  }, [navigation ,carts.length , formFilled]);
+  }, [navigation, carts.length, formFilled]);
 
   const getStatusFk = () => {
     if (PaymentStatus == "Unpaid") {
@@ -168,27 +164,26 @@ const [formFilled, setFormFilled] = useState(false);
     }
   };
 
-
-
   // ---- utils/transformCart.js (or inside the component) ----
   const mapCartToInvoiceProducts = (carts) =>
     carts.map(({ id, quantity, sellPrice, name, taxRate }) => ({
-      id: id,                       // rename id -> productId (adjust to API)
+      id: id, // rename id -> productId (adjust to API)
       quantity,
-      price: Number(sellPrice),            // be sure it's a real number
-      productname: String(name),      // keep if the API wants it
-      taxRate: Number(taxRate)
+      price: Number(sellPrice), // be sure it's a real number
+      productname: String(name), // keep if the API wants it
+      taxRate: Number(taxRate),
     }));
-
 
   // --- fixed handleGenerate (single version) ---
   const handleGenerate = async (button = "download", formData, resetForm) => {
     try {
       const api = "invoice/invoices";
       const invoiceType =
-        selectedButton === "gst" ? "gst"
-          : selectedButton === "Quatation" ? "quotation"
-            : "provisional";
+        selectedButton === "gst"
+          ? "gst"
+          : selectedButton === "Quatation"
+          ? "quotation"
+          : "provisional";
 
       // add/override only what you really need
       const payload = { ...formData, type: invoiceType };
@@ -196,40 +191,49 @@ const [formFilled, setFormFilled] = useState(false);
       console.log("payload in handleGenrate ", payload);
 
       const cleanedPayload = Object.fromEntries(
-  Object.entries(payload).filter(([_, v]) => v !== null && v !== undefined)
-);
+        Object.entries(payload).filter(
+          ([_, v]) => v !== null && v !== undefined
+        )
+      );
 
-console.log("Final Payload:", JSON.stringify(cleanedPayload, null, 2));
+      console.log("Final Payload:", JSON.stringify(cleanedPayload, null, 2));
 
       const response = await createApi(api, cleanedPayload, {
         Authorization: `Bearer ${userData?.token}`,
-          "Content-Type": "application/json", // optional but safe
-
+        "Content-Type": "application/json", // optional but safe
       });
-
-      showSnackbar("Invoice created successfully", "success");
+      if(response){
+        showSnackbar("Invoice created successfully", "success");
       dispatch(clearCart());
       resetForm();
-
+      setDiscountValue(0);
+      setDiscountRate(0);
+      setFinalTotal(0);
+      setFinalAmountValue(0);
+      }
+      
       if (button === "download") return response;
       navigation.pop(2);
     } catch (err) {
-    console.log("create invoice error →", err?.response?.data || err.message || err);
-      showSnackbar("Server rejected the invoice – check required fields", "error");
+      console.log(
+        "create invoice error →",
+        err?.response?.data || err.message || err
+      );
+      showSnackbar(
+        "Server rejected the invoice – check required fields",
+        "error"
+      );
+       return false;
     }
   };
 
   return (
-    
-
-<ScrollView
-  scrollEnabled={!isHorizontalScrolling}
-  keyboardShouldPersistTaps="handled"
-  nestedScrollEnabled={true}
-  contentContainerStyle={{ paddingBottom: 20 }}
->
-
-
+    <ScrollView
+      scrollEnabled={!isHorizontalScrolling}
+      keyboardShouldPersistTaps="handled"
+      nestedScrollEnabled={true}
+      contentContainerStyle={{ paddingBottom: 20 }}
+    >
       <Formik
         enableReinitialize={true}
         initialValues={{
@@ -240,11 +244,15 @@ console.log("Final Payload:", JSON.stringify(cleanedPayload, null, 2));
         }}
         validateOnChange={true}
         // validateOnChange={false}   // ✅ disables noise on typing
-        validateOnBlur={true}      //
+        validateOnBlur={true} //
         validationSchema={validationSchema}
         onSubmit={async (values, { resetForm }) => {
           console.log("values are , ", values);
           console.log("selected cartvalue is , ", cartsValue);
+          if (!finalAmountValue && selectedButton !== "Quatation") {
+            showSnackbar("Final Amount cannot be 0", "error");
+            return;
+          }
           const DataCustomer = {
             name: values?.name,
             address: values?.address,
@@ -266,11 +274,15 @@ console.log("Final Payload:", JSON.stringify(cleanedPayload, null, 2));
             statusfk: getStatusFk(),
             subtotal: cartsValue?.totalPrice,
             // address: "123 Main Street, City, Country",
-            discount: cartsValue?.discount,
-            finaltotal: finalTotal,
-            // vendorprofit: 100,
+            discount: selectedButton === "Quatation" ? 0 : discountValue,
+            finaltotal:
+              selectedButton === "Quatation" || finalAmountValue === 0
+                ? cartsValue?.totalPrice
+                : parseFloat(finalTotal),
             paymentMode: "COD",
-            ...(PaymentStatus == "Unpaid" || PaymentStatus == "Partially Paid" ? { remainingamount: cartsValue?.afterdiscount } : { remainingamount: 0 }),
+            ...(PaymentStatus == "Unpaid" || PaymentStatus == "Partially Paid"
+              ? { remainingamount: cartsValue?.afterdiscount }
+              : { remainingamount: 0 }),
             // ...(selectedButton == "provisional" ? {provisionNumber: "12"} : {}),
           };
 
@@ -284,8 +296,6 @@ console.log("Final Payload:", JSON.stringify(cleanedPayload, null, 2));
             discountRates: discountRate,
             // products: carts,
             products: mapCartToInvoiceProducts(carts),
-
-
           };
           console.log("Form Submitted Data:", payload?.customerData);
           console.log("Form Submitted Data:123", payload);
@@ -304,9 +314,9 @@ console.log("Final Payload:", JSON.stringify(cleanedPayload, null, 2));
               // viewInvoiceData:payload
             });
             resetForm();
+            setFinalAmountValue(0);
           }
-          resetForm();
-          dispatch(clearCart());
+        
         }}
       >
         {({
@@ -320,41 +330,40 @@ console.log("Final Payload:", JSON.stringify(cleanedPayload, null, 2));
           isValid,
           dirty,
         }) => {
-          console.log("DATA VALID", isValid)
-          console.log("DATA Dirty", dirty)
+          console.log("DATA VALID", isValid);
+          console.log("DATA Dirty", dirty);
           // console.log("cart is , ", carts.length);
           console.log("error is , ", error);
           return (
             <View>
               {/* Phone Field */}
               <TextInput
-                label="Phone"
-                mode="flat"
-                keyboardType="phone-pad"
-                maxLength={10}
-                style={styles.input}
-                // onChangeText={handleChange("phone")}
-                onChangeText={
-                  async (phoneNumber) => {
-                  setFieldValue("phone", phoneNumber);
-                  await fetchUserData(phoneNumber, setFieldValue);
-                }}
-                // onBlur={() => handlePhoneBlur(values.phone)}
-                value={values.phone}
-                right={
-                  values.phone ? (
-                    <TextInput.Icon
-                      icon="close"
-                      size={20}
-                      style={{ marginBottom: -22 }}
-                      onPress={() => setFieldValue("phone", "")}
-                    />
-                  ) : null
-                }
-              />
-              {touched.phone && errors.phone && (
-                <Text style={styles.errorText}>{errors.phone}</Text>
-              )}
+  label="Phone"
+  mode="flat"
+  keyboardType="phone-pad"
+  maxLength={10}
+  style={styles.input}
+  onChangeText={async (phoneNumber) => {
+    const numericText = phoneNumber.replace(/[^0-9]/g, "");
+    setFieldValue("phone", numericText);
+    await fetchUserData(numericText, setFieldValue);
+  }}
+  onBlur={handleBlur("phone")}   // ✅ Fixed
+  value={values.phone}
+  right={
+    values.phone ? (
+      <TextInput.Icon
+        icon="close"
+        size={20}
+        style={{ marginBottom: -22 }}
+        onPress={() => setFieldValue("phone", "")}
+      />
+    ) : null
+  }
+/>
+{touched.phone && errors.phone && (
+  <Text style={styles.errorText}>{errors.phone}</Text>
+)}
               {/* Name Field */}
               {loading && (
                 <View style={styles.loaderContainer}>
@@ -365,10 +374,19 @@ console.log("Final Payload:", JSON.stringify(cleanedPayload, null, 2));
                 label="Name"
                 mode="flat"
                 style={styles.input}
-                onChangeText={(text) => {
-                  if (text.trim()) setFormFilled(true);
-                  handleChange("name")(text); // still pass to Formik
-                }}
+               onChangeText={(text) => {
+  // Allow only alphabets (A–Z, a–z) and spaces
+  let filteredText = text.replace(/[^A-Za-z\s]/g, "");
+
+  // Capitalize the first letter, keep the rest as is
+  if (filteredText.length > 0) {
+    filteredText = filteredText.charAt(0).toUpperCase() + filteredText.slice(1);
+  }
+
+  if (filteredText.trim()) setFormFilled(true);
+
+  handleChange("name")(filteredText); // pass to Formik
+}}
                 onBlur={handleBlur("name")}
                 value={values.name}
                 editable={!loading}
@@ -405,8 +423,9 @@ console.log("Final Payload:", JSON.stringify(cleanedPayload, null, 2));
                 mode="flat"
                 style={styles.input}
                 onChangeText={(text) => {
-                  if (text.trim()) setFormFilled(true);
-                  handleChange("address")(text);
+                   const filteredText = text.replace(/[^A-Za-z0-9,\s]/g, "");
+                  if (filteredText.trim()) setFormFilled(true);
+                  handleChange("address")(filteredText);
                 }}
                 onBlur={handleBlur("address")}
                 value={values.address}
@@ -473,37 +492,48 @@ console.log("Final Payload:", JSON.stringify(cleanedPayload, null, 2));
               {/* Item Data Table */}
               {carts.length > 0 && (
                 <View style={{ marginTop: 10 }}>
-
-
                   <ItemDataTable
-  carts={carts}
-  discountValue={discountValue}
-  setDiscountRate={setDiscountRate}
-  discountRate={discountRate}
-  finalTotal={finalTotal}
-  setFinalTotal={setFinalTotal}
-  onHorizontalScrollStart={() => setIsHorizontalScrolling(true)}
-  onHorizontalScrollEnd={() => setIsHorizontalScrolling(false)}
-/>
+                    selectedButton={selectedButton}
+                    finalAmountValue={finalAmountValue}
+                    setFinalAmountValue={setFinalAmountValue}
+                    carts={carts}
+                    discountValue={discountValue}
+                    setDiscountRate={setDiscountRate}
+                    setDiscountValue={setDiscountValue}
+                    discountRate={discountRate}
+                    finalTotal={finalTotal}
+                    setFinalTotal={setFinalTotal}
+                    onHorizontalScrollStart={() =>
+                      setIsHorizontalScrolling(true)
+                    }
+                    onHorizontalScrollEnd={() =>
+                      setIsHorizontalScrolling(false)
+                    }
+                  />
 
-                  <PriceDetails setPaymentStatus={setPaymentStatus} selectedButton={selectedButton} discountValue={discountValue} setDiscountValue={setDiscountValue} />
-
+                  <PriceDetails
+                    setPaymentStatus={setPaymentStatus}
+                    finalTotal={finalTotal}
+                    selectedButton={selectedButton}
+                    discountValue={discountValue}
+                    setDiscountValue={setDiscountValue}
+                    finalAmountValue={finalAmountValue}
+                    finalAmountError={finalAmountError}
+                    setFinalAmountAError={setFinalAmountAError}
+                    setFinalAmountValue={setFinalAmountValue}
+                  />
                 </View>
-              )
-
-              }
+              )}
 
               {/* Submit Button */}
               <TouchableOpacity
-                disabled={error || isValid || !dirty || carts?.length <= 0}
-                style={[
+ disabled={!!finalAmountError || (carts?.length === 0)}      
+           style={[
                   styles.submitButton,
                   {
-                    opacity: carts?.length <= 0 ? 0.5 : 1,
+                    opacity: carts?.length > 0 ? 1 : 0.5,
                     backgroundColor:
-                      error || isValid || !dirty || carts?.length <= 0
-                        ? "rgba(0, 0, 6, 0.5)"
-                        : "#007bff",
+                      carts?.length <= 0 ? "rgba(0, 0, 6, 0.5)" : "#007bff",
                   },
                 ]}
                 onPress={handleSubmit}
@@ -515,24 +545,19 @@ console.log("Final Payload:", JSON.stringify(cleanedPayload, null, 2));
         }}
       </Formik>
 
-      {
-        showModal && (
-          <ConfirmModal
-            visible={showModal}
-            setVisible={handleCancel}
-            handlePress={handleConfirm}
-            message="If you go back, all of your Filled Form Data will be lost. Are you sure you want to go back?"
-            heading="Warning"
-            buttonTitle="Go Back"
-          />
-        )
-
-      }
-
+      {showModal && (
+        <ConfirmModal
+          visible={showModal}
+          setVisible={handleCancel}
+          handlePress={handleConfirm}
+          message="If you go back, all of your Filled Form Data will be lost. Are you sure you want to go back?"
+          heading="Warning"
+          buttonTitle="Go Back"
+        />
+      )}
     </ScrollView>
-  )
-}
-
+  );
+};
 
 const styles = StyleSheet.create({
   buttonView: {
@@ -548,7 +573,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#ccc",
-
   },
   addButtonText: {
     marginLeft: 2,

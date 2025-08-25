@@ -8,19 +8,20 @@ import { fontFamily, fontSize } from "../Util/UtilApi";
 import CustomDropdown from "./CustomeDropdown";
 
 
-const PriceDetails = ({ setPaymentStatus, selectedButton, discountValue, setDiscountValue }) => {
+const PriceDetails = ({ setPaymentStatus, selectedButton, discountValue, setDiscountValue,finalTotal,finalAmountValue,setFinalAmountValue,finalAmountError,setFinalAmountAError }) => {
   const dispatch = useDispatch();
-  const totalPrice = useSelector((state) => state.cart.totalPrice);
+  const totalPrice = useSelector((state) => state.cart.totalPrice); 
+    const gstAmount = useSelector((state) => state.cart.gstAmount); 
+    console.log("gstAmount of redux - ", gstAmount);
   const afterdiscount = useSelector((state) => state.cart.afterdiscount);
   const error = useSelector((state) => state.cart.error);
-
-
   const [PartiallyAmount, setPartiallyAmount] = useState("");
   const carts = useSelector((state) => state.cart.Carts);
   const [selectedStatus, setSelectedStatus] = useState("Paid");
   const paymentStatuses = ["Unpaid", "Paid", "Partially Paid"];
-  const { t } = useTranslation();
 
+  
+  const { t } = useTranslation();
 
   console.log("Error is ", error)
   console.log("totalPrice of redux - ", totalPrice);
@@ -35,14 +36,43 @@ const PriceDetails = ({ setPaymentStatus, selectedButton, discountValue, setDisc
     }
   }, [selectedStatus]);
 
-  const handleDiscountChange = (value) => {
-    const parsedDiscount =
-      value.trim() === "" || isNaN(parseFloat(value))
-        ? null
-        : parseFloat(value);
-    dispatch(applyDiscount(parsedDiscount));
-    setDiscountValue(value);
-  };
+  // const handleDiscountChange = (value) => {
+  //   const parsedDiscount =
+  //     value.trim() === "" || isNaN(parseFloat(value))
+  //       ? null
+  //       : parseFloat(value);
+  //   dispatch(applyDiscount(parsedDiscount));
+  //   setDiscountValue(value);
+  // };
+  //   const handleFinalAmountChange = (value) => {
+  //   const parsedDiscount = value.trim() === "" || isNaN(parseFloat(value))? null: parseFloat(value);
+
+  //   // dispatch(applyDiscount(parsedDiscount));
+  //   // setDiscountValue(value);
+  //   setFinalAmountValue(parsedDiscount)
+  // };
+
+   const handleFinalAmountChange = (value) => {
+  // Allow only digits (0–9)
+let numericText = value.replace(/[^0-9.]/g, "");
+  let enteredValue = parseFloat(numericText) || 0;
+  let maxAllowed = parseFloat(totalPrice);
+
+  if (selectedButton === "gst") {
+    maxAllowed = parseFloat(totalPrice) + parseFloat(gstAmount);
+  }
+
+  if (enteredValue > maxAllowed) {
+    setFinalAmountAError(`Final amount cannot exceed ${maxAllowed}`);
+    console.log("Final amount cannot exceed total price + GST");
+  } else {
+    setFinalAmountAError("");
+    console.log("within limit ✅");
+  }
+
+  setFinalAmountValue(numericText); // store only digits
+};
+
 
   const handlePartiallyAmount = (value) => {
     const PartiallyAmount =
@@ -67,25 +97,82 @@ const PriceDetails = ({ setPaymentStatus, selectedButton, discountValue, setDisc
           {`₹ ${totalPrice?.toFixed(2) || "total"}`}
         </Text>
       </View>
+       {/* Total Amount  */}
+      <View style={styles.priceView}>
+        <Text style={styles.value}>{t("Total Amount")}</Text>
+        <Text
+          style={[styles.value, { fontSize: fontSize.labelLarge }]}>
+
+          ₹ {
+            selectedButton ==="gst"
+              ? (Number(totalPrice) + Number(gstAmount)).toFixed(2) // Show full price
+              : totalPrice.toFixed(2) // Show discounted price
+          }
+        </Text>
+      </View>
 
       {/* Discount  */}
       {selectedButton !== "Quatation" && (
+        <>
         <View style={styles.priceView}>
           <View style={{ marginTop: 7 }}>
             <Text style={styles.label}>{t("Discount")}</Text>
           </View>
           <View style={styles.discountInputWrapper}>
-            <TextInput
+            <Text style={styles.value}>
+            {
+            
+              discountValue 
+          }
+              </Text> 
+            {/* <TextInput
               style={styles.input}
               keyboardType="numeric"
               placeholder="Enter Discount"
               value={discountValue}
               onChangeText={handleDiscountChange} // Update discount state
-            />
+            /> */}
           </View>
           {/* Display error message */}
         </View>
+               <View style={styles.priceView}>
+          <View style={{ marginTop: 7 }}>
+            <Text style={styles.label}>{t("Final Amount")}</Text>
+          </View>
+
+          <View style={styles.discountInputWrapper}>
+           <TextInput
+  style={styles.input}
+  keyboardType="numeric"
+  placeholder="Enter Final Amount"
+  value={finalAmountValue}
+  onChangeText={handleFinalAmountChange}
+/>
+              {finalAmountError ? <Text style={styles.errorText}>{finalAmountError}</Text> : null}
+          </View>
+          {/* Display error message */}
+        </View>
+      <View style={styles.priceView}>
+        <Text style={styles.value}>{t("Payable Amount")}</Text>
+        <Text
+          style={[styles.value, { fontSize: fontSize.labelLarge }]}>
+          ₹ {
+            selectedButton=== "Partially Paid"
+              ? totalPrice.toFixed(2)
+              : finalTotal // Show discounted price
+          }
+        </Text>
+      </View>
+      </>
       )}
+
+      {/* {finalAmountError && (
+        <View style={styles.priceView}>
+          <View style={styles.discountInputWrapper}>
+            <Text style={styles.errorText}>{finalAmountError}</Text>
+          </View>
+        </View>
+      )} */}
 
       {error && (
         <View style={styles.priceView}>
@@ -142,28 +229,12 @@ const PriceDetails = ({ setPaymentStatus, selectedButton, discountValue, setDisc
             <View style={styles.priceView}>
               <Text style={styles.label}>{t("Remaining Amount")}</Text>
               <Text style={[styles.value, { fontSize: fontSize.labelLarge, fontFamily: fontFamily.medium }]}>
-                ₹ {(afterdiscount).toFixed(2)}
+                ₹ {(finalTotal-PartiallyAmount).toFixed(2)}
               </Text>
             </View>
           )}
         </>
       )}
-
-      {/* Total Amount  */}
-      <View style={styles.priceView}>
-        <Text style={styles.Totallabel}>{t("Total Amount")}</Text>
-        { }
-        <Text
-          style={[styles.value, { fontSize: fontSize.labelLarge }]}>
-
-          ₹ {
-            selectedStatus === "Partially Paid"
-              ? totalPrice.toFixed(2) // Show full price
-              : afterdiscount.toFixed(2) // Show discounted price
-          }
-        </Text>
-      </View>
-
     </View>
   );
 };
@@ -215,6 +286,11 @@ const styles = StyleSheet.create({
     marginVertical: 3,
     marginLeft: 6,
   },
+  errorText: {
+  color: "red",
+  fontSize: 12,
+  marginTop: 4,
+},
   discountInputWrapper: {
     flex: 1,
     // justifyContent: "flex-end",

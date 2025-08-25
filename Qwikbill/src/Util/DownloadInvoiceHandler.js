@@ -67,7 +67,6 @@ export const useDownloadInvoice = () => {
       Alert.alert("Failed to Open", "Unable to open the file.");
     }
   };
-
   async function checkNotificationPermission() {
     const { status } = await Notifications.getPermissionsAsync();
     if (status !== "granted") {
@@ -173,29 +172,57 @@ export const useDownloadInvoice = () => {
     }
   };
 
-  const shareInvoicePressHandler = async (api, orderId = 1) => {
-    try {
-      const result = await FileSystem.downloadAsync(
-        api,
-        FileSystem.documentDirectory + `invoice_${orderId}.pdf`
-      );
-      if (result?.uri && (await Sharing.isAvailableAsync())) {
-        await Sharing.shareAsync(result.uri);
-      } else {
-        Alert.alert("Sharing Not Available", "Unable to share the file.");
-      }
-    } catch (error) {
-      console.error("Sharing error:", error);
-      Alert.alert("Download Failed", "Unable to download the invoice.");
-    }
-  };
+  const shareInvoicePressHandler = async (api, orderId = 1, token) => {
+  try {
+    const fileUri = FileSystem.documentDirectory + `invoice_${orderId}.pdf`;
 
-  const shareInvoiceOnWhatsApp = async (api, orderId = 1) => {
+    // Remove old file if exists
+    const fileInfo = await FileSystem.getInfoAsync(fileUri);
+    if (fileInfo.exists) {
+      await FileSystem.deleteAsync(fileUri, { idempotent: true });
+    }
+
+    // Download with headers (same as your working downloader)
+    const result = await FileSystem.downloadAsync(api, fileUri, {
+      headers: {
+        Authorization: `Bearer ${token}`,  // 🔑 required
+        Accept: "application/pdf",
+      },
+    });
+
+    // Check file size
+    const downloadedFileInfo = await FileSystem.getInfoAsync(result.uri);
+    console.log("Downloaded for sharing:", downloadedFileInfo);
+    if (!downloadedFileInfo.exists || downloadedFileInfo.size < 100) {
+      // <100 bytes → definitely not a valid PDF
+      throw new Error("Downloaded file is invalid (probably an error response).");
+    }
+
+    // Share
+    if (await Sharing.isAvailableAsync()) {
+      await Sharing.shareAsync(result.uri, {
+        mimeType: "application/pdf",
+        dialogTitle: "Share Invoice",
+      });
+    } else {
+      Alert.alert("Sharing Not Available", "Unable to share the file.");
+    }
+  } catch (error) {
+    console.error("Sharing error:", error);
+    Alert.alert("Download Failed", error.message || "Unable to download the invoice.");
+  }
+};
+
+  const shareInvoiceOnWhatsApp = async (api, orderId = 1,token) => {
     try {
-      const result = await FileSystem.downloadAsync(
-        api,
-        FileSystem.documentDirectory + `invoice_${orderId}.pdf`
-      );
+
+      const result = await FileSystem.downloadAsync(api, FileSystem.documentDirectory + `invoice_${orderId}.pdf`, {
+      headers: {
+        Authorization: `Bearer ${token}`,  // 🔑 required
+        Accept: "application/pdf",
+      },
+    });
+      
       const shareOptions = {
         url: result.uri,
         type: "application/pdf",

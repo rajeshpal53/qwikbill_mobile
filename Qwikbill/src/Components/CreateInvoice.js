@@ -145,7 +145,7 @@ export default function CreateInvoice({ navigation, route }) {
 
   return (
     <ScrollView style={styles.scrollView} nestedScrollEnabled={true} >
-      <TouchableWithoutFeedback>
+       {/* <TouchableWithoutFeedback> */}
         <View style={styles.container}>
           <View >
             {/* <Entypo name="shop" size={30} color="#0c3b73" marginLeft="20" marginVertical="10" paddingLeft="0" marginHorizontal="0" /> */}
@@ -184,11 +184,10 @@ export default function CreateInvoice({ navigation, route }) {
             </View>
           </View>
         </View>
-      </TouchableWithoutFeedback>
+     {/* </TouchableWithoutFeedback> */}
     </ScrollView>
   );
 }
-
 const styles = StyleSheet.create({
   scrollView: {
     flex: 1,

@@ -160,27 +160,20 @@ const PdfScreen = ({ navigation }) => {
   };
 
   const handleShare = async () => {
-    if (!createdInvoice) {
-      showSnackbar(
-        "Invoice Not Created, First Click On Generate Button",
-        "error"
-      );
-    } else {
+   
       console.log("invoice data that we get for share is , ", createdInvoice);
       try {
         setShareLoading(true);
         await shareInvoicePressHandler(
           `${API_BASE_URL}invoice/downloadInvoice/${createdInvoice?.id}`,
           createdInvoice?.id,
-          createdInvoice?.name
+          userData?.token,
         );
       } catch (error) {
         console.log("error in sharing pdf , ", error);
       } finally {
         setShareLoading(false);
       }
-    }
-
 
   }
 
@@ -197,7 +190,7 @@ const PdfScreen = ({ navigation }) => {
         await shareInvoiceOnWhatsApp(
           `${API_BASE_URL}invoice/downloadInvoice/${createdInvoice?.id}`,
           createdInvoice?.id,
-          createdInvoice?.name
+          userData?.token
         );
       } catch (error) {
         console.log("error in sharing pdf , ", error);

@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Card, Avatar, Menu, Button } from "react-native-paper";
-import { fontSize } from "../../Util/UtilApi";
+import { fontSize,capitalizeFirstLetter } from "../../Util/UtilApi";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useState } from "react";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -56,7 +56,7 @@ const ViewAllVendersCard = ({ item }) => {
             <View>
               {
                 <Avatar.Text
-                  size={40}
+                  size={30}
                   label={item?.vendor?.shopname.charAt(0)}
                   style={styles.avatarPlaceholder}
                 />
@@ -67,38 +67,6 @@ const ViewAllVendersCard = ({ item }) => {
               <View style={styles.InnershopnameView}>
                 <Text style={styles.shopnameText}>{item?.vendor?.shopname}</Text>
               </View>
-
-              {/* <View style={{ width: "20%" }}>
-                <Menu
-                  visible={selectedModal === item?.id}
-                  onDismiss={() => setSelectedModal(null)}
-                  anchor={
-                    <View style={{}}>
-                      <Button onPress={() => handleModal(item?.id)}>
-                        <MaterialIcons
-                          name="more-vert"
-                          size={22}
-                          color="black"
-                        />
-                      </Button>
-                    </View>
-                  }
-                  contentStyle={{
-                    padding: 1,
-                    marginRight: 5,
-                    marginTop: 30,
-                    backgroundColor: "#F8F8F8",
-                  }} // Content style for Menu items
-                  elevation={1} // Adds shadow to the Menu component
-                  mode="adaptive" // Use the adaptive mode, adjusting based on screen size and space
-
-                  // anchorPosition='bottom'
-                >
-                  <Menu.Item onPress={() => handleAddProduct()} title="Add Product" />
-                  <Menu.Item onPress={() => handleEditProduct(item)} title="Edit Product" />
-                </Menu>
-              </View> 
-               */}
             </View>
           </View>
 
@@ -142,11 +110,10 @@ const ViewAllVendersCard = ({ item }) => {
                 />
               </View>
               <View>
-                <Text style={styles.detailsText}>{item?.role?.name}</Text>
+                <Text style={styles.detailsText}>{capitalizeFirstLetter(item?.role?.name)}</Text>
               </View>
             </View>
            
-
 
             <View style={styles.InnerDetailsView}>
               <View>
@@ -269,8 +236,8 @@ const styles = StyleSheet.create({
   },
   avatarPlaceholder: {
      borderRadius: 15,
-    width: 45,
-    height: 45,
+    width: 35,
+    height: 35,
     justifyContent: "center",
     alignItems: "center",
   },

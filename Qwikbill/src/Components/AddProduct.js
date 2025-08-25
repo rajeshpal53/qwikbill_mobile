@@ -2,7 +2,7 @@ import { useRoute } from "@react-navigation/native";
 import { Formik } from "formik";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Alert, Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { Text, TextInput } from "react-native-paper";
+import { Text, TextInput,List,ActivityIndicator,Portal, Modal } from "react-native-paper";
 import RazorpayCheckout from 'react-native-razorpay';
 import Svg, { Path } from "react-native-svg";
 import * as Yup from "yup";
@@ -57,8 +57,9 @@ const AddProduct = ({ navigation }) => {
   const [HSNCode, SetHSNCode] = useState();
   const { selectedShop } = useContext(ShopContext);
   const { showSnackbar } = useSnackbar();
+  const [expanded, setExpanded] = useState(false);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-
+const TAX_OPTIONS = ["5", "12", "18", "28"]; // only percentage values
   const timeoutId = useRef(null); // useRef to persist timeoutId
 
   console.log("DATA OF HSNCODE IS ", HSNCode);
@@ -331,7 +332,12 @@ const AddProduct = ({ navigation }) => {
                     keyboardType="numeric"
                     mode="flat"
                     style={styles.input}
-                    onChangeText={handleChange("PurchasePrice")}
+                  maxLength={7}
+                    onChangeText={(text) => {
+    // Remove any non-numeric characters
+    const numericText = text.replace(/[^0-9]/g, "");
+    handleChange("PurchasePrice")(numericText);
+  }}
                     onBlur={handleBlur("PurchasePrice")}
                     value={values.PurchasePrice}
                     error={touched.PurchasePrice && !!errors.PurchasePrice}
@@ -341,20 +347,26 @@ const AddProduct = ({ navigation }) => {
                   )}
 
                   {/* Selling Price */}
-                  <TextInput
-                    label="Selling Price*"
-                    keyboardType="numeric"
-                    mode="flat"
-                    style={styles.input}
-                    onChangeText={handleChange("SellingPrice")}
-                    onBlur={handleBlur("SellingPrice")}
-                    value={values.SellingPrice}
-                    error={touched.SellingPrice && !!errors.SellingPrice}
-                  />
-                  {touched.SellingPrice && errors.SellingPrice && (
-                    <Text style={styles.errorText}>{errors.SellingPrice}</Text>
-                  )}
+                 <TextInput
+  label="Selling Price*"
+  keyboardType="numeric"
+  mode="flat"
+  style={styles.input}
+  maxLength={7}
+  value={values.SellingPrice}
+  error={touched.SellingPrice && !!errors.SellingPrice}
+  onChangeText={(text) => {
+    // Remove any non-numeric characters
+    const numericText = text.replace(/[^0-9]/g, "");
+    handleChange("SellingPrice")(numericText);
+  }}
+  onBlur={handleBlur("SellingPrice")}
+/>
 
+{touched.SellingPrice && errors.SellingPrice && (
+  <Text style={styles.errorText}>{errors.SellingPrice}</Text>
+)}
+                
                   {/* HSN Code */}
                   <TextInput
                     label="HSN Code"
@@ -373,7 +385,7 @@ const AddProduct = ({ navigation }) => {
                     <Text style={styles.errorText}>{errors.HSNCode}</Text>
                   )}
 
-                  <TextInput
+                  {/* <TextInput
                     label="Tax Rate (%)"
                     keyboardType="numeric"
                     mode="flat"
@@ -402,6 +414,47 @@ const AddProduct = ({ navigation }) => {
                   {touched.TaxRate && errors.TaxRate && (
                     <Text style={styles.errorText}>{errors.TaxRate}</Text>
                   )}
+ */}
+                  <View style={styles.dropdownWrapper}>
+  {/* Trigger */}
+  <List.Accordion
+    title={values.TaxRate ? `${values.TaxRate}%` : "Select Tax Rate"}
+    expanded={expanded}
+    onPress={() => setExpanded(!expanded)}
+    titleStyle={{ color: values.TaxRate ? "black" : "grey" }}
+    style={styles.input}
+  />
+
+  {/* Floating dropdown */}
+  {expanded && (
+  <Portal>
+    {/* Full screen backdrop */}
+    <TouchableOpacity
+      style={styles.backdrop}
+      activeOpacity={1}
+      onPress={() => setExpanded(false)} // close on outside press
+    >
+      {/* Stop touches from propagating when pressing inside dropdown */}
+      <TouchableOpacity activeOpacity={1} style={styles.dropdownOverlay}>
+        {TAX_OPTIONS.map((rate) => (
+          <TouchableOpacity
+            key={rate}
+            onPress={() => {
+              handleChange("TaxRate")(rate);
+              setExpanded(false);
+            }}
+          >
+            <List.Item title={rate+"%"} />
+          </TouchableOpacity>
+        ))}
+      </TouchableOpacity>
+    </TouchableOpacity>
+  </Portal>
+)}
+  {touched.TaxRate && errors.TaxRate && (
+    <Text style={styles.errorText}>{errors.TaxRate}</Text>
+  )}
+</View>
 
 
                   {/* Submit Button */}
@@ -412,11 +465,11 @@ const AddProduct = ({ navigation }) => {
                     <Text style={styles.submitButtonText}>Submit</Text>
                   </TouchableOpacity>
                  
-                    <Image
+                    {/* <Image
                       source={require('../../assets/addproduct.png')}
                       style={styles.fixedImage}
                       resizeMode="contain"
-                    />
+                    /> */}
                   
 
                  
@@ -506,6 +559,31 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  dropdownOverlay: {
+  position: "absolute",
+  bottom: 205, // adjust based on input position
+  left: 35,
+  right: 0,
+  width:"80%", 
+  backgroundColor: "white",
+  elevation: 5, // Android shadow
+  shadowColor: "#000", // iOS shadow
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.2,
+  shadowRadius: 4,
+  borderRadius: 8,
+  zIndex: 999,
+},
+backdrop: {
+  position: "absolute",
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: "transparent", // or 'rgba(0,0,0,0.1)' for dim effect
+  justifyContent: "flex-start",
+  alignItems: "center",
+},
 });
 
 export default AddProduct;

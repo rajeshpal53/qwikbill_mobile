@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#343A40",
     fontFamily: "Poppins-Bold", // Use Poppins-Bold for product name
-    fontSize: fontSize.headingSmall + 6,
+    fontSize: fontSize.labelLarge ,
     textAlign: "left",
   },
   mainContentWrapper: {
