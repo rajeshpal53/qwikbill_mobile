@@ -37,7 +37,7 @@ import { useTranslation } from "react-i18next";
 import NoDataFound from "../../Components/NoDataFound";
 import DeleteModal from "../../UI/DeleteModal";
 import { useSnackbar } from "../../Store/SnackbarContext";
-
+import SelectionOverlay from "../../Component/SelectionOverlay";
 
 const ProductDetailsScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -48,7 +48,7 @@ const ProductDetailsScreen = ({ navigation }) => {
   const products = useSelector((state) => state.product.products);
   const dispatch = useDispatch();
   const [Productdata, SetProductData] = useState([]);
-  const isfocused = useIsFocused();
+  const isFocused = useIsFocused();
   const [open, setOpen] = useState(false);
   const onStateChange = (state) => setOpen(state.open);
   const [bulkUploadModalVisible, setBulkUploadModalVisible] = useState(false);
@@ -70,9 +70,28 @@ const ProductDetailsScreen = ({ navigation }) => {
   const [visible, setVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const { t } = useTranslation();
-
+const [selectedProducts, setSelectedProducts] = useState([]);
+const [selectionMode, setSelectionMode] = useState(false);
   console.log("token is", userData?.token)
 
+
+  const toggleSelectProduct = (productId) => {
+  setSelectedProducts((prev) => {
+    if (prev.includes(productId)) {
+      return prev.filter((id) => id !== productId); // deselect
+    } else {
+      return [...prev, productId]; // select
+    }
+  });
+};
+
+  useEffect(() => {
+  if (isFocused) {
+    // Always reload fresh data when screen comes into focus
+    setPage(1);
+    getproductdata(1);
+  }
+}, [isFocused]);
 
   useFocusEffect(
     useCallback(() => {
@@ -118,6 +137,28 @@ const ProductDetailsScreen = ({ navigation }) => {
     await getproductdata(1); // Fetch new data
     setRefreshing(false); // Set refreshing state to false once done
   };
+
+
+  const handleBulkDelete = async () => {
+  try {
+    // call delete API with selectedProducts
+    console.log("Deleting products with IDs:", selectedProducts);
+     const response=await deleteApi("products/deleteMultipleProducts",{ Authorization: `Bearer ${userData.token}`,},{productIds:selectedProducts});
+    SetProductData((prev) => prev.filter(p => !selectedProducts.includes(p.id)));
+    setSelectedProducts([]);
+    showSnackbar(`${response?.deletedIds?.length} products deleted successfully.`, "success");
+    setTimeout(() => {
+  showSnackbar(
+    `${response?.skippedIds?.length} product(s) were skipped because they are linked to invoices.`,
+    "error"
+  );
+}, 2000);
+  } catch (error) {
+    console.error(error);
+    showSnackbar(`${error.data.message}` ,"error"
+  );
+  }
+};
 
   const Apistore = (page) => {
     let api = `products/getProducts?vendorfk=${selectedShop?.vendor?.id}&page=${page}&limit=${PAGE_SIZE}`;
@@ -215,7 +256,10 @@ const ProductDetailsScreen = ({ navigation }) => {
       console.log("GET ALL DATA IS125 ", response?.data);
       if (response?.data) {
         showSnackbar(t("Product deleted successfully")), "success";
-        await getproductdata();
+         setRefresh((prev) => !prev); 
+          SetProductData((prev) => prev.filter((p) => p.id !== ProductId));
+        await getproductdata(1);
+
 
         console.log("GET ALL DATA IS response", response.data);
       } else {
@@ -299,6 +343,11 @@ const ProductDetailsScreen = ({ navigation }) => {
     );
   };
 
+const handleLongSelect = (id) => {
+  setSelectionMode(true);
+  setSelectedProducts([id]); // first selection
+};
+
   return mainLoading ? (
     <View style={{ flex: 1, justifyContent: "center" }}>
       <ActivityIndicator size={"large"} />
@@ -338,7 +387,7 @@ const ProductDetailsScreen = ({ navigation }) => {
                       "High to Low Price",
                       "Clear All",
                     ].map((suggestbtn, key) => (
-                      <TouchableOpacity
+                 <TouchableOpacity
                         key={key}
                         style={[
                           styles.suggestionButton,
@@ -370,6 +419,11 @@ const ProductDetailsScreen = ({ navigation }) => {
             setRefresh={setRefresh}
             setProductId={setProductId}
             setVisible={setVisible}
+            isSelected={selectedProducts.includes(item.id)}  // ✅ highlight if selected
+    onSelect={() => toggleSelectProduct(item.id)}
+   
+      onLongSelect={() => handleLongSelect(item.id)}
+  selectionMode={selectionMode}
           />
         )}
         // keyExtractor={(item, index) =>
@@ -394,6 +448,14 @@ const ProductDetailsScreen = ({ navigation }) => {
           </View>
         )}
       />
+
+      {selectedProducts.length > 0 && (
+  <SelectionOverlay
+    selectedProducts={selectedProducts}
+    onDelete={handleBulkDelete}
+     onClearSelection={() => setSelectedProducts([])}
+  />
+)}
       {
         (selectedShop?.role?.name === "owner" || selectedShop?.role?.name === "manager") && (
           <FAB.Group

@@ -45,80 +45,68 @@ const ItemDataTable = ({
   const scrollRef = useRef(null);
   const [showScrollHint, setShowScrollHint] = useState(true);
   useEffect(() => {
-  const discount = parseFloat(discountValue) || 0;
-  const total = parseFloat(totalPrice) || 0;
+  const total = Number(totalPrice) || 0;
+  const gst = Number(gstAmount) || 0;
 
-  if (total > 0) {
-    // If finalAmountValue is empty, null, or zero → reset discountValue & discountRate
-    if (!finalAmountValue) {
-      if (selectedButton === "gst") {
-        setFinalTotal(totalPrice +gstAmount)
-      }else if(selectedButton === "provisional") {
-        setFinalTotal(totalPrice)
-      }
-      // setFinalTotal(totalPrice +gstAmount)
-      setDiscountValue(0);
-      setDiscountRate(0);
-      return;
-    }
-
-    let percentage;
-    if (selectedButton === "gst") {
-      // GST bill → include GST in total for percentage calculation
-      percentage = (1 - finalAmountValue / (total + gstAmount)) * 100;
-      setDiscountValue(total + gstAmount - finalAmountValue);
-    } else {
-      // Provisional bill → exclude GST from total
-      percentage = (1 - finalAmountValue / total) * 100;
-      setDiscountValue(total - finalAmountValue);
-    }
-
-    console.log("percentage is ", percentage);
-    setDiscountRate(parseFloat(percentage.toFixed(3)));
-  } else {
-    setFinalTotal(totalPrice+gstAmount)
-    setDiscountRate(0); // Avoid division by zero
+  if (total <= 0) {
+    // reset when no total
+    setFinalTotal(0);
+    setDiscountRate(0);
     setDiscountValue(0);
+    return;
   }
-}, [
-  discountValue,
-  totalPrice,
-  finalAmountValue,
-  carts,
-  gstAmount,
-  selectedButton
-]);
 
-  useEffect(() => {
+  // STEP 1: If no finalAmountValue given, reset everything to defaults
+  if (!finalAmountValue || Number(finalAmountValue) === 0) {
+    if (selectedButton === "gst") {
+      setFinalTotal(total + gst);
+      
+    } else {
+      setFinalTotal(total);
+    }
 
-  let total = 0;
-  if (finalAmountValue > 0) {
-      carts.forEach((item) => {
-    const amount = (item.sellPrice * item.quantity) || 0;
-    const discountAmt = (amount * discountRate) / 100;
-    const amtAfterDiscount = amount - discountAmt;
-    const gstAmt = (amtAfterDiscount * item.taxRate) / 100;
+    setDiscountValue(0);
+    setDiscountRate(0);
+    return;
+  }
+
+  // STEP 2: Calculate discount percentage & value
+  let discountVal = 0;
+  let percentage = 0;
+  if (selectedButton === "gst") {
+    const gross = total + gst;
+    discountVal = gross - Number(finalAmountValue);
+    percentage = (discountVal / gross) * 100;
+  } else {
+    discountVal = total - Number(finalAmountValue);
+    percentage = (discountVal / total) * 100;
+  }
+
+  setDiscountValue(Number(discountVal.toFixed(2)));
+  setDiscountRate(Number(percentage));
+
+  // STEP 3: Recalculate final total from carts (line by line)
+  let computedTotal = 0;
+  carts.forEach((item) => {
+    const price = Number(item.sellPrice) || 0;
+    const qty = Number(item.quantity) || 0;
+    const taxRate = Number(item.taxRate) || 0;
+
+    const lineAmount = price * qty;
+    const lineDiscount = (lineAmount * percentage) / 100;
+    const afterDiscount = lineAmount - lineDiscount;
 
     if (selectedButton === "gst") {
-      total += amtAfterDiscount + gstAmt; // accumulate without rounding yet
+      const gstAmt = (afterDiscount * taxRate) / 100;
+      computedTotal += afterDiscount + gstAmt;
     } else {
-      total += amtAfterDiscount;
+      computedTotal += afterDiscount;
     }
-      console.log("Total calculated:", "total "+total,"amount "+amount,"discountRate "+discountRate,"discountAmt"+discountAmt,"amtAfterDiscount"+amtAfterDiscount);
   });
-  setFinalTotal(total.toFixed(2)); // round to 2 decimal places
-  console.log("selectedButton", selectedButton);
-  console.log("Final total before rounding:", total);
-  }
 
-}, [
-  carts,
-  discountRate,
-  selectedButton,
-  finalAmountValue,
-  totalPrice,
-  gstAmount,
-]);
+  setFinalTotal(Number(computedTotal.toFixed(2)));
+}, [carts, totalPrice, gstAmount, finalAmountValue, selectedButton]);
+
   console.log("discountRate is ", discountRate, totalPrice);
   console.log("finalTotal calculated is", finalTotal);
 
@@ -181,10 +169,10 @@ const ItemDataTable = ({
     </DataTable.Title>
   </>
 )}
-              <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>
+              <DataTable.Title style={{ width: COLUMN_WIDTHS.small,justifyContent: "flex-end" }}>
                  Total
               </DataTable.Title>
-              <DataTable.Title style={{ width: COLUMN_WIDTHS.small }}>
+              <DataTable.Title style={{ width: COLUMN_WIDTHS.small, justifyContent: "flex-end" }}>
                 Action
               </DataTable.Title>
             </DataTable.Header>
@@ -225,7 +213,7 @@ const ItemDataTable = ({
       <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>
         ₹{discountAmt.toFixed(2)}
       </DataTable.Cell>
-      <DataTable.Cell style={{ width: COLUMN_WIDTHS.medium }}>
+      <DataTable.Cell style={{ width: COLUMN_WIDTHS.medium}}>
         ₹{amtAfterDiscount.toFixed(2)}
       </DataTable.Cell>
       {
@@ -242,16 +230,17 @@ const ItemDataTable = ({
         )
       }
       {/* Total cell */}
-      <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>
+      <DataTable.Cell style={{ width: COLUMN_WIDTHS.small,justifyContent: "flex-end" }}>
         ₹{total.toFixed(2)}
       </DataTable.Cell>
 
       {/* Delete action */}
-      <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>
+      <DataTable.Cell style={{ width: COLUMN_WIDTHS.small, justifyContent: "flex-end", alignItems: "center" }}>
         <TouchableOpacity
           onPress={() => dispatch(removeFromCart(item.id))}
+          style={{marginLeft:3}}
         >
-          <MaterialIcons name="delete" size={20} color="red" />
+          <MaterialIcons name="delete" size={23} color="red" />
         </TouchableOpacity>
       </DataTable.Cell>
     </DataTable.Row>
@@ -311,7 +300,7 @@ const styles = StyleSheet.create({
   },
   totalContainer: {
     marginTop: 10,
-    paddingHorizontal: 5,
+    // paddingHorizontal: 5,
   },
   totalText: {
     fontSize: 16,
