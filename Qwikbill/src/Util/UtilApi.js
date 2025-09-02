@@ -38,17 +38,23 @@ const apiRequest = async (method, url, data = null, customHeaders = {}) => {
   }
 };
 
-  const deleteApiRequest= async( method ,url, headers={})=>{
-        const response= await axios({
+  const deleteApiRequest= async( method ,url, headers={},payload)=>{
+    try{
+      const response= await axios({
           url:`${API_BASE_URL}${url}`,
           method,
+          data:payload?JSON.stringify(payload):null,
           headers:{
             "Content-Type":"application/json",
             ...headers,
           },
           withCredentials:true
         })
-        return response
+        return response.data||'';
+    }catch(error){
+       console.error(`Error with ${method.toUpperCase()} request to ${url}:`, error.response || error.message);
+    throw error.response || error.message;
+  }    
   }
   //CREATE
   export const createApi = async (endpoint, data, headers) => {
@@ -66,8 +72,8 @@ export const updateApi = async (endpoint, data, headers) => {
   };
 
   // DELETE
-  export const deleteApi = async (endpoint,headers) => {
-    return deleteApiRequest('delete', endpoint, headers);
+  export const deleteApi = async (endpoint,headers,payload) => {
+    return deleteApiRequest('delete', endpoint, headers,payload);
   };
   export const fontSize = {
     headingLarge: 24,

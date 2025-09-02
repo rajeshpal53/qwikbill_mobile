@@ -48,7 +48,9 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const [formFilled, setFormFilled] = useState(false);
   const [finalAmountValue, setFinalAmountValue] = useState(0);
   const [finalAmountError, setFinalAmountAError] = useState("");
-
+const roundToTwo = (num) => {
+  return Number(Math.round(num + 'e2') + 'e-2');
+};
   console.log("DATA OF ERROR ", error, discountValue);
   // useEffect(() => {
   //   console.log("selected shop isuser , ", selectedShop);
@@ -250,19 +252,14 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           console.log("values are , ", values);
           console.log("selected cartvalue is , ", cartsValue);
           if (!finalAmountValue && selectedButton !== "Quatation") {
-            showSnackbar("Final Amount cannot be 0", "error");
-            return;
+            // showSnackbar("Final Amount cannot be 0", "error");
+            setFinalAmountValue(finalTotal)
           }
+
           const DataCustomer = {
             name: values?.name,
             address: values?.address,
             gstNumber: User?.gstNumber || values?.gstNumber || null,
-            // ...(          // ← include gstNumber ONLY when you really have one
-            //   selectedButton === 'gst' &&
-            //     (User?.gstNumber || values.gstNumber.trim())
-            //     ? { gstNumber: (User?.gstNumber || values.gstNumber.trim()) }
-            //     : {}
-            // ),
             phone: User?.getNumber || values?.phone,
             userId: User?.id || undefined,
           };
@@ -275,10 +272,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
             subtotal: cartsValue?.totalPrice,
             // address: "123 Main Street, City, Country",
             discount: selectedButton === "Quatation" ? 0 : discountValue,
-            finaltotal:
-              selectedButton === "Quatation" || finalAmountValue === 0
-                ? cartsValue?.totalPrice
-                : parseFloat(finalTotal),
+            finaltotal:selectedButton === "Quatation" ? cartsValue?.totalPrice: parseFloat(finalTotal),
             paymentMode: "COD",
             ...(PaymentStatus == "Unpaid" || PaymentStatus == "Partially Paid"
               ? { remainingamount: cartsValue?.afterdiscount }
@@ -315,6 +309,10 @@ const CreateInvoiceForm = ({ selectedButton }) => {
             });
             resetForm();
             setFinalAmountValue(0);
+            setFinalTotal(0);
+            setDiscountRate(0);
+            setDiscountValue(0);
+            submit.current = false;
           }
         
         }}

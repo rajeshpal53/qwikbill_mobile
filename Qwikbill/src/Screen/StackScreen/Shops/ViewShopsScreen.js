@@ -269,7 +269,7 @@ export default function ViewShopsScreen() {
         menuItems={menuItems}
       /> */}
 
-        <FAB
+        {/* <FAB
           icon="plus"
           style={styles.fab}
           onPress={() =>
@@ -277,7 +277,7 @@ export default function ViewShopsScreen() {
               isHome: false,
             })
           }
-        />
+        /> */}
         {isModalVisible && (
           <DeleteModal
             visible={isModalVisible}

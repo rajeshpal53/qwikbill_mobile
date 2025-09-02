@@ -80,7 +80,11 @@ const AllItemProduct = () => {
       }
     } catch (error) {
       if (page === 1) setProducts([]);
+      console.error("Error fetching products:", error?.data?.status,error,error?.status);
+      if(error?.status!==404){
       showSnackbar("Something went wrong while loading products.", "error");
+
+      }
     } finally {
       setloader(false);
     }

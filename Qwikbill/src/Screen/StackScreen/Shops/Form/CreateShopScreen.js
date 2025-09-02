@@ -111,7 +111,7 @@ const ProfileValidationSchema = Yup.object().shape({
 pincode: Yup.string()
   .matches(/^[1-9][0-9]{5}$/, "Enter a valid 6-digit Indian pincode")
   .test("is-valid-pincode", "Invalid Indian pincode", (value) => {
-    if (!value) return false;
+    if (!value) return true; // ✅ Skip check if empty
     const pincodeInt = parseInt(value, 10);
     return pincodeInt >= 110001 && pincodeInt <= 999999;
   }),
@@ -167,6 +167,7 @@ const CreateShopScreen = ({ navigation }) => {
   const { showSnackbar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(false);
   const submit = useRef(false);
+  const[submitLoading,setSubmitLoading]=useState(false);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
   const [role, Setrole] = useState("");
@@ -244,6 +245,7 @@ const CreateShopScreen = ({ navigation }) => {
     aadharFrontImage: userData?.user?.aadharCardFronturl || null,
     aadharBackImage: userData?.user?.aadharCardBackurl || null,
     profileImage: userData?.user?.profilePicurl || null,
+
 
   });
 
@@ -618,7 +620,7 @@ const CreateShopScreen = ({ navigation }) => {
       onSubmit={async (values) => {
         console.log("hi prathesm");
         console.log("submitted Values are ", values);
-
+        setSubmitLoading(true)
         let createdUserId = null;
 
         const updateUserPayloadData = new FormData();
@@ -678,6 +680,7 @@ const CreateShopScreen = ({ navigation }) => {
         } catch (error) {
           console.log("Error creating or updating user , ", error);
         } finally {
+          setSubmitLoading(false)
         }
 
         const data = new FormData();
@@ -811,6 +814,7 @@ const CreateShopScreen = ({ navigation }) => {
           }
         } finally {
           setIsLoading(false);
+          setSubmitLoading(false);
         }
       }}
 
@@ -902,6 +906,7 @@ const CreateShopScreen = ({ navigation }) => {
                       setEditorContent={setEditorContent}
                       textInputMode={textInputMode}
                       shopImageField="shopImage"
+                  
                     />
                   </View>
                 </ProgressStep>
@@ -948,6 +953,7 @@ const CreateShopScreen = ({ navigation }) => {
 
                   {currentStep === 1 && (
                     <Button
+                      disabled={submitLoading}
                       mode="contained"
                       onPress={handleSubmit}
                       style={{ flex: 1 }}

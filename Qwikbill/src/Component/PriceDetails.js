@@ -74,6 +74,7 @@ let numericText = value.replace(/[^0-9.]/g, "");
 };
 
 
+
   const handlePartiallyAmount = (value) => {
     const PartiallyAmount =
       value.trim() === "" || isNaN(parseFloat(value))
@@ -92,23 +93,32 @@ let numericText = value.replace(/[^0-9.]/g, "");
 
       {/* Price  */}
       <View style={styles.priceView}>
-        <Text style={styles.label}>{t("Price")} ({carts.length})</Text>
-        <Text style={styles.value}>
-          {`₹ ${totalPrice?.toFixed(2) || "total"}`}
-        </Text>
+        <Text style={styles.label}>{t("Price")} ({carts.length} items)</Text>
+       <Text style={styles.value}>
+  ₹ {totalPrice
+    ? Number(totalPrice).toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
+    : "total"}
+</Text>
       </View>
        {/* Total Amount  */}
       <View style={styles.priceView}>
         <Text style={styles.value}>{t("Total Amount")}</Text>
-        <Text
-          style={[styles.value, { fontSize: fontSize.labelLarge }]}>
-
-          ₹ {
-            selectedButton ==="gst"
-              ? (Number(totalPrice) + Number(gstAmount)).toFixed(2) // Show full price
-              : totalPrice.toFixed(2) // Show discounted price
-          }
-        </Text>
+        <Text style={[styles.value,{ fontSize: fontSize.labelLarge }]}>
+  ₹ {
+    selectedButton === "gst"
+      ? Number(totalPrice + gstAmount).toLocaleString("en-IN", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })
+      : Number(totalPrice).toLocaleString("en-IN", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })
+  }
+</Text>
       </View>
 
       {/* Discount  */}
@@ -120,10 +130,10 @@ let numericText = value.replace(/[^0-9.]/g, "");
           </View>
           <View style={styles.discountInputWrapper}>
             <Text style={styles.value}>
-            {
-            
-              discountValue 
-          }
+             {Number(discountValue).toLocaleString("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}
               </Text> 
             {/* <TextInput
               style={styles.input}
@@ -141,12 +151,20 @@ let numericText = value.replace(/[^0-9.]/g, "");
           </View>
 
           <View style={styles.discountInputWrapper}>
-           <TextInput
-  style={styles.input}
+        <TextInput
+  label="Final Amount"
+  mode="flat"
   keyboardType="numeric"
-  placeholder="Enter Final Amount"
-  value={finalAmountValue}
+  style={styles.input}
+  value={ finalAmountValue?finalAmountValue.toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }):finalTotal.toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }) }
   onChangeText={handleFinalAmountChange}
+  error={!!finalAmountError}
 />
               {finalAmountError ? <Text style={styles.errorText}>{finalAmountError}</Text> : null}
           </View>
@@ -154,14 +172,20 @@ let numericText = value.replace(/[^0-9.]/g, "");
         </View>
       <View style={styles.priceView}>
         <Text style={styles.value}>{t("Payable Amount")}</Text>
-        <Text
-          style={[styles.value, { fontSize: fontSize.labelLarge }]}>
-          ₹ {
-            selectedButton=== "Partially Paid"
-              ? totalPrice.toFixed(2)
-              : finalTotal // Show discounted price
-          }
-        </Text>
+       <Text
+  style={[styles.value, { fontSize: fontSize.labelLarge }]}>
+  ₹ {
+    selectedButton === "Partially Paid"
+      ? Number(totalPrice).toLocaleString("en-IN", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })
+      : Number(finalTotal).toLocaleString("en-IN", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })
+  }
+</Text>
       </View>
       </>
       )}
@@ -314,7 +338,7 @@ const styles = StyleSheet.create({
 
   input: {
     fontFamily: "Poppins-Medium",
-    fontSize: fontSize.labelMedium,
+    fontSize: fontSize.labelLarge,
   },
   errorText: {
     color: "red"

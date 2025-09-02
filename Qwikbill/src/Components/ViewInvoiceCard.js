@@ -1,84 +1,127 @@
-import { View ,StyleSheet,TouchableOpacity,Pressable} from "react-native";
-import { Text,Card} from "react-native-paper";
-import {fontSize, statusName} from "../Util/UtilApi";
+import { View, StyleSheet, Pressable } from "react-native";
+import { Text, Card } from "react-native-paper";
+import { fontSize, statusName } from "../Util/UtilApi";
 
-const ViewInvoiceCard = ({ invoice,navigation }) => {
-  console.log(invoice,"in ViewScreen")
-    return (
-        <Pressable onPress={()=>{navigation.navigate("PDFScreen",{viewInvoiceData:invoice})}}>
+const ViewInvoiceCard = ({ invoice, navigation }) => {
+  return (
+    <Pressable
+      onPress={() =>
+        navigation.navigate("PDFScreen", { viewInvoiceData: invoice })
+      }
+    >
       <Card style={styles.card}>
-        <View style={{flexDirection:"row", justifyContent:"space-between",width:"100%", }}>
-        <Text style={styles.invoice}>Invoice #{invoice.id}</Text>
-        <Text style={{color: invoice?.statusfk === 1 ? "red" : invoice?.statusfk === 2 ? "green" : "orange" }}>{statusName[invoice.statusfk]?.toUpperCase()}</Text>
+        {/* Header Row */}
+        <View style={styles.headerRow}>
+          <View>
+            <Text style={styles.invoiceNumber}>
+              #{invoice?.invoiceNumber || invoice?.id}
+            </Text>
+            <Text style={styles.invoiceType}>
+              {invoice?.type?.toUpperCase() || "INVOICE"}
+            </Text>
+          </View>
+          <Text
+            style={[
+              styles.status,
+              {
+                color:
+                  invoice?.statusfk === 1
+                    ? "red"
+                    : invoice?.statusfk === 2
+                    ? "green"
+                    : "orange",
+              },
+            ]}
+          >
+            {statusName[invoice?.statusfk]?.toUpperCase()}
+          </Text>
         </View>
-        <Text style={styles.title}>{invoice?.user?.name?invoice?.user?.name:"User Name" }
-          
-        </Text>
-        <Text style={styles.date}>{new Date(invoice.createdAt).toDateString()}</Text>
-        <Text style={styles.date}>{invoice.address}</Text>
-        <View style={styles.row}>
-          <Text style={styles.allText}>Total Amount:</Text>
-          <Text style={styles.allText}>₹{invoice.subtotal}</Text>
+
+        {/* Middle Content */}
+        <View style={styles.rowBetween}>
+          <View>
+            <Text style={styles.customerName}>
+              {invoice?.user?.name || "User Name"}
+            </Text>
+            <Text style={styles.date}>
+              Payment: {invoice?.paymentMode}
+            </Text>
+          </View>
+
+          <View style={{ alignItems: "flex-end" }}>
+            <Text style={styles.finalLabel}>Final Amount</Text>
+            <Text style={styles.finalAmount}>₹{invoice?.finaltotal}</Text>
+          </View>
         </View>
-        <View style={styles.row}>
-          <Text style={styles.allText}>Discount:</Text>
-          <Text style={styles.allText}>₹{invoice.discount}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.allText}>Final Amount:</Text>
-          <Text style={styles.finalTotal}>₹{invoice.finaltotal}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.allText}>Payment Mode:</Text>
-          <Text style={styles.allText}> {invoice.paymentMode}</Text>
+
+        {/* Footer Row */}
+        <View style={styles.rowBetween}>
+                  <Text style={styles.footerText}> {new Date(invoice?.createdAt).toDateString()}</Text>  
         </View>
       </Card>
-      </Pressable>
-    );
-    };
-    const styles = StyleSheet.create({
-        card: {
-          backgroundColor: "#fff",
-          padding: 15,
-          marginVertical: 2,
-          marginHorizontal: 16,
-          borderRadius: 10,
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.2,
-          shadowRadius: 4,
-          elevation: 3,
-        },
-        title: {
-          fontSize: 18,
-          fontWeight: "bold",
-        },
-        date: {
-          fontSize: fontSize.label,
-          color: "gray",
-          marginBottom: 5,
-        },
-        invoice:{
-            fontSize: 18,
-            color: "gray",
-        },
-        address: {
-          fontSize: fontSize.label,
-          marginBottom: 5,
-        },
-        row: {
-          flexDirection: "row",
-          justifyContent: "space-between",
-          marginVertical: 2,
-        },
-        finalTotal: {
-          fontWeight: "bold",
-          fontSize: fontSize.labelMedium,
-          color: "green",
-        },
-        allText:{
-          fontSize: fontSize.labelMedium,
-        }
-      });
+    </Pressable>
+  );
+};
 
-  export default ViewInvoiceCard;
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: "#fff",
+    padding: 14,
+    marginVertical: 6,
+    marginHorizontal: 16,
+    borderRadius: 12,
+    elevation: 3,
+  },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 6,
+  },
+  invoiceNumber: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  invoiceType: {
+    fontSize: 12,
+    color: "#666",
+    fontStyle: "italic",
+  },
+  status: {
+    fontSize: 13,
+    fontWeight: "bold",
+  },
+  rowBetween: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+ 
+  },
+  customerName: {
+    fontSize: 15,
+    fontWeight: "500",
+    color: "#000",
+  },
+  date: {
+    fontSize: 12,
+    color: "gray",
+  },
+  finalLabel: {
+    fontSize: 12,
+    color: "gray",
+  },
+  finalAmount: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "green",
+  },
+  footerText: {
+    fontSize: 13,
+    color: "#555",
+    marginTop: 3,
+  },
+
+  
+});
+
+export default ViewInvoiceCard;

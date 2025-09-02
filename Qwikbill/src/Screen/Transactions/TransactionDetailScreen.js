@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Avatar, Button, Card } from "react-native-paper";
 import { useDownloadInvoice } from "../../Util/DownloadInvoiceHandler";
-import { API_BASE_URL, fontFamily, fontSize, readApi } from "../../Util/UtilApi";
+import { API_BASE_URL, fontFamily, fontSize, readApi,NORM_URL } from "../../Util/UtilApi";
 
 
 const TransactionDetailScreen = ({ item }) => {
@@ -78,8 +78,7 @@ const TransactionDetailScreen = ({ item }) => {
 
       await downloadInvoicePressHandler(
         `${API_BASE_URL}invoice/downloadInvoice/${invoicefk}`,
-        // invoice?.id,
-        name
+        `${vendor.shopname}${invoicefk}`||"invoice",
       );
 
       console.log("url for download invoice", `${API_BASE_URL}invoice/downloadInvoice/${invoicefk}`)
@@ -266,7 +265,10 @@ const TransactionDetailScreen = ({ item }) => {
                 Share Invoice
               </Button>
             </View>
-            <TouchableOpacity style={styles.supportButton} onPress={() => navigation.navigate("AllQuerysAndSupport")}>
+            <TouchableOpacity style={styles.supportButton} onPress={() => navigation.navigate("Policies", {
+                    webUri: `${NORM_URL}qapp/helpandsupport?view=mobile`,
+                    headerTitle: "Help & Support",
+                  })}>
               <FontAwesome name="phone" size={16} color="blue" />
               <Text style={styles.supportText}>Contact Support</Text>
             </TouchableOpacity>
