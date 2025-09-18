@@ -44,7 +44,7 @@ import axios from "axios";
 import UserDataContext from "../../../../Store/UserDataContext";
 import { ShopContext } from "../../../../Store/ShopContext";
 import ConfirmModal from "../../../../Components/Modal/ConfirmModal";
-
+import ProviderBankDetailForm from "./ProviderBankDetailForm";
 // Form validation schema using Yup
 
 // const validationSchema = Yup.object().shape({
@@ -83,11 +83,16 @@ const ShopValidataionSchema = Yup.object().shape({
 
   shopAddress: Yup.string()
     .required("Shop Address is required")
-    .max(50, "Shop Address cannot be more than 50 characters"),
+    .max(150, "Shop Address cannot be more than 150 characters"),
    gstNumber: Yup.string().matches(
   /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
   "Invalid GSTIN format. Example: 27AAAPL1234C1Z1"
-)
+),
+cinNumber: Yup.string()
+  .matches(
+    /^[ULF][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/,
+    "Enter a valid 21-character CIN Number"
+  ),
 
   // location: Yup.string().required("Location is required"),
   // kilometerRadius: Yup.number()
@@ -95,13 +100,32 @@ const ShopValidataionSchema = Yup.object().shape({
   //   .required("Kilometer radius is required"),
 });
 
+const bankValidationSchema = Yup.object().shape({
+  accountNumber: Yup.string()
+    
+    .matches(/^[0-9]{9,18}$/, "Account number must be 9–18 digits"),
+  
+  ifscCode: Yup.string()
+   
+    .matches(/^[A-Z]{4}0[A-Z0-9]{6}$/, "Invalid IFSC code"),
+  
+  branchName: Yup.string()
+   
+    .max(100, "Branch name must be under 100 characters"),
+  
+  accountHolderName: Yup.string()
+  
+    .matches(/^[a-zA-Z\s.]+$/, "Only alphabets, spaces, and '.' are allowed")
+    .max(100, "Account holder name must be under 100 characters"),
+});
+
 const ProfileValidationSchema = Yup.object().shape({
  // profileImage: Yup.mixed().required("Profile image is required"),
   name: Yup.string().required("Name is required")
     .max(50, "Name cannot be more than 50 characters").matches(/^[A-Za-z\s]+$/, "Special characters are not allowed"),
-  whatsappNumber: Yup.string()
-    .required("WhatsApp number is required")
-    .matches(/^[6-9]\d{9}$/, "WhatsApp number must be  10 digits"),
+ whatsappNumber: Yup.string()
+  .required("WhatsApp number is required")
+  .matches(/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number"),
 
   mobile: Yup.string().required("mobile number is required"),
   // .matches(/^[6-9]\d{9}$/, "Invalid Mobile Number")
@@ -125,6 +149,7 @@ pincode: Yup.string()
       const age = today.getFullYear() - value.getFullYear();
       return age >= 12;
     }),
+
 
   //------------------------------------------------
   // userAddress : Yup.string()
@@ -192,7 +217,6 @@ const CreateShopScreen = ({ navigation }) => {
   const textInputMode = "flat";
   const progressRef = useRef(null);
 
-
   const [selectedGender, setSelectedGender] = useState(() => {
     console.log("routedata is the , ", routeData);
     if (routeData) {
@@ -245,6 +269,12 @@ const CreateShopScreen = ({ navigation }) => {
     aadharFrontImage: userData?.user?.aadharCardFronturl || null,
     aadharBackImage: userData?.user?.aadharCardBackurl || null,
     profileImage: userData?.user?.profilePicurl || null,
+accountNumber:userData?.user?.accountNumber||"",
+ifscCode:userData?.user?.ifscCode||"",
+branchName:userData?.user?.branchName||"",
+accountHolderName:userData?.user?.accountHolderName||"",
+signature:userData?.user?.signature||null
+
 
 
   });
@@ -520,7 +550,7 @@ const CreateShopScreen = ({ navigation }) => {
         // console.log("routeData , ", routeData?.formatted_address);
         const formattedAddress = routeData?.formatted_address;
         setFieldValue("showAddress", formattedAddress);
-
+        
         setFieldValue("latitude", String(location?.coords?.latitude));
         setFieldValue("longitude", String(location?.coords?.longitude));
         console.log("setted");
@@ -615,7 +645,7 @@ const CreateShopScreen = ({ navigation }) => {
       initialValues={initialData}
       enableReinitialize={true}
       validationSchema={
-        currentStep === 0 ? ProfileValidationSchema : ShopValidataionSchema
+        currentStep === 0 ? ProfileValidationSchema :currentStep===1? ShopValidataionSchema:bankValidationSchema
       }
       onSubmit={async (values) => {
         console.log("hi prathesm");
@@ -729,6 +759,24 @@ const CreateShopScreen = ({ navigation }) => {
           data.append("cinNumber", values?.cinNumber);
 
         }
+          if (values?.accountNumber) {
+          data.append("accountNumber", values?.accountNumber);
+
+        }  if (values?.ifscCode) {
+          data.append("ifscCode", values?.ifscCode);
+
+        }  if (values?.branchName) {
+          data.append("branchName", values?.branchName);
+
+        }  if (values?.accountHolderName) {
+          data.append("accountHolderName", values?.accountHolderName);
+
+        }
+         if (values?.signature) {
+          data.append("signature", values?.signature);
+        }
+
+
         console.log("updateProviderPayload is , ", data);
 
         try {
@@ -759,7 +807,7 @@ const CreateShopScreen = ({ navigation }) => {
             navigation.goBack();
           } else {
             console.log("jayesh is happy", userfk);
-
+            
             console.log("route data befor api call ", data)
             const response = await axios.post(
               `${API_BASE_URL}vendors/createVendorWithImage`,
@@ -790,7 +838,8 @@ const CreateShopScreen = ({ navigation }) => {
           if (isLoading) {
             setIsLoading(false);
           }
-          console.log("Error creating or updating service provider: ", error);
+          console.error("Error creating or updating service provider: ", error);
+
           if (routeData) {
             console.log("DATA OF USER", routeData)
             console.error(
@@ -806,9 +855,8 @@ const CreateShopScreen = ({ navigation }) => {
               "Something went Wrong Creating Service Provider else route ",
               error
             );
-
             showSnackbar(
-              t(`Something went Wrong Creating Service Provider  ${error.data.error}`),
+              `Something went Wrong Creating Service Provider  ${error.data.error}`,
               "error"
             );
           }
@@ -910,6 +958,29 @@ const CreateShopScreen = ({ navigation }) => {
                     />
                   </View>
                 </ProgressStep>
+                 <ProgressStep
+                  // label="Shop Details"
+                  removeBtnRow={true}
+                  scrollViewProps={styles.scrollViewProps}
+                  onSubmit={handleSubmit}
+
+                // previousBtnTextStyle={{ display: 'none' }}
+                >
+                  <View>
+                  <ProviderBankDetailForm
+                    title={"Bank Details"}
+                      handleBlur={handleBlur}
+                      handleChange={handleChange}
+                      setFieldValue={setFieldValue}
+                      values={values}
+                      touched={touched}
+                      errors={errors}
+                      navigation={navigation}
+                      shopImageField="signature"
+                  /> 
+                  
+                  </View>
+                </ProgressStep>
 
 
               </ProgressSteps>
@@ -937,7 +1008,7 @@ const CreateShopScreen = ({ navigation }) => {
                     <Icon name="arrowleft" size={20} color="#fff" />
                   </Button>
 
-                  {currentStep === 0 && (
+                  {currentStep <2 && (
                     <Button
                       mode="contained"
                       // icon={"arrow-right"}
@@ -951,7 +1022,7 @@ const CreateShopScreen = ({ navigation }) => {
                     </Button>
                   )}
 
-                  {currentStep === 1 && (
+                  {currentStep === 2 && (
                     <Button
                       disabled={submitLoading}
                       mode="contained"

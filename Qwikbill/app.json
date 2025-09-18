@@ -2,7 +2,7 @@
   "expo": {
     "name": "QwikBill",
     "slug": "qwikbill",
-    "version": "1.2.0",
+    "version": "1.0.0",
     "newArchEnabled": true,
     "orientation": "portrait",
     "icon": "./assets/qLogo.png",
@@ -37,7 +37,8 @@
         "expo-build-properties",
         {
           "android": {
-            "enableProguardInReleaseBuilds": false
+            "enableProguardInReleaseBuilds": true
+            
           }
         }
       ]

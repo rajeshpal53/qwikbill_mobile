@@ -156,17 +156,23 @@ const ProviderServiceForm = ({
         {touched.gstNumber && errors.gstNumber && (
           <Text style={{ color: "red" }}>{errors.gstNumber}</Text>
         )}
+<TextInput
+  label={t("CIN Number")}
+  mode={textInputMode}
+  style={{ backgroundColor: "transparent" }}
+  onChangeText={(text) => {
+    // Force uppercase & remove spaces
+    const formattedText = text.toUpperCase().replace(/\s+/g, "");
+    handleChange("cinNumber")(formattedText);
+  }}
+  onBlur={handleBlur("cinNumber")}
+  value={values.cinNumber}
+  error={touched.cinNumber && errors.cinNumber}
+/>
 
-        <TextInput
-          label={t("CIN Number")}
-          // disabled = { (!values?.latitude || values?.latitude === "") ? true : false}
-          mode={textInputMode}
-         style={{ backgroundColor: "transparent" }}
-          onChangeText={handleChange("cinNumber")}
-          onBlur={handleBlur("cinNumber")}
-          value={values.cinNumber}
-          error={touched.cinNumber && errors.cinNumber}
-        />
+         {touched.cinNumber && errors.cinNumber && (
+          <Text style={{ color: "red" }}>{errors.cinNumber}</Text>
+        )}
 
 
       </View>

@@ -5,11 +5,11 @@ import axios from 'axios';
 
 export const API_BASE_URL = "https://qwikbill.in/qapi/";
 // export const API_BASE_URL = "http://192.168.1.35:2235/";
+import { navigate } from "./NavigationService"; // global navigation helper
 
 //for preview:>  eas build --platform android  --profile preview
 // for development:> eas build --platform android  --profile development
 // for production:> eas build --platform android  --profile production
-
 export const NORM_URL="https://qwikbill.in/qapp/"
 const apiRequest = async (method, url, data = null, customHeaders = {}) => {
   try {
@@ -34,6 +34,12 @@ const apiRequest = async (method, url, data = null, customHeaders = {}) => {
     return response.data || '';
   } catch (error) {
     console.error(`Error with ${method.toUpperCase()} request to ${url}:`, error.response || error.message);
+     if (error.response?.status === 401|| error?.data?.status===401) {
+      console.log("Unauthorized! Redirecting to login.");
+      await AsyncStorage.removeItem("userData"); // clear session
+      navigate("login",{status:401}); // redirect to login
+    }
+
     throw error.response || error.message;
   }
 };
@@ -114,12 +120,14 @@ export const updateApi = async (endpoint, data, headers) => {
     unpaid:1,
     paid:2,
     partially_paid:3,
+    quatation:4
 
   }
   export const statusName= {
     1:"unpaid",
     2:"paid",
     3:"partially paid",
+    4:"Quatation"
   }
   export const RoleStatusName={
    1:"owner",

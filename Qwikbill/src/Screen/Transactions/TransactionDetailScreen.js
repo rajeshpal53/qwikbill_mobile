@@ -221,15 +221,15 @@ const TransactionDetailScreen = ({ item }) => {
                 <Text style={styles.label}>{id || "N/A"}</Text>
               </View>
               <View style={styles.row}>
-                <View style={styles.preRow}>
+                {/* <View style={styles.preRow}>
                   <FontAwesome name="money" size={16} color="gray" />
                   <Text style={styles.label}>Shop Profit:</Text>
-                </View>
-                <Text style={styles.label}> ₹{item?.vendorprofit ?? "N/A"}</Text>
+                </View> */}
+                {/* <Text style={styles.label}> ₹{item?.vendorprofit ?? "N/A"}</Text> */}
               </View>
             </View>
 
-            <View style={styles.buttonView}>
+            {/* <View style={styles.buttonView}>
               <Button
                 // mode="contained"
                 style={{
@@ -271,7 +271,7 @@ const TransactionDetailScreen = ({ item }) => {
                   })}>
               <FontAwesome name="phone" size={16} color="blue" />
               <Text style={styles.supportText}>Contact Support</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </Card>
         ))
       ) : (

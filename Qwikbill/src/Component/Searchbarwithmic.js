@@ -198,7 +198,7 @@ const Searchbarwithmic = ({
             if (searchQuery.length > 0) {
               searchData(searchQuery);
             } else {
-              refuser.current?.focus(); // Focus input if search is empty
+              refuser?.current?.focus(); // Focus input if search is empty
             }
           }}
           inputStyle={styles.inputStyle}

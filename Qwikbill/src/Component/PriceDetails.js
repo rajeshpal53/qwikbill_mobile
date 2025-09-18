@@ -8,7 +8,7 @@ import { fontFamily, fontSize } from "../Util/UtilApi";
 import CustomDropdown from "./CustomeDropdown";
 
 
-const PriceDetails = ({ setPaymentStatus, selectedButton, discountValue, setDiscountValue,finalTotal,finalAmountValue,setFinalAmountValue,finalAmountError,setFinalAmountAError }) => {
+const PriceDetails = ({ setPaymentStatus, selectedButton, discountValue, setDiscountValue,finalTotal,finalAmountValue,setFinalAmountValue,finalAmountError,setFinalAmountAError,selectedPaymentMode,setSelectedPaymentMode }) => {
   const dispatch = useDispatch();
   const totalPrice = useSelector((state) => state.cart.totalPrice); 
     const gstAmount = useSelector((state) => state.cart.gstAmount); 
@@ -23,6 +23,14 @@ const PriceDetails = ({ setPaymentStatus, selectedButton, discountValue, setDisc
   
   const { t } = useTranslation();
 
+
+  const paymentModes = [
+  "CASH",
+  "UPI",
+  "RTGS/NEFT",
+  "CREDIT CARD/DEBIT CARD",
+  "Online",
+];
   console.log("Error is ", error)
   console.log("totalPrice of redux - ", totalPrice);
   useEffect(() => {
@@ -232,33 +240,84 @@ let numericText = value.replace(/[^0-9.]/g, "");
           </View>
 
         </View>
+        
       )}
       {selectedStatus === "Partially Paid" && (
-        <>
-          <View style={styles.priceView}>
-            <Text style={[styles.label, { marginTop: 5 }]}>{t("Partially Paid")}</Text>
-            <View style={styles.discountInputWrapper}>
-              <TextInput
-                style={styles.input}
-                keyboardType="numeric"
-                placeholder="Enter Amount"
-                value={PartiallyAmount}
-                onChangeText={handlePartiallyAmount}
-              />
-            </View>
-          </View>
+  <>
+    <View style={styles.priceView}>
+      <Text style={[styles.label, { marginTop: 5 }]}>{t("Partially Paid")}</Text>
+      <View style={styles.discountInputWrapper}>
+        <TextInput
+          style={styles.input}
+          keyboardType="numeric"
+          placeholder="Enter Amount"
+          value={PartiallyAmount}
+          onChangeText={(text) => {
+            // Convert to number
+            let amount = parseFloat(text) || 0;
+            // Prevent exceeding finalTotal
+            if (amount > finalTotal) {
+              amount = finalTotal;
+            }
+            setPartiallyAmount(amount.toString());
+          }}
+        />
+      </View>
+    </View>
 
-          {/* Remaining Amount after partial payment */}
-          {PartiallyAmount !== "" && !isNaN(PartiallyAmount) && (
-            <View style={styles.priceView}>
-              <Text style={styles.label}>{t("Remaining Amount")}</Text>
-              <Text style={[styles.value, { fontSize: fontSize.labelLarge, fontFamily: fontFamily.medium }]}>
-                ₹ {(finalTotal-PartiallyAmount).toFixed(2)}
-              </Text>
-            </View>
-          )}
-        </>
-      )}
+    {/* Remaining Amount after partial payment */}
+    {PartiallyAmount !== "" && !isNaN(PartiallyAmount) && (
+      <View style={styles.priceView}>
+        <Text style={styles.label}>{t("Remaining Amount")}</Text>
+        <Text
+          style={[
+            styles.value,
+            { fontSize: fontSize.labelLarge, fontFamily: fontFamily.medium },
+          ]}
+        >
+          ₹ {(finalTotal - parseFloat(PartiallyAmount || 0)).toFixed(2)}
+        </Text>
+      </View>
+    )}
+  </>
+)}
+   
+
+
+{
+  selectedStatus !== "Unpaid" && (
+    <View style={styles.priceView}>
+      <View style={{ alignItems: "center", marginTop: 10 }}>
+        <Text style={styles.label}>{t("Payment Mode")}</Text>
+      </View>
+
+      <View style={styles.pickerWrapper}>
+        <Picker
+          selectedValue={selectedPaymentMode} // <-- separate state for paymentMode
+          onValueChange={(itemValue) => setSelectedPaymentMode(itemValue)}
+          style={[
+            styles.picker,
+            {
+              width:
+                selectedStatus === "Partially Paid"
+                  ? "71%"
+                  : selectedStatus === "Paid"
+                  ? "60%"
+                  : "51%",
+            },
+          ]}
+          mode="dropdown"
+        >
+          {paymentModes.map((mode, index) => (
+            <Picker.Item key={index} label={t(mode)} value={mode} />
+          ))}
+        </Picker>
+      </View>
+    </View>
+  )
+}
+
+
     </View>
   );
 };

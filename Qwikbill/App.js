@@ -22,6 +22,7 @@ import { UserDataProvider } from "./src/Store/UserDataContext.js";
 import { TourGuideProvider } from "rn-tourguide";
 import { ShopProvider } from "./src/Store/ShopContext.js";
 import { StorageLocationProvider } from "./src/Store/StorageLocationContext.js";
+import { navigationRef } from "./src/Util/NavigationService.js";
 //import { requestUserPermission, setupTokenRefreshListener } from "./src/Util/NotificationHandler.js";
 const customTheme = {
   ...DefaultTheme,
@@ -59,6 +60,7 @@ export default function App() {
     };
     loadFonts();
   });
+
   return (
     <SafeAreaProvider>
       <StorageLocationProvider>
@@ -71,12 +73,12 @@ export default function App() {
                 <I18nextProvider i18n={i18n}>
                   <PaperProvider theme={customTheme}>
                     <TourGuideProvider {...{ borderRadius: 16,backdropColor: 'hsla(64, 5.80%, 47.50%, 0.39)' }}>
-                      <NavigationContainer>
+                      <NavigationContainer ref={navigationRef}>
                         <AuthProvider>
                           <LoginTimeProvider>
                             <FontProvider>
                               {fontsLoaded ? (
-                                <StackNavigator />
+                                <StackNavigator  />
                               ) : (
                                 <ActivityIndicator size={"large"} />
                               )}

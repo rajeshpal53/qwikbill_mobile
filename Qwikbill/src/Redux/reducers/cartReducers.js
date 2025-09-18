@@ -41,6 +41,42 @@ export const addToCart = (state, action) => {
   }
 };
 
+export const updateQuantity = (state, action) => {
+  const { id, quantity } = action.payload;
+  const foundIndex = state.Carts.findIndex((item) => item.id === id);
+
+  if (foundIndex !== -1) {
+    const cartItem = state.Carts[foundIndex];
+    const itemPrice = toNumber(cartItem.sellPrice);
+    const itemGst = (itemPrice * toNumber(cartItem.taxRate)) / 100;
+
+    // Calculate new totals
+    const newQuantity = quantity > 0 ? quantity : 1;
+    const newTotalPrice = itemPrice * newQuantity;
+    const newGstAmount = itemGst * newQuantity;
+
+    // Update cart item
+    state.Carts[foundIndex] = {
+      ...cartItem,
+      quantity: newQuantity,
+      totalPrice: newTotalPrice,
+      gstAmount: newGstAmount,
+    };
+
+    // Recalculate global totals
+    state.totalQuantity = state.Carts.reduce((sum, item) => sum + item.quantity, 0);
+    state.totalPrice = state.Carts.reduce((sum, item) => sum + item.totalPrice, 0);
+    state.gstAmount = state.Carts.reduce((sum, item) => sum + item.gstAmount, 0);
+
+    // Recalculate afterdiscount
+    state.afterdiscount = state.totalPrice - state.discount;
+    if (state.PartiallyAmount > 0) {
+      state.afterdiscount -= state.PartiallyAmount;
+      state.afterdiscount = Math.max(state.afterdiscount, 0);
+    }
+  }
+};
+
 export const removeFromCart = (state, action) => {
   const itemId = action.payload;
   const itemToRemove = state.Carts.find((item) => item.id === itemId);
@@ -58,6 +94,7 @@ export const removeFromCart = (state, action) => {
     state.afterdiscount = Math.max(state.afterdiscount, 0);
   }
 };
+
 
 export const applyDiscount = (state, action) => {
   const discountAmount = toNumber(action.payload);

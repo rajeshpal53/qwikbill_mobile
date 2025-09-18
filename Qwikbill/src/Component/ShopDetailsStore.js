@@ -29,7 +29,6 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
     const id = item.vendor.id 
     console.log("my tokennn ",userData?.token)
     try {
-      
       const response = await deleteApi(`vendors/${id}`, {
       
           Authorization: `Bearer ${userData?.token}`,
