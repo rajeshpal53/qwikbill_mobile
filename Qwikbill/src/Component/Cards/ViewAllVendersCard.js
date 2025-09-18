@@ -1,0 +1,269 @@
+import {
+  ScrollView,
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import { Card, Avatar, Menu, Button } from "react-native-paper";
+import { fontSize,capitalizeFirstLetter } from "../../Util/UtilApi";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useState } from "react";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useNavigation } from "@react-navigation/native";
+
+const ViewAllVendersCard = ({ item }) => {
+  const [selectedModal, setSelectedModal] = useState(null);
+  const navigation = useNavigation();
+  
+
+  console.log("selected shop item is ",item)
+
+  const handleModal = (id) => {
+    setSelectedModal(selectedModal === id ? null : id);
+  };
+
+  const handleDelete = () => {
+    setConfirmModalVisible(true);
+    setAddressDeleteId(item?.id);
+    setSelectedModal(null);
+  };
+
+  const handleAddProduct = () => {
+  
+   // setSelectedModal(null);
+    navigation.navigate("AddProduct", {
+      addressDetails: item,
+      isUpdateAddress: true,
+    });
+  };
+
+
+  const handleEditProduct = (item) => {
+    console.log("DATA OF ITEM productt  IS ", item);
+    setSelectedModal(null);
+    navigation.navigate("AddProduct", {
+      addressDetails: item,
+      isUpdateAddress: true,
+    });
+  };
+
+  return (
+  
+      <Card style={styles.card}>
+        <View style={styles.container}>
+          <View style={styles.ImageView}>
+            <View>
+              {
+                <Avatar.Text
+                  size={30}
+                  label={item?.vendor?.shopname.charAt(0)}
+                  style={styles.avatarPlaceholder}
+                />
+              }
+            </View>
+            <View style={styles.shopnameView}>
+
+              <View style={styles.InnershopnameView}>
+                <Text style={styles.shopnameText}>{item?.vendor?.shopname}</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.detailscontainerView}>
+            <View style={styles.InnerDetailsView}>
+              <View>
+                <MaterialCommunityIcons
+                  name="phone"
+                  size={18}
+                  color="rgba(0, 0, 0, 0.6)"
+                  style={styles.icon} // Custom style
+                />
+              </View>
+              <View>
+                <Text style={styles.detailsText}>{item?.user?.mobile}</Text>
+              </View>
+            </View>
+            
+            <View style={styles.InnerDetailsView}>
+              <View>
+                <MaterialCommunityIcons
+                  name="map-marker"
+                  size={18}
+                  color="rgba(0, 0, 0, 0.6)"
+                  style={styles.icon} // Custom style
+                />
+              </View>
+              <View>
+                <Text style={styles.detailsText}>{item?.vendor?.shopAddress}</Text>
+              </View>
+            </View>
+
+
+            <View style={styles.InnerDetailsView}>
+              <View>
+                <MaterialIcons
+                  name="person"
+                  size={18}
+                  color="rgba(0, 0, 0, 0.6)"
+                  style={styles.icon} // Custom style
+                />
+              </View>
+              <View>
+                <Text style={styles.detailsText}>{capitalizeFirstLetter(item?.role?.name)}</Text>
+              </View>
+            </View>
+           
+
+            <View style={styles.InnerDetailsView}>
+              <View>
+                <MaterialIcons
+                  name="description"
+                  size={18}
+                  color="rgba(0, 0, 0, 0.6)"
+                  style={styles.icon} // Custom style
+                />
+              </View>
+              <View>
+                <Text style={styles.detailsText}>{item?.role?.description}</Text>
+              </View>
+            </View>
+            
+            
+          </View>
+          <View style={styles.StatusandRatingView}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("ViewShopDetailsScreen", { item: item })
+              }
+              style={{ flexDirection: "row", alignItems: "center" }}
+            >
+              <View>
+                <Text style={styles.Approvedtext}>View Details</Text>
+              </View>
+              <View>
+                <MaterialCommunityIcons
+                  name="arrow-right"
+                  size={15}
+                  color="#2196F3"
+                  style={styles.icon}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Card>
+  
+  );
+};
+
+const styles = StyleSheet.create({
+  card: {
+    marginVertical: 8,
+    marginHorizontal: 10,
+    borderRadius: 8,
+    elevation: 4,
+    flex: 1,
+    backgroundColor: "#fff",
+    paddingHorizontal: 5,
+   // shadowOffset:2,
+   // shadowColor:"#ddd"
+
+    // alignContent:"center"
+  },
+  container: {
+    flex: 1,
+    paddingVertical: 5,
+    marginVertical: 6,
+  
+  },
+  ImageView: {
+    paddingHorizontal: 5,
+    marginLeft: 5,
+    flexDirection: "row",
+  
+  marginVertical:2
+  },
+  detailscontainerView: {
+    // marginVertical: 5,
+    marginHorizontal: 10,
+    marginVertical: 8,
+    // flexDirection: "column",
+    // borderWidth: 1,
+    flex: 1,
+
+  },
+  StatusandRatingView: {
+    flexDirection: "row",
+    // borderWidth: 1,
+    // justifyContent: "space-between",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    marginRight: 20,
+    flex: 1,
+    marginVertical:3,
+  },
+
+  shopnameView: {
+    flex: 1,
+    // borderWidth:2,
+    paddingHorizontal: 8,
+    flexDirection: "row",
+  },
+  InnershopnameView: {
+    flex: 1,  
+    alignSelf:"center"
+  },
+  InnerDetailsView: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+
+    marginBottom:5,
+    marginLeft:6
+  },
+  statusView: {},
+  shopnameText: {
+    fontSize: fontSize.headingSmall,
+    fontFamily: "Poppins-Bold",
+    marginTop: 2,
+  },
+  detailsText: {
+    paddingHorizontal: 5,
+    fontSize: fontSize.label,
+    fontFamily: "Poppins-Medium",
+    marginHorizontal:2
+  },
+  avatarPlaceholder: {
+     borderRadius: 15,
+    width: 35,
+    height: 35,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  Approvedtext: {
+    fontSize: fontSize.labelMedium,
+    fontFamily: "Poppins-Medium",
+    // borderWidth:1,
+    borderRadius: 5,
+    paddingHorizontal: 5,
+    // backgroundColor: "#e1faeb",
+    color: "#2196F3",
+  },
+  rating: {
+    fontSize: fontSize.label,
+    fontFamily: "Poppins-Medium",
+    // borderWidth:1,
+    borderRadius: 5,
+    paddingHorizontal: 5,
+    backgroundColor: "#f7ebba",
+    color: "#edc009",
+  },
+  //   statusText: {
+  //     paddingHorizontal: 5,
+  //     fontFamily: "Poppins-Medium",
+  //     fontSize: fontSize.labelMedium,
+  //   },
+});
+
+export default ViewAllVendersCard;
