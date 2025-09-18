@@ -103,6 +103,7 @@ function ViewInvoiceScreen1({ navigation }) {
     if (selected === "Partially Paid") api += "&statusfk=3";
     if (selected === "Unpaid") api += "&statusfk=1";
     if (selected === "Paid") api += "&statusfk=2";
+     if (selected === "Quatation") api += "&statusfk=4";
 
     if (typeFilter) {
       api += `&type=${typeFilter}`;

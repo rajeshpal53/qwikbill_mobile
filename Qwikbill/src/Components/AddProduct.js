@@ -288,7 +288,6 @@ const TAX_OPTIONS = ["5", "12", "18", "28"]; // only percentage values
                   showSnackbar("Error creating product", "error");
                   console.log("Unable to Upload data ", error);
                 }
-
               }
             }}
           >
@@ -369,18 +368,22 @@ const TAX_OPTIONS = ["5", "12", "18", "28"]; // only percentage values
                 
                   {/* HSN Code */}
                   <TextInput
-                    label="HSN Code"
-                    mode="flat"
-                    style={styles.input}
-                    // onChangeText={handleChange("HSNCode")}
-                    onChangeText={async (HSNCode) => {
-                      setFieldValue("HSNCode", HSNCode);
-                      await HandleHsnCode(HSNCode, setFieldValue);
-                    }}
-                    // onBlur={() => HandleHsnCode(values?.HSNCode, setFieldValue)}
-                    value={values.HSNCode}
-                    error={touched.HSNCode && !!errors.HSNCode}
-                  />
+                  maxLength={8}
+  label="HSN Code"
+  mode="flat"
+  style={styles.input}
+  keyboardType="numeric" // shows numeric keypad on mobile
+  onChangeText={async (HSNCode) => {
+    // Remove any non-digit characters
+    const onlyNumbers = HSNCode.replace(/[^0-9]/g, "");
+
+    setFieldValue("HSNCode", onlyNumbers);
+    await HandleHsnCode(onlyNumbers, setFieldValue);
+  }}
+  value={values.HSNCode}
+  error={touched.HSNCode && !!errors.HSNCode}
+/>
+
                   {touched.HSNCode && errors.HSNCode && (
                     <Text style={styles.errorText}>{errors.HSNCode}</Text>
                   )}

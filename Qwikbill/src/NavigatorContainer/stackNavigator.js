@@ -6,9 +6,11 @@ import { useTranslation } from "react-i18next";
 import {
   StyleSheet,
   Text,
-  View
+  View,
+  TouchableOpacity
 } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
+import { Ionicons } from "@expo/vector-icons"; // if you're using Expo
 import AllQueryAndSupport from "../../src/Screen/StackScreen/QueriesScreens/AllQueryAndSupport.js";
 import PdfScreen from "../Component/PdfViewer.js";
 import CreateInvoice from "../Components/CreateInvoice.js";
@@ -53,20 +55,24 @@ import UserDataContext from "../Store/UserDataContext.js";
 import { fontSize, readApi } from "../Util/UtilApi.js";
 import BottomNavigator from "./BottomNavigator.js";
 import ShowProductScreen from "../Screen/StackScreen/ShowProductScreen.js";
-
+import useTokenExpiry from "../Store/useTokenExpiry.js";
 export default function StackNavigator() {
+      // useTokenExpiry()
+
   const Stack = createStackNavigator();
   const [isLandscape, setIsLandscape] = useState(false);
   const { isAuthenticated, isLoading, searchMode } = useContext(AuthContext);
-  const { userData, fetchUserData, clearUserData } =
-    useContext(UserDataContext);
-  const [isForgetPasswordState, setIsForgetPasswordState] = useState(false);
+ 
   const [roleDetails, setroleDetails] = useState(false);
   const [noItemModal, setNoItemModal] = useState(false);
   const [noItemData, setNoItemData] = useState({});
   const [isConnected, setIsConnected] = useState(false);
-
+ const [initialRoute, setInitialRoute] = useState(null);
   const { passkey } = usePasskey()
+   const { userData, fetchUserData, clearUserData } =
+    useContext(UserDataContext);
+      const [isForgetPasswordState, setIsForgetPasswordState] = useState(false);
+
   const { t } = useTranslation()
   const fetchServiceProvider = async (userData) => {
     try {
@@ -110,30 +116,59 @@ export default function StackNavigator() {
       });
   }, []);
 
+  useEffect(() => {
+    const checkRoute = async () => {
+      // fetch async values
+      // const forgetState = await getForgetPasswordState();
+      // const userData = await getUserData();
+      // const passkey = await getPasskey();
 
-  if (isLoading) {
+      if (forgetState) {
+        setInitialRoute("login");
+      } else if (userData) {
+        if (!passkey) {
+          setInitialRoute("CreateNewPasscode");
+        } else {
+          setInitialRoute("Passcode");
+        }
+      } else {
+        setInitialRoute("login");
+      }
+    };
+
+    checkRoute();
+  }, []);
+
+
+
+  if (isLoading||!initialRoute===null) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" />
       </View>
     );
+
   }
+
+
+
   // console.log("userData is", userData);
   // console.log(isLoading);
   // console.log(isAuthenticated, "akdskddkfkfkf");
   return (
     <>
+    {console.log("passkey in stack navigator", passkey,isForgetPasswordState,userData)}
       <Stack.Navigator
         // initialRouteName={userData ? "Passcode" : "login"}
-        initialRouteName={
-          isForgetPasswordState
-            ? "login"
-            : userData
-              ? passkey === null
-                ? "CreateNewPasscode"
-                : "Passcode"
-              : "login"
-        }
+         initialRouteName={
+  isForgetPasswordState
+    ? "login"
+    : userData && Object.keys(userData).length > 0
+      ? passkey == null
+        ? "CreateNewPasscode"
+        : "Passcode"
+      : "login"
+}
         screenOptions={
           {
             // headerTitle: "Create Invoice",
@@ -190,7 +225,20 @@ export default function StackNavigator() {
           component={InvoiceTransactionScreen}
           options={{
             headerTitle: "Transaction Details",
+            headerRight: () => (
+      <TouchableOpacity
+        onPress={() => {
+          // Add your share logic here
+          console.log("Share button pressed");
+          
+        }}
+        style={{ marginRight: 15 }}
+      >
+        <Ionicons name="share-social-outline" size={24} color="black" />
+      </TouchableOpacity>
+    ),
           }}
+
         />
 
         <Stack.Screen
@@ -291,6 +339,7 @@ export default function StackNavigator() {
             //   />
             // ),
             headerTitleAlign: "center",
+            
           })}
         />
         <Stack.Screen

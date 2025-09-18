@@ -148,10 +148,13 @@ const [selectionMode, setSelectionMode] = useState(false);
     setSelectedProducts([]);
     showSnackbar(`${response?.deletedIds?.length} products deleted successfully.`, "success");
     setTimeout(() => {
-  showSnackbar(
+      if(response?.skippedIds?.length > 0){
+        showSnackbar(
     `${response?.skippedIds?.length} product(s) were skipped because they are linked to invoices.`,
     "error"
   );
+      }
+  
 }, 2000);
   } catch (error) {
     console.error(error);

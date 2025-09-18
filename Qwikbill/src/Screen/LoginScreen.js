@@ -25,6 +25,7 @@ import { ActivityIndicator } from "react-native-paper";
 import { useSnackbar } from "../Store/SnackbarContext";
 import SetpasswordModal from "../Components/Modal/SetpasswordModal";
 
+import { useRoute } from "@react-navigation/native";
 import { AuthContext } from "../Store/AuthContext";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import UserDataContext from "../Store/UserDataContext";
@@ -35,9 +36,10 @@ const fontScale = PixelRatio.getFontScale();
 
 const getFontSize = (size) => size / fontScale;
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({ navigation, }) => {
   const { login, isAuthenticated, storeData, setLoginDetail, handleLogin } =
     useContext(AuthContext);
+    const route = useRoute();
   const { userData, saveUserData } = useContext(UserDataContext);
   const {selectedShop}=useContext(ShopContext);
   const [isLoading, setIsLoading] = useState(false);
@@ -45,6 +47,7 @@ const LoginScreen = ({ navigation }) => {
   const { width, height } = useWindowDimensions();
   const [visible, setVisible] = useState(false);
   const [PassisSecure, setPassIsSecure] = useState(true);
+const status = route?.params?.status;
 
   // useEffect(() => {
   //   const unsubscribe = NetInfo.addEventListener(state => {
@@ -55,6 +58,12 @@ const LoginScreen = ({ navigation }) => {
   // }, []);
 
   const { showSnackbar } = useSnackbar();
+
+    useEffect(()=>{
+    if(status===401){
+      showSnackbar("Session Expired! Please login again.","error");
+    }
+  },[])
 
 
   const validationSchema = Yup.object().shape({

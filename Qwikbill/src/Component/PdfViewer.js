@@ -302,7 +302,7 @@ const PdfScreen = ({ navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity style={styles.paymentButton} onPress={handleWhatsappShare}>
             <FontAwesome5 name="whatsapp" size={24} color="#fff" />
-            <Text style={styles.buttonText}>  Share Link</Text>
+            <Text style={styles.buttonText}>  Share Invoice</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.bottomButtons}>

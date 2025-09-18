@@ -7,6 +7,7 @@ import {
   decreaseQuantity as decreaseQuantityReducer,
   incrementQuantity as incrementQuantityReducer,
   removeFromCart as removeFromCartReducer,
+  updateQuantity as updateQuantityReducer
 } from "../reducers/cartReducers";
 
 const initialState = {
@@ -33,6 +34,7 @@ const CartSlice = createSlice({
     incrementQuantity: incrementQuantityReducer,
     decreaseQuantity: decreaseQuantityReducer,
     clearCart: clearCartReducer,
+    updateQuantity:updateQuantityReducer
   },
 });
 
@@ -44,6 +46,7 @@ export const {
   clearCart,
   applyDiscount,
   applyPartiallyAmount,
+  updateQuantity
 } = CartSlice.actions;
 
 export default CartSlice.reducer;

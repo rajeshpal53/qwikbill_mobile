@@ -84,60 +84,58 @@ export const AuthProvider = ({ children }) => {
   };
 
   const handleLogin = async (values, navigation) => {
-    try {
-      console.log("login screen", values);
-      console.log("login screen passkey", passkey);
-      console.log(`isPasskey`, isPasskey, passkey);
+  try {
+    console.log("login screen", values);
+    console.log("login screen passkey", passkey);
+    console.log(`isPasskey`, isPasskey, passkey);
+    setIsLoading(true);
 
-      setIsLoading(true);
+    const payload = {
+      mobile: values.mobile,
+      password: values?.password,
+    };
 
-      const payload = {
-        mobile: values.mobile,
-        password: values?.password,
-      };
+    const response = await createApi("users/loginUser", payload);
+    console.log("Full API Response:", response);
 
-      const response = await createApi("users/loginUser", payload);
-      console.log("Full API Response:", response);
+    // ✅ Check for login failure and exit early
+    if (!response || response?.error || !response?.token) {
+      console.log("Login failed: Invalid credentials");
+      showSnackbar("Invalid mobile number or password", "error");
 
-      if (!response || response?.error || !response?.token) {
-        console.log("Login failed: Invalid credentials");
-        showSnackbar("Invalid mobile number or password", "error");
-        await AsyncStorage.removeItem("loginDetail");
-        await saveUserData(null);
-        setIsLoading(false);
-        return;
-      }
-
-      await AsyncStorage.setItem("userToken", response.token);
-      await saveUserData(response);
-
-      await storeData("loginDetail", response);
-      await AsyncStorage.setItem("firstTimeLogin", "true");
-
-      setLoginDetail(response);
-      console.log("Saving user data:", response);
-       console.log("hellooooooooooooo")
-      await saveUserData(response);
-
-      if (isPasskey) {
-        navigation.reset({ index: 0, routes: [{ name: "Passcode" }] });
-      } else {
-        navigation.reset({ index: 0, routes: [{ name: "CreateNewPasscode" }] });
-      }
-      showSnackbar("Login successful", "success");
-      return true;
-     
-
-      
-    } catch (error) {
-      //console.error("Login error:", error);
-      showSnackbar(`${error.data.message}`, "error");
-      return false;
-      // showSnackbar("Wrong phone number or password .", "error");
-    } finally {
+      await AsyncStorage.removeItem("loginDetail");
+      await saveUserData(null);
       setIsLoading(false);
+      return false; // ⬅️ stop execution here
     }
-  };
+    if(response){
+       await AsyncStorage.setItem("userToken", response.token);
+    await saveUserData(response);
+    await storeData("loginDetail", response);
+    await AsyncStorage.setItem("firstTimeLogin", "true");
+
+    setLoginDetail(response);
+    console.log("Saving user data:", response,isPasskey);
+    if (isPasskey) {
+      navigation.reset({ index: 0, routes: [{ name: "Passcode" }] });
+    } else {
+      navigation.reset({ index: 0, routes: [{ name: "CreateNewPasscode" }] });
+    }
+
+    showSnackbar("Login successful", "success");
+    return true;
+    }
+    // ✅ Login success flow
+   
+  } catch (error) {
+    console.error("Login error:", error);
+    showSnackbar(error?.data?.message || "Login failed. Please try again.", "error");
+    return false;
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const logout = async () => {
     try {

@@ -22,7 +22,7 @@ import { ButtonColor, createApi, fontSize, readApi } from "../../Util/UtilApi";
 import ItemDataTable from "../Cards/ItemDataTable";
 import PriceDetails from "../PriceDetails";
 import ConfirmModal from "../../Components/Modal/ConfirmModal";
-
+import NameTextInput from "./NameTextInput";
 const CreateInvoiceForm = ({ selectedButton }) => {
   const [isHorizontalScrolling, setIsHorizontalScrolling] = useState(false);
   const dispatch = useDispatch();
@@ -48,6 +48,17 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const [formFilled, setFormFilled] = useState(false);
   const [finalAmountValue, setFinalAmountValue] = useState(0);
   const [finalAmountError, setFinalAmountAError] = useState("");
+  const[selectedPaymentMode,setSelectedPaymentMode]=useState("")
+{/* <NameInput
+  values={values}
+  handleChange={handleChange}
+  handleBlur={handleBlur}
+  touched={touched}
+  errors={errors}
+  setFieldValue={setFieldValue}
+  setFormFilled={setFormFilled}   // ✅ now it’s a function
+/> */}
+
 const roundToTwo = (num) => {
   return Number(Math.round(num + 'e2') + 'e-2');
 };
@@ -63,7 +74,7 @@ const roundToTwo = (num) => {
       /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1}$/,
       "Invalid GSTIN format. Example: 23AAMCA6167B1ZW"
     ),
-    phone: Yup.string()
+    mobile: Yup.string()
       .required("Phone is required")
       .matches(/^\d{10}$/, "Phone must be 10 digits"),
   });
@@ -85,20 +96,22 @@ const roundToTwo = (num) => {
             };
             const response = await readApi(api, headers);
             if (response) {
+                            console.log("response of search ", response);
+
               setUser(response);
               setFieldValue("name", response?.name);
               setFieldValue("address", response?.address);
-              setFieldValue("phone", phoneNumber);
+              setFieldValue("mobile", phoneNumber);
             } else {
               setFieldValue("name", response?.name);
               setFieldValue("address", response?.address);
-              setFieldValue("phone", phoneNumber);
+              setFieldValue("mobile", phoneNumber);
             }
           } catch (error) {
             setFieldValue("name", "");
             setFieldValue("address", "");
 
-            setFieldValue("phone", phoneNumber);
+            setFieldValue("mobile", phoneNumber);
             console.error("Error fetching User data:", error);
           } finally {
             setLoading(false);
@@ -106,7 +119,7 @@ const roundToTwo = (num) => {
         } else {
           setFieldValue("name", "");
           setFieldValue("address", "");
-          setFieldValue("phone", phoneNumber);
+          setFieldValue("mobile", phoneNumber);
         }
       } catch (error) {
         console.error("Error fetching HSN code data:", error);
@@ -138,7 +151,7 @@ const roundToTwo = (num) => {
         User?.name ||
         User?.address ||
         User?.gstNumber ||
-        User?.phone ||
+        User?.mobile ||
         formFilled;
       // formik.values.name ||
       // formik.values.address ||
@@ -186,20 +199,16 @@ const roundToTwo = (num) => {
           : selectedButton === "Quatation"
           ? "quotation"
           : "provisional";
-
       // add/override only what you really need
       const payload = { ...formData, type: invoiceType };
-
       console.log("payload in handleGenrate ", payload);
-
+      // payload.vendorfk = undefined; 
       const cleanedPayload = Object.fromEntries(
         Object.entries(payload).filter(
           ([_, v]) => v !== null && v !== undefined
         )
       );
-
       console.log("Final Payload:", JSON.stringify(cleanedPayload, null, 2));
-
       const response = await createApi(api, cleanedPayload, {
         Authorization: `Bearer ${userData?.token}`,
         "Content-Type": "application/json", // optional but safe
@@ -212,8 +221,7 @@ const roundToTwo = (num) => {
       setDiscountRate(0);
       setFinalTotal(0);
       setFinalAmountValue(0);
-      }
-      
+      } 
       if (button === "download") return response;
       navigation.pop(2);
     } catch (err) {
@@ -221,8 +229,12 @@ const roundToTwo = (num) => {
         "create invoice error →",
         err?.response?.data || err.message || err
       );
-      showSnackbar(
-        "Server rejected the invoice – check required fields",
+      // showSnackbar(
+      //   "Server rejected the invoice – check required fields",
+      //   "error"
+      // );
+         showSnackbar(
+       err?.data?.message || "Failed to create invoice",
         "error"
       );
        return false;
@@ -242,7 +254,7 @@ const roundToTwo = (num) => {
           name: "",
           address: "",
           gstNumber: "",
-          phone: "",
+          mobile: "",
         }}
         validateOnChange={true}
         // validateOnChange={false}   // ✅ disables noise on typing
@@ -260,7 +272,7 @@ const roundToTwo = (num) => {
             name: values?.name,
             address: values?.address,
             gstNumber: User?.gstNumber || values?.gstNumber || null,
-            phone: User?.getNumber || values?.phone,
+            mobile: User?.getNumber || values?.mobile,
             userId: User?.id || undefined,
           };
           // const finalTotal = (parseInt(cartsValue?.totalPrice) || 0) - (parseInt(cartsValue?.discount) || 0);
@@ -268,12 +280,13 @@ const roundToTwo = (num) => {
           const extraData = {
             usersfk: User?.id,
             vendorfk: selectedShop?.vendor?.id,
-            statusfk: getStatusFk(),
+            statusfk: selectedButton === "Quatation" ?4:
+             getStatusFk(),
             subtotal: cartsValue?.totalPrice,
             // address: "123 Main Street, City, Country",
             discount: selectedButton === "Quatation" ? 0 : discountValue,
             finaltotal:selectedButton === "Quatation" ? cartsValue?.totalPrice: parseFloat(finalTotal),
-            paymentMode: "COD",
+            paymentMode: selectedPaymentMode||"Cash",
             ...(PaymentStatus == "Unpaid" || PaymentStatus == "Partially Paid"
               ? { remainingamount: cartsValue?.afterdiscount }
               : { remainingamount: 0 }),
@@ -291,7 +304,7 @@ const roundToTwo = (num) => {
             // products: carts,
             products: mapCartToInvoiceProducts(carts),
           };
-          console.log("Form Submitted Data:", payload?.customerData);
+          console.log("Form Submitted Data:", payload?.DataCustomer);
           console.log("Form Submitted Data:123", payload);
           submit.current = true;
           const customerResponse = await handleGenerate(
@@ -335,43 +348,16 @@ const roundToTwo = (num) => {
           return (
             <View>
               {/* Phone Field */}
-              <TextInput
-  label="Phone"
-  mode="flat"
-  keyboardType="phone-pad"
-  maxLength={10}
-  style={styles.input}
-  onChangeText={async (phoneNumber) => {
-    const numericText = phoneNumber.replace(/[^0-9]/g, "");
-    setFieldValue("phone", numericText);
-    await fetchUserData(numericText, setFieldValue);
-  }}
-  onBlur={handleBlur("phone")}   // ✅ Fixed
-  value={values.phone}
-  right={
-    values.phone ? (
-      <TextInput.Icon
-        icon="close"
-        size={20}
-        style={{ marginBottom: -22 }}
-        onPress={() => setFieldValue("phone", "")}
-      />
-    ) : null
-  }
-/>
-{touched.phone && errors.phone && (
-  <Text style={styles.errorText}>{errors.phone}</Text>
-)}
-              {/* Name Field */}
-              {loading && (
-                <View style={styles.loaderContainer}>
-                  <ActivityIndicator size="large" color="#0000ff" />
-                </View>
-              )}
-              <TextInput
+              <NameTextInput
+              values={values}handleChange={handleChange} handleBlur={handleBlur} touched={touched} errors={errors} setFieldValue={setFieldValue} setFormFilled={setFormFilled}
+              />
+
+
+              {/* <TextInput
                 label="Name"
                 mode="flat"
                 style={styles.input}
+                maxLength={50}
                onChangeText={(text) => {
   // Allow only alphabets (A–Z, a–z) and spaces
   let filteredText = text.replace(/[^A-Za-z\s]/g, "");
@@ -407,7 +393,7 @@ const roundToTwo = (num) => {
               />
               {touched.name && errors.name && (
                 <Text style={styles.errorText}>{errors.name}</Text>
-              )}
+              )} */}
 
               {loading && (
                 <View style={styles.loaderContainer}>
@@ -415,11 +401,46 @@ const roundToTwo = (num) => {
                 </View>
               )}
 
+              <TextInput
+  label="Phone"
+  mode="flat"
+  keyboardType="phone-pad"
+  maxLength={10}
+  style={styles.input}
+  onChangeText={async (phoneNumber) => {
+    const numericText = phoneNumber.replace(/[^0-9]/g, "");
+    setFieldValue("mobile", numericText);
+    await fetchUserData(numericText, setFieldValue);
+  }}
+  onBlur={handleBlur("mobile")}   // ✅ Fixed
+  value={values.mobile}
+  right={
+    values.mobile ? (
+      <TextInput.Icon
+        icon="close"
+        size={20}
+        style={{ marginBottom: -22 }}
+        onPress={() => setFieldValue("mobile", "")}
+      />
+    ) : null
+  }
+/>
+{touched.mobile && errors.mobile && (
+  <Text style={styles.errorText}>{errors.mobile}</Text>
+)}
+              {/* Name Field */}
+              {loading && (
+                <View style={styles.loaderContainer}>
+                  <ActivityIndicator size="large" color="#0000ff" />
+                </View>
+              )}
+              
               {/* Address Field */}
               <TextInput
                 label="Address"
                 mode="flat"
                 style={styles.input}
+                maxLength={150}
                 onChangeText={(text) => {
                    const filteredText = text.replace(/[^A-Za-z0-9,\s]/g, "");
                   if (filteredText.trim()) setFormFilled(true);
@@ -453,23 +474,30 @@ const roundToTwo = (num) => {
               {selectedButton == "gst" && (
                 <>
                   <TextInput
-                    label="GST Number"
-                    mode="flat"
-                    style={styles.input}
-                    onChangeText={handleChange("gstNumber")}
-                    onBlur={handleBlur("gstNumber")}
-                    value={values.gstNumber}
-                    right={
-                      values.gstNumber ? (
-                        <TextInput.Icon
-                          icon="close"
-                          size={20}
-                          style={{ marginBottom: -22 }}
-                          onPress={() => setFieldValue("gstNumber", "")} // Clears the input when close icon is pressed
-                        />
-                      ) : null
-                    }
-                  />
+                    maxLength={15}
+  label="GST Number"
+  mode="flat"
+  style={styles.input}
+  onChangeText={(text) => {
+    // Remove all spaces
+    const filteredText = text.replace(/[^A-Za-z0-9,\s]/g, "");
+
+    handleChange("gstNumber")(filteredText);
+  }}
+  onBlur={handleBlur("gstNumber")}
+  value={values.gstNumber}
+  right={
+    values.gstNumber ? (
+      <TextInput.Icon
+        icon="close"
+        size={20}
+        style={{ marginBottom: -22 }}
+        onPress={() => setFieldValue("gstNumber", "")} // Clears the input when close icon is pressed
+      />
+    ) : null
+  }
+/>
+
                   {touched.gstNumber && errors.gstNumber && (
                     <Text style={styles.errorText}>{errors.gstNumber}</Text>
                   )}
@@ -519,6 +547,8 @@ const roundToTwo = (num) => {
                     finalAmountError={finalAmountError}
                     setFinalAmountAError={setFinalAmountAError}
                     setFinalAmountValue={setFinalAmountValue}
+                    setSelectedPaymentMode={setSelectedPaymentMode}
+                    selectedPaymentMode={setSelectedPaymentMode}
                   />
                 </View>
               )}
