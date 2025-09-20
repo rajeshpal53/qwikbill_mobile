@@ -1,162 +1,3 @@
-// import { useContext, useEffect, useState } from "react";
-// import { StyleSheet, View } from "react-native";
-// import {
-//   Card,
-//   Title,
-//   Paragraph,
-//   Button,
-//   Avatar,
-//   ActivityIndicator,
-//   Icon,
-// } from "react-native-paper";
-// import { AuthContext } from "../Store/AuthContext";
-// import { useIsFocused } from "@react-navigation/native";
-// import { createApi } from "../Util/UtilApi";
-// import UserDataContext from "../Store/UserDataContext";
-// import { useSnackbar } from "../Store/SnackbarContext";
-// function ProfileSetting({ navigation }) {
-// const { loginDetail, getData, isLoading, isAuthenticated, logout } =useContext(AuthContext);
-//   const [loginDetail1, setLoginDetail1] = useState(loginDetail);
-//   const [newLoading, setNewLoading] = useState(true);
-//   const isFocused = useIsFocused();
-//   const {userData,saveUserData}=useContext(UserDataContext)
-//   const {showSnackbar}=useSnackbar();
-//     console.log(userData,"userData")
-//   const logoutHandler = async() => {
-//     // navigation.navigate("login")
-//         try{
-//       const response= await createApi("users/logout",{mobile:userData.user.mobile},{
-//         "Content-Type": "application/json",
-//         Authorization: `Bearer ${userData.token}`,
-//       } )
-//       console.log(response)
-//       showSnackbar("logout successfull","success")
-//       saveUserData(null)
-//       if (isLoading) {
-//         return (
-//           <View
-//             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-//           >
-//             <ActivityIndicator size="large" />
-//           </View>
-//         );
-//       }
-//       navigation.navigate("login");
-
-//     }catch(err){
-//       console.error("failed to logout",err)
-//     }
-
-//   };
-//   useEffect(() => {
-//     async function loginDetailHandler() {
-//       try {
-//         const newValue = (await getData("loginDetail")) || "";
-
-//         setLoginDetail1(newValue);
-//       } catch {
-//         console.log("failed get data ");
-//       } finally {
-//         setNewLoading(false);
-//       }
-//     }
-
-//     loginDetailHandler();
-//   }, [isFocused, loginDetail]);
-//   const login = loginDetail1;
-//   if (newLoading) {
-//     return <ActivityIndicator size="large" />;
-//   }
-//   const editProfileHandler=()=>{
-//     navigation.navigate("editProfile",{login:login})
-//   }
-//   return (
-//     <View style={styles.container}>
-//       <Card style={styles.card}>
-//         <View>
-//         <Avatar.Text
-//           size={100}
-//           label={login.name?.charAt(0)}
-//           style={styles.avatar}
-//         />
-
-//         </View>
-
-//         <Card.Content style={{ alignSelf: "center",margin:20}}>
-//           <Title
-//             style={styles.titleStyle}
-//           >{`${login.name} ${login.surname}`}</Title>
-//           {/* <Paragraph style={styles.paragraph}>ID: {login._id}</Paragraph> */}
-//           <Paragraph style={styles.paragraph}>First Name: {login.name}</Paragraph>
-//           <Paragraph style={styles.paragraph}>
-//             Surname: {login.surname}
-//           </Paragraph>
-//           <Paragraph style={styles.paragraph}>Email: {login.email}</Paragraph>
-//           <Paragraph style={styles.paragraph}>Role: {login.role}</Paragraph>
-//         </Card.Content>
-//         <Card.Actions>
-//           <Button icon="pencil" mode="contained" buttonColor="#26a0df" labelStyle={styles.buttonText} onPress={editProfileHandler}>
-//             Edit
-//           </Button>
-//           <Button
-//        icon={() => <Icon name="log-out-outline" size={20} color="white" />}
-//         buttonColor="#26a0df"
-//         onPress={logoutHandler}
-//         mode="contained"
-//         labelStyle={styles.buttonText}
-
-//       >
-//         LogOut
-//       </Button>
-//         </Card.Actions>
-//       </Card>
-//     </View>
-//   );
-// }
-// const styles = StyleSheet.create({
-//   container: {
-//     flexGrow: 1,
-//     justifyContent: "center",
-//     alignItems: "center",
-//     padding: 20,
-//     paddingHorizontal:10
-//   },
-//   buttonText: {
-//     color: "white",
-//   },
-//   card: {
-//     width: "100%",
-//     height:"100%",
-//     color: "#fff",
-
-//     justifyContent:"center"
-//   },
-//   logout:{ alignSelf: "flex-end", marginBottom: 10, backgroundColor:"#0c3b73"},
-//   paragraph: {
-//     marginVertical: 10,
-//     fontSize:15,
-//     paddingVertical:5
-//   },
-//   titleStyle: {
-//     fontWeight: "bold",
-//     fontSize:25,
-//     marginBottom: 10,
-//     alignSelf: "center",
-//   },
-//   iconButton: {
-//     backgroundColor: "#fff",
-//   },
-//   iconButton2: {
-//     backgroundColor: "#fff",
-//   },
-//   avatar: {
-//     justifySelf: "center",
-//     alignSelf: "center",
-//     marginVertical: 10,
-//   },
-// });
-
-// export default ProfileSetting;
 
 import { useContext, useEffect, useState } from "react";
 import {
@@ -185,7 +26,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import ChangeLanguageModal from "../Components/Modal/ChangeLanguageModal";
 import { ShopContext } from "../Store/ShopContext";
 import { useSnackbar } from "../Store/SnackbarContext";
-
+import { useTheme } from "../../constants/Theme";
 const ProfileSetting = ({
   navigation,
   roleDetails,
@@ -200,7 +41,7 @@ const ProfileSetting = ({
   const [language, setLanguage] = useState("English"); // Default language
   const [visible, setVisible] = useState(false);
   const [imageUrl, setImageUrl] = useState(`${NORM_URL}assets/mobile/male.png`);
-
+  const{colors}=useTheme()
   const { showSnackbar } = useSnackbar();
   const { userData, clearUserData, saveUserData } = useContext(UserDataContext);
   // const { setCreateuser } = useContext(WalletContext);
@@ -210,6 +51,7 @@ const ProfileSetting = ({
 
   const { updateSelectedShop, noItemModal, selectedShop, clearSelectedShop } =
     useContext(ShopContext);
+      const styles=profileStyle(colors);
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchServiceProvider(userData);
@@ -443,9 +285,9 @@ const ProfileSetting = ({
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={["#0a6846"]}
+              colors={[colors?.primary]}
               //  #26a0df
-              progressBackgroundColor={"#fff"}
+              progressBackgroundColor={colors?.background}
             />
           }
         >
@@ -456,7 +298,7 @@ const ProfileSetting = ({
                   justifyContent: "center",
                   marginBottom: 25,
                   alignItems: "center",
-                  backgroundColor: "#fff",
+                  backgroundColor: colors?.background,
                 }}
               >
                 <TouchableOpacity
@@ -489,7 +331,7 @@ const ProfileSetting = ({
                       style={{
                         fontSize: 20,
                         fontFamily: "Poppins-Bold",
-                        color: "#7E8A8C",
+                        color: colors?.avatarBackground,
                       }}
                     >
                       {userData?.user?.name || userData?.user?.mobile}
@@ -506,7 +348,7 @@ const ProfileSetting = ({
                       <Button
                         icon="pencil"
                         mode="contained"
-                        buttonColor="#007bff"
+                        buttonColor={colors?.accent}
                         style={styles.button}
                       >
                         {t("Edit")}
@@ -518,14 +360,14 @@ const ProfileSetting = ({
                     onPress={loginClickHandler}
                     // icon="pencil"
                     mode="contained"
-                    buttonColor="#0c3b73"
+                    buttonColor={colors?.primary}
                     style={styles.button}
                   >
                     {t("Login")}
                   </Button>
                 )}
               </View>
-              <Card.Content style={{ backgroundColor: "#fff" }}>
+              <Card.Content style={{ backgroundColor: colors?.background}}>
                 {menuItems?.map((item, index) =>
                   item?.value === "needMoreHelp" ? (
                     <Pressable
@@ -535,7 +377,7 @@ const ProfileSetting = ({
                       key={index}
                     >
                       <View>
-                        <Text style={{ fontFamily: "Poppins-Medium" }}>
+                        <Text style={{ fontFamily: "Poppins-Medium",color:colors?.text }}>
                           {t(item?.label)}
                         </Text>
                         <View style={styles.helpItem}>
@@ -554,16 +396,16 @@ const ProfileSetting = ({
                             <MaterialIcons
                               name="support-agent"
                               size={24}
-                              color="black"
+                              color={colors?.text}
                             />
                             <View style={{ flex: 1 }}>
-                              <Text style={{ fontFamily: "Poppins-Medium" }}>
+                              <Text style={{ fontFamily: "Poppins-Medium",color:colors?.textSecondary}}>
                                 {t("Feedback and Help")}
                               </Text>
                               <Text
                                 style={{
                                   fontFamily: "Poppins-Regular",
-                                  color: "rgba(0, 0, 0, 0.5)",
+                                  color: colors?.textSecondary,
                                   fontSize: fontSize.label,
                                 }}
                               >
@@ -574,7 +416,7 @@ const ProfileSetting = ({
                             <Text
                               style={{
                                 fontFamily: "Poppins-Medium",
-                                color: "#007BFF",
+                                color: colors?.accent,
                               }}
                             >
                               {t("Support")}
@@ -592,7 +434,7 @@ const ProfileSetting = ({
                       <Icon
                         name={item.icon}
                         size={24}
-                        color="#26a0df"
+                        color={colors?.secondary}
                         // #26a0df
                         style={styles.icon}
                       />
@@ -600,7 +442,7 @@ const ProfileSetting = ({
                       <Icon
                         name="chevron-right"
                         size={24}
-                        color="#000"
+                        color={colors?.text}
                         style={styles.chevron}
                       />
                     </TouchableOpacity>
@@ -675,11 +517,12 @@ const ProfileSetting = ({
     </>
   );
 };
-const styles = StyleSheet.create({
+const profileStyle = (colors) =>
+StyleSheet.create({
   item: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f0f0f0",
+    backgroundColor: colors?.surface,
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -692,7 +535,7 @@ const styles = StyleSheet.create({
     // flex: 1,
     height: "100%",
     justifyContent: "center",
-    backgroundColor: "#fff",
+    backgroundColor: colors?.background,
   },
   text: {
     fontSize: 20,
@@ -700,11 +543,12 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: "Poppins-Regular",
+    color:colors?.text
   },
   card: {
     width: "100%",
     height: "100%",
-    backgroundColor: "#fff",
+    backgroundColor: colors?.background,
     justifyContent: "center",
   },
   avatar: {
@@ -715,7 +559,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRadius: 50,
     backgroundColor: "gray",
-    backgroundColor: "#B3ECFF",
+    backgroundColor: colors?.avatarBackground,
   },
   chevron: {
     marginLeft: "auto",
@@ -729,7 +573,7 @@ const styles = StyleSheet.create({
   helpItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f0f0f0",
+    backgroundColor: colors?.surface,
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -737,7 +581,7 @@ const styles = StyleSheet.create({
   },
   modalBackground: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    backgroundColor: colors?.text,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -750,7 +594,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 40,
     right: 20,
-    backgroundColor: "#ffffff",
+    backgroundColor: colors?.background,
     padding: 10,
     borderRadius: 20,
   },
@@ -758,5 +602,5 @@ const styles = StyleSheet.create({
     color: "#000",
     fontWeight: "bold",
   },
-});
+})
 export default ProfileSetting;

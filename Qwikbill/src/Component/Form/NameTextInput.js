@@ -4,7 +4,7 @@ import { TextInput } from "react-native-paper";
 import { debounce, set } from "lodash"; // or write your own debounce
 import { readApi } from "../../Util/UtilApi";
 
-const NameTextInput = ({ values, handleChange, handleBlur, touched, errors, setFieldValue, setFormFilled }) => {
+const NameTextInput = ({ values, handleChange, handleBlur, touched, errors, setFieldValue, setFormFilled,setUser }) => {
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
 
@@ -48,6 +48,7 @@ const NameTextInput = ({ values, handleChange, handleBlur, touched, errors, setF
   };
 
   const handleSuggestionPress = (item) => {
+    setUser(item)
     setFieldValue("name", item?.name || ""); // assuming item has a 'name' property
     setFieldValue("mobile",item?.mobile || ""); // assuming item has a 'mobile' property
     setFieldValue("address",item?.address || ""); // assuming item has a 'address' property
@@ -87,6 +88,7 @@ const NameTextInput = ({ values, handleChange, handleBlur, touched, errors, setF
                  setFieldValue("mobile", "");
                  setFieldValue("address","")
                 setSuggestions([]);
+                setUser(null)
               }}
             />
           ) : null

@@ -3,6 +3,8 @@ import axios from 'axios';
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
 
+// "enableProguardInReleaseBuilds": true
+
 export const API_BASE_URL = "https://qwikbill.in/qapi/";
 // export const API_BASE_URL = "http://192.168.1.35:2235/";
 import { navigate } from "./NavigationService"; // global navigation helper

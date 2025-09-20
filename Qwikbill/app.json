@@ -6,7 +6,7 @@
     "newArchEnabled": true,
     "orientation": "portrait",
     "icon": "./assets/qLogo.png",
-    "userInterfaceStyle": "light",
+"userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/qLogo.png",
       "resizeMode": "contain",
@@ -37,7 +37,7 @@
         "expo-build-properties",
         {
           "android": {
-            "enableProguardInReleaseBuilds": true
+           
             
           }
         }

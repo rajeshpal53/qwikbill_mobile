@@ -60,7 +60,7 @@ export default function PasscodeScreen({ navigation }) {
 
 
 
-  console.log("passkey in passCode screen",passkey)
+  // console.log("passkey in passCode screen",passkey)
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -92,7 +92,7 @@ export default function PasscodeScreen({ navigation }) {
         const newValue = (await getData("loginDetail")) || "";
 
         setLoginDetail1(newValue);
-        console.log("login detail 1 isss",loginDetail1)
+        // console.log("login detail 1 isss",loginDetail1)
 
       } catch {
         console.log("failed get data ");

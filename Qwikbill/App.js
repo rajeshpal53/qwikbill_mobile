@@ -23,6 +23,8 @@ import { TourGuideProvider } from "rn-tourguide";
 import { ShopProvider } from "./src/Store/ShopContext.js";
 import { StorageLocationProvider } from "./src/Store/StorageLocationContext.js";
 import { navigationRef } from "./src/Util/NavigationService.js";
+import { ThemeProvider,useThemeContext } from "./src/Store/ThemeContext.js";
+import { useTheme } from "./constants/Theme.js";
 //import { requestUserPermission, setupTokenRefreshListener } from "./src/Util/NotificationHandler.js";
 const customTheme = {
   ...DefaultTheme,
@@ -37,14 +39,9 @@ const customTheme = {
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(true);
   const[fcmToken, setFcmToken] = useState(null);
-//   useEffect(() => {
-//     // Request permission and retrieve token on startup
-//     requestUserPermission();
-//     // Set up the token refresh listener
-//     const unsubscribeTokenRefresh = setupTokenRefreshListener(setFcmToken);
-//     // Clean up the token refresh listener
-//     return () => unsubscribeTokenRefresh();
-//   }, []);
+
+    const { colors, isDark } = useTheme();
+
 
   useEffect(() => {
     const loadFonts = async () => {
@@ -59,11 +56,13 @@ export default function App() {
       setFontsLoaded(true);
     };
     loadFonts();
+
   });
 
   return (
     <SafeAreaProvider>
       <StorageLocationProvider>
+        <ThemeProvider>
       <UserDataProvider>
         <ShopProvider>
         {/* <ShopDetailProvider> */}
@@ -71,14 +70,22 @@ export default function App() {
             <SnackbarProvider>
               <Provider store={Store}>
                 <I18nextProvider i18n={i18n}>
-                  <PaperProvider theme={customTheme}>
+                  <PaperProvider theme={customTheme} >
                     <TourGuideProvider {...{ borderRadius: 16,backdropColor: 'hsla(64, 5.80%, 47.50%, 0.39)' }}>
                       <NavigationContainer ref={navigationRef}>
                         <AuthProvider>
                           <LoginTimeProvider>
                             <FontProvider>
                               {fontsLoaded ? (
-                                <StackNavigator  />
+                                <StackNavigator  theme={{
+          dark: isDark,
+          colors: {
+            background: colors.background,
+            text: colors.text,
+            primary: colors.primary,
+            // you can map other nav theme values
+          }
+        }}  />
                               ) : (
                                 <ActivityIndicator size={"large"} />
                               )}
@@ -95,6 +102,7 @@ export default function App() {
         {/* </ShopDetailProvider> */}
         </ShopProvider>
       </UserDataProvider>
+      </ThemeProvider>
       </StorageLocationProvider>
     </SafeAreaProvider>
   );

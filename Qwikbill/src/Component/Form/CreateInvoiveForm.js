@@ -23,6 +23,8 @@ import ItemDataTable from "../Cards/ItemDataTable";
 import PriceDetails from "../PriceDetails";
 import ConfirmModal from "../../Components/Modal/ConfirmModal";
 import NameTextInput from "./NameTextInput";
+import { useTheme } from "../../../constants/Theme";
+
 const CreateInvoiceForm = ({ selectedButton }) => {
   const [isHorizontalScrolling, setIsHorizontalScrolling] = useState(false);
   const dispatch = useDispatch();
@@ -49,6 +51,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const [finalAmountValue, setFinalAmountValue] = useState(0);
   const [finalAmountError, setFinalAmountAError] = useState("");
   const[selectedPaymentMode,setSelectedPaymentMode]=useState("")
+  const {colors}=useTheme()
 {/* <NameInput
   values={values}
   handleChange={handleChange}
@@ -246,7 +249,7 @@ const roundToTwo = (num) => {
       scrollEnabled={!isHorizontalScrolling}
       keyboardShouldPersistTaps="handled"
       nestedScrollEnabled={true}
-      contentContainerStyle={{ paddingBottom: 20 }}
+      contentContainerStyle={{ paddingBottom: 20,backgroundColor:colors?.background }}
     >
       <Formik
         enableReinitialize={true}
@@ -349,7 +352,7 @@ const roundToTwo = (num) => {
             <View>
               {/* Phone Field */}
               <NameTextInput
-              values={values}handleChange={handleChange} handleBlur={handleBlur} touched={touched} errors={errors} setFieldValue={setFieldValue} setFormFilled={setFormFilled}
+              values={values}handleChange={handleChange} handleBlur={handleBlur} touched={touched} errors={errors} setFieldValue={setFieldValue} setFormFilled={setFormFilled}   setUser={setUser}
               />
 
 

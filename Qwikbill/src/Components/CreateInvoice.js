@@ -21,12 +21,13 @@ import { fontSize, readApi } from "../Util/UtilApi";
 // } from "rn-tourguide";
 import { useTranslation } from "react-i18next";
 import UserDataContext from "../Store/UserDataContext";
-
+import { useTheme } from "../../constants/Theme";
 
 export default function CreateInvoice({ navigation, route }) {
   const startTour = route.params;
   const windowWidth = useWindowDimensions().width;
   const windowHeight = useWindowDimensions().height;
+  const{colors}=useTheme()
   // const { selectedShop, setSelectedShop } = useContext(AuthContext);
   const [invoiceType, setInvoiceType] = useState("provInvoice");
   const pickerRef = useRef();
@@ -144,7 +145,7 @@ export default function CreateInvoice({ navigation, route }) {
   };
 
   return (
-    <ScrollView style={styles.scrollView} nestedScrollEnabled={true} >
+    <ScrollView style={[styles.scrollView,{backgroundColor:colors?.background}]} nestedScrollEnabled={true} >
        {/* <TouchableWithoutFeedback> */}
         <View style={styles.container}>
           <View >
@@ -191,7 +192,7 @@ export default function CreateInvoice({ navigation, route }) {
 const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
-    backgroundColor: "#fff",
+    
   },
   container: {
     flex: 1,

@@ -1,8 +1,12 @@
 import { View, StyleSheet, Pressable } from "react-native";
 import { Text, Card } from "react-native-paper";
-import { fontSize, statusName } from "../Util/UtilApi";
+import { statusName } from "../Util/UtilApi";
+import { useTheme } from "../../constants/Theme";
 
 const ViewInvoiceCard = ({ invoice, navigation }) => {
+  const { colors } = useTheme();
+  const styles = makeStyles(colors); // 👈 generate theme-aware styles
+
   return (
     <Pressable
       onPress={() =>
@@ -26,10 +30,10 @@ const ViewInvoiceCard = ({ invoice, navigation }) => {
               {
                 color:
                   invoice?.statusfk === 1
-                    ? "red"
+                    ? colors.danger
                     : invoice?.statusfk === 2
-                    ? "green"
-                    : "orange",
+                    ? colors.success
+                    : colors.warning,
               },
             ]}
           >
@@ -56,72 +60,73 @@ const ViewInvoiceCard = ({ invoice, navigation }) => {
 
         {/* Footer Row */}
         <View style={styles.rowBetween}>
-                  <Text style={styles.footerText}> {new Date(invoice?.createdAt).toDateString()}</Text>  
+          <Text style={styles.footerText}>
+            {new Date(invoice?.createdAt).toDateString()}
+          </Text>
         </View>
       </Card>
     </Pressable>
   );
 };
 
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: "#fff",
-    padding: 14,
-    marginVertical: 6,
-    marginHorizontal: 16,
-    borderRadius: 12,
-    elevation: 3,
-  },
-  headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 6,
-  },
-  invoiceNumber: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  invoiceType: {
-    fontSize: 12,
-    color: "#666",
-    fontStyle: "italic",
-  },
-  status: {
-    fontSize: 13,
-    fontWeight: "bold",
-  },
-  rowBetween: {
-    flexDirection: "row",
-    justifyContent: "space-between",
- 
-  },
-  customerName: {
-    fontSize: 15,
-    fontWeight: "500",
-    color: "#000",
-  },
-  date: {
-    fontSize: 12,
-    color: "gray",
-  },
-  finalLabel: {
-    fontSize: 12,
-    color: "gray",
-  },
-  finalAmount: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "green",
-  },
-  footerText: {
-    fontSize: 13,
-    color: "#555",
-    marginTop: 3,
-  },
-
-  
-});
+// 👇 Style generator function
+const makeStyles = (colors) =>
+  StyleSheet.create({
+    card: {
+      padding: 14,
+      marginVertical: 6,
+      marginHorizontal: 16,
+      borderRadius: 12,
+      elevation: 3,
+      backgroundColor: colors.background,
+    },
+    headerRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 6,
+    },
+    invoiceNumber: {
+      fontSize: 16,
+      fontWeight: "bold",
+      color: colors.text,
+    },
+    invoiceType: {
+      fontSize: 12,
+      color: colors.muted,
+      fontStyle: "italic",
+    },
+    status: {
+      fontSize: 13,
+      fontWeight: "bold",
+    },
+    rowBetween: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+    },
+    customerName: {
+      fontSize: 15,
+      fontWeight: "500",
+      color: colors.text,
+    },
+    date: {
+      fontSize: 12,
+      color: colors.muted,
+    },
+    finalLabel: {
+      fontSize: 12,
+      color: colors.muted,
+    },
+    finalAmount: {
+      fontSize: 16,
+      fontWeight: "bold",
+      color: colors.success,
+    },
+    footerText: {
+      fontSize: 13,
+      color: colors.muted,
+      marginTop: 3,
+    },
+  });
 
 export default ViewInvoiceCard;

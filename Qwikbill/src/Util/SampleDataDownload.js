@@ -8,9 +8,9 @@ import { StorageAccessFramework } from "expo-file-system";
 import { useStorageLocationContext } from "../Store/StorageLocationContext";
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true, // set this true to play the sound and also show the popup when app is open
-    shouldSetBadge: false,
+    allowAlert: true,   // ⬅️ replaces shouldShowAlert
+    allowSound: true,   // ⬅️ replaces shouldPlaySound
+    allowBadge: false,  // ⬅️ replaces shouldSetBadge
   }),
 });
 

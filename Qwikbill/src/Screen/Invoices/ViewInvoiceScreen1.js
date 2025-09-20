@@ -12,7 +12,7 @@ import FilterModal from "../../Components/Modal/FilterModal";
 import UserDataContext from "../../Store/UserDataContext";
 import NoDataFound from "../../Components/NoDataFound";
 import { Filter } from "react-native-svg";
-
+import { useTheme } from "../../../constants/Theme";
 function ViewInvoiceScreen1({ navigation }) {
   const [invoices, setInvoices] = useState([]);
   const [page, setPage] = useState(1);
@@ -41,7 +41,8 @@ function ViewInvoiceScreen1({ navigation }) {
   const vendorId = selectedShop?.vendor?.id;          // <- **centralised**
   const authHeader = { Authorization: `Bearer ${userData?.token}` };
   const [typeFilter, setTypeFilter] = useState("");
-
+  const { colors, isDark } = useTheme();
+  
 
   // useEffect(() => {
   //   if (page === 1) {
@@ -225,13 +226,13 @@ function ViewInvoiceScreen1({ navigation }) {
 
   };
 
-
+  console.log(colors?.background,"inViewScreen")
 
   return (
-    <View style={{ backgroundColor: "#fff", flex: 1 }}>
+    <View style={{ backgroundColor: colors?.background, flex: 1 }}>
       <FlatList
         ListHeaderComponent={
-          <View style={{ marginTop: 8 }}>
+          <View style={{ marginTop: 8,backgroundColor: colors?.background, }}>
             <Searchbarwithmic
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}

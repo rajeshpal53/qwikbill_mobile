@@ -25,7 +25,7 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
 
 
   const handleDelete = async (item) => {
-    console.log("vendor id isss", item.vendor.id);
+    // console.log("vendor id isss", item.vendor.id);
     const id = item.vendor.id 
     console.log("my tokennn ",userData?.token)
     try {

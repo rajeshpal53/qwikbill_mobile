@@ -56,19 +56,24 @@ import { fontSize, readApi } from "../Util/UtilApi.js";
 import BottomNavigator from "./BottomNavigator.js";
 import ShowProductScreen from "../Screen/StackScreen/ShowProductScreen.js";
 import useTokenExpiry from "../Store/useTokenExpiry.js";
+import { useThemeContext } from "../Store/ThemeContext.js";
+import { useTheme } from "../../constants/Theme.js";
 export default function StackNavigator() {
       // useTokenExpiry()
 
   const Stack = createStackNavigator();
   const [isLandscape, setIsLandscape] = useState(false);
   const { isAuthenticated, isLoading, searchMode } = useContext(AuthContext);
- 
+ const {theme}=useThemeContext()
+ const{colors}=useTheme()
   const [roleDetails, setroleDetails] = useState(false);
   const [noItemModal, setNoItemModal] = useState(false);
   const [noItemData, setNoItemData] = useState({});
   const [isConnected, setIsConnected] = useState(false);
  const [initialRoute, setInitialRoute] = useState(null);
   const { passkey } = usePasskey()
+
+  const styles = stackStyles(colors)
    const { userData, fetchUserData, clearUserData } =
     useContext(UserDataContext);
       const [isForgetPasswordState, setIsForgetPasswordState] = useState(false);
@@ -169,11 +174,16 @@ export default function StackNavigator() {
         : "Passcode"
       : "login"
 }
-        screenOptions={
-          {
-            // headerTitle: "Create Invoice",
-          }
-        }
+       screenOptions={{
+    headerStyle: {
+      backgroundColor: colors?.background, // 🔹 applies to all screens
+    },
+    headerTintColor: colors?.text, // optional: text/icon color
+    headerTitleStyle: {
+      fontWeight: "bold", // optional: styling for header title
+    },
+  }}
+
       >
         <Stack.Screen
           name="wertone"
@@ -637,11 +647,16 @@ export default function StackNavigator() {
     </>
   );
 }
-const styles = StyleSheet.create({
+
+
+
+const stackStyles =(colors)=> StyleSheet.create({
   headerTitle: {
+    color:colors?.text,
     fontFamily: "Poppins-Regular",
     fontSize: fontSize.headingSmall,
     fontWeight: "bold",
+
   },
   fab: {
     position: "absolute",

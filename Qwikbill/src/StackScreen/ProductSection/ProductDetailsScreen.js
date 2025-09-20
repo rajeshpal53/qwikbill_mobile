@@ -38,7 +38,7 @@ import NoDataFound from "../../Components/NoDataFound";
 import DeleteModal from "../../UI/DeleteModal";
 import { useSnackbar } from "../../Store/SnackbarContext";
 import SelectionOverlay from "../../Component/SelectionOverlay";
-
+import { useTheme } from "../../../constants/Theme";
 const ProductDetailsScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchmodal, setsearchmodal] = useState(false); // State for modal visibility
@@ -73,7 +73,7 @@ const ProductDetailsScreen = ({ navigation }) => {
 const [selectedProducts, setSelectedProducts] = useState([]);
 const [selectionMode, setSelectionMode] = useState(false);
   console.log("token is", userData?.token)
-
+const{colors}=useTheme();
 
   const toggleSelectProduct = (productId) => {
   setSelectedProducts((prev) => {
@@ -356,7 +356,7 @@ const handleLongSelect = (id) => {
       <ActivityIndicator size={"large"} />
     </View>
   ) : (
-    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+    <View style={{ flex: 1, backgroundColor:colors?.background}}>
       <View
         style={{
           flexDirection: "row",

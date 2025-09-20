@@ -11,10 +11,10 @@ import UserDataContext from "../Store/UserDataContext";
 
 // Notification Handler
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
+ handleNotification: async () => ({
+    allowAlert: true,   // ⬅️ replaces shouldShowAlert
+    allowSound: true,   // ⬅️ replaces shouldPlaySound
+    allowBadge: false,  // ⬅️ replaces shouldSetBadge
   }),
 });
 

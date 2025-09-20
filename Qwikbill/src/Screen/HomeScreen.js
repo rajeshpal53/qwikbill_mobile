@@ -39,12 +39,13 @@ import UserDataContext from "../Store/UserDataContext";
 import { rolePermissions, services } from "../tempList/ServicesList";
 import DropDownList from "../UI/DropDownList";
 import { ButtonColor, fontFamily, fontSize } from "../Util/UtilApi";
-
+import { useTheme } from "../../constants/Theme";
 
 export default function HomeScreen({ navigation, noItemData }) {
   const { t } = useTranslation();
   const { currentLoginTime, lastLoginTime, storeTime } =
     useContext(LoginTimeContext);
+    const { colors, isDark } = useTheme();
   // const { getData } = useContext(AuthContext);
   const [loginDetail, setLoginDetail] = useState({});
   // const [vendorsAll, setVendorDetails] = useState([]);
@@ -55,6 +56,9 @@ export default function HomeScreen({ navigation, noItemData }) {
   const pickerRef = useRef();
   const { width, height } = useWindowDimensions();
   console.log(width, "  ", height);
+
+
+  console.log(isDark,"isDark")
   // const overlayHeight = (0.20*windowHeight);
   // console.log(responsiveHeight(80), "    --- responsiveHeight");
   // console.log(verticalScale(700), "    --- verticalscale");
@@ -97,7 +101,7 @@ export default function HomeScreen({ navigation, noItemData }) {
     }
   }, [noItemModal]);
 
-  console.log("jayessssh tokennn ,", userData?.token)
+  // console.log("jayessssh tokennn ,", userData?.token)
 
   // useEffect(() => {
   //   const validateToken = async () => {
@@ -153,7 +157,7 @@ export default function HomeScreen({ navigation, noItemData }) {
 
 
   useEffect(() => {
-    console.log(`vendor id isss ${userData?.user?.mobile} `)
+    // console.log(`vendor id isss ${userData?.user?.mobile} `)
   }, [])
 
   useEffect(() => {
@@ -230,9 +234,9 @@ export default function HomeScreen({ navigation, noItemData }) {
     );
   }
 
-  console.log("DATA OF ALL SHOP ", allShops.length);
+  // console.log("DATA OF ALL SHOP ", allShops.length);
   return (
-    <SafeAreaView style={styles.safeContainer}>
+    <SafeAreaView style={[styles.safeContainer,{backgroundColor:colors?.background}]}>
 
       <View style={styles.overlay}>
         <View style={styles.header}>
@@ -250,7 +254,7 @@ export default function HomeScreen({ navigation, noItemData }) {
         <View>
           <View style={styles.dropDownContainer}>
             <View style={styles.dropdownRow}>
-              <Ionicons name="storefront-sharp" size={24} color="#0c3b73" marginBottom={1} />
+              <Ionicons name="storefront-sharp" size={24} color={colors?.primary} marginBottom={1} />
               <DropDownList options={allShops} />
             </View>
           </View>
@@ -316,7 +320,7 @@ export default function HomeScreen({ navigation, noItemData }) {
                           >
                             <View style={{ alignItems: "center" }}>
                               <Text>{item.icon}</Text>
-                              <Text style={styles.itemText}>{t(item.name)}</Text>
+                              <Text style={[styles.itemText,{color:colors?.text}]}>{t(item.name)}</Text>
                             </View>
                           </TouchableOpacity>
                           <TourGuideZone
@@ -393,7 +397,6 @@ export default function HomeScreen({ navigation, noItemData }) {
 const styles = StyleSheet.create({
   safeContainer: {
     flex: 1,
-
     // paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   scrollView: {

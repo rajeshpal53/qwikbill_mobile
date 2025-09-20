@@ -5,6 +5,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Avatar, Card } from "react-native-paper";
 import { ShopContext } from "../../Store/ShopContext";
 import { fontSize } from "../../Util/UtilApi";
+import { useTheme } from "../../../constants/Theme";
 
 const ProductDetailsCard = ({
   item,
@@ -18,6 +19,7 @@ const ProductDetailsCard = ({
 }) => {
   const navigation = useNavigation();
   const { selectedShop } = useContext(ShopContext);
+  const { colors,isDark } = useTheme();
 
   const HandleProductDelete = () => {
     setProductId(item?.id);
@@ -29,22 +31,38 @@ const ProductDetailsCard = ({
       activeOpacity={0.8}
       onPress={() => {
         if (selectionMode) {
-          onSelect(); // toggle selection
+          onSelect();
         } else {
-          // normal navigation (when not in selection mode)
           navigation.navigate("ProductDetail", { item });
         }
       }}
-      onLongPress={onLongSelect} // ✅ must be here, not inside onPress
+      onLongPress={onLongSelect}
     >
-      <Card style={[styles.card, isSelected && styles.cardSelected]}>
+      <Card
+        style={[
+          styles.card,
+          { backgroundColor: colors.background ,
+             shadowColor: isDark === true ? "#ffffff30" : "#000000", // light shadow in dark mode
+          },
+
+          isSelected && {
+            borderColor: colors.primary,
+            backgroundColor: colors.secondary + "22", // ✅ faint tint
+          },
+        ]}
+      >
+        {/* Header */}
         <View style={styles.headerRow}>
           <Avatar.Text
             size={38}
             label={item?.name?.charAt(0)?.toUpperCase()}
-            style={styles.avatar}
+            style={{ backgroundColor: colors.primary }}
+            color={colors.text}
           />
-          <Text style={styles.productName} numberOfLines={1}>
+          <Text
+            style={[styles.productName, { color: colors.text }]}
+            numberOfLines={1}
+          >
             {item.name}
           </Text>
 
@@ -60,41 +78,52 @@ const ProductDetailsCard = ({
                   })
                 }
               >
-                <MaterialIcons name="edit" size={20} color="#1E88E5" />
+                <MaterialIcons name="edit" size={20} color={colors.primary} />
               </TouchableOpacity>
               <TouchableOpacity onPress={HandleProductDelete}>
-                <MaterialIcons name="delete" size={20} color="#E53935" />
+                <MaterialIcons name="delete" size={20} color={colors.danger} />
               </TouchableOpacity>
             </View>
           )}
         </View>
 
-        {/* Compact 2x2 Grid for details */}
+        {/* Grid */}
         <View style={styles.detailsGrid}>
-          <View
-            style={{ justifyContent: "space-between", flexDirection: "row" }}
-          >
+          <View style={styles.rowBetween}>
             <View style={styles.detailBox}>
-              <Text style={styles.label}>Sell Price</Text>
-              <Text style={styles.value}>₹{item.sellPrice}</Text>
+              <Text style={[styles.label, { color: colors.text }]}>
+                Sell Price
+              </Text>
+              <Text style={[styles.value, { color: colors.text }]}>
+                ₹{item.sellPrice}
+              </Text>
             </View>
             <View style={styles.detailBox}>
-              <Text style={styles.label}>Tax Rate</Text>
-              <Text style={styles.value}>
+              <Text style={[styles.label, { color: colors.text }]}>
+                Tax Rate
+              </Text>
+              <Text style={[styles.value, { color: colors.text }]}>
                 {Number(item.taxRate).toFixed(2)}%
               </Text>
             </View>
           </View>
-          <View
-            style={{ justifyContent: "space-between", flexDirection: "row" }}
-          >
+
+          <View style={styles.rowBetween}>
             <View style={styles.detailBox}>
-              <Text style={styles.label}>Cost Price</Text>
-              <Text style={styles.value}>₹{item.costPrice}</Text>
+              <Text style={[styles.label, { color: colors.text }]}>
+                Cost Price
+              </Text>
+              <Text style={[styles.value, { color: colors.text }]}>
+                ₹{item.costPrice}
+              </Text>
             </View>
             <View style={styles.detailBox}>
-              <Text style={styles.label}>HSN Code</Text>
-              <Text style={styles.value}>{item.hsncode || "-"}</Text>
+              <Text style={[styles.label, { color: colors.text }]}>
+                HSN Code
+              </Text>
+              <Text style={[styles.value, { color: colors.text }]}>
+                {item.hsncode || "-"}
+              </Text>
             </View>
           </View>
         </View>
@@ -110,27 +139,17 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     elevation: 2,
     padding: 12,
-    backgroundColor: "#fff",
-  },
-  cardSelected: {
-    borderWidth: 2,
-    borderColor: "#0a6846",
-    backgroundColor: "#E8F5E9", // ✅ light green tint when selected
   },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 6,
   },
-  avatar: {
-    backgroundColor: "#0D47A1",
-  },
   productName: {
     fontSize: fontSize.labelLarge,
     fontFamily: "Poppins-Medium",
     marginLeft: 12,
     flex: 1,
-    color: "#212529",
   },
   actionButtons: {
     flexDirection: "row",
@@ -141,6 +160,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     marginTop: 6,
+  },
+  rowBetween: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
   },
   detailBox: {
     width: "50%",
@@ -153,13 +177,11 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: "Poppins-Regular",
     fontSize: fontSize.label,
-    color: "#6c757d",
     marginRight: 10,
   },
   value: {
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.label + 1,
-    color: "#000",
   },
 });
 
