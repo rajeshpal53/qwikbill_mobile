@@ -13,7 +13,7 @@ export const AuthContext = createContext();
 
 // Create a provider component
 export const AuthProvider = ({ children }) => {
-  const { isPasskey, passkey } = usePasskey();
+  // const { isPasskey, passkey } = usePasskey();
   //const navigation = useNavigation();
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -83,13 +83,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const handleLogin = async (values, navigation) => {
+  const handleLogin = async (values, navigation,isPasskey,passkey) => {
   try {
     console.log("login screen", values);
     console.log("login screen passkey", passkey);
-    console.log(`isPasskey`, isPasskey, passkey);
+    console.log(`AuthContext passkey`, isPasskey, passkey);
     setIsLoading(true);
-
     const payload = {
       mobile: values.mobile,
       password: values?.password,
@@ -116,7 +115,7 @@ export const AuthProvider = ({ children }) => {
 
     setLoginDetail(response);
     console.log("Saving user data:", response,isPasskey);
-    if (isPasskey) {
+    if (isPasskey||passkey) {
       navigation.reset({ index: 0, routes: [{ name: "Passcode" }] });
     } else {
       navigation.reset({ index: 0, routes: [{ name: "CreateNewPasscode" }] });

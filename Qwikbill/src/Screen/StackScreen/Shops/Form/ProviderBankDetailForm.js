@@ -27,7 +27,7 @@ const ProviderBankDetailForm = ({
       <View style={{ marginVertical: 15 }}>
         <ServiceImagePicker
           image={values?.signature}
-          label={"Autherized Signature"}
+          label={"Authorized Signature"}
           setFieldValue={setFieldValue}
           uploadFieldName={shopImageField}
         />
@@ -102,6 +102,21 @@ const ProviderBankDetailForm = ({
 />
 {touched.accountHolderName && errors.accountHolderName && (
   <Text style={{ color: "red" }}>{errors.accountHolderName}</Text>
+)}
+<TextInput
+  label={t("UPI ID")}
+  mode={textInputMode}
+  style={{ backgroundColor: "transparent",marginVertical:10}}
+ onChangeText={(text) => {
+    const trimmed = text.trim(); // remove leading/trailing spaces
+    handleChange("upiId")(trimmed);
+  }}
+  onBlur={handleBlur("upiId")}
+  value={values.upiId}
+  error={touched.upiId && errors.upiId}
+/>
+{touched.upiId && errors.upiId && (
+  <Text style={{ color: "red" }}>{errors.upiId}</Text>
 )}
 </View>
 

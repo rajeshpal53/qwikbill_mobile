@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import {
-  Image,
   Pressable,
   StyleSheet,
   TouchableOpacity,
   View
 } from "react-native";
+import { Image } from "expo-image";
 // import ImageResizer from "react-native-image-resizer";
 //import ImageResizer from "react-native-image-resizer";
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons"; // For icons
@@ -270,7 +270,7 @@ export default function ServiceImagePicker({
       ) : (
         <View>
           <Text style={{ fontSize: 16, color: "rgba(0, 0, 0, 0.5)" }}>
-            {label} {label === "Shop Image" ? "" : "*"}
+            {label} {label === "Shop Image"||"Authorized Signature" ? "" : "*"}
           </Text>
           <View
             style={
@@ -283,6 +283,7 @@ export default function ServiceImagePicker({
               <View style={styles.previewContainer}>
                 {console.log("image url of , ", imageUrl)}
                 <Image
+                 cachePolicy="none" 
                   source={{
                     uri: imageUrl || "https://via.placeholder.com/150" || "",
                     headers: { Accept: "*/*" },

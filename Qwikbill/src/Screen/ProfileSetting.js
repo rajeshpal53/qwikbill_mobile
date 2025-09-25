@@ -27,6 +27,7 @@ import ChangeLanguageModal from "../Components/Modal/ChangeLanguageModal";
 import { ShopContext } from "../Store/ShopContext";
 import { useSnackbar } from "../Store/SnackbarContext";
 import { useTheme } from "../../constants/Theme";
+import { LoginTimeContext } from "../Store/LoginTimeContext";
 const ProfileSetting = ({
   navigation,
   roleDetails,
@@ -48,7 +49,7 @@ const ProfileSetting = ({
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [modalImageUrl, setModalImageUrl] = useState(null);
-
+  const{clearLoginTime}=useContext(LoginTimeContext)
   const { updateSelectedShop, noItemModal, selectedShop, clearSelectedShop } =
     useContext(ShopContext);
       const styles=profileStyle(colors);
@@ -160,7 +161,7 @@ const ProfileSetting = ({
     } else {
       setImageUrl("https://dailysabji.com/assets/mobile/neutral.png");
     }
-  }, [isFocused, userData]); // Removed imageUrl from dependency array
+  }, [isFocused, userData]); 
 
   const languageModalOpen = () => {
     setLanguageModalVisible(true);
@@ -181,6 +182,27 @@ const ProfileSetting = ({
     setSelectedImageUri(null);
   };
 
+  // useEffect(() => {
+  //   if (userData) {
+  //     if (userData?.user?.profilePicurl) {
+  //       const nevVar = `${NORM_URL}/${userData?.user?.profilePicurl}`;
+  //       setImageUrl(nevVar);
+  //     } else if (userData?.user?.gender == null) {
+  //       setImageUrl(`${NORM_URL}assets/mobile/neutral.png`);
+  //     } else if (userData?.user?.gender === "Female") {
+  //       setImageUrl(`${NORM_URL}assets/mobile/female.png`);
+  //     } else if (
+  //       userData?.user?.gender === "Male" ||
+  //       userData?.user?.gender === "male"
+  //     ) {
+  //       setImageUrl(`${NORM_URL}assets/mobile/male.png`);
+  //     } else {
+  //       setImageUrl(`${NORM_URL}assets/mobile/neutral.png`);
+  //     }
+  //   } else {
+  //     setImageUrl(`${NORM_URL}assets/mobile/neutral.png`);
+  //   }
+  // }, [isFocused, userData]); 
   const handlePress = (value) => {
     console.log("Data of value ", value);
     // if (value == "Address") {
@@ -234,7 +256,7 @@ const ProfileSetting = ({
           Authorization: `Bearer ${userData.token}`,
         }
       );
-
+      
       if (response) {
         showSnackbar("Logged out successfully", "success");
 
@@ -242,7 +264,8 @@ const ProfileSetting = ({
         await clearUserData();
         await AsyncStorage.clear(); // clear everything
         await clearSelectedShop(); // clear selectedShop from context
-
+        // await AsyncStorage.removeItem('lastLoginTime');
+        await clearLoginTime()
         console.log("User data after logout:", userData);
         navigation.dispatch(
           CommonActions.reset({
@@ -331,7 +354,7 @@ const ProfileSetting = ({
                       style={{
                         fontSize: 20,
                         fontFamily: "Poppins-Bold",
-                        color: colors?.avatarBackground,
+                        color: colors?.text,
                       }}
                     >
                       {userData?.user?.name || userData?.user?.mobile}

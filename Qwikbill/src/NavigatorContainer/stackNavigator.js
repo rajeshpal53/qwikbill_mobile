@@ -58,6 +58,7 @@ import ShowProductScreen from "../Screen/StackScreen/ShowProductScreen.js";
 import useTokenExpiry from "../Store/useTokenExpiry.js";
 import { useThemeContext } from "../Store/ThemeContext.js";
 import { useTheme } from "../../constants/Theme.js";
+import ShareTransaction from "../Components/ShareTransaction.js";
 export default function StackNavigator() {
       // useTokenExpiry()
 
@@ -77,6 +78,27 @@ export default function StackNavigator() {
    const { userData, fetchUserData, clearUserData } =
     useContext(UserDataContext);
       const [isForgetPasswordState, setIsForgetPasswordState] = useState(false);
+  useEffect(() => {
+  const decideRoute = async () => {
+    try {
+      if (isForgetPasswordState) {
+        setInitialRoute("login");
+      } else if (userData && Object.keys(userData).length > 0) {
+        setInitialRoute(passkey == null ? "CreateNewPasscode" : "Passcode");
+      } else {
+        setInitialRoute("login");
+      }
+    } catch (err) {
+      console.log("Route decision error:", err);
+      setInitialRoute("login");
+    } finally {
+     
+    }
+  };
+
+  decideRoute();
+}, [userData, passkey, isForgetPasswordState]);
+
 
   const { t } = useTranslation()
   const fetchServiceProvider = async (userData) => {
@@ -121,39 +143,39 @@ export default function StackNavigator() {
       });
   }, []);
 
-  useEffect(() => {
-    const checkRoute = async () => {
-      // fetch async values
-      // const forgetState = await getForgetPasswordState();
-      // const userData = await getUserData();
-      // const passkey = await getPasskey();
+  // useEffect(() => {
+  //   const checkRoute = async () => {
+  //     // fetch async values
+  //     // const forgetState = await getForgetPasswordState();
+  //     // const userData = await getUserData();
+  //     // const passkey = await getPasskey();
 
-      if (forgetState) {
-        setInitialRoute("login");
-      } else if (userData) {
-        if (!passkey) {
-          setInitialRoute("CreateNewPasscode");
-        } else {
-          setInitialRoute("Passcode");
-        }
-      } else {
-        setInitialRoute("login");
-      }
-    };
+  //     if (forgetState) {
+  //       setInitialRoute("login");
+  //     } else if (userData) {
+  //       if (!passkey) {
+  //         setInitialRoute("CreateNewPasscode");
+  //       } else {
+  //         setInitialRoute("Passcode");
+  //       }
+  //     } else {
+  //       setInitialRoute("login");
+  //     }
+  //   };
 
-    checkRoute();
-  }, []);
+  //   checkRoute();
+  // }, []);
 
 
 
-  if (isLoading||!initialRoute===null) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+  if (isLoading || initialRoute === null) {
+  return (
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <ActivityIndicator size="large" />
+    </View>
+  );
+}
 
-  }
 
 
 
@@ -165,15 +187,7 @@ export default function StackNavigator() {
     {console.log("passkey in stack navigator", passkey,isForgetPasswordState,userData)}
       <Stack.Navigator
         // initialRouteName={userData ? "Passcode" : "login"}
-         initialRouteName={
-  isForgetPasswordState
-    ? "login"
-    : userData && Object.keys(userData).length > 0
-      ? passkey == null
-        ? "CreateNewPasscode"
-        : "Passcode"
-      : "login"
-}
+         initialRouteName={initialRoute}
        screenOptions={{
     headerStyle: {
       backgroundColor: colors?.background, // 🔹 applies to all screens
@@ -231,25 +245,13 @@ export default function StackNavigator() {
           }}
         />
         <Stack.Screen
-          name="InvoiceTransactionScreen"
-          component={InvoiceTransactionScreen}
-          options={{
-            headerTitle: "Transaction Details",
-            headerRight: () => (
-      <TouchableOpacity
-        onPress={() => {
-          // Add your share logic here
-          console.log("Share button pressed");
-          
-        }}
-        style={{ marginRight: 15 }}
-      >
-        <Ionicons name="share-social-outline" size={24} color="black" />
-      </TouchableOpacity>
-    ),
-          }}
-
-        />
+  name="InvoiceTransactionScreen"
+  component={InvoiceTransactionScreen}
+  options={({ route }) => ({
+    headerTitle: "Transaction Details",
+    headerRight: () => <ShareTransaction id={route.params?.invoices?.invoicefk} />, // ✅ pass id
+  })}
+/>
 
         <Stack.Screen
           name="EditProduct"

@@ -280,7 +280,7 @@ const TAX_OPTIONS = ["5", "12", "18", "28"]; // only percentage values
                   if (response) {
                     showSnackbar("Product Added Successfully", "success");
                     resetForm();
-                    navigation.goBack();
+                    navigation.navigate("wertone",{screen:"Products"});
                   } else {
                     showSnackbar("Failed to add product", "error");
                   }
@@ -312,8 +312,8 @@ const TAX_OPTIONS = ["5", "12", "18", "28"]; // only percentage values
                     style={styles.input}
                     onChangeText={(text) => {
                       // Allow only alphabets and numbers
-                      const cleanedText = text.replace(/[^a-zA-Z0-9 ]/g, "");
-                      handleChange("ProductName")(cleanedText);
+                     
+                      handleChange("ProductName")(text);
                     }}
                     onBlur={handleBlur("ProductName")}
                     value={values.ProductName}

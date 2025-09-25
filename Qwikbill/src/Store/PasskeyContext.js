@@ -16,8 +16,11 @@ export const PasskeyProvider = ({ children }) => {
       if (storedPasskey) {
         setPasskey(storedPasskey);
         setIsPasskey(true)
+        return true;
       }else{
+
         setIsPasskey(false)
+        return false
       }
     } catch (error) {
       console.error('Failed to load passkey', error);
@@ -53,7 +56,7 @@ export const PasskeyProvider = ({ children }) => {
   }, []);
 
   return (
-    <PasskeyContext.Provider value={{ passkey, savePasskey, removePasskey,isPasskey}}>
+    <PasskeyContext.Provider value={{ passkey, savePasskey, removePasskey,isPasskey,loadPasskey}}>
       {children}
     </PasskeyContext.Provider>
   );

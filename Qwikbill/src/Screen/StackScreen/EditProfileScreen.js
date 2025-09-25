@@ -24,6 +24,7 @@ import {
   API_BASE_URL,
   NORM_URL
 } from "../../Util/UtilApi";
+import GenderDropdown from "../../Components/GenderDropdown";
 
 const referenceDate = new Date("2025-01-08T07:29:04.338Z");
 // Minimum date for a person to be at least 5 years old
@@ -477,45 +478,15 @@ export default function EditProfileScreen({ navigation }) {
                       </View>
 
                       <View style={styles.ageGenderContainer}>
-                        <View>
-                          <List.Accordion
-                            accessibilityLabel="Gender"
-
-                            style={{
-                              height: 56,
-                              borderBottomWidth: 1,
-                              borderBottomColor: "rgba(0, 0, 0, 0.3)",
-                            }}
-
-                            title={selectedGender || "Select Gender"}
-                            expanded={dropdownVisible}
-                            onPress={handlePress}
-                          // left={(props) => <List.Icon {...props} icon="earth" />}
-                          >
-                            <View style={styles.dropdownContainer}>
-                              <ScrollView
-                                contentContainerStyle={{ width: "100%" }}
-                              >
-                                {genderList.map((item, index) => (
-                                  <List.Item
-                                    key={index}
-                                    title={item.gender}
-
-                                    onPress={() => {
-                                      setSelectedGender(item.gender);
-                                      setFieldValue("gender", item.gender);
-                                      setDropdownVisible(false);
-                                    }}
-                                  />
-                                ))}
-                              </ScrollView>
-                            </View>
-                          </List.Accordion>
-                          {touched.gender && errors.gender ? (
-                            <Text style={styles.errorText}>{errors.gender}</Text>
-                          ) : null}
-                        </View>
-
+                       <GenderDropdown 
+                        genderList={genderList}
+  selectedGender={selectedGender}
+  setSelectedGender={setSelectedGender}
+  setFieldValue={setFieldValue}
+  touched={touched}
+  errors={errors}
+                       />
+                        
 
                       </View>
 

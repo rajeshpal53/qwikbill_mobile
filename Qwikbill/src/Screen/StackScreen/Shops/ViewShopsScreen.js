@@ -41,7 +41,6 @@ export default function ViewShopsScreen() {
   const { showSnackbar } = useSnackbar();
   const isFocused = useIsFocused();
   const { userData } = useContext(UserDataContext);
-
   const [searchedData, setSearchedData] = useState([]);
   const [searchCalled, setSearchCalled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -118,7 +117,7 @@ export default function ViewShopsScreen() {
     };
 
     fetchUserRoles();
-  }, []);
+  }, [isFocused]);
 
 
 
@@ -212,7 +211,7 @@ export default function ViewShopsScreen() {
           setSearchQuery={setSearchQuery}
           setsearchmodal={setsearchmodal}
           setTranscript={setTranscript}
-          placeholderText="Search Vender ..."
+          placeholderText="Search Shop ..."
           searchData={searchdata}
         //    refuser={searchBarRef}
         />

@@ -117,6 +117,8 @@ const bankValidationSchema = Yup.object().shape({
   
     .matches(/^[a-zA-Z\s.]+$/, "Only alphabets, spaces, and '.' are allowed")
     .max(100, "Account holder name must be under 100 characters"),
+    upiId: Yup.string()
+    .matches(/^[\w.-]{2,256}@[a-zA-Z]{2,64}$/, "Enter a valid UPI ID")
 });
 
 const ProfileValidationSchema = Yup.object().shape({
@@ -188,6 +190,7 @@ const CreateShopScreen = ({ navigation }) => {
   const richText = useRef();
   const routeData = route?.params?.editItem || null;
   const isAdmin = route?.params?.isAdmin ?? false;
+  const isGoBack= route?.params?.isGoBack ??true
   const isFocused = useIsFocused();
   const { showSnackbar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(false);
@@ -248,6 +251,7 @@ const CreateShopScreen = ({ navigation }) => {
   const [initialData, setInitialData] = useState({
     name: userData?.user?.name || "",
     mobile: userData?.user?.mobile || "",
+    userAddress:userData?.user?.address || "",
     email: userData?.user?.email || "",
     gender: userData?.user?.gender || "",
     dob: new Date() || null,
@@ -261,24 +265,23 @@ const CreateShopScreen = ({ navigation }) => {
     isApproved: routeData?.shopname || false,
     gstNumber: routeData?.gstNumber || "",
     cinNumber: routeData?.cinNumber || "",
+     upiId: routeData?.upiId || "",
     // isOnline: false,
     // isVerified: false,
     // homeDelivery: false,
     // showAddress: "",
     shopImage: routeData?.shopImage || null,
+    signature:routeData?.signatureImage||null,
     aadharFrontImage: userData?.user?.aadharCardFronturl || null,
     aadharBackImage: userData?.user?.aadharCardBackurl || null,
     profileImage: userData?.user?.profilePicurl || null,
-accountNumber:userData?.user?.accountNumber||"",
-ifscCode:userData?.user?.ifscCode||"",
-branchName:userData?.user?.branchName||"",
-accountHolderName:userData?.user?.accountHolderName||"",
-signature:userData?.user?.signature||null
-
-
-
+accountNumber:routeData?.accountNumber||"",
+ifscCode:routeData?.ifscCode||"",
+branchName:routeData?.branchName||"",
+accountHolderName:routeData?.accountHolderName||"",
   });
 
+  
 
   useEffect(() => {
     const handleBackPress = navigation.addListener("beforeRemove", (e) => {
@@ -431,6 +434,17 @@ signature:userData?.user?.signature||null
           isOnline: routeData?.isOnline || false,
           isVerified: routeData?.isVerified || false,
           homeDelivery: routeData?.homeServiceProvide || false,
+          accountNumber:routeData?.accountNumber||"",
+              cinNumber: routeData?.cinNumber || "",
+
+ifscCode:routeData?.ifscCode||"",
+branchName:routeData?.branchName||"",
+accountHolderName:routeData?.accountHolderName||"",
+signature:(routeData?.signatureImage &&
+              formatUrl(routeData?.signatureImage, "signature")) ||
+            null,
+
+
           // showAddress: tempShowAddress?.formatted_address || "",
           shopImage:
             (routeData?.shopImage &&
@@ -499,10 +513,6 @@ signature:userData?.user?.signature||null
   function handleCancel() {
     setShowModal(false);
   }
-
-
-
-
   const handleGenderDropDownPress = () => {
     setGenderDropDownVisible((prev) => !prev);
   };
@@ -740,10 +750,15 @@ signature:userData?.user?.signature||null
 
         data.append("usersfk", userfk);
 
+
         console.log("userfk isssss ssss", routeData, createdUserId);
 
         if (routeData) {
           data.append("id", routeData?.id);
+        }
+
+        if(values?.upiId){
+          data.append("upiId",values?.upiId)
         }
 
 
@@ -804,7 +819,12 @@ signature:userData?.user?.signature||null
             // });
             submit.current = true;
             // navigation.pop(2);
+            if(isGoBack){
             navigation.goBack();
+            }
+            else{
+              navigation?.navigate("ViewShops")
+            }
           } else {
             console.log("jayesh is happy", userfk);
             

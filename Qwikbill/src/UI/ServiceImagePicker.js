@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useContext } from "react";
 import {
   Image,
   Pressable,
@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import Modal from "react-native-modal";
 import { Divider, Text } from "react-native-paper";
 import { fontSize } from "../Util/UtilApi";
+import UserDataContext from "../Store/UserDataContext";
 // import ImageResizer from "react-native-imageresizer"; // Import the package
 
 // import * as ImageManipulator from 'expo-image-manipulator';
@@ -38,10 +39,56 @@ export default function ServiceImagePicker({
   const [uploadStatus, setUploadStatus] = useState("");
   const [modalVisibel, setModalVisible] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
+  const{userData}=useContext(UserDataContext)
   // const imageUrl = image?.uri
   //   ? image?.uri
   //   : "";
 
+//   useEffect(() => {
+//   if (uploadFieldName === "profileImage" && type === "rounded") {
+//     if (image?.uri) {
+//       // ✅ If user uploaded, always prefer uploaded image
+//       setImageUrl(image.uri);
+//     } else if (userData?.user?.profilePicurl) {
+//       // ✅ If backend profilePicurl exists
+//       const nevVar = `${NORM_URL}/${userData.user.profilePicurl}`;
+//       setImageUrl(nevVar);
+//     } else if (userData?.user?.gender == null) {
+//       setImageUrl("https://dailysabji.com/assets/mobile/neutral.png");
+//     } else if (
+//       userData?.user?.gender === "Female" ||
+//       userData?.user?.gender === "female"
+//     ) {
+//       setImageUrl("https://dailysabji.com/assets/mobile/female.png");
+//     } else if (
+//       userData?.user?.gender === "Male" ||
+//       userData?.user?.gender === "male"
+//     ) {
+//       setImageUrl("https://dailysabji.com/assets/mobile/male.png");
+//     } else {
+//       setImageUrl("https://dailysabji.com/assets/mobile/neutral.png");
+//     }
+//   } else {
+//     // For non-profileImage cases
+//     setImageUrl(image?.uri || "https://dailysabji.com/assets/mobile/neutral.png");
+//   }
+// }, [userData, uploadFieldName, type, image]);
+
+
+const getDefaultProfileImage = (gender) => {
+  if (!gender) {
+    return "https://dailysabji.com/assets/mobile/neutral.png";
+  }
+  if (gender.toLowerCase() === "male") {
+    return "https://dailysabji.com/assets/mobile/male.png";
+  }
+  if (gender.toLowerCase() === "female") {
+    return "https://dailysabji.com/assets/mobile/female.png";
+  }
+  return "https://dailysabji.com/assets/mobile/neutral.png";
+};
+
+  console.log(imageUrl,"rounded")
   useEffect(() => {
     const setImageUrlfunc = () => {
       console.log("pratham y image , ", image);
@@ -243,8 +290,7 @@ export default function ServiceImagePicker({
             <Image
               source={{
                 uri:
-                  imageUrl ||
-                  "https://servicediary.online/assets/mobile/male.png", // Replace with your image URL
+                  imageUrl||getDefaultProfileImage(userData?.user?.gender), // Replace with your image URL
                 headers: { Accept: "*/*" },
                 // priority: FastImage.priority.high,
                 // cache: FastImage.cacheControl.web,

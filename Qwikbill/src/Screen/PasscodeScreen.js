@@ -130,7 +130,7 @@ export default function PasscodeScreen({ navigation }) {
       return Alert.alert("Invalid Passcode", "Passcode must be 4 digits.");
 
     }
-    await storeCurrentTime();
+    // await storeCurrentTime();
 
     if (enteredPasscode === passkey) {
       if (loginDetail1.isshop === false) {
@@ -161,7 +161,7 @@ export default function PasscodeScreen({ navigation }) {
 
     if (result.success) {
       // const {previousLoginTime} = await storeTimes();
-      await storeCurrentTime();
+      // await storeCurrentTime();
       if (loginDetail1.isshop === false) {
         navigation.navigate("CreateShopScreen");
       } else {

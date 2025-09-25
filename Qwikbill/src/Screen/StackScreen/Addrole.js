@@ -22,6 +22,8 @@ import { ButtonColor, createApi, fontSize, readApi } from "../../Util/UtilApi";
 // import RNPickerSelect from "react-native-picker-select";
 import { Picker } from "@react-native-picker/picker";
 import ConfirmModal from "../../Components/Modal/ConfirmModal";
+import NameTextInput from "../../Component/Form/NameTextInput";
+import RolePicker from "../../Components/RolePicker";
 
 const AddRole = () => {
   const { userData } = useContext(UserDataContext);
@@ -37,6 +39,7 @@ const AddRole = () => {
   const [currentUserRole, setcurrentUserRole] = useState("");
   const pendingActionRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
+  const[formFilled,setFormFilled]=useState(false)
   // <—
 
   // useEffect(() => {
@@ -302,12 +305,13 @@ const AddRole = () => {
           handleSubmit,
           touched,
           setFieldValue,
+          
         }) => {
           console.log("FILLED DATA OF VALUE ", values);
           return (
             <View style={styles.form}>
               <View style={styles.header}>
-                <Text style={styles.headerText}>Owner Name</Text>
+                <Text style={styles.headerText}>Owner Name </Text>
                 <Text style={styles.subHeaderText}>{userData?.user?.name}</Text>
               </View>
 
@@ -345,7 +349,7 @@ const AddRole = () => {
               )}
 
               {/* User Name */}
-              <TextInput
+              {/* <TextInput
                 mode="flat"
                 label="Enter User Name"
                 style={
@@ -367,6 +371,18 @@ const AddRole = () => {
                     />
                   ) : null
                 }
+              /> */}
+              <NameTextInput
+              values={values}
+              handleChange={handleChange} 
+              handleBlur={handleBlur}
+              touched={touched}
+              errors={errors} 
+              setFieldValue={setFieldValue}
+              setFormFilled={setFormFilled}   
+              inputStyle={styles?.input}
+              setUser={setUser}
+              placeholder={"Enter User Name"}
               />
               {touched.userName && errors.userName && (
                 <Text style={styles.errorText}>{errors.userName}</Text>
@@ -391,15 +407,18 @@ const AddRole = () => {
               )}
 
               {/* Shop Description */}
-              <View style={{ marginBottom: 6 }}>
+
+              {selectedShop?.role?.vendor?.details&&(
+                 <View style={{ marginBottom: 6 }}>
                 <Text style={styles.label}>Shop Description</Text>
                 <View style={styles.TextShopDes}>
                   <Text style={styles.TextShop}>
-                    {selectedShop?.details ||
-                      "This is dummy data, This is a shop details. "}
+                    {selectedShop?.details}
                   </Text>
                 </View>
               </View>
+              )}
+             
 
               {/* Shop Dropdown */}
               <View style={{ marginBottom: 10 }}>
@@ -416,7 +435,7 @@ const AddRole = () => {
 
               {/* User Role Dropdown */}
               <View style={{ marginBottom: 10,margintop:10, }}>
-                <Text
+                {/* <Text
                   style={{
                     fontSize: fontSize.labelLarge,
                     fontFamily: "Poppins-Regular",
@@ -444,10 +463,21 @@ const AddRole = () => {
                       value={role?.value || ""}
                     />
                   ))}
-                </Picker>
-                {touched.userRole && errors.userRole && (
+                </Picker> */}
+
+                <RolePicker
+                  values={values}
+              touched={touched}
+              errors={errors} 
+              setFieldValue={setFieldValue}
+              getAssignableRoles={getAssignableRoles}
+              SetAddRole={SetAddRole}
+              currentUserRole={currentUserRole}
+              
+                /> 
+                {/* {touched.userRole && errors.userRole && (
                   <Text style={styles.errorText}>{errors.userRole}</Text>
-                )}
+                )} */}
               </View>
 
               {/* Submit Button */}

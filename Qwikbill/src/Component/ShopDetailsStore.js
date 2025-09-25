@@ -59,6 +59,7 @@ const ShopDetailsStore = ({ item, setConfirmModalVisible, setShopDeleteId }) => 
     navigation.navigate("CreateShopScreen", {
       editItem: newPayload,
       isUpdateAddress: true,
+      isGoBack:false
 
     });
   };

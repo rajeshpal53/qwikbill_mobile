@@ -2,12 +2,7 @@
 
 import { useNavigation } from "@react-navigation/native";
 import { useContext, useEffect, useState } from "react";
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, StyleSheet, Text, View,TouchableOpacity } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { useDebounce } from "use-debounce";
@@ -21,7 +16,8 @@ import { ShopContext } from "../Store/ShopContext";
 import { useSnackbar } from "../Store/SnackbarContext";
 import UserDataContext from "../Store/UserDataContext";
 import { readApi } from "../Util/UtilApi";
-
+import { Image } from "expo-image";
+import { Dimensions } from "react-native";
 const AllItemProduct = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
@@ -43,6 +39,7 @@ const AllItemProduct = () => {
   const { selectedShop } = useContext(ShopContext);
   const { userData } = useContext(UserDataContext);
   const { showSnackbar } = useSnackbar();
+const { width: deviceWidth } = Dimensions.get("window");
 
   useEffect(() => {
     if (selectedShop?.vendor?.product?.length === 0) {
@@ -80,10 +77,14 @@ const AllItemProduct = () => {
       }
     } catch (error) {
       if (page === 1) setProducts([]);
-      console.error("Error fetching products:", error?.data?.status,error,error?.status);
-      if(error?.status!==404){
-      showSnackbar("Something went wrong while loading products.", "error");
-
+      console.error(
+        "Error fetching products:",
+        error?.data?.status,
+        error,
+        error?.status
+      );
+      if (error?.status !== 404) {
+        showSnackbar("Something went wrong while loading products.", "error");
       }
     } finally {
       setloader(false);
@@ -122,7 +123,7 @@ const AllItemProduct = () => {
       setSearchedData([]);
       setSearchCalled(false);
     }
-  }
+  };
 
   const loadmore = () => {
     if (hasmore && !loader && page < totalpage) {
@@ -167,10 +168,33 @@ const AllItemProduct = () => {
         onEndReachedThreshold={0.8}
         ListFooterComponent={Loader}
         ListEmptyComponent={() => (
-          <View style={{ alignItems: "center", marginTop: 20 }}>
-            <Text style={{ fontSize: 16, color: "gray" }}>
-              No products found.
-            </Text>
+          <View
+            style={{
+              flex: 0.5,
+              justifyContent: "flex-end",
+              alignItems: "center",
+              marginTop: "35%",
+            }}
+          >
+            <Image
+              source={require("../../assets/invoiceGenrate.png")}
+              style={{
+                width: deviceWidth * 0.8, // 👈 90% of screen width
+                height: (deviceWidth * 0.7 * 280) / 300, // keep original aspect ratio
+                alignSelf: "center", // center align
+              }}
+            />
+            <Text style={styles.vendorText}>No Products Found !</Text>
+            <TouchableOpacity
+              style={styles.touchableview}
+              onPress={() =>  navigation.navigate("AddProduct", {
+                      EditData: null,
+                      isUpdated: false,
+                     
+                    })}
+            >
+              <Text style={styles.btntext}>Please add a products</Text>
+            </TouchableOpacity>
           </View>
         )}
       />
@@ -183,9 +207,7 @@ const AllItemProduct = () => {
         />
       )}
 
-      {showOverlay && (
-        <ViewCartOverlay navigation={navigation} carts={carts} />
-      )}
+      {showOverlay && <ViewCartOverlay navigation={navigation} carts={carts} />}
     </View>
   );
 };
@@ -194,6 +216,25 @@ const styles = StyleSheet.create({
   flatListContainer: {
     paddingBottom: 130,
   },
+    touchableview: {
+      
+      paddingVertical: 5,
+      paddingHorizontal: 10,
+      borderRadius: 10,
+      backgroundColor: "#007bff",
+    },
+     btntext: {
+        fontFamily: "Poppins-Medium",
+        fontSize: 14,
+        color: "#fff",
+      },
+        vendorText: {
+          fontWeight: "bold",
+          marginVertical: 20,
+          // fontSize: 18,
+          fontFamily: "Poppins-Medium",
+          fontSize: 16,
+        },
 });
 
 export default AllItemProduct;

@@ -172,9 +172,9 @@ export const useDownloadInvoice = () => {
     }
   };
 
-  const shareInvoicePressHandler = async (api, orderId = 1, token) => {
+  const shareInvoicePressHandler = async (api, orderId = 1, token,name="invoice") => {
   try {
-    const fileUri = FileSystem.documentDirectory + `invoice_${orderId}.pdf`;
+    const fileUri = FileSystem.documentDirectory + `${name}_${orderId}.pdf`;
 
     // Remove old file if exists
     const fileInfo = await FileSystem.getInfoAsync(fileUri);

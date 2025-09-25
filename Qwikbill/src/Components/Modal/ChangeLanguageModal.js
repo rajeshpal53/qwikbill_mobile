@@ -68,7 +68,7 @@ const ChangeLanguageModal = ({
                 }}
               >
                 <Text style={styles.modalTitle}>
-                  {t("Select Your Language")}
+                  {t("Change Language")}
                 </Text>
 
                 <TouchableOpacity

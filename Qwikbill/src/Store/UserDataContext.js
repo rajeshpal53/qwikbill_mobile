@@ -6,9 +6,7 @@ const UserDataContext = createContext();
 export const UserDataProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
 
-  // Load data from AsyncStorage when the app starts
-  useEffect(() => {
-    const loadUserData = async () => {
+  const loadUserData = async () => {
       try {
         const storedData = await AsyncStorage.getItem('userData');
         if (storedData) {
@@ -18,6 +16,9 @@ export const UserDataProvider = ({ children }) => {
         console.log('Error loading user data:', error);
       }
     };
+  // Load data from AsyncStorage when the app starts
+  useEffect(() => {
+    
 
     loadUserData();
   }, []);
@@ -80,7 +81,7 @@ export const UserDataProvider = ({ children }) => {
   };
 
   return (
-    <UserDataContext.Provider value={{ userData, saveUserData, clearUserData, fetchUserData }}>
+    <UserDataContext.Provider value={{ userData, saveUserData, clearUserData, fetchUserData,loadUserData}}>
       {children}
     </UserDataContext.Provider>
   );

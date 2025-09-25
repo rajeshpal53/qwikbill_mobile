@@ -1,5 +1,5 @@
 import { memo, useState } from "react";
-import { Text, TouchableOpacity, View, StyleSheet, TextInput } from "react-native";
+import { Text, TouchableOpacity, View, StyleSheet, TextInput, Alert } from "react-native";
 import { useDispatch } from "react-redux";
 import {
   decreaseQuantity,
@@ -7,10 +7,14 @@ import {
   removeFromCart,
   updateQuantity,
 } from "./slices/CartSlice";
+import { useSnackbar } from "../Store/SnackbarContext";
+
+const MAX_QUANTITY = 10000; // 👈 define max once
 
 const IncAndDicButton = ({ item }) => {
   const dispatch = useDispatch();
   const [inputValue, setInputValue] = useState(String(item.quantity));
+    const {showSnackbar}=useSnackbar()
 
   const handleDecrement = () => {
     if (item.quantity > 1) {
@@ -22,28 +26,38 @@ const IncAndDicButton = ({ item }) => {
   };
 
   const handleIncrement = () => {
-    dispatch(incrementQuantity(item));
-    setInputValue(String(item.quantity + 1));
+    if (item.quantity < MAX_QUANTITY) {
+      dispatch(incrementQuantity(item));
+      setInputValue(String(item.quantity + 1));
+    } else {
+      showSnackbar(`Limit Reached ,You cannot add more than ${MAX_QUANTITY} items.`,"error")
+      // Alert.alert("Limit Reached", `You cannot add more than ${MAX_QUANTITY} items.`);
+    }
   };
 
-const handleQuantityChange = (text) => {
-  // Allow only numbers
-  const numericValue = text.replace(/[^0-9]/g, "");
-  setInputValue(numericValue);
+  const handleQuantityChange = (text) => {
+    // Allow only numbers
+    const numericValue = text.replace(/[^0-9]/g, "");
+    setInputValue(numericValue);
 
-  // If user cleared input, don't dispatch yet
-  if (numericValue === "") return;
+    if (numericValue === "") return;
 
-  const quantity = parseInt(numericValue, 10);
+    let quantity = parseInt(numericValue, 10);
 
-  if (!isNaN(quantity) && quantity > 0) {
+    if (isNaN(quantity) || quantity <= 0) {
+      // reset to 1 if invalid
+      quantity = 1;
+    } else if (quantity > MAX_QUANTITY) {
+      // cap at 1000
+      quantity = MAX_QUANTITY;
+      // Alert.alert("Limit Reached", `Maximum allowed quantity is ${MAX_QUANTITY}.`);
+    showSnackbar(`Limit Reached ,Maximum allowed quantity is ${MAX_QUANTITY}.`,"error")
+
+    }
+
     dispatch(updateQuantity({ id: item.id, quantity }));
-  } else {
-    // If invalid (0, NaN), force reset to 1 in Redux
-    dispatch(updateQuantity({ id: item.id, quantity: 1 }));
-    setInputValue("1");
-  }
-};
+    setInputValue(String(quantity));
+  };
 
 
   return (
@@ -58,7 +72,6 @@ const handleQuantityChange = (text) => {
           value={inputValue}
           keyboardType="numeric"
           onChangeText={handleQuantityChange}
-         
         />
 
         <TouchableOpacity onPress={handleIncrement} style={styles.quantityButton}>
@@ -93,11 +106,10 @@ const styles = StyleSheet.create({
   quantityInput: {
     borderWidth: 1,
     borderColor: "#ccc",
-    width: 30,
+    width: 40,
     height: 40,
     textAlign: "center",
-    justifyContent:"flex-end",
-    fontSize: 13,
+    fontSize: 14,
     borderRadius: 5,
   },
 });

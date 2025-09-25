@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { IconButton, Modal, ProgressBar, TextInput } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { LoginTimeContext } from "../../Store/LoginTimeContext";
 
 const SetpasswordModal = ({
   visible,
@@ -18,6 +19,7 @@ const SetpasswordModal = ({
   const [PassisSecure, setPassIsSecure] = useState(true);
   const [ConfirmPassisSecure, setConfirmPassIsSecure] = useState(true);
   const [strength, setStrength] = useState(0);
+  const{clearLoginTime}=useContext(LoginTimeContext)
   const ValidationSchema = Yup.object().shape({
     password: Yup.string()
       .min(8, "Password must be at least  8 characters")
@@ -112,6 +114,7 @@ const SetpasswordModal = ({
             );
 
             if (signupSuccessfully) {
+              clearLoginTime()
               closeModal();
               resetForm(); // Reset the form after successful submission
 

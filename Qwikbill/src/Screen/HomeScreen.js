@@ -17,6 +17,7 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   View,
+  Dimensions
 } from "react-native";
 import { RefreshControl } from "react-native-gesture-handler";
 import { ActivityIndicator } from "react-native-paper";
@@ -43,7 +44,7 @@ import { useTheme } from "../../constants/Theme";
 
 export default function HomeScreen({ navigation, noItemData }) {
   const { t } = useTranslation();
-  const { currentLoginTime, lastLoginTime, storeTime } =
+  const { currentLoginTime, lastLoginTime, storeCurrentTime } =
     useContext(LoginTimeContext);
     const { colors, isDark } = useTheme();
   // const { getData } = useContext(AuthContext);
@@ -56,6 +57,7 @@ export default function HomeScreen({ navigation, noItemData }) {
   const pickerRef = useRef();
   const { width, height } = useWindowDimensions();
   console.log(width, "  ", height);
+const { width: deviceWidth } = Dimensions.get("window");
 
 
   console.log(isDark,"isDark")
@@ -81,20 +83,6 @@ export default function HomeScreen({ navigation, noItemData }) {
   useEffect(() => {
     fetchShopsFromServer()
   }, [])
-
-  useEffect(() => {
-
-    // console.log(" slected shop in HomeSscreen", selectedShop);
-    console.log("all shops  are ", allShops)
-
-  }, [selectedShop]);
-  useEffect(() => {
-
-    console.log(" slelected vendor ", allShops);
-
-  }, [selectedShop]);
-
-
   useEffect(() => {
     if (noItemModal) {
       console.log("Modal should show now because noItemModal is true.");
@@ -127,7 +115,10 @@ export default function HomeScreen({ navigation, noItemData }) {
   //   };
 
   //   validateToken();         
-  // }, [navigation]);          
+  // }, [navigation]);   
+  useEffect(()=>{
+   storeCurrentTime();
+  },[])       
 
 
   useEffect(() => {
@@ -248,7 +239,9 @@ export default function HomeScreen({ navigation, noItemData }) {
                 : `${userData?.user?.mobile}`}
             </Text>
           </View>
-          <Text style={styles.subHeaderText}>Last Login : {lastLoginTime}</Text>
+          {
+            lastLoginTime&& <Text style={styles.subHeaderText}>Last Login : {lastLoginTime}</Text>
+          }
         </View>
 
         <View>
@@ -347,12 +340,17 @@ export default function HomeScreen({ navigation, noItemData }) {
                   />
                 </View>
               ) : (
-                <View style={{ flex: 0.5, justifyContent: "flex-end", alignItems: "center", marginTop: "10%" }}>
-                  <Image
-                    source={require("../../assets/invoiceGenrate.png")}
-                    style={{ width: 300, height: 280 }}
-                  />
-                  <Text style={styles.vendorText}>To Generate New Invoice</Text>
+                <View style={{ flex: 0.5, justifyContent: "flex-end", alignItems: "center", marginTop: "5%" }}>
+                 
+<Image
+  source={require("../../assets/invoiceGenrate.png")}
+  style={{
+    width: deviceWidth * 0.8,   // 👈 90% of screen width
+    height: (deviceWidth * 0.7 *280  ) / 300, // keep original aspect ratio
+    alignSelf: "center",        // center align
+  }}
+/>
+                  <Text style={styles.vendorText}>Generate Invoice !</Text>
                   <TouchableOpacity
                     style={styles.touchableview}
                     onPress={() => navigation.navigate("CreateShopScreen")}

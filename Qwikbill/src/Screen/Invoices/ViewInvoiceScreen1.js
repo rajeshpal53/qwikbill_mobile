@@ -13,6 +13,9 @@ import UserDataContext from "../../Store/UserDataContext";
 import NoDataFound from "../../Components/NoDataFound";
 import { Filter } from "react-native-svg";
 import { useTheme } from "../../../constants/Theme";
+import SelectionOverlay from "../../Component/SelectionOverlay";
+import { useSnackbar } from "../../Store/SnackbarContext";
+import { deleteApi } from "../../Util/UtilApi";
 function ViewInvoiceScreen1({ navigation }) {
   const [invoices, setInvoices] = useState([]);
   const [page, setPage] = useState(1);
@@ -42,8 +45,11 @@ function ViewInvoiceScreen1({ navigation }) {
   const authHeader = { Authorization: `Bearer ${userData?.token}` };
   const [typeFilter, setTypeFilter] = useState("");
   const { colors, isDark } = useTheme();
-  
-
+  const [selectedInvoice, setSelectedInvoice] = useState([]);
+const [selectionMode, setSelectionMode] = useState(false);
+  const [invoiceId, setInvoiceId] = useState("");
+  const[visible,setVisible]=useState(false)
+  const {showSnackbar}=useSnackbar();
   // useEffect(() => {
   //   if (page === 1) {
   //     fetchInvoices(1);
@@ -60,6 +66,32 @@ function ViewInvoiceScreen1({ navigation }) {
   // console.log(" slected shop in invoiceScreen1", selectedShop);
 
 
+  const toggleSelectInvoice = (invoiceId) => {
+  setSelectedInvoice((prev) => {
+    if (prev.includes(invoiceId)) {
+      return prev.filter((id) => id !== invoiceId); // deselect
+    } else {
+      return [...prev, invoiceId]; // select
+    }
+  });
+};
+const handleBulkDelete = async () => {
+  try {
+    // call delete API with selectedProducts
+    // console.log("Deleting products with IDs:", selectedProducts);
+     const response=await deleteApi("invoice/deleteMultipleInvoice",{ Authorization: `Bearer ${userData.token}`,},{invoiceIds:selectedInvoice});
+     setInvoices((prev) => prev.filter(i => !selectedInvoice.includes(i.id)));
+
+    setSelectedInvoice([]);
+    // showSnackbar(`${response?.deletedIds?.length} invoice deleted successfully.`, "success");;
+        showSnackbar(` invoice deleted successfully.`, "success");;
+        setSelectionMode(false)
+  } catch (error) {
+    console.error(error);
+    showSnackbar(`${error.data.message}` ,"error"
+  );
+  }
+};
 
   // Unified effect for filters and selected shop
   useEffect(() => {
@@ -82,6 +114,10 @@ function ViewInvoiceScreen1({ navigation }) {
       }
     }
   }, [page]);
+  const handleLongSelect = (id) => {
+  setSelectionMode(true);
+  setSelectedInvoice([id]); // first selection
+};
 
 
 
@@ -122,7 +158,6 @@ function ViewInvoiceScreen1({ navigation }) {
     }
 
     setIsLoading(true);
-
     try {
       const api = buildApiUrl(pageNum);
       const response = await readApi(api, authHeader);
@@ -270,7 +305,16 @@ function ViewInvoiceScreen1({ navigation }) {
         contentContainerStyle={{ paddingBottom: 140 }}
         data={searchQuery?.length > 0 && searchCalled ? searchedData : invoices}
         renderItem={({ item }) => (
-          <ViewInvoiceCard invoice={item} navigation={navigation} />
+          <ViewInvoiceCard
+           invoice={item} 
+          navigation={navigation}
+            setInvoiceId={setInvoiceId}
+            setVisible={setVisible}
+            isSelected={selectedInvoice.includes(item.id)}  // ✅ highlight if selected
+    onSelect={() => toggleSelectInvoice(item.id)}
+   
+      onLongSelect={() => handleLongSelect(item.id)}
+  selectionMode={selectionMode}/>
         )}
         keyExtractor={(item, index) => `${item.id}-${index}`}
         onEndReached={loadMoreData}
@@ -332,6 +376,13 @@ function ViewInvoiceScreen1({ navigation }) {
             onPress={() => setModalVisible(true)}
             color="#fff"
           />)}
+          {selectedInvoice.length > 0 && (
+  <SelectionOverlay
+    selectedProducts={selectedInvoice}
+    onDelete={handleBulkDelete}
+     onClearSelection={() => {setSelectedInvoice([]);setSelectionMode(false)}}
+  />
+)}
 
 
       {searchModal && (

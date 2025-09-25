@@ -375,6 +375,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
         setIdToken(idToken);
         setPasswordModalVisible(true);
       }
+
     
   } catch (error) {
 
@@ -517,7 +518,6 @@ return (
                       </Text>
                     </TouchableOpacity>
                   </View>
-
                   <Button
                     mode="contained"
                     onPress={confirmOtp}

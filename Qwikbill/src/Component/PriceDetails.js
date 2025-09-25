@@ -6,20 +6,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { applyDiscount, applyPartiallyAmount } from "../Redux/slices/CartSlice";
 import { fontFamily, fontSize } from "../Util/UtilApi";
 import CustomDropdown from "./CustomeDropdown";
+import PaymentModeDropdown from "../Components/PaymentModeDropDown";
 
-
-const PriceDetails = ({ setPaymentStatus, selectedButton, discountValue, setDiscountValue,finalTotal,finalAmountValue,setFinalAmountValue,finalAmountError,setFinalAmountAError,selectedPaymentMode,setSelectedPaymentMode }) => {
+const PriceDetails = ({ setPaymentStatus, selectedButton, discountValue, setDiscountValue,finalTotal,finalAmountValue,setFinalAmountValue,finalAmountError,setFinalAmountAError,selectedPaymentMode,setSelectedPaymentMode, PartiallyAmount ,setPartiallyAmount }) => {
   const dispatch = useDispatch();
   const totalPrice = useSelector((state) => state.cart.totalPrice); 
     const gstAmount = useSelector((state) => state.cart.gstAmount); 
     console.log("gstAmount of redux - ", gstAmount);
   const afterdiscount = useSelector((state) => state.cart.afterdiscount);
   const error = useSelector((state) => state.cart.error);
-  const [PartiallyAmount, setPartiallyAmount] = useState("");
   const carts = useSelector((state) => state.cart.Carts);
   const [selectedStatus, setSelectedStatus] = useState("Paid");
-  const paymentStatuses = ["Unpaid", "Paid", "Partially Paid"];
-
+  const paymentStatuses = ["Unpaid", "Paid", "Partially Paid","Quatation"];
   
   const { t } = useTranslation();
 
@@ -221,25 +219,16 @@ let numericText = value.replace(/[^0-9.]/g, "");
           <View style={{ alignItems: "center", marginTop: 10 }}>
             <Text style={styles.label}>{t("Status")}</Text>
           </View>
-
-          <View style={styles.pickerWrapper}>
-            <Picker
-              selectedValue={selectedStatus}
-              onValueChange={(itemValue) => setSelectedStatus(itemValue)}
-              style={[
-                styles.picker,
-                {
-                  width: selectedStatus === "Partially Paid" ? "71%" :  selectedStatus === "Paid" ? "45%" : "51%",
-                },
-              ]} mode="dropdown"
-            >
-              {paymentStatuses.map((status, index) => (
-                <Picker.Item key={index} label={t(status)} value={status} />
-              ))}
-            </Picker>
+        
+               <PaymentModeDropdown
+      label="Status"
+  options={paymentStatuses} // ["Unpaid", "Partially Paid", "Paid"]
+  value={selectedStatus}
+  onChange={setSelectedStatus}
+  t={t}
+  width={"90%"}
+    />
           </View>
-
-        </View>
         
       )}
       {selectedStatus === "Partially Paid" && (
@@ -259,7 +248,7 @@ let numericText = value.replace(/[^0-9.]/g, "");
             if (amount > finalTotal) {
               amount = finalTotal;
             }
-            setPartiallyAmount(amount.toString());
+            setPartiallyAmount(Number(amount));
           }}
         />
       </View>
@@ -281,10 +270,27 @@ let numericText = value.replace(/[^0-9.]/g, "");
     )}
   </>
 )}
+
+  {selectedStatus !== "Unpaid"|| selectedStatus !== "Quatation" && (
+  <View style={styles.priceView}>
+    <View style={{ alignItems: "center", marginTop: 10 }}>
+      <Text style={styles.label}>{t("Payment Mode")}</Text>
+    </View>
+
+    <PaymentModeDropdown
+      label=" Payment Mode"
+        options={paymentModes}
+        value={selectedPaymentMode}
+        onChange={(option) => setSelectedPaymentMode(option)}
+        width="70%"
+        t={t} // pass translation fn if available
+    />
+  </View>
+)}
    
 
 
-{
+{/* {
   selectedStatus !== "Unpaid" && (
     <View style={styles.priceView}>
       <View style={{ alignItems: "center", marginTop: 10 }}>
@@ -295,18 +301,21 @@ let numericText = value.replace(/[^0-9.]/g, "");
         <Picker
           selectedValue={selectedPaymentMode} // <-- separate state for paymentMode
           onValueChange={(itemValue) => setSelectedPaymentMode(itemValue)}
+          mode="dropdown"
+           dropdownIconColor="transparent"
           style={[
             styles.picker,
             {
               width:
                 selectedStatus === "Partially Paid"
-                  ? "71%"
+                  ? "100%"
                   : selectedStatus === "Paid"
                   ? "60%"
                   : "51%",
+                  flex: 1, marginRight: -20
             },
           ]}
-          mode="dropdown"
+          
         >
           {paymentModes.map((mode, index) => (
             <Picker.Item key={index} label={t(mode)} value={mode} />
@@ -315,7 +324,7 @@ let numericText = value.replace(/[^0-9.]/g, "");
       </View>
     </View>
   )
-}
+} */}
 
 
     </View>
@@ -390,8 +399,8 @@ const styles = StyleSheet.create({
   },
   picker: {
     height: 55,
-   // width: "72%",
-    alignItems: "flex-start",
+  //  width: "72%",
+    alignItems: "flex-end",
     marginRight: -25,
   },
 

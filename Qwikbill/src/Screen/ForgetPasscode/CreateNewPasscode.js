@@ -30,9 +30,9 @@ const CreateNewPasscode = ({ navigation }) => {
   const [newPasskey, setNewPasskey] = useState("");
   const { height } = useWindowDimensions();
 
-  useEffect(() => {
-    savePasskey(newPasskey);
-  }, [passkey]);
+  // useEffect(() => {
+  //   savePasskey(newPasskey);
+  // }, [passkey]);
   return (
     <>
       <StatusBar style="light" backgroundColor={"#0c3b73"} />
@@ -89,6 +89,7 @@ const CreateNewPasscode = ({ navigation }) => {
                         console.log(values);
                         setNewPasskey(values.passcode);
                         savePasskey(values.passcode);
+                        savePasskey(values?.passcode)
                         showSnackbar(
                           "succesfully update new passcode",
                           "success"

@@ -3,17 +3,43 @@ import { Text, Card } from "react-native-paper";
 import { statusName } from "../Util/UtilApi";
 import { useTheme } from "../../constants/Theme";
 
-const ViewInvoiceCard = ({ invoice, navigation }) => {
-  const { colors } = useTheme();
-  const styles = makeStyles(colors); // 👈 generate theme-aware styles
+const ViewInvoiceCard = ({
+  invoice,
+  navigation,
+  setInvoiceId,
+  setVisible,
+  isSelected,
+  onSelect,
+  onLongSelect,
+  selectionMode,
+}) => {
+  const { colors, isDark } = useTheme();
+  const styles = makeStyles(colors);
 
   return (
     <Pressable
-      onPress={() =>
-        navigation.navigate("PDFScreen", { viewInvoiceData: invoice })
-      }
+      onPress={() => {
+        if (selectionMode) {
+          onSelect();
+        } else {
+          navigation.navigate("PDFScreen", { viewInvoiceData: invoice });
+        }
+      }}
+      onLongPress={onLongSelect}
     >
-      <Card style={styles.card}>
+      <Card
+        style={[
+          styles.card,
+          {
+            backgroundColor: colors.background,
+            shadowColor: isDark ? "#ffffff30" : "#000000",
+          },
+          isSelected && {
+            borderColor: colors.primary,
+            backgroundColor: colors.secondary + "22", // ✅ faint tint for selected
+          },
+        ]}
+      >
         {/* Header Row */}
         <View style={styles.headerRow}>
           <View>
@@ -47,9 +73,7 @@ const ViewInvoiceCard = ({ invoice, navigation }) => {
             <Text style={styles.customerName}>
               {invoice?.user?.name || "User Name"}
             </Text>
-            <Text style={styles.date}>
-              Payment: {invoice?.paymentMode}
-            </Text>
+            <Text style={styles.date}>Payment: {invoice?.paymentMode}</Text>
           </View>
 
           <View style={{ alignItems: "flex-end" }}>
@@ -79,6 +103,8 @@ const makeStyles = (colors) =>
       borderRadius: 12,
       elevation: 3,
       backgroundColor: colors.background,
+      borderWidth: 1.2, // to show selection border
+      borderColor: "transparent",
     },
     headerRow: {
       flexDirection: "row",

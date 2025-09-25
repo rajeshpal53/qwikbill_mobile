@@ -109,7 +109,7 @@ export default function BottomNavigator({
        </Tab.Screen>
 
       <Tab.Screen
-        name= {t("Invoice")}
+        name= {t("Invoices")}
         component={ViewInvoiceScreen1}
         // component={Invoice}
         options={{

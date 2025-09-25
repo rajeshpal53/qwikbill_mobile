@@ -11,7 +11,7 @@ function DropDownList({ options, disabled }) {
 
   const selectedLabel = selectedShop
     ? `${selectedShop.vendor.shopname} (${capitalizeFirstLetter(selectedShop.role?.name)})`
-    : "Select Shop *";
+    : "No Shop Added *";
 
   const handleSelect = (item) => {
     updateSelectedShop(item);

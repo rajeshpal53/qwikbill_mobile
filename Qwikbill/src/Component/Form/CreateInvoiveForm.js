@@ -43,16 +43,18 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const pendingActionRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
   const totalPrice = useSelector((state) => state.cart.totalPrice);
-
   const [discountValue, setDiscountValue] = useState(0);
   const [discountRate, setDiscountRate] = useState(0);
   const [finalTotal, setFinalTotal] = useState(0);
   const [formFilled, setFormFilled] = useState(false);
   const [finalAmountValue, setFinalAmountValue] = useState(0);
   const [finalAmountError, setFinalAmountAError] = useState("");
-  const[selectedPaymentMode,setSelectedPaymentMode]=useState("")
-  const {colors}=useTheme()
-{/* <NameInput
+  const [selectedPaymentMode, setSelectedPaymentMode] = useState("");
+    const [PartiallyAmount, setPartiallyAmount] = useState("");
+
+  const { colors } = useTheme();
+  {
+    /* <NameInput
   values={values}
   handleChange={handleChange}
   handleBlur={handleBlur}
@@ -60,11 +62,12 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   errors={errors}
   setFieldValue={setFieldValue}
   setFormFilled={setFormFilled}   // ✅ now it’s a function
-/> */}
+/> */
+  }
 
-const roundToTwo = (num) => {
-  return Number(Math.round(num + 'e2') + 'e-2');
-};
+  const roundToTwo = (num) => {
+    return Number(Math.round(num + "e2") + "e-2");
+  };
   console.log("DATA OF ERROR ", error, discountValue);
   // useEffect(() => {
   //   console.log("selected shop isuser , ", selectedShop);
@@ -99,7 +102,7 @@ const roundToTwo = (num) => {
             };
             const response = await readApi(api, headers);
             if (response) {
-                            console.log("response of search ", response);
+              console.log("response of search ", response);
 
               setUser(response);
               setFieldValue("name", response?.name);
@@ -177,8 +180,11 @@ const roundToTwo = (num) => {
       return 1;
     } else if (PaymentStatus == "Paid") {
       return 2;
-    } else {
+    } else if (PaymentStatus == "Partially Paid") {
       return 3;
+    }
+    else{
+      return 4;
     }
   };
 
@@ -205,7 +211,7 @@ const roundToTwo = (num) => {
       // add/override only what you really need
       const payload = { ...formData, type: invoiceType };
       console.log("payload in handleGenrate ", payload);
-      // payload.vendorfk = undefined; 
+      // payload.vendorfk = undefined;
       const cleanedPayload = Object.fromEntries(
         Object.entries(payload).filter(
           ([_, v]) => v !== null && v !== undefined
@@ -216,15 +222,15 @@ const roundToTwo = (num) => {
         Authorization: `Bearer ${userData?.token}`,
         "Content-Type": "application/json", // optional but safe
       });
-      if(response){
+      if (response) {
         showSnackbar("Invoice created successfully", "success");
-      dispatch(clearCart());
-      resetForm();
-      setDiscountValue(0);
-      setDiscountRate(0);
-      setFinalTotal(0);
-      setFinalAmountValue(0);
-      } 
+        dispatch(clearCart());
+        resetForm();
+        setDiscountValue(0);
+        setDiscountRate(0);
+        setFinalTotal(0);
+        setFinalAmountValue(0);
+      }
       if (button === "download") return response;
       navigation.pop(2);
     } catch (err) {
@@ -236,20 +242,23 @@ const roundToTwo = (num) => {
       //   "Server rejected the invoice – check required fields",
       //   "error"
       // );
-         showSnackbar(
-       err?.data?.message || "Failed to create invoice",
-        "error"
-      );
-       return false;
+      showSnackbar(err?.data?.message || "Failed to create invoice", "error");
+      return false;
     }
   };
-
+  const getFirstError = (errors) => {
+    const key = Object.keys(errors)[0];
+    return key ? { key, msg: errors[key] } : null;
+  };
   return (
     <ScrollView
       scrollEnabled={!isHorizontalScrolling}
       keyboardShouldPersistTaps="handled"
       nestedScrollEnabled={true}
-      contentContainerStyle={{ paddingBottom: 20,backgroundColor:colors?.background }}
+      contentContainerStyle={{
+        paddingBottom: 20,
+        backgroundColor: colors?.background,
+      }}
     >
       <Formik
         enableReinitialize={true}
@@ -268,7 +277,7 @@ const roundToTwo = (num) => {
           console.log("selected cartvalue is , ", cartsValue);
           if (!finalAmountValue && selectedButton !== "Quatation") {
             // showSnackbar("Final Amount cannot be 0", "error");
-            setFinalAmountValue(finalTotal)
+            setFinalAmountValue(finalTotal);
           }
 
           const DataCustomer = {
@@ -283,16 +292,17 @@ const roundToTwo = (num) => {
           const extraData = {
             usersfk: User?.id,
             vendorfk: selectedShop?.vendor?.id,
-            statusfk: selectedButton === "Quatation" ?4:
-             getStatusFk(),
+            statusfk: selectedButton === "Quatation" ? 4 : getStatusFk(),
             subtotal: cartsValue?.totalPrice,
+            partialAmount:PartiallyAmount||0,
             // address: "123 Main Street, City, Country",
             discount: selectedButton === "Quatation" ? 0 : discountValue,
-            finaltotal:selectedButton === "Quatation" ? cartsValue?.totalPrice: parseFloat(finalTotal),
-            paymentMode: selectedPaymentMode||"Cash",
-            ...(PaymentStatus == "Unpaid" || PaymentStatus == "Partially Paid"
-              ? { remainingamount: cartsValue?.afterdiscount }
-              : { remainingamount: 0 }),
+            finaltotal:
+              selectedButton === "Quatation"
+                ? cartsValue?.totalPrice
+                : parseFloat(finalTotal),
+            paymentMode: selectedPaymentMode || "Cash",
+            ...(PaymentStatus == "Unpaid" || PaymentStatus == "Partially Paid" ? { remainingamount:Number(finalTotal-PartiallyAmount)}: { remainingamount: 0 }),
             // ...(selectedButton == "provisional" ? {provisionNumber: "12"} : {}),
           };
 
@@ -330,7 +340,6 @@ const roundToTwo = (num) => {
             setDiscountValue(0);
             submit.current = false;
           }
-        
         }}
       >
         {({
@@ -343,18 +352,36 @@ const roundToTwo = (num) => {
           touched,
           isValid,
           dirty,
+          submitCount,
+          setFieldTouched,
         }) => {
           console.log("DATA VALID", isValid);
           console.log("DATA Dirty", dirty);
           // console.log("cart is , ", carts.length);
           console.log("error is , ", error);
+
+          useEffect(() => {
+            if (submitCount > 0 && Object.keys(errors).length) {
+              const firstErr = getFirstError(errors);
+              if (firstErr) {
+                setFieldTouched(firstErr.key, true, false);
+                showSnackbar(firstErr.msg, "error");
+              }
+            }
+          }, [ submitCount]);
           return (
             <View>
               {/* Phone Field */}
               <NameTextInput
-              values={values}handleChange={handleChange} handleBlur={handleBlur} touched={touched} errors={errors} setFieldValue={setFieldValue} setFormFilled={setFormFilled}   setUser={setUser}
+                values={values}
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+                touched={touched}
+                errors={errors}
+                setFieldValue={setFieldValue}
+                setFormFilled={setFormFilled}
+                setUser={setUser}
               />
-
 
               {/* <TextInput
                 label="Name"
@@ -405,47 +432,49 @@ const roundToTwo = (num) => {
               )}
 
               <TextInput
-  label="Phone"
-  mode="flat"
-  keyboardType="phone-pad"
-  maxLength={10}
-  style={styles.input}
-  onChangeText={async (phoneNumber) => {
-    const numericText = phoneNumber.replace(/[^0-9]/g, "");
-    setFieldValue("mobile", numericText);
-    await fetchUserData(numericText, setFieldValue);
-  }}
-  onBlur={handleBlur("mobile")}   // ✅ Fixed
-  value={values.mobile}
-  right={
-    values.mobile ? (
-      <TextInput.Icon
-        icon="close"
-        size={20}
-        style={{ marginBottom: -22 }}
-        onPress={() => setFieldValue("mobile", "")}
-      />
-    ) : null
-  }
-/>
-{touched.mobile && errors.mobile && (
-  <Text style={styles.errorText}>{errors.mobile}</Text>
-)}
+                label="Phone *"
+                mode="flat"
+                keyboardType="phone-pad"
+                maxLength={10}
+                style={styles.input}
+                onChangeText={async (phoneNumber) => {
+                  const numericText = phoneNumber.replace(/[^0-9]/g, "");
+                  setFieldValue("mobile", numericText);
+                  await fetchUserData(numericText, setFieldValue);
+                }}
+                onBlur={handleBlur("mobile")} // ✅ Fixed
+                value={values.mobile}
+                right={
+                  values.mobile ? (
+                    <TextInput.Icon
+                      icon="close"
+                      size={20}
+                      style={{ marginBottom: -22 }}
+                      onPress={() => setFieldValue("mobile", "")}
+                    />
+                  ) : null
+                }
+              />
+              {touched.mobile && errors.mobile && (
+              
+                  <Text style={styles.errorText}>{errors.mobile}</Text>
+               
+              )}
               {/* Name Field */}
               {loading && (
                 <View style={styles.loaderContainer}>
                   <ActivityIndicator size="large" color="#0000ff" />
                 </View>
               )}
-              
+
               {/* Address Field */}
               <TextInput
-                label="Address"
+                label="Address *"
                 mode="flat"
                 style={styles.input}
                 maxLength={150}
                 onChangeText={(text) => {
-                   const filteredText = text.replace(/[^A-Za-z0-9,\s]/g, "");
+                  const filteredText = text.replace(/[^A-Za-z0-9,\s]/g, "");
                   if (filteredText.trim()) setFormFilled(true);
                   handleChange("address")(filteredText);
                 }}
@@ -478,28 +507,28 @@ const roundToTwo = (num) => {
                 <>
                   <TextInput
                     maxLength={15}
-  label="GST Number"
-  mode="flat"
-  style={styles.input}
-  onChangeText={(text) => {
-    // Remove all spaces
-    const filteredText = text.replace(/[^A-Za-z0-9,\s]/g, "");
+                    label="GST Number"
+                    mode="flat"
+                    style={styles.input}
+                    onChangeText={(text) => {
+                      // Remove all spaces
+                      const filteredText = text.replace(/[^A-Za-z0-9,\s]/g, "");
 
-    handleChange("gstNumber")(filteredText);
-  }}
-  onBlur={handleBlur("gstNumber")}
-  value={values.gstNumber}
-  right={
-    values.gstNumber ? (
-      <TextInput.Icon
-        icon="close"
-        size={20}
-        style={{ marginBottom: -22 }}
-        onPress={() => setFieldValue("gstNumber", "")} // Clears the input when close icon is pressed
-      />
-    ) : null
-  }
-/>
+                      handleChange("gstNumber")(filteredText);
+                    }}
+                    onBlur={handleBlur("gstNumber")}
+                    value={values.gstNumber}
+                    right={
+                      values.gstNumber ? (
+                        <TextInput.Icon
+                          icon="close"
+                          size={20}
+                          style={{ marginBottom: -22 }}
+                          onPress={() => setFieldValue("gstNumber", "")} // Clears the input when close icon is pressed
+                        />
+                      ) : null
+                    }
+                  />
 
                   {touched.gstNumber && errors.gstNumber && (
                     <Text style={styles.errorText}>{errors.gstNumber}</Text>
@@ -551,15 +580,17 @@ const roundToTwo = (num) => {
                     setFinalAmountAError={setFinalAmountAError}
                     setFinalAmountValue={setFinalAmountValue}
                     setSelectedPaymentMode={setSelectedPaymentMode}
-                    selectedPaymentMode={setSelectedPaymentMode}
+                    selectedPaymentMode={selectedPaymentMode}
+                    setPartiallyAmount={setPartiallyAmount}
+                    PartiallyAmount={PartiallyAmount}
                   />
                 </View>
               )}
 
               {/* Submit Button */}
               <TouchableOpacity
- disabled={!!finalAmountError || (carts?.length === 0)}      
-           style={[
+                disabled={!!finalAmountError || carts?.length === 0}
+                style={[
                   styles.submitButton,
                   {
                     opacity: carts?.length > 0 ? 1 : 0.5,

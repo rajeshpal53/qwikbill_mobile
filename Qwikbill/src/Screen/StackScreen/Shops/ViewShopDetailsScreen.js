@@ -18,7 +18,7 @@ const ViewShopDetailsScreen = ({ route }) => {
   const {showSnackbar}=useSnackbar();
   const { updateSelectedShop, allShops } = useContext(ShopContext);
 
-  const defaultImage = require("../../../../assets/myShop.jpg");
+  const defaultImage = require("../../../../assets/shop3.jpeg");
 
   console.log("one selected shop item ",allShops)
   console.log("one selected shop name  item ",item.vendor.shopname)
@@ -70,7 +70,7 @@ const ViewShopDetailsScreen = ({ route }) => {
                   ? { uri: `${NORM_URL}${item?.vendor?.shopImage}?${new Date().getTime()}` }
                   : defaultImage
               }
-              resizeMode="cover"
+              resizeMode="stretch"
               style={{
                 borderTopLeftRadius: 10,
                 borderTopRightRadius: 10,

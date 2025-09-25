@@ -43,7 +43,7 @@ export default function CreateInvoice({ navigation, route }) {
   const toggleOptions = [
     { value: "provisional", label: "Prov Invoice" },
     { value: "gst", label: "GST Invoice" },
-    { value: "Quatation", label: "Quatation" },
+    // { value: "Quatation", label: "Quatation" },
   ];
 
   //----------------------------------------------------
@@ -178,7 +178,6 @@ export default function CreateInvoice({ navigation, route }) {
             onChange={setSelectedValue}
             t={t}
           />
-
           <View style={styles.MainContainer}>
             <View style={styles.TextView}>
               <CreateInvoiveForm selectedButton={selectedValue} />

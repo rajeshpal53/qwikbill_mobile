@@ -48,7 +48,7 @@ const UserDetailsStore = ({ item }) => {
               <Text style={styles.Phonetext}>Email</Text>
             </View>
             <View>
-              <Text style={styles.PhoneNumbertext}>{userData?.user?.email}</Text>
+              <Text style={styles.PhoneNumbertext}>{userData?.user?.email||"Not Available"}</Text>
             </View>
           </View>
         </View>
@@ -69,7 +69,7 @@ const UserDetailsStore = ({ item }) => {
               <Text style={styles.PhoneNumbertext} >
                 {[userData?.user?.address, userData?.user?.pincode]
                   .filter(Boolean)
-                  .join(", ")}
+                  .join(", ")||"Not Available"}
               </Text>
             </View>
           </View>

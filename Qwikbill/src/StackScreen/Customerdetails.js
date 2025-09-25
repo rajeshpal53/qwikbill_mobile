@@ -1,12 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useContext } from "react";
 import { Text, View, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
-import { fontFamily, fontSize } from "../Util/UtilApi";
-import { Avatar } from "react-native-paper";
+import { fontFamily, fontSize, readApi } from "../Util/UtilApi";
+import { ActivityIndicator, Avatar } from "react-native-paper";
 import { debounce } from "lodash";
 import { API_BASE_URL, NORM_URL } from "../Util/UtilApi";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons} from '@expo/vector-icons';
+import { ShopContext } from "../Store/ShopContext";
 import { MaterialIcons } from "@expo/vector-icons"; // for icons
+import UserDataContext from "../Store/UserDataContext";
 // import EditCustomerDetailsModal from "../Modal/EditCustomerDetailsModal";
 // import EditCustomerDetailsModal from "../../Modal/EditCustomerDetailsModal";
 
@@ -15,6 +17,10 @@ const CustomerDetails = ({ route, navigation }) => {
   console.log("Items value", item);
   const [profileUrl, setProfileUrl] = useState("");
   const [fallbackText, setFallbackText] = useState("U");
+  const { selectedShop } = useContext(ShopContext)
+  const [customerDetail,setCoustomerDetail]=useState({})
+  const[isLoading,setIsLoading] =useState(false)
+  const {userData}=useContext(UserDataContext)
   //   const [SelectedEditItem, setSelectedEditItem] = useState(null);
   //   const [editmodal, seteditmodal] = useState(false);
 
@@ -27,9 +33,27 @@ const CustomerDetails = ({ route, navigation }) => {
   //   // Function for handling Delete button press
   //   const handleDelete = () => {
   //     // Logic to handle deletion goes here
-  //     console.log("Customer deleted", item.id);
+  //     console.log("Customer deleted", item.id);``
   //   };
-
+  
+    useEffect(()=>{
+        const fetchCustomer=async()=>{
+          try{
+            setIsLoading(true)
+              console.log(selectedShop,"selectedShop")
+          console.log("api")
+            const response=await readApi(`invoice/getCustomerStats?vendorfk=${selectedShop?.vendor?.id}&usersfk=${item?.user?.id}`,{Authorization: `Bearer ${userData?.token}`},)
+            console.log(response, `invoice/getCustomerStats?vendorfk=${selectedShop?.vendor?.id}&usersfk=${item?.user?.id}`,"response in customer detials")
+            setCoustomerDetail(response)
+          }catch(err){
+            console.error(err)
+          }finally{
+            setIsLoading(false)
+          }
+          
+        }
+        fetchCustomer()
+    },[selectedShop,item]) 
 
   useEffect(() => {
     const setUrl = () => {
@@ -56,6 +80,11 @@ const CustomerDetails = ({ route, navigation }) => {
     }
     return singleLetterText;
   };
+
+
+  if(isLoading){
+    return(<ActivityIndicator size="large"/>)
+  }
   return (
     <ScrollView style={styles.container}>
       <View style={styles.card}>
@@ -141,24 +170,24 @@ const CustomerDetails = ({ route, navigation }) => {
           <View style={styles.totalOrder}>
             <Ionicons name="cart" size={24} color="#00008b" />
             <Text >Total Order</Text>
-            <Text style={styles.amount}>1</Text>
+            <Text style={styles.amount}>{customerDetail?.totalOrders}</Text>
           </View>
           <View style={styles.totalPurchase}>
             <Ionicons name="stats-chart" size={24} color="#00008b" />
             <Text>Total Purchase</Text>
-            <Text style={styles.amount}>₹150</Text>
+            <Text style={styles.amount}>₹ {customerDetail?.amountPaid+customerDetail?.remainingAmount}</Text>
           </View>
         </View>
         <View style={styles.container3}>
           <View style={styles.remainingAmount}>
             <FontAwesome name="calendar" size={24} color="#00008b" />
             <Text>Remaining Amount</Text>
-            <Text style={styles.amount}>₹0</Text>
+            <Text style={styles.amount}>₹ {customerDetail?.remainingAmount}</Text>
           </View>
           <View style={styles.paidAmount}>
             <Ionicons name="checkmark-circle" size={24} color="#00008b" />
             <Text>Paid Amount</Text>
-            <Text style={styles.amount}>₹150</Text>
+            <Text style={styles.amount}>₹ {customerDetail?.amountPaid||0}</Text>
           </View>
        {/*} </View>
           <Text style={styles.sectionTitle}>Recent Orders</Text>

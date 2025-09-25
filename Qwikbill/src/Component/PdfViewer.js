@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState, useMemo } from "react";
 import {
   View,
-
+Dimensions,
   StyleSheet,
   Alert,
   Platform,
@@ -51,7 +51,13 @@ const PdfScreen = ({ navigation }) => {
   const { userData } = useContext(UserDataContext);
   const invoiceId = createdInvoice?.id
   
+const { width } = Dimensions.get("window");
+const scale = width / 375; // 375 = base iPhone width (adjust as your design base)
 
+function normalize(size) {
+  return Math.round(size * scale);
+}
+const styles=pdfStyle(normalize)
   useEffect(() => {
     console.log("view InvoiceData is under useEffect , ", viewInvoiceData);
 
@@ -328,7 +334,52 @@ const PdfScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const pdfStyle =(normalize)=> StyleSheet.create({
+   headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: normalize(8),
+    paddingHorizontal: normalize(12),
+  },
+  userName: {
+    fontSize: normalize(16),
+    fontWeight: "bold",
+    flexShrink: 1, // avoids text cut-off on smaller screens
+  },
+  amountContainer: {
+    flexDirection: "column",
+    alignItems: "flex-end",
+  },
+  detailContainer: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+    maxWidth: "70%", // prevents text overflow
+  },
+  amountText: {
+    fontSize: normalize(18),
+    fontWeight: "bold",
+    color: "#000",
+  },
+  unpaidText: {
+    fontSize: normalize(12),
+    flexWrap: "wrap",
+  },
+  actionButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: normalize(8),
+  },
+  recordButton: {
+    flex: 1,
+    paddingVertical: normalize(10),
+    backgroundColor: "#26a0df",
+    alignItems: "center",
+    borderRadius: normalize(5),
+    marginRight: normalize(5),
+    flexDirection: "row",
+    justifyContent: "center",
+  },
   buttonsContainer: {
     // flexDirection: "row",
     // justifyContent: "space-between",
@@ -344,38 +395,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     height: "30%"
 
-  },
-  headerContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 10,
-    paddingHorizontal: 20
-  },
-  userName: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  amountContainer: {
-    flexDirection: "column",
-    alignItems: "flex-end",
-  },
-  detailContainer: {
-    flexDirection: "column",
-    alignItems: "flex-start",
-  },
-  amountText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#000",
-  },
-  unpaidText: {
-    fontSize: 14,
-  },
-  actionButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginVertical: 10,
   },
   recordButton: {
     flex: 1,

@@ -43,7 +43,7 @@ const LoginScreen = ({ navigation, }) => {
   const { userData, saveUserData } = useContext(UserDataContext);
   const {selectedShop}=useContext(ShopContext);
   const [isLoading, setIsLoading] = useState(false);
-  const { isPasskey } = usePasskey();
+  const { isPasskey,passkey } = usePasskey();
   const { width, height } = useWindowDimensions();
   const [visible, setVisible] = useState(false);
   const [PassisSecure, setPassIsSecure] = useState(true);
@@ -123,7 +123,7 @@ const status = route?.params?.status;
         validationSchema={validationSchema}
         onSubmit={async (value, { resetForm }) => {
           try {
-            await handleLogin(value, navigation);
+            await handleLogin(value, navigation,isPasskey,passkey);
             // if (isPasskey) {
             //   navigation.navigate("Passcode");
             // } else {
