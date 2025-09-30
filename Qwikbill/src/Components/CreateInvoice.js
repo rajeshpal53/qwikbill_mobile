@@ -22,9 +22,11 @@ import { fontSize, readApi } from "../Util/UtilApi";
 import { useTranslation } from "react-i18next";
 import UserDataContext from "../Store/UserDataContext";
 import { useTheme } from "../../constants/Theme";
-
+import { useLayoutEffect } from "react";
 export default function CreateInvoice({ navigation, route }) {
   const startTour = route.params;
+  const isQuotation = route?.params?.isQuotation || false;
+  const iscloneItem=route?.params?.iscloneItem || null;;
   const windowWidth = useWindowDimensions().width;
   const windowHeight = useWindowDimensions().height;
   const{colors}=useTheme()
@@ -45,8 +47,7 @@ export default function CreateInvoice({ navigation, route }) {
     { value: "gst", label: "GST Invoice" },
     // { value: "Quatation", label: "Quatation" },
   ];
-
-  //----------------------------------------------------
+  console.log("isQuotation in create",isQuotation)
 
   const [buttonsModes, setButtonsModes] = useState({
     firstButtonMode: false,
@@ -69,7 +70,13 @@ export default function CreateInvoice({ navigation, route }) {
     };
   }, []);
 
-  
+   useLayoutEffect(() => {
+    navigation.setOptions({
+      title: isQuotation ? "Create Quotation" : "Create Invoice",
+    });
+  }, [navigation, isQuotation]);
+
+
 
   useEffect(()=>{
     fetchCount();
@@ -180,7 +187,7 @@ export default function CreateInvoice({ navigation, route }) {
           />
           <View style={styles.MainContainer}>
             <View style={styles.TextView}>
-              <CreateInvoiveForm selectedButton={selectedValue} />
+              <CreateInvoiveForm selectedButton={selectedValue} isQuotation={isQuotation} iscloneItem={iscloneItem} />
             </View>
           </View>
         </View>

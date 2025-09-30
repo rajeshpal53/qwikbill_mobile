@@ -25,6 +25,7 @@ import * as Yup from "yup";
 import { useSnackbar } from "../Store/SnackbarContext";
 import TextBox from "react-native-password-eye";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { MaterialIcons } from "@expo/vector-icons";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { useContext, useState, useEffect } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -372,14 +373,8 @@ export default function PasscodeScreen({ navigation }) {
                                 arrowSize={{ width: 16, height: 8 }}
                                 backgroundColor="transparent"
                               >
-                                <AntDesign
-                                  name="infocirlceo"
-                                  size={20}
-                                  color="#6dbbc7"
-                                  onPress={() => {
-                                    setTooltipVisible(true);
-                                  }}
-                                />
+                               <MaterialIcons name="info-outline" size={22} color="#6dbbc7" />
+
                               </Tooltip>
                             </View>
 

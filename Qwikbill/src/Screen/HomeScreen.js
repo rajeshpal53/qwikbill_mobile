@@ -198,13 +198,16 @@ const { width: deviceWidth } = Dimensions.get("window");
     (vendorStatus?.activeInvoices || 0)
 
 
-  const goToHandler = (Screen) => {
+  const goToHandler = (Screen,name) => {
     // navigation.navigate("wertone", {screen:'CreateInvoice'});
     // console.log("Pra ", item)
     if (Screen === "CreateShopScreen") {
       navigation.navigate(Screen, { isHome: false });
     } else if (Screen === "bulkUpload") {
       setBulkUploadModalVisible(true)
+    } 
+    else if(name==="Create Quotation"){
+      navigation.navigate("CreateInvoice", { isQuotation: true });
     }
     else {
       console.log("hi");
@@ -306,7 +309,7 @@ const { width: deviceWidth } = Dimensions.get("window");
                             style={[styles.item, isDisabled && { opacity: 0.5 },]}
                             onPress={() => {
                               if (!isDisabled) {
-                                goToHandler(item.navigateTo);
+                                goToHandler(item.navigateTo,item?.name);
                               }
                             }}
                             disabled={isDisabled}

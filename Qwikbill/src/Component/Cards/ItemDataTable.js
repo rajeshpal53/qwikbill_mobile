@@ -26,6 +26,10 @@ const ItemDataTable = ({
   finalAmountValue,
   setFinalAmountValue,
   setDiscountValue,
+  totaGst,
+  setTotalGst,
+  iscloneItem
+
 }) => {
   const screenWidth = Dimensions.get("window").width;
   const carts = useSelector((state) => state.cart.Carts);
@@ -45,64 +49,76 @@ const ItemDataTable = ({
   const scrollRef = useRef(null);
   const [showScrollHint, setShowScrollHint] = useState(true);
   useEffect(() => {
-    const total = Number(totalPrice) || 0;
-    const gst = Number(gstAmount) || 0;
-    if (total <= 0) {
-      // reset when no total
-      setFinalTotal(0);
-      setDiscountRate(0);
-      setDiscountValue(0);
-      return;
-    }
-    // STEP 1: If no finalAmountValue given, reset everything to defaults
-    if (!finalAmountValue || Number(finalAmountValue) === 0) {
-      if (selectedButton === "gst") {
-        setFinalTotal(total + gst);
-      } else {
-        setFinalTotal(total);
-      }
+  const total = Number(totalPrice) || 0;
+  const gst = Number(gstAmount) || 0;
 
-      setDiscountValue(0);
-      setDiscountRate(0);
-      return;
-    }
+  if (total <= 0) {
+    // reset when no total
+    setFinalTotal(0);
+    setDiscountRate(0);
+    setDiscountValue(0);
+    setTotalGst(0); // ✅ also reset GST
+    return;
+  }
 
-    // STEP 2: Calculate discount percentage & value
-    let discountVal = 0;
-    let percentage = 0;
+  // STEP 1: If no finalAmountValue given, reset everything to defaults
+  if (!finalAmountValue || Number(finalAmountValue) === 0) {
     if (selectedButton === "gst") {
-      const gross = total + gst;
-      discountVal = gross - Number(finalAmountValue);
-      percentage = (discountVal / gross) * 100;
+      setFinalTotal(total + gst);
+      setTotalGst(gst); // ✅ update GST
     } else {
-      discountVal = total - Number(finalAmountValue);
-      percentage = (discountVal / total) * 100;
+      setFinalTotal(total);
+      setTotalGst(0); // ✅ no GST case
     }
 
-    setDiscountValue(Number(discountVal.toFixed(2)));
-    setDiscountRate(Number(percentage));
+    setDiscountValue(0);
+    setDiscountRate(0);
+    return;
+  }
 
-    // STEP 3: Recalculate final total from carts (line by line)
-    let computedTotal = 0;
-    carts.forEach((item) => {
-      const price = Number(item.sellPrice) || 0;
-      const qty = Number(item.quantity) || 0;
-      const taxRate = Number(item.taxRate) || 0;
+  // STEP 2: Calculate discount percentage & value
+  let discountVal = 0;
+  let percentage = 0;
+  if (selectedButton === "gst") {
+    const gross = total + gst;
+    discountVal = gross - Number(finalAmountValue);
+    percentage = (discountVal / gross) * 100;
+  } else {
+    discountVal = total - Number(finalAmountValue);
+    percentage = (discountVal / total) * 100;
+  }
 
-      const lineAmount = price * qty;
-      const lineDiscount = (lineAmount * percentage) / 100;
-      const afterDiscount = lineAmount - lineDiscount;
+  setDiscountValue(Number(discountVal.toFixed(2)));
+  setDiscountRate(Number(percentage));
 
-      if (selectedButton === "gst") {
-        const gstAmt = (afterDiscount * taxRate) / 100;
-        computedTotal += afterDiscount + gstAmt;
-      } else {
-        computedTotal += afterDiscount;
-      }
-    });
+  // STEP 3: Recalculate final total from carts (line by line)
+  let computedTotal = 0;
+  let computedGst = 0;
 
-    setFinalTotal(Number(computedTotal.toFixed(2)));
-  }, [carts, totalPrice, gstAmount, finalAmountValue, selectedButton]);
+  carts.forEach((item) => {
+    const price = Number(item.sellPrice) || 0;
+    const qty = Number(item.quantity) || 0;
+    const taxRate = Number(item.taxRate) || 0;
+
+    const lineAmount = price * qty;
+    const lineDiscount = (lineAmount * percentage) / 100;
+    const afterDiscount = lineAmount - lineDiscount;
+
+    if (selectedButton === "gst") {
+      const gstAmt = (afterDiscount * taxRate) / 100;
+      computedTotal += afterDiscount + gstAmt;
+      computedGst += gstAmt;
+    } else {
+      computedTotal += afterDiscount;
+    }
+  });
+
+  setTotalGst(Number(computedGst.toFixed(2))); // ✅ always update GST
+  setFinalTotal(Number(computedTotal.toFixed(2)));
+}, [carts, totalPrice, gstAmount, finalAmountValue, selectedButton,iscloneItem]);
+
+
+
 
   console.log("discountRate is ", discountRate, totalPrice);
   console.log("finalTotal calculated is", finalTotal);

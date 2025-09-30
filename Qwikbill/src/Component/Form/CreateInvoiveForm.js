@@ -25,7 +25,7 @@ import ConfirmModal from "../../Components/Modal/ConfirmModal";
 import NameTextInput from "./NameTextInput";
 import { useTheme } from "../../../constants/Theme";
 
-const CreateInvoiceForm = ({ selectedButton }) => {
+const CreateInvoiceForm = ({ selectedButton,isQuotation,iscloneItem}) => {
   const [isHorizontalScrolling, setIsHorizontalScrolling] = useState(false);
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -51,7 +51,13 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   const [finalAmountError, setFinalAmountAError] = useState("");
   const [selectedPaymentMode, setSelectedPaymentMode] = useState("");
     const [PartiallyAmount, setPartiallyAmount] = useState("");
-
+const [totaGst,setTotalGst]=useState(0)
+const [initialValues,setInitialValues]=useState({
+  name:"",
+  address:"",
+  mobile:"",
+  gstNumber:"",
+})
   const { colors } = useTheme();
   {
     /* <NameInput
@@ -64,10 +70,20 @@ const CreateInvoiceForm = ({ selectedButton }) => {
   setFormFilled={setFormFilled}   // ✅ now it’s a function
 /> */
   }
-
-  const roundToTwo = (num) => {
-    return Number(Math.round(num + "e2") + "e-2");
-  };
+    useEffect(()=>{
+      if(iscloneItem){
+        console.log("clone item is , ", iscloneItem,carts);
+        setInitialValues({
+          name:iscloneItem?.name||"",
+          address:iscloneItem?.address||"",
+          mobile:iscloneItem?.mobile||"",
+          gstNumber:iscloneItem?.gstNumber||"",
+        })
+        setDiscountValue(iscloneItem?.discount||0)
+        setDiscountRate(iscloneItem?.discountRates||0)
+        setFinalTotal(iscloneItem?.finaltotal||0)
+      }
+    },[iscloneItem])
   console.log("DATA OF ERROR ", error, discountValue);
   // useEffect(() => {
   //   console.log("selected shop isuser , ", selectedShop);
@@ -199,7 +215,7 @@ const CreateInvoiceForm = ({ selectedButton }) => {
     }));
 
   // --- fixed handleGenerate (single version) ---
-  const handleGenerate = async (button = "download", formData, resetForm) => {
+  const handleGenerate = async (button = "download", formData, resetForm, setSubmitting, setErrors, setTouched ) => {
     try {
       const api = "invoice/invoices";
       const invoiceType =
@@ -226,6 +242,9 @@ const CreateInvoiceForm = ({ selectedButton }) => {
         showSnackbar("Invoice created successfully", "success");
         dispatch(clearCart());
         resetForm();
+         setSubmitting(false);
+      setErrors({});
+      setTouched({});
         setDiscountValue(0);
         setDiscountRate(0);
         setFinalTotal(0);
@@ -262,20 +281,15 @@ const CreateInvoiceForm = ({ selectedButton }) => {
     >
       <Formik
         enableReinitialize={true}
-        initialValues={{
-          name: "",
-          address: "",
-          gstNumber: "",
-          mobile: "",
-        }}
+        initialValues={initialValues}
         validateOnChange={true}
         // validateOnChange={false}   // ✅ disables noise on typing
         validateOnBlur={true} //
         validationSchema={validationSchema}
-        onSubmit={async (values, { resetForm }) => {
+        onSubmit={async (values, { resetForm ,setSubmitting, setErrors, setTouched}) => {
           console.log("values are , ", values);
           console.log("selected cartvalue is , ", cartsValue);
-          if (!finalAmountValue && selectedButton !== "Quatation") {
+          if (!finalAmountValue) {
             // showSnackbar("Final Amount cannot be 0", "error");
             setFinalAmountValue(finalTotal);
           }
@@ -285,22 +299,19 @@ const CreateInvoiceForm = ({ selectedButton }) => {
             address: values?.address,
             gstNumber: User?.gstNumber || values?.gstNumber || null,
             mobile: User?.getNumber || values?.mobile,
-            userId: User?.id || undefined,
+            userId: User?.id || iscloneItem?.usersfk|| undefined,
           };
           // const finalTotal = (parseInt(cartsValue?.totalPrice) || 0) - (parseInt(cartsValue?.discount) || 0);
 
           const extraData = {
-            usersfk: User?.id,
+            usersfk: iscloneItem? iscloneItem?.usersfk: User?.id,
             vendorfk: selectedShop?.vendor?.id,
-            statusfk: selectedButton === "Quatation" ? 4 : getStatusFk(),
+            statusfk: getStatusFk(),
             subtotal: cartsValue?.totalPrice,
             partialAmount:PartiallyAmount||0,
             // address: "123 Main Street, City, Country",
-            discount: selectedButton === "Quatation" ? 0 : discountValue,
-            finaltotal:
-              selectedButton === "Quatation"
-                ? cartsValue?.totalPrice
-                : parseFloat(finalTotal),
+            discount:  discountValue,
+            finaltotal: parseFloat(finalTotal),
             paymentMode: selectedPaymentMode || "Cash",
             ...(PaymentStatus == "Unpaid" || PaymentStatus == "Partially Paid" ? { remainingamount:Number(finalTotal-PartiallyAmount)}: { remainingamount: 0 }),
             // ...(selectedButton == "provisional" ? {provisionNumber: "12"} : {}),
@@ -323,7 +334,8 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           const customerResponse = await handleGenerate(
             "download",
             payload,
-            resetForm
+            resetForm,
+            setSubmitting, setErrors, setTouched
           );
           console.log("customerResponse is , ", customerResponse);
           if (customerResponse) {
@@ -354,21 +366,22 @@ const CreateInvoiceForm = ({ selectedButton }) => {
           dirty,
           submitCount,
           setFieldTouched,
+          isSubmitting
         }) => {
           console.log("DATA VALID", isValid);
           console.log("DATA Dirty", dirty);
           // console.log("cart is , ", carts.length);
           console.log("error is , ", error);
 
-          useEffect(() => {
-            if (submitCount > 0 && Object.keys(errors).length) {
-              const firstErr = getFirstError(errors);
-              if (firstErr) {
-                setFieldTouched(firstErr.key, true, false);
-                showSnackbar(firstErr.msg, "error");
-              }
-            }
-          }, [ submitCount]);
+         useEffect(() => {
+  if (!isSubmitting && submitCount > 0 && Object.keys(errors).length) {
+    const firstErr = getFirstError(errors);
+    if (firstErr) {
+      setFieldTouched(firstErr.key, true, false);
+      showSnackbar(firstErr.msg, "error");
+    }
+  }
+}, [submitCount, isSubmitting, errors]);
           return (
             <View>
               {/* Phone Field */}
@@ -561,12 +574,15 @@ const CreateInvoiceForm = ({ selectedButton }) => {
                     discountRate={discountRate}
                     finalTotal={finalTotal}
                     setFinalTotal={setFinalTotal}
+                    totaGst={totaGst}
+                    setTotalGst={setTotalGst}
                     onHorizontalScrollStart={() =>
                       setIsHorizontalScrolling(true)
                     }
                     onHorizontalScrollEnd={() =>
                       setIsHorizontalScrolling(false)
                     }
+                    iscloneItem={iscloneItem}
                   />
 
                   <PriceDetails
@@ -583,6 +599,11 @@ const CreateInvoiceForm = ({ selectedButton }) => {
                     selectedPaymentMode={selectedPaymentMode}
                     setPartiallyAmount={setPartiallyAmount}
                     PartiallyAmount={PartiallyAmount}
+                    isQuotation={isQuotation}
+                     totaGst={totaGst}
+                    setTotalGst={setTotalGst}
+                     iscloneItem={iscloneItem}
+
                   />
                 </View>
               )}

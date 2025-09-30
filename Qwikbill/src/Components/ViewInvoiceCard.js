@@ -1,7 +1,10 @@
+
 import { View, StyleSheet, Pressable } from "react-native";
 import { Text, Card } from "react-native-paper";
 import { statusName } from "../Util/UtilApi";
 import { useTheme } from "../../constants/Theme";
+import { Menu, IconButton } from "react-native-paper";
+import { useState } from "react";
 
 const ViewInvoiceCard = ({
   invoice,
@@ -12,9 +15,13 @@ const ViewInvoiceCard = ({
   onSelect,
   onLongSelect,
   selectionMode,
+  cloneInvoiceHandler
 }) => {
   const { colors, isDark } = useTheme();
   const styles = makeStyles(colors);
+  const [menuVisible, setMenuVisible] = useState(false);
+
+    const  toggleHandler = () => setMenuVisible(!menuVisible);
 
   return (
     <Pressable
@@ -46,25 +53,61 @@ const ViewInvoiceCard = ({
             <Text style={styles.invoiceNumber}>
               #{invoice?.invoiceNumber || invoice?.id}
             </Text>
+
             <Text style={styles.invoiceType}>
               {invoice?.type?.toUpperCase() || "INVOICE"}
             </Text>
           </View>
-          <Text
-            style={[
-              styles.status,
-              {
-                color:
-                  invoice?.statusfk === 1
-                    ? colors.danger
-                    : invoice?.statusfk === 2
-                    ? colors.success
-                    : colors.warning,
-              },
-            ]}
-          >
-            {statusName[invoice?.statusfk]?.toUpperCase()}
-          </Text>
+           <View style={styles.headerRight}>
+    <Text
+      style={[
+        styles.status,
+        {
+          color:
+            invoice?.statusfk === 1
+              ? colors.danger
+              : invoice?.statusfk === 2
+              ? colors.success
+              : colors.warning,
+        },
+      ]}
+    >
+      {statusName[invoice?.statusfk]?.toUpperCase()}
+    </Text>
+
+    <Menu
+     style={{ margin: 0, padding: 0 ,backgroundColor:colors.background}} 
+      visible={menuVisible}
+      onDismiss={toggleHandler}
+      anchor={
+        <IconButton
+          style={{ margin: 0, padding: 0 }}
+          icon="dots-vertical"
+          size={20}
+          onPress={toggleHandler}
+        />
+      }
+      contentStyle={{ backgroundColor: colors.background }} 
+    >
+      <Menu.Item
+    style={{ backgroundColor: colors.background }}
+    onPress={()=>{cloneInvoiceHandler(invoice,toggleHandler)}}
+    title="Clone Invoice"
+    leadingIcon="file-document-outline"   // 👈 Material icon name
+  />
+  
+  <Menu.Item
+    onPress={() => {
+      console.log("Delete pressed");
+      toggleHandler();
+    }}
+    title="Delete"
+    leadingIcon="delete"         // 👈 icon for delete
+     // optional text color
+  />
+    </Menu>
+  </View>
+         
         </View>
 
         {/* Middle Content */}
@@ -122,9 +165,14 @@ const makeStyles = (colors) =>
       color: colors.muted,
       fontStyle: "italic",
     },
+    headerRight: {
+  flexDirection: "row",
+  alignItems: "center",
+},
     status: {
-      fontSize: 13,
+      fontSize: 14,
       fontWeight: "bold",
+      marginRight:0,
     },
     rowBetween: {
       flexDirection: "row",

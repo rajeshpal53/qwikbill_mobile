@@ -59,6 +59,7 @@ import useTokenExpiry from "../Store/useTokenExpiry.js";
 import { useThemeContext } from "../Store/ThemeContext.js";
 import { useTheme } from "../../constants/Theme.js";
 import ShareTransaction from "../Components/ShareTransaction.js";
+import { SafeAreaView } from "react-native-safe-area-context";
 export default function StackNavigator() {
       // useTokenExpiry()
 
@@ -183,7 +184,7 @@ export default function StackNavigator() {
   // console.log(isLoading);
   // console.log(isAuthenticated, "akdskddkfkfkf");
   return (
-    <>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors?.background }}>
     {console.log("passkey in stack navigator", passkey,isForgetPasswordState,userData)}
       <Stack.Navigator
         // initialRouteName={userData ? "Passcode" : "login"}
@@ -282,9 +283,9 @@ export default function StackNavigator() {
           component={CreateInvoice}
           options={{
             // headerTitle: "Add Invoice",
-            headerTitle: () => (
-              <Text style={styles.headerTitle}>{"Create Invoice"}</Text>
-            ),
+            // headerTitle: () => (
+            //   <Text style={styles.headerTitle}>{"Create Invoice"}</Text>
+            // ),
             headerTitleAlign: "center",
           }}
         />
@@ -646,7 +647,7 @@ export default function StackNavigator() {
         isConnected={isConnected}
         setIsConnected={setIsConnected}
       />
-    </>
+    </SafeAreaView>
   );
 }
 

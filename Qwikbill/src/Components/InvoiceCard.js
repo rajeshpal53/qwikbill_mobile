@@ -59,7 +59,7 @@ function InvoiceCard({ invoices, navigation, setInvoices }) {
               <Card.Content>
                 <Text variant="headlineLarge">{item?.people?.firstname}</Text>
                 <Text variant="bodyMedium" style={styles.cardText}>
-                  {" "}
+               
                   {/* {item.client.people.phone} */}
                 </Text>
               </Card.Content>

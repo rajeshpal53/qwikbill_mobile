@@ -2,7 +2,7 @@
   "expo": {
     "name": "QwikBill",
     "slug": "qwikbill",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "newArchEnabled": true,
     "orientation": "portrait",
     "icon": "./assets/qLogo.png",
@@ -13,7 +13,6 @@
       "backgroundColor": "#ffffff"
     },
     "plugins": [
-         "@config-plugins/react-native-blob-util",
         "@config-plugins/react-native-pdf",
          "@react-native-firebase/app",
       "@react-native-firebase/auth",
@@ -37,8 +36,7 @@
         "expo-build-properties",
         {
           "android": {
-           
-            
+              "enableProguardInReleaseBuilds": true
           }
         }
       ]

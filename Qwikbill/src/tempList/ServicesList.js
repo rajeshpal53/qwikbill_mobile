@@ -8,9 +8,9 @@ import {
 
 
 export const rolePermissions = {
-  owner: ["Create Invoice", "Add Product", "Add Shop","View Your Shops","Transactions","Product Upload","View Customer", "Accounts Dashboard"],
-  manager: ["Create Invoice", "Add Product","View Your Shops","Transactions","Product Upload","View Customer", "Accounts Dashboard"],
-  employee:["Create Invoice","View Your Shops","Transactions","View Customer", "Accounts Dashboard"],
+  owner: ["Create Invoice", "Add Product", "Add Shop","View Your Shops","Transactions","Product Upload","View Customer", "Accounts Dashboard","Create Quotation"],
+  manager: ["Create Invoice", "Add Product","View Your Shops","Transactions","Product Upload","View Customer", "Accounts Dashboard","Create Quotation"],
+  employee:["Create Invoice","View Your Shops","Transactions","View Customer", "Accounts Dashboard","Create Quotation"],
   viewer: ["View Your Shops", "Transactions","View Customer", "Accounts Dashboard"], 
 };
 export const services = [
@@ -100,12 +100,20 @@ export const services = [
     key: "9",
     navigateTo: "UserAccounts",
   },
+   {
+    name: "Create Quotation",
+    icon: <FontAwesome5 name="file-invoice" size={30} color="#26a0df" />,
+    key: "10",
+    navigateTo: "CreateInvoice",
+    testID: "Create-Invoice",
+  },
   {
     name: "",
     icon: "",
-    key: "10",
+    key: "11",
     navigateTo: "",
   },
+ 
   // {
   //   name: "More",
   //   icon: <Feather name="more-horizontal" size={30} color="#26a0df" />,

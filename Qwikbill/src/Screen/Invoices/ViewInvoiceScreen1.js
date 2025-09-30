@@ -14,9 +14,15 @@ import NoDataFound from "../../Components/NoDataFound";
 import { Filter } from "react-native-svg";
 import { useTheme } from "../../../constants/Theme";
 import SelectionOverlay from "../../Component/SelectionOverlay";
+import { useDispatch, useSelector } from "react-redux";
 import { useSnackbar } from "../../Store/SnackbarContext";
 import { deleteApi } from "../../Util/UtilApi";
+import { addToCart, removeFromCart } from "../../Redux/slices/CartSlice";
+
 function ViewInvoiceScreen1({ navigation }) {
+  const carts = useSelector((state) => state.cart.Carts);
+  const dispatch = useDispatch();
+
   const [invoices, setInvoices] = useState([]);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -50,6 +56,7 @@ const [selectionMode, setSelectionMode] = useState(false);
   const [invoiceId, setInvoiceId] = useState("");
   const[visible,setVisible]=useState(false)
   const {showSnackbar}=useSnackbar();
+  const [apiError, setApiError] = useState(false);
   // useEffect(() => {
   //   if (page === 1) {
   //     fetchInvoices(1);
@@ -93,16 +100,27 @@ const handleBulkDelete = async () => {
   }
 };
 
+
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchInvoices(1, true);
+    setRefreshing(false);
+  };
+
+
+
   // Unified effect for filters and selected shop
   useEffect(() => {
-    if (selectedShop?.vendor?.id) {
-      setPage(1); // Reset page on filter/shop change
-      setSearchQuery(""); // Reset search on filter change
-      setSearchCalled(false);
-      setHasMore(true);
-      fetchInvoices(1, true); // force reload
-    }
-  }, [selected, sortBy, typeFilter, selectedShop?.vendor?.id]);
+  if (selectedShop?.vendor?.id && !apiError) {
+    setPage(1);
+    setSearchQuery("");
+    setSearchCalled(false);
+    setHasMore(true);
+    fetchInvoices(1, true);
+  }
+}, [selected, sortBy, typeFilter, selectedShop?.vendor?.id,dateRange]);
+
 
   // Only used for pagination
   useEffect(() => {
@@ -114,28 +132,16 @@ const handleBulkDelete = async () => {
       }
     }
   }, [page]);
-  const handleLongSelect = (id) => {
-  setSelectionMode(true);
-  setSelectedInvoice([id]); // first selection
-};
-
-
-
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await fetchInvoices(1, true);
-    setRefreshing(false);
-  };
+  
 
   const buildApiUrl = (pageNum) => {
     const id = selectedShop?.vendor?.id
-    console.log(id, "inViewinVoiceScreen")
+    console.log(id, date, "inViewinVoiceScreen")
     let api = `invoice/getInvoices?vendorfk=${vendorId}&page=${pageNum}&size=10`;
     if (sortBy && sortBy != "datewise") api += `&dateWise=${sortBy}`;
     if (sortBy && sortBy == "datewise")
-      api += `&startDate=${formatDate(date.startDate)}&endDate=${formatDate(
-        date.endDate
+      api += `&startDate=${formatDate(dateRange.startDate)}&endDate=${formatDate(
+        dateRange.endDate
       )}`;
     if (selected === "Partially Paid") api += "&statusfk=3";
     if (selected === "Unpaid") api += "&statusfk=1";
@@ -149,37 +155,36 @@ const handleBulkDelete = async () => {
     return api;
   };
 
-  const fetchInvoices = async (pageNum = 1, force = false) => {
-    if (!force && pageNum === 1 && !mainLoading) return;
+ const fetchInvoices = async (pageNum = 1, force = false) => {
+  if (!force && pageNum === 1 && !mainLoading) return;
+  if (pageNum === 1) {
+    setMainLoading(true);
+    setHasMore(true);
+    setApiError(false); // reset error on new fetch
+  }
+  setIsLoading(true);
+  try {
+    const api = buildApiUrl(pageNum);
+    const response = await readApi(api, authHeader);
 
     if (pageNum === 1) {
-      setMainLoading(true);
-      setHasMore(true);
+      setInvoices(response.invoices || []);
+    } else if (response?.invoices?.length > 0) {
+      setInvoices(prev => [...prev, ...response.invoices]);
+    } else {
+      setHasMore(false);
     }
+  } catch (err) {
+    setApiError(true); // stop repeated calls
+    if (pageNum === 1) setInvoices([]);
+    console.error("API fetch failed:", err);
+  } finally {
+    setIsLoading(false);
+    setMainLoading(false);
+  }
+};
 
-    setIsLoading(true);
-    try {
-      const api = buildApiUrl(pageNum);
-      const response = await readApi(api, authHeader);
-
-      if (pageNum === 1) {
-        setInvoices(response.invoices || []);
-      } else if (response?.invoices?.length > 0) {
-        setInvoices(prev => [...prev, ...response.invoices]);
-      } else {
-        setHasMore(false);
-      }
-    } catch (err) {
-      if (pageNum === 1) setInvoices([]);
-    } finally {
-      setIsLoading(false);
-      setMainLoading(false);
-    }
-  };
-
-
-
-  const loadMoreData = () => {
+    const loadMoreData = () => {
     if (!isLoading && hasMore) {
       const nextPage = page + 1;
       setPage(nextPage);
@@ -191,6 +196,15 @@ const handleBulkDelete = async () => {
       }
     }
   };
+
+
+  const handleLongSelect = (id) => {
+  setSelectionMode(true);
+  setSelectedInvoice([id]); // first selection
+};
+
+
+
 
   const onSearch = (query) => {
     setSearchQuery(query);
@@ -206,6 +220,62 @@ const handleBulkDelete = async () => {
   // }, [page, selectedShop]);
   console.log("type  filterisss ", typeFilter)
 
+
+  const cloneInvoiceHandler=(invoice,toggleHandler)=>{
+     console.log("invoice is",invoice)
+      const newCart = {
+      address: invoice?.address || "",
+      discount: Number(invoice?.discount) || 0, // not present in invoice
+      finaltotal: Number(invoice?.finaltotal) || 0,
+      gstNumber: invoice?.gstNumber || null,
+      mobile: invoice?.user?.mobile || "",
+      name: invoice?.user?.name || "",
+      partialAmount: 0,
+      paymentMode: invoice?.paymentMode || "Cash",
+     discountRate:Number(invoice?.invoiceProducts?.[0]?.discountRate),
+      products: invoice?.invoiceProducts?.map((p) => {
+    console.log("p in map is",p)
+       return (       
+        {
+        id: p?.productfk,
+        price: Number(p?.price) || 0,
+        productname: p?.Product?.name || "Unknown Product", 
+        name: p?.Product?.name || "Unknown Product", /// ✅ you need to join with product table if available
+        quantity: p?.quantity || 1,
+        taxRate: Math.round(Number(p?.gstRate) * 100) ||p?.Product?.taxRate , // gstRate is 0.180 => 18
+      discountRate:Number(p?.discountRate),
+      sellPrice:Number(p?.Product?.sellPrice),
+      }   
+    )}) || [],
+      remainingamount: Number(invoice?.finaltotal) || 0,
+      statusfk: invoice?.statusfk, // default to new status
+      subtotal: Number(invoice?.subtotal) || 0,
+      userId: invoice?.usersfk,
+      usersfk: invoice?.usersfk,
+      vendorfk: invoice?.vendorfk,
+    };
+    console.log("🚀 newCart:", newCart);
+    console.log("🚀 products:", newCart?.products);
+    invoice?.invoiceProducts?.forEach((p) => {
+     dispatch(addToCart({
+        id: p?.productfk,
+        price: Number(p?.price) || 0,
+        productname: p?.name || "Unknown Product", // ✅ you need to join with product table if available
+         name: p?.Product?.name || "Unknown Product", /// ✅ you need to join with product table if available
+        quantity: p?.quantity ,
+        taxRate: Math.round(Number(p?.gstRate) * 100) ||p?.Product?.taxRate , // gstRate is 0.180 => 18
+      discountRate:Number(p?.discountRate),
+      sellPrice:Number(p?.Product?.sellPrice),
+      gstAmount:Number(p?.gstAmt),
+      }))
+    })
+    navigation.navigate("CreateInvoice", {
+      iscloneItem:newCart
+    });
+
+    toggleHandler(); // close menu
+
+  }
 
 
 
@@ -242,10 +312,14 @@ const handleBulkDelete = async () => {
 
 
 
-
-  function formatDate(date) {
-    return date ? date.toISOString().split("T")[0] : "";
-  }
+function formatDate(date) {
+  if (!date) return "";
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+  const year = d.getFullYear();
+  return `${day}-${month}-${year}`;
+}
 
   const Loader = () => {
     // if (!isLoading) return null;
@@ -312,6 +386,7 @@ const handleBulkDelete = async () => {
             setVisible={setVisible}
             isSelected={selectedInvoice.includes(item.id)}  // ✅ highlight if selected
     onSelect={() => toggleSelectInvoice(item.id)}
+    cloneInvoiceHandler={cloneInvoiceHandler}
    
       onLongSelect={() => handleLongSelect(item.id)}
   selectionMode={selectionMode}/>

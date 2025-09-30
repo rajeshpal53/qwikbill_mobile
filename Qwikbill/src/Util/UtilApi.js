@@ -131,6 +131,18 @@ export const updateApi = async (endpoint, data, headers) => {
     3:"partially paid",
     4:"Quatation"
   }
+
+
+  export const statusName1= {
+    1:"Unpaid",
+    2:"Paid",
+    3:"Partially Paid",
+    4:"Quotation"
+  }
+
+  export const getStatusName = (id) => {
+  return statusName1[id] || "Unknown";
+};
   export const RoleStatusName={
    1:"owner",
    2:"manager",

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Alert, Platform } from "react-native";
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import * as Notifications from "expo-notifications";
 import * as Sharing from "expo-sharing";
 import * as IntentLauncher from "expo-intent-launcher";
@@ -76,62 +76,75 @@ export const useDownloadInvoice = () => {
     return true;
   }
 
-  const downloadInvoicePressHandler = async (api, name) => {
-    await checkNotificationPermission();
-    console.log("Downloading invoice:", api, name);
-    let result;
-    const extension = ".pdf";
-    const fileType = "pdf";
-    try {
-      setIsLoading(true);
-      result = await FileSystem.downloadAsync(
-        api,
-        FileSystem.documentDirectory + `${name}${extension}`,
-        {
-          headers: {
-            Authorization: `Bearer ${userData?.token}`,
-          },
-        }
-      );
 
-      console.log("Downloaded PDF: debug 1:", result?.uri);
-      await saveFile(result?.uri, `${name}${extension}`, "application/pdf", fileType);
-    } catch (error) {
-      console.error("PDF Download/Save error:", error);
-      Alert.alert("Download Failed", "Unable to download the invoice.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
-  const downloadExcelHandler = async (api, name = "SampleFile") => {
-    await checkNotificationPermission();
-    console.log("Downloading Excel:", api, name);
-    let result;
-    const extension = ".xlsx";
-    const fileType = "xlsx";
-    const mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-    try {
-      setIsLoading(true);
-      result = await FileSystem.downloadAsync(
-        api,
-        FileSystem.documentDirectory + `${name}${extension}`,
-        {
-          headers: {
-            Authorization: `Bearer ${userData?.token}`,
-          },
-        }
-      );
+const downloadInvoicePressHandler = async (api, name) => {
+  await checkNotificationPermission();
+  console.log("Downloading invoice:", api, name);
 
-      console.log("Downloaded XLSX: debug 1:", result?.uri);
-      await saveFile(result?.uri, `${name}${extension}`, mimeType, fileType);
-    } catch (error) {
-      console.error("Excel Download/Save error:", error);
-      Alert.alert("Download Failed", "Unable to download the Excel file.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const extension = ".pdf";
+  const fileType = "pdf";
+
+  try {
+    setIsLoading(true);
+
+    // Define local path
+    const fileUri = FileSystem.documentDirectory + `${name}${extension}`;
+
+    // Download the file using the new API
+    const { uri } = await FileSystem.downloadAsync(api, fileUri, {
+      headers: {
+        Authorization: `Bearer ${userData?.token}`,
+      },
+    });
+
+    console.log("Downloaded PDF: debug 1:", uri);
+
+    // Save to device (e.g., media library, share, or custom storage logic)
+    await saveFile(uri, `${name}${extension}`, "application/pdf", fileType);
+  } catch (error) {
+    console.error("PDF Download/Save error:", error);
+    Alert.alert("Download Failed", "Unable to download the invoice.");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
+const downloadExcelHandler = async (api, name = "SampleFile") => {
+  await checkNotificationPermission();
+  console.log("Downloading Excel:", api, name);
+  const extension = ".xlsx";
+  const fileType = "xlsx";
+  const mimeType =
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+  try {
+    setIsLoading(true);
+
+    // Local file path
+    const fileUri = FileSystem.documentDirectory + `${name}${extension}`;
+
+    // Modern download API
+    const { uri } = await FileSystem.downloadAsync(api, fileUri, {
+      headers: {
+        Authorization: `Bearer ${userData?.token}`,
+      },
+    });
+
+    console.log("Downloaded XLSX: debug 1:", uri);
+
+    // Save or share the file
+    await saveFile(uri, `${name}${extension}`, mimeType, fileType);
+  } catch (error) {
+    console.error("Excel Download/Save error:", error);
+    Alert.alert("Download Failed", "Unable to download the Excel file.");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
 
   const saveFile = async (uri, filename, mimetype, fileType) => {
     try {

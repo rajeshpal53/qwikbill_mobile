@@ -6,32 +6,38 @@ const toNumber = (v) => {
 export const addToCart = (state, action) => {
   const newItem = action.payload;
   const existingItemIndex = state.Carts.findIndex((item) => item.id === newItem.id);
+
   const itemPrice = toNumber(newItem.sellPrice);
-  const itemGst = (toNumber(itemPrice) * toNumber(newItem.taxRate)) / 100;
-  console.log("itemPrice is ", itemGst,newItem);
+  const itemGst = (itemPrice * toNumber(newItem.taxRate)) / 100;
+
+  // ✅ default to 1 if quantity not provided
+  const incomingQty = toNumber(newItem.quantity) > 0 ? toNumber(newItem.quantity) : 1;
+
   if (existingItemIndex !== -1) {
     let inCartItemTemp = state.Carts[existingItemIndex];
-    inCartItemTemp.quantity++;
-    inCartItemTemp.totalPrice += itemPrice;
-    inCartItemTemp.gstAmount = (inCartItemTemp.gstAmount || 0) + itemGst;
+
+    inCartItemTemp.quantity += incomingQty;
+    inCartItemTemp.totalPrice += itemPrice * incomingQty;
+    inCartItemTemp.gstAmount = (inCartItemTemp.gstAmount || 0) + itemGst * incomingQty;
+
     state.Carts[existingItemIndex] = inCartItemTemp;
 
-    state.totalPrice += itemPrice;
-    console.log("itemGst is ", itemGst);
-    state.gstAmount += itemGst;
-    state.totalQuantity++;
+    state.totalPrice += itemPrice * incomingQty;
+    state.gstAmount += itemGst * incomingQty;
+    state.totalQuantity += incomingQty;
   } else {
     state.Carts.push({
       ...newItem,
       sellPrice: itemPrice,
       costPrice: toNumber(newItem.costPrice),
-      totalPrice: itemPrice,
-      quantity: 1,
-      gstAmount: itemGst,
+      totalPrice: itemPrice * incomingQty,
+      quantity: incomingQty,
+      gstAmount: itemGst * incomingQty,
     });
-    state.totalPrice += itemPrice;
-    state.gstAmount += itemGst;
-    state.totalQuantity++;
+
+    state.totalPrice += itemPrice * incomingQty;
+    state.gstAmount += itemGst * incomingQty;
+    state.totalQuantity += incomingQty;
   }
 
   state.afterdiscount = state.totalPrice - state.discount;
@@ -40,6 +46,7 @@ export const addToCart = (state, action) => {
     state.afterdiscount = Math.max(state.afterdiscount, 0);
   }
 };
+
 
 export const updateQuantity = (state, action) => {
   const { id, quantity } = action.payload;

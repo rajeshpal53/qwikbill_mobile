@@ -1,35 +1,74 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { StyleSheet, Text, TextInput, View, } from "react-native";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useDispatch, useSelector } from "react-redux";
 import { applyDiscount, applyPartiallyAmount } from "../Redux/slices/CartSlice";
 import { fontFamily, fontSize } from "../Util/UtilApi";
 import CustomDropdown from "./CustomeDropdown";
 import PaymentModeDropdown from "../Components/PaymentModeDropDown";
-
-const PriceDetails = ({ setPaymentStatus, selectedButton, discountValue, setDiscountValue,finalTotal,finalAmountValue,setFinalAmountValue,finalAmountError,setFinalAmountAError,selectedPaymentMode,setSelectedPaymentMode, PartiallyAmount ,setPartiallyAmount }) => {
+import { statusName,getStatusName } from "../Util/UtilApi";
+const PriceDetails = ({
+  setPaymentStatus,
+  selectedButton,
+  discountValue,
+  setDiscountValue,
+  finalTotal,
+  finalAmountValue,
+  setFinalAmountValue,
+  finalAmountError,
+  setFinalAmountAError,
+  selectedPaymentMode,
+  setSelectedPaymentMode,
+  PartiallyAmount,
+  setPartiallyAmount,
+  isQuotation,
+  totaGst,
+  setTotalGst,
+  iscloneItem
+}) => {
   const dispatch = useDispatch();
-  const totalPrice = useSelector((state) => state.cart.totalPrice); 
-    const gstAmount = useSelector((state) => state.cart.gstAmount); 
-    console.log("gstAmount of redux - ", gstAmount);
+  const totalPrice = useSelector((state) => state.cart.totalPrice);
+  const gstAmount = useSelector((state) => state.cart.gstAmount);
+  console.log("gstAmount of redux - ", gstAmount);
   const afterdiscount = useSelector((state) => state.cart.afterdiscount);
   const error = useSelector((state) => state.cart.error);
   const carts = useSelector((state) => state.cart.Carts);
   const [selectedStatus, setSelectedStatus] = useState("Paid");
-  const paymentStatuses = ["Unpaid", "Paid", "Partially Paid","Quatation"];
-  
+  const [paymentStatuses, setPaymentStatuses] = useState([
+    "Unpaid",
+    "Paid",
+    "Partially Paid",
+  ]);
+
+  console.log("isQuotation in price details ", isQuotation);
+  useEffect(() => {
+    if (isQuotation) {
+      setPaymentStatuses(["Quotation"]);
+      setSelectedStatus("Quotation");
+      setPaymentStatus("Quotation");
+    } else if(iscloneItem) {
+      console.log("iscloneItem in price details ", iscloneItem.statusfk);
+      setPaymentStatuses(["Unpaid", "Paid", "Partially Paid","Quotation"]);
+      setSelectedStatus(getStatusName(iscloneItem?.statusfk));
+      setPaymentStatus(getStatusName(iscloneItem?.statusfk));
+    }else{
+      setPaymentStatuses(["Unpaid", "Paid", "Partially Paid"]);
+      setSelectedStatus("Paid");
+      setPaymentStatus("Paid");
+    }
+  }, [isQuotation,iscloneItem]);
+
   const { t } = useTranslation();
 
-
   const paymentModes = [
-  "CASH",
-  "UPI",
-  "RTGS/NEFT",
-  "CREDIT CARD/DEBIT CARD",
-  "Online",
-];
-  console.log("Error is ", error)
+    "CASH",
+    "UPI",
+    "RTGS/NEFT",
+    "CREDIT CARD/DEBIT CARD",
+    "Online",
+  ];
+  console.log("Error is ", error);
   console.log("totalPrice of redux - ", totalPrice);
   useEffect(() => {
     setPaymentStatus(selectedStatus);
@@ -58,28 +97,26 @@ const PriceDetails = ({ setPaymentStatus, selectedButton, discountValue, setDisc
   //   setFinalAmountValue(parsedDiscount)
   // };
 
-   const handleFinalAmountChange = (value) => {
-  // Allow only digits (0–9)
-let numericText = value.replace(/[^0-9.]/g, "");
-  let enteredValue = parseFloat(numericText) || 0;
-  let maxAllowed = parseFloat(totalPrice);
+  const handleFinalAmountChange = (value) => {
+    // Allow only digits (0–9)
+    let numericText = value.replace(/[^0-9.]/g, "");
+    let enteredValue = parseFloat(numericText) || 0;
+    let maxAllowed = parseFloat(totalPrice);
 
-  if (selectedButton === "gst") {
-    maxAllowed = parseFloat(totalPrice) + parseFloat(gstAmount);
-  }
+    if (selectedButton === "gst") {
+      maxAllowed = parseFloat(totalPrice) + parseFloat(gstAmount);
+    }
 
-  if (enteredValue > maxAllowed) {
-    setFinalAmountAError(`Final amount cannot exceed ${maxAllowed}`);
-    console.log("Final amount cannot exceed total price + GST");
-  } else {
-    setFinalAmountAError("");
-    console.log("within limit ✅");
-  }
+    if (enteredValue > maxAllowed) {
+      setFinalAmountAError(`Final amount cannot exceed ${maxAllowed}`);
+      console.log("Final amount cannot exceed total price + GST");
+    } else {
+      setFinalAmountAError("");
+      console.log("within limit ✅");
+    }
 
-  setFinalAmountValue(numericText); // store only digits
-};
-
-
+    setFinalAmountValue(numericText); // store only digits
+  };
 
   const handlePartiallyAmount = (value) => {
     const PartiallyAmount =
@@ -92,108 +129,123 @@ let numericText = value.replace(/[^0-9.]/g, "");
 
   return (
     <View style={styles.Main}>
-
       {/*<View>
         <Text style={styles.headerText}>{t("Price Details")}</Text>
       </View> */}
 
       {/* Price  */}
       <View style={styles.priceView}>
-        <Text style={styles.label}>{t("Price")} ({carts.length} items)</Text>
-       <Text style={styles.value}>
-  ₹ {totalPrice
-    ? Number(totalPrice).toLocaleString("en-IN", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })
-    : "total"}
-</Text>
+        <Text style={styles.label}>
+          {t("Price")} ({carts.length} items)
+        </Text>
+        <Text style={styles.value}>
+          ₹{" "}
+          {totalPrice
+            ? Number(totalPrice).toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })
+            : "total"}
+        </Text>
       </View>
-       {/* Total Amount  */}
-      <View style={styles.priceView}>
-        <Text style={styles.value}>{t("Total Amount")}</Text>
-        <Text style={[styles.value,{ fontSize: fontSize.labelLarge }]}>
-  ₹ {
-    selectedButton === "gst"
-      ? Number(totalPrice + gstAmount).toLocaleString("en-IN", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })
-      : Number(totalPrice).toLocaleString("en-IN", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })
-  }
-</Text>
-      </View>
+      {/* Total Amount  */}
+{ console.log("totaGst in price details ", totaGst)}
+      {selectedButton === "gst" && (
+        <View>
+          <View style={styles.priceView}>
+            <Text style={styles.value}>{t("Tax")}</Text>
+            <Text style={[styles.value, { fontSize: fontSize.labelLarge }]}>
+              ₹
+              {Number(totaGst ).toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </Text>
+          </View>
+          <View style={styles.priceView}>
+            <Text style={styles.value}>{t("Total Amount")+ (" + GST")}</Text>
+            <Text style={[styles.value, { fontSize: fontSize.labelLarge }]}>
+              ₹
+              {Number(totalPrice + gstAmount).toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </Text>
+          </View>
+        </View>
+      )}
 
       {/* Discount  */}
-      {selectedButton !== "Quatation" && (
+      {selectedButton !== "Quotation" && (
         <>
-        <View style={styles.priceView}>
-          <View style={{ marginTop: 7 }}>
-            <Text style={styles.label}>{t("Discount")}</Text>
-          </View>
-          <View style={styles.discountInputWrapper}>
-            <Text style={styles.value}>
-             {Number(discountValue).toLocaleString("en-IN", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}
-              </Text> 
-            {/* <TextInput
+          <View style={styles.priceView}>
+            <View style={{ marginTop: 7 }}>
+              <Text style={styles.label}>{t("Discount")}</Text>
+            </View>
+            <View style={styles.discountInputWrapper}>
+              <Text style={styles.value}>
+                {Number(discountValue).toLocaleString("en-IN", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </Text>
+              {/* <TextInput
               style={styles.input}
               keyboardType="numeric"
               placeholder="Enter Discount"
               value={discountValue}
               onChangeText={handleDiscountChange} // Update discount state
             /> */}
+            </View>
+            {/* Display error message */}
           </View>
-          {/* Display error message */}
-        </View>
-               <View style={styles.priceView}>
-          <View style={{ marginTop: 7 }}>
-            <Text style={styles.label}>{t("Final Amount")}</Text>
-          </View>
+          <View style={styles.priceView}>
+            <View style={{ marginTop: 7 }}>
+              <Text style={styles.label}>{t("Final Amount")}</Text>
+            </View>
 
-          <View style={styles.discountInputWrapper}>
-        <TextInput
-  label="Final Amount"
-  mode="flat"
-  keyboardType="numeric"
-  style={styles.input}
-  value={ finalAmountValue?finalAmountValue.toLocaleString("en-IN", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }):finalTotal.toLocaleString("en-IN", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }) }
-  onChangeText={handleFinalAmountChange}
-  error={!!finalAmountError}
-/>
-              {finalAmountError ? <Text style={styles.errorText}>{finalAmountError}</Text> : null}
+            <View style={styles.discountInputWrapper}>
+              <TextInput
+                label="Final Amount"
+                mode="flat"
+                keyboardType="numeric"
+                style={styles.input}
+                value={
+                  finalAmountValue
+                    ? finalAmountValue.toLocaleString("en-IN", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })
+                    : finalTotal.toLocaleString("en-IN", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })
+                }
+                onChangeText={handleFinalAmountChange}
+                error={!!finalAmountError}
+              />
+              {finalAmountError ? (
+                <Text style={styles.errorText}>{finalAmountError}</Text>
+              ) : null}
+            </View>
+            {/* Display error message */}
           </View>
-          {/* Display error message */}
-        </View>
-      <View style={styles.priceView}>
-        <Text style={styles.value}>{t("Payable Amount")}</Text>
-       <Text
-  style={[styles.value, { fontSize: fontSize.labelLarge }]}>
-  ₹ {
-    selectedButton === "Partially Paid"
-      ? Number(totalPrice).toLocaleString("en-IN", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })
-      : Number(finalTotal).toLocaleString("en-IN", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })
-  }
-</Text>
-      </View>
-      </>
+          <View style={styles.priceView}>
+            <Text style={styles.value}>{t("Payable Amount")}</Text>
+            <Text style={[styles.value, { fontSize: fontSize.labelLarge }]}>
+              ₹{" "}
+              {selectedButton === "Partially Paid"
+                ? Number(totalPrice).toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })
+                : Number(finalTotal).toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+            </Text>
+          </View>
+        </>
       )}
 
       {/* {finalAmountError && (
@@ -207,90 +259,93 @@ let numericText = value.replace(/[^0-9.]/g, "");
       {error && (
         <View style={styles.priceView}>
           <View style={styles.discountInputWrapper}>
-            <Text style={styles.errorText}>{t("Discount amount must be between 0 and total price.")}</Text>
+            <Text style={styles.errorText}>
+              {t("Discount amount must be between 0 and total price.")}
+            </Text>
           </View>
         </View>
       )}
 
       {/* Payment Status with Border Style */}
-      {selectedButton !== "Quatation" && (
-
+      {selectedButton !== "Quotation" && (
         <View style={[styles.priceView]}>
           <View style={{ alignItems: "center", marginTop: 10 }}>
             <Text style={styles.label}>{t("Status")}</Text>
           </View>
-        
-               <PaymentModeDropdown
-      label="Status"
-  options={paymentStatuses} // ["Unpaid", "Partially Paid", "Paid"]
-  value={selectedStatus}
-  onChange={setSelectedStatus}
-  t={t}
-  width={"90%"}
-    />
-          </View>
-        
+
+          <PaymentModeDropdown
+            label="Status"
+            options={paymentStatuses} // ["Unpaid", "Partially Paid", "Paid"]
+            value={selectedStatus}
+            onChange={setSelectedStatus}
+            t={t}
+            width={"90%"}
+          />
+        </View>
       )}
       {selectedStatus === "Partially Paid" && (
-  <>
-    <View style={styles.priceView}>
-      <Text style={[styles.label, { marginTop: 5 }]}>{t("Partially Paid")}</Text>
-      <View style={styles.discountInputWrapper}>
-        <TextInput
-          style={styles.input}
-          keyboardType="numeric"
-          placeholder="Enter Amount"
-          value={PartiallyAmount}
-          onChangeText={(text) => {
-            // Convert to number
-            let amount = parseFloat(text) || 0;
-            // Prevent exceeding finalTotal
-            if (amount > finalTotal) {
-              amount = finalTotal;
-            }
-            setPartiallyAmount(Number(amount));
-          }}
-        />
-      </View>
-    </View>
+        <>
+          <View style={styles.priceView}>
+            <Text style={[styles.label, { marginTop: 5 }]}>
+              {t("Partially Paid")}
+            </Text>
+            <View style={styles.discountInputWrapper}>
+              <TextInput
+                style={styles.input}
+                keyboardType="numeric"
+                placeholder="Enter Amount"
+                value={PartiallyAmount}
+                onChangeText={(text) => {
+                  // Convert to number
+                  let amount = parseFloat(text) || 0;
+                  // Prevent exceeding finalTotal
+                  if (amount > finalTotal) {
+                    amount = finalTotal;
+                  }
+                  setPartiallyAmount(Number(amount));
+                }}
+              />
+            </View>
+          </View>
 
-    {/* Remaining Amount after partial payment */}
-    {PartiallyAmount !== "" && !isNaN(PartiallyAmount) && (
-      <View style={styles.priceView}>
-        <Text style={styles.label}>{t("Remaining Amount")}</Text>
-        <Text
-          style={[
-            styles.value,
-            { fontSize: fontSize.labelLarge, fontFamily: fontFamily.medium },
-          ]}
-        >
-          ₹ {(finalTotal - parseFloat(PartiallyAmount || 0)).toFixed(2)}
-        </Text>
-      </View>
-    )}
-  </>
-)}
+          {/* Remaining Amount after partial payment */}
+          {PartiallyAmount !== "" && !isNaN(PartiallyAmount) && (
+            <View style={styles.priceView}>
+              <Text style={styles.label}>{t("Remaining Amount")}</Text>
+              <Text
+                style={[
+                  styles.value,
+                  {
+                    fontSize: fontSize.labelLarge,
+                    fontFamily: fontFamily.medium,
+                  },
+                ]}
+              >
+                ₹ {(finalTotal - parseFloat(PartiallyAmount || 0)).toFixed(2)}
+              </Text>
+            </View>
+          )}
+        </>
+      )}
 
-  {selectedStatus !== "Unpaid"|| selectedStatus !== "Quatation" && (
-  <View style={styles.priceView}>
-    <View style={{ alignItems: "center", marginTop: 10 }}>
-      <Text style={styles.label}>{t("Payment Mode")}</Text>
-    </View>
+      {selectedStatus !== "Unpaid" && selectedStatus !== "Quotation" && (
+        <View style={styles.priceView}>
+          <View style={{ alignItems: "center", marginTop: 10 }}>
+            <Text style={styles.label}>{t("Payment Mode")}</Text>
+          </View>
 
-    <PaymentModeDropdown
-      label=" Payment Mode"
-        options={paymentModes}
-        value={selectedPaymentMode}
-        onChange={(option) => setSelectedPaymentMode(option)}
-        width="70%"
-        t={t} // pass translation fn if available
-    />
-  </View>
-)}
-   
+          <PaymentModeDropdown
+            label=" Payment Mode"
+            options={paymentModes}
+            value={selectedPaymentMode}
+            onChange={(option) => setSelectedPaymentMode(option)}
+            width="70%"
+            t={t} // pass translation fn if available
+          />
+        </View>
+      )}
 
-
-{/* {
+      {/* {
   selectedStatus !== "Unpaid" && (
     <View style={styles.priceView}>
       <View style={{ alignItems: "center", marginTop: 10 }}>
@@ -325,8 +380,6 @@ let numericText = value.replace(/[^0-9.]/g, "");
     </View>
   )
 } */}
-
-
     </View>
   );
 };
@@ -359,8 +412,6 @@ const styles = StyleSheet.create({
     color: "#333",
     fontFamily: "Poppins-Medium",
     fontSize: fontSize.labelMedium,
-
-
   },
   value: {
     // fontSize: 16,
@@ -379,10 +430,10 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
   errorText: {
-  color: "red",
-  fontSize: 12,
-  marginTop: 4,
-},
+    color: "red",
+    fontSize: 12,
+    marginTop: 4,
+  },
   discountInputWrapper: {
     flex: 1,
     // justifyContent: "flex-end",
@@ -399,7 +450,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     height: 55,
-  //  width: "72%",
+    //  width: "72%",
     alignItems: "flex-end",
     marginRight: -25,
   },
@@ -409,9 +460,8 @@ const styles = StyleSheet.create({
     fontSize: fontSize.labelLarge,
   },
   errorText: {
-    color: "red"
-  }
+    color: "red",
+  },
 });
 
 export default PriceDetails;
-

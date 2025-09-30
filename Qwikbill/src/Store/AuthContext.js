@@ -118,12 +118,11 @@ export const AuthProvider = ({ children }) => {
     if (isPasskey||passkey) {
       navigation.reset({ index: 0, routes: [{ name: "Passcode" }] });
     } else {
-      navigation.reset({ index: 0, routes: [{ name: "CreateNewPasscode" }] });
-    }
+      navigation.reset({ index: 0, routes: [{ name: "CreateNewPasscode" }] });}
 
     showSnackbar("Login successful", "success");
     return true;
-    }
+   }
     // ✅ Login success flow
    
   } catch (error) {

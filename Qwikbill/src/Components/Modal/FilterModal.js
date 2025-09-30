@@ -29,7 +29,7 @@ const FilterModal = ({
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
 
   const dateFilters = [
-    { label: "1 Month", value: "1months" },
+    { label: "1 Month", value: "1month" },
     { label: "3 Months", value: "3months" },
     { label: "6 Months", value: "6months" },
     { label: "Date Wise", value: "datewise" },
@@ -38,8 +38,16 @@ const FilterModal = ({
   const typeFilters = [
     { label: "Gst", value: "gst" },
     { label: "Provisional", value: "provisional" },
-    { label: "Quotation", value: "quotation" },
+    // { label: "Quotation", value: "quotation" },
   ];
+
+  // 🔹 Remove Filter Handler
+  const handleRemoveFilter = () => {
+    setSelectedValue("");
+    setSortBy("");
+    setTypeFilter("");
+    setDateRange({ startDate: null, endDate: null });
+  };
 
   const handleSubmit = () => {
     if (selectedValue === "datewise") {
@@ -48,21 +56,63 @@ const FilterModal = ({
     }
     setModalVisible(false);
   };
+//   const handleDateChange = (event, selectedDate, type) => {
+//   if (!selectedDate) return; // user cancelled the picker
 
-  const handleDateChange = (event, selectedDate, type) => {
-    if (selectedDate) {
-      setDateRange((prev) => ({
-        ...prev,
-        [type]: selectedDate,
-      }));
-    }
+//   setDateRange((prev) => {
+//     let newStart = prev.startDate;
+//     let newEnd = prev.endDate;
+    
+//     if (type === "startDate") {
+//       newStart = selectedDate;
+//       // if endDate exists and is before startDate, reset endDate
+//       if (prev.endDate && selectedDate > prev.endDate) {
+//         newEnd = selectedDate;
+//       }
+//       setShowStartDatePicker(false);
+//       setShowEndDatePicker(true); // open endDate picker after startDate
+//     } else if (type === "endDate") {
+//       newEnd = selectedDate;
+//       // if startDate exists and is after endDate, reset startDate
+//       if (prev.startDate && selectedDate < prev.startDate) {
+//         newStart = selectedDate;
+//       }
+//       setShowEndDatePicker(false);
+//     }
+
+//     return { startDate: newStart, endDate: newEnd };
+//   });
+// };
+
+const handleDateChange = (event, selectedDate, type) => {
+  if (!selectedDate) {
+    // user cancelled the picker
+    if (type === "startDate") setShowStartDatePicker(false);
+    if (type === "endDate") setShowEndDatePicker(false);
+    return;
+  }
+
+  setDateRange(prev => {
+    const newRange = { ...prev };
+
     if (type === "startDate") {
+      newRange.startDate = selectedDate;
+      // If endDate exists and is before startDate, reset it
+      if (prev.endDate && prev.endDate < selectedDate) {
+        newRange.endDate = null;
+      }
       setShowStartDatePicker(false);
-      setShowEndDatePicker(true);
-    } else {
+      // Only open end date picker after a short delay to ensure state updates
+      setTimeout(() => setShowEndDatePicker(true), 100);
+    } else if (type === "endDate") {
+      newRange.endDate = selectedDate;
       setShowEndDatePicker(false);
     }
-  };
+
+    return newRange;
+  });
+};
+
 
   return (
     <Modal
@@ -83,9 +133,17 @@ const FilterModal = ({
                 <AntDesign name="close" size={24} color="black" />
               </TouchableOpacity>
 
+              {/* Remove Filter Button */}
+              <TouchableOpacity
+                style={styles.removeFilterButton}
+                onPress={handleRemoveFilter}
+              >
+                <Text style={styles.removeFilterText}>{t("Remove Filter")}</Text>
+              </TouchableOpacity>
+
               <Text style={styles.modalTitle}>{t("Select Filter")}</Text>
 
-              {/* Date Filters as List */}
+              {/* Date Filters */}
               <View style={styles.optionList}>
                 {dateFilters.map((option, index) => (
                   <TouchableOpacity
@@ -117,7 +175,7 @@ const FilterModal = ({
                 ))}
               </View>
 
-              {/* Type Filters as Picker */}
+              {/* Type Filters */}
               <View style={styles.pickerContainer}>
                 <Picker
                   selectedValue={
@@ -224,6 +282,19 @@ const styles = StyleSheet.create({
     top: 15,
     right: 15,
   },
+  removeFilterButton: {
+    position: "absolute",
+    top: 15,
+    left: 15,
+    backgroundColor: "#f44336",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+  },
+  removeFilterText: {
+    color: "white",
+    fontWeight: "bold",
+  },
   modalTitle: {
     fontSize: 20,
     fontWeight: "bold",
@@ -236,13 +307,10 @@ const styles = StyleSheet.create({
   optionItem: {
     paddingVertical: 12,
     paddingHorizontal: 10,
-  
-   backgroundColor:"#f0f0f0",
-   marginBottom:5,
-   borderRadius:12,
-   textAlign:"center",
-   alignItems:"center",
-   fontFamily:fontFamily.medium
+    backgroundColor: "#f0f0f0",
+    marginBottom: 5,
+    borderRadius: 12,
+    alignItems: "center",
   },
   optionText: {
     fontSize: 16,

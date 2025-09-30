@@ -11,7 +11,8 @@ import HomeHeaderRight from "../Components/HeaderComponents/HomeHeaderRight.js";
 import { fontSize } from "../Util/UtilApi.js";
 import ViewInvoiceScreen1 from "../Screen/Invoices/ViewInvoiceScreen1.js";
 import { useTranslation } from "react-i18next";
-
+import { SafeAreaView,useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTheme } from "../../constants/Theme.js";
 export default function BottomNavigator({
   roleDetails,
   setroleDetails,
@@ -23,7 +24,8 @@ export default function BottomNavigator({
   // const { searchMode } = useContext(AuthContext);
   const Tab = createBottomTabNavigator();
   const{t}=useTranslation()
-
+  const insets = useSafeAreaInsets(); 
+  const{colors}=useTheme()
   // const handleSearch = (query) => {
   //   setSearchQuery(query);
   //   // Handle search logic here
@@ -33,44 +35,31 @@ export default function BottomNavigator({
   // console.log("set no item moal in tab",setNoItemModal)
   // console.log("set role detais",setroleDetails)
   return (
+    // <SafeAreaView style={{ flex: 1, backgroundColor: colors?.background }}>
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
-        tabBarActiveTintColor: "#26a0df", // Color for active tab
-        tabBarInactiveTintColor: "#fff", // Color for inactive tabs
-        tabBarLabelStyle: {
-          fontSize: 14, // Adjust the label font size
-          // borderRadius:10,
-        },
-        headerShown: false,
-        tabBarStyle: {
-          height: 55,
-          backgroundColor: "black",
-          color: "white",
-          borderTopRightRadius: 15,
-          borderTopLeftRadius: 15,
-          borderTopColor: "#fff",
-          // borderTo
-        },
-        headerStyle: {
-          // backgroundColor: `#262580`, // Set your desired header background color here
-          backgroundColor: "#0c3b73",
-          shadowColor: "transparent", // This removes the shadow on iOS
-          elevation: 0, // This removes the shadow on Android
-          // marginTop:2,
-        },
-        tabBarHideOnKeyboard: true,
-        headerTintColor: "white", // Set your desired header text color here
-        headerTitleStyle: {
-          fontWeight: "bold", // Optional: Set your desired font weight
-        },
-        // headerLeft: () => (
-        //   <Pressable onPress={() => console.log("bar Pressed")}>
-        //     <Ionicons name="person-circle-outline" size={40} color="#ffffff" />
-        //   </Pressable>
-        // ),
-        headerRight: () => <HomeHeaderRight />,
-      }}
+          tabBarActiveTintColor: "#26a0df",
+          tabBarInactiveTintColor: "#fff",
+          tabBarLabelStyle: { fontSize: 14 },
+          headerShown: false,
+          tabBarStyle: {
+            height: 55 + insets.bottom, // add bottom inset
+            paddingBottom: insets.bottom, // ensures tab bar buttons are not blocked
+            backgroundColor: "black",
+            borderTopRightRadius: 15,
+            borderTopLeftRadius: 15,
+            borderTopColor: "#fff",
+          },
+          headerStyle: {
+            backgroundColor: "#0c3b73",
+            shadowColor: "transparent",
+            elevation: 0,
+          },
+          headerTintColor: "white",
+          headerTitleStyle: { fontWeight: "bold" },
+          tabBarHideOnKeyboard: true,
+        }}
     >
       <Tab.Screen
         name= "Home"
@@ -181,6 +170,7 @@ export default function BottomNavigator({
         )}
       </Tab.Screen>
     </Tab.Navigator>
+    // </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({

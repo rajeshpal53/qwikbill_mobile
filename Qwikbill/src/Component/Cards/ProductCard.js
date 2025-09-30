@@ -21,9 +21,10 @@ const ProductCardDetails = ({ item }) => {
 
   useEffect(() => {
     // console.log("InCart is , ", isInCart); // Keep for debugging if needed
-  }, [isInCart]);
+  }, []);
 
   const handleAddToCart = () => {
+    console.log("Adding to cart:", item);
     dispatch(addToCart(item));
   };
 

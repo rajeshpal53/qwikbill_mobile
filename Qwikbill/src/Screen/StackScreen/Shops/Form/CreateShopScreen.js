@@ -39,7 +39,9 @@ import { useTranslation } from "react-i18next";
 import ProviderProfileForm from "./ProviderProfileForm";
 import ProviderServiceForm from "./ProviderServiceForm";
 import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
-import Icon from "react-native-vector-icons/AntDesign";
+import { AntDesign } from "@expo/vector-icons";
+import { Ionicons,Feather,Entypo ,MaterialCommunityIcons,FontAwesome5} from "@expo/vector-icons";
+
 import axios from "axios";
 import UserDataContext from "../../../../Store/UserDataContext";
 import { ShopContext } from "../../../../Store/ShopContext";
@@ -436,7 +438,7 @@ accountHolderName:routeData?.accountHolderName||"",
           homeDelivery: routeData?.homeServiceProvide || false,
           accountNumber:routeData?.accountNumber||"",
               cinNumber: routeData?.cinNumber || "",
-
+          upiId:routeData?.upiId||"",
 ifscCode:routeData?.ifscCode||"",
 branchName:routeData?.branchName||"",
 accountHolderName:routeData?.accountHolderName||"",
@@ -1025,7 +1027,10 @@ signature:(routeData?.signatureImage &&
                   // style={{ flex: 1 }}
                   >
                     {/* Previous */}
-                    <Icon name="arrowleft" size={20} color="#fff" />
+               
+                  <Entypo name="chevron-left" size={30} color="#fff" />
+
+
                   </Button>
 
                   {currentStep <2 && (
@@ -1036,7 +1041,10 @@ signature:(routeData?.signatureImage &&
                       onPress={() =>
                         handleNextStep(validateForm, setFieldTouched)
                       }
-                      style={{ flex: 1 }}
+                      style={{ flex: 1}}
+                      labelStyle={{
+    fontSize: 16,     
+  }}
                     >
                       Next
                     </Button>

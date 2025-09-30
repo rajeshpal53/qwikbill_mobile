@@ -25,6 +25,7 @@ import { StorageLocationProvider } from "./src/Store/StorageLocationContext.js";
 import { navigationRef } from "./src/Util/NavigationService.js";
 import { ThemeProvider,useThemeContext } from "./src/Store/ThemeContext.js";
 import { useTheme } from "./constants/Theme.js";
+import useCheckForUpdate from "./src/Util/useCheckForUpdate.js";
 //import { requestUserPermission, setupTokenRefreshListener } from "./src/Util/NotificationHandler.js";
 const customTheme = {
   ...DefaultTheme,
@@ -59,6 +60,7 @@ export default function App() {
 
   });
 
+  useCheckForUpdate();
   return (
     <SafeAreaProvider>
       <StorageLocationProvider>

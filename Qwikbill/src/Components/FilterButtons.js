@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 const FilterButtons = ({selected,onFilterChange}) => {
   const { t } = useTranslation();
 
-  const filters = ["All", "Unpaid", "Paid", "Partially Paid" ];
+  const filters = ["All", "Unpaid", "Paid", "Partially Paid","Quatation"];
   return (
     <View style={{ flexDirection: "row", padding: 10 }}>
       <FlatList
