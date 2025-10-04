@@ -46,24 +46,34 @@ const apiRequest = async (method, url, data = null, customHeaders = {}) => {
   }
 };
 
-  const deleteApiRequest= async( method ,url, headers={},payload)=>{
-    try{
-      const response= await axios({
-          url:`${API_BASE_URL}${url}`,
-          method,
-          data:payload?JSON.stringify(payload):null,
-          headers:{
-            "Content-Type":"application/json",
-            ...headers,
-          },
-          withCredentials:true
-        })
-        return response.data||'';
-    }catch(error){
-       console.error(`Error with ${method.toUpperCase()} request to ${url}:`, error.response || error.message);
+  const deleteApiRequest = async (method, url, headers = {}, payload) => {
+  try {
+    const config = {
+      url: `${API_BASE_URL}${url}`,
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        ...headers,
+      },
+      withCredentials: true,
+    };
+
+    // only add data if payload is provided and method usually accepts a body
+    if (payload) {
+      config.data = payload; // let axios handle JSON.stringify internally
+    }
+    
+    const response = await axios(config);
+    return response.data || "";
+  } catch (error) {
+    console.error(
+      `Error with ${method.toUpperCase()} request to ${url}:`,
+      error.response || error.message
+    );
     throw error.response || error.message;
-  }    
   }
+};
+
   //CREATE
   export const createApi = async (endpoint, data, headers) => {
     return apiRequest('post', endpoint, data, headers);

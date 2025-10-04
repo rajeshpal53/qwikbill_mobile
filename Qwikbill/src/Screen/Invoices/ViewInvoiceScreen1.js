@@ -1,7 +1,7 @@
 
 import React, { useEffect, useContext, useState, useRef } from "react";
 import { View, Text, FlatList, RefreshControl } from "react-native";
-import { readApi } from "../../Util/UtilApi";
+import { API_BASE_URL, readApi } from "../../Util/UtilApi";
 import { ShopContext } from "../../Store/ShopContext";
 import { ActivityIndicator, FAB } from "react-native-paper";
 import ViewInvoiceCard from "../../Components/ViewInvoiceCard";
@@ -219,6 +219,23 @@ const handleBulkDelete = async () => {
   //   if (page > 1) fetchInvoices(page);
   // }, [page, selectedShop]);
   console.log("type  filterisss ", typeFilter)
+  const delteHandler=async(invoice,toggleHandler)=>{
+      try{
+        console.log("invoice to be deleted",`${API_BASE_URL}invoice/invoices/${invoice?.id}`)
+        const response=await deleteApi(`invoice/invoices/${invoice?.id}`,{Authorization:`Bearer ${userData?.token}`},)
+        if(response){
+        setInvoices((prev) =>
+  prev.filter((i) => i.id !== invoice?.id)
+);
+        }
+        showSnackbar("Invoice delted successfully","success")
+      }catch(error){
+        showSnackbar("failed to delete invoice","error")
+      }
+      finally{
+        toggleHandler()
+      }
+  }
 
 
   const cloneInvoiceHandler=(invoice,toggleHandler)=>{
@@ -387,6 +404,7 @@ function formatDate(date) {
             isSelected={selectedInvoice.includes(item.id)}  // ✅ highlight if selected
     onSelect={() => toggleSelectInvoice(item.id)}
     cloneInvoiceHandler={cloneInvoiceHandler}
+    delteHandler={delteHandler}
    
       onLongSelect={() => handleLongSelect(item.id)}
   selectionMode={selectionMode}/>

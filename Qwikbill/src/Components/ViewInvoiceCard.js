@@ -15,7 +15,8 @@ const ViewInvoiceCard = ({
   onSelect,
   onLongSelect,
   selectionMode,
-  cloneInvoiceHandler
+  cloneInvoiceHandler,
+  delteHandler
 }) => {
   const { colors, isDark } = useTheme();
   const styles = makeStyles(colors);
@@ -99,7 +100,7 @@ const ViewInvoiceCard = ({
   <Menu.Item
     onPress={() => {
       console.log("Delete pressed");
-      toggleHandler();
+      delteHandler(invoice,toggleHandler)
     }}
     title="Delete"
     leadingIcon="delete"         // 👈 icon for delete
