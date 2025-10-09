@@ -104,50 +104,47 @@ const [initialValues,setInitialValues]=useState({
   console.log("user isss ", User);
 
   const fetchUserData = async (phoneNumber, setFieldValue) => {
-    if (timeoutId.current) {
-      clearTimeout(timeoutId.current);
-    }
-    timeoutId.current = setTimeout(async () => {
-      try {
-        if (/^\d{10}$/.test(phoneNumber)) {
-          setLoading(true);
-          try {
-            const api = `users/getUserByMobile/${phoneNumber}`;
-            const headers = {
-              Authorization: `Bearer ${userData?.token}`,
-            };
-            const response = await readApi(api, headers);
-            if (response) {
-              console.log("response of search ", response);
+  if (timeoutId.current) {
+    clearTimeout(timeoutId.current);
+  }
 
-              setUser(response);
-              setFieldValue("name", response?.name);
-              setFieldValue("address", response?.address);
-              setFieldValue("mobile", phoneNumber);
-            } else {
-              setFieldValue("name", response?.name);
-              setFieldValue("address", response?.address);
-              setFieldValue("mobile", phoneNumber);
-            }
-          } catch (error) {
-            setFieldValue("name", "");
-            setFieldValue("address", "");
+  timeoutId.current = setTimeout(async () => {
+    try {
+      if (/^\d{10}$/.test(phoneNumber)) {
+        setLoading(true);
+        const api = `users/getUserByMobile/${phoneNumber}`;
+        const headers = {
+          Authorization: `Bearer ${userData?.token}`,
+        };
 
-            setFieldValue("mobile", phoneNumber);
-            console.error("Error fetching User data:", error);
-          } finally {
-            setLoading(false);
+        try {
+          const response = await readApi(api, headers);
+
+          if (response) {
+            // If user found, fill the fields
+            setUser(response);
+            setFieldValue("name", response?.name || "");
+            setFieldValue("address", response?.address || "");
           }
-        } else {
-          setFieldValue("name", "");
-          setFieldValue("address", "");
+          // Always update mobile, regardless of user found
           setFieldValue("mobile", phoneNumber);
+        } catch (error) {
+          console.error("Error fetching User data:", error);
+          // If API fails, do not clear name/address, just update mobile
+          setFieldValue("mobile", phoneNumber);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error("Error fetching HSN code data:", error);
+      } else {
+        // Invalid phone number, only update mobile
+        setFieldValue("mobile", phoneNumber);
       }
-    }, 300);
-  };
+    } catch (error) {
+      console.error("Error in fetchUserData:", error);
+    }
+  }, 300);
+};
+
 
   function handleConfirm() {
     setShowModal(false); // close the modal

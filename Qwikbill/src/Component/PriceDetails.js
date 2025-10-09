@@ -166,7 +166,7 @@ const PriceDetails = ({
             <Text style={styles.value}>{t("Total Amount")+ (" + GST")}</Text>
             <Text style={[styles.value, { fontSize: fontSize.labelLarge }]}>
               ₹
-              {Number(totalPrice + gstAmount).toLocaleString("en-IN", {
+              {Number(totaGst+totalPrice).toLocaleString("en-IN", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })}

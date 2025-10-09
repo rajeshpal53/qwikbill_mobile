@@ -39,18 +39,27 @@ export default function BottomNavigator({
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
-          tabBarActiveTintColor: "#26a0df",
-          tabBarInactiveTintColor: "#fff",
-          tabBarLabelStyle: { fontSize: 14 },
-          headerShown: false,
-          tabBarStyle: {
-            height: 55 + insets.bottom, // add bottom inset
-            paddingBottom: insets.bottom, // ensures tab bar buttons are not blocked
-            backgroundColor: "black",
-            borderTopRightRadius: 15,
-            borderTopLeftRadius: 15,
-            borderTopColor: "#fff",
-          },
+        tabBarActiveTintColor: "#26a0df",
+  tabBarInactiveTintColor: "#fff",
+  headerShown: false,
+  tabBarStyle: {
+    height: 60, // compact height
+    backgroundColor: "black",
+    borderTopRightRadius: 15,
+    borderTopLeftRadius: 15,
+    borderTopWidth: 0.5,
+    borderTopColor: "#444",
+    paddingBottom: 5, // give some space for label
+  },
+  tabBarLabelStyle: {
+    fontSize: 12,      // smaller font so it fits in compact height
+    textAlign: "center",
+    marginBottom: 2,   // fine-tune vertical alignment
+  },
+  tabBarIconStyle: {
+    marginTop: 5,      // push icon slightly down
+  },
+  tabBarHideOnKeyboard: true,
           headerStyle: {
             backgroundColor: "#0c3b73",
             shadowColor: "transparent",

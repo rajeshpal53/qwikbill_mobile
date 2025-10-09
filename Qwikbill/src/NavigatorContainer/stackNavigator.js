@@ -184,8 +184,8 @@ export default function StackNavigator() {
   // console.log(isLoading);
   // console.log(isAuthenticated, "akdskddkfkfkf");
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors?.background }}>
-    {console.log("passkey in stack navigator", passkey,isForgetPasswordState,userData)}
+    // <SafeAreaView style={{ flex: 1, backgroundColor: colors?.background }}>
+    <SafeAreaView edges={['bottom']} style={{ flex: 1, backgroundColor: colors?.background }}>
       <Stack.Navigator
         // initialRouteName={userData ? "Passcode" : "login"}
          initialRouteName={initialRoute}
@@ -647,7 +647,8 @@ export default function StackNavigator() {
         isConnected={isConnected}
         setIsConnected={setIsConnected}
       />
-    </SafeAreaView>
+      </SafeAreaView>
+   
   );
 }
 

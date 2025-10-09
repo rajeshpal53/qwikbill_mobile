@@ -68,7 +68,8 @@ const NameTextInput = ({
   );
 
   const handleTextChange = (text) => {
-    let filteredText = text.replace(/[^A-Za-z\s]/g, "");
+   let filteredText = text.replace(/[^A-Za-z\s.,]/g, "");
+
     if (filteredText.length > 0) {
       filteredText = filteredText.charAt(0).toUpperCase() + filteredText.slice(1);
     }
@@ -99,7 +100,7 @@ const NameTextInput = ({
         onChangeText={handleTextChange}
         onBlur={handleBlur("name")}
         value={values.name}
-        editable={!loading}
+        // editable={!loading}
         right={
           loading ? (
             <ActivityIndicator
@@ -133,6 +134,7 @@ const NameTextInput = ({
 
       {suggestions.length > 0 && (
         <FlatList
+        keyboardShouldPersistTaps="handled"
           data={suggestions}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (

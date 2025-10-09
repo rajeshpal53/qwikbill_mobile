@@ -500,6 +500,7 @@ const handleLongSelect = (id) => {
             }
             fabStyle={{
               backgroundColor: "#007bff", //
+              bottom: -40,
             }}
           />
         )
@@ -546,7 +547,7 @@ const styles = StyleSheet.create({
   fab: {
     position: "absolute",
     right: 25,
-    bottom: 25,
+    bottom: 10,
     backgroundColor: "#0c3b73",
     justifyContent: "center",
     alignItems: "center",

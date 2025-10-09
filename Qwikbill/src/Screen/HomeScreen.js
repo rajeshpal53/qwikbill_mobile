@@ -10,7 +10,6 @@ import { useTranslation } from "react-i18next";
 import {
   FlatList,
   Image,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -25,6 +24,8 @@ import {
   responsiveHeight,
   responsiveWidth
 } from "react-native-responsive-dimensions";
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import {
   TourGuideZone,
   TourGuideZoneByPosition,
@@ -41,7 +42,7 @@ import { rolePermissions, services } from "../tempList/ServicesList";
 import DropDownList from "../UI/DropDownList";
 import { ButtonColor, fontFamily, fontSize } from "../Util/UtilApi";
 import { useTheme } from "../../constants/Theme";
-
+import { StatusBar } from "expo-status-bar";
 export default function HomeScreen({ navigation, noItemData }) {
   const { t } = useTranslation();
   const { currentLoginTime, lastLoginTime, storeCurrentTime } =
@@ -230,7 +231,11 @@ const { width: deviceWidth } = Dimensions.get("window");
 
   // console.log("DATA OF ALL SHOP ", allShops.length);
   return (
-    <SafeAreaView style={[styles.safeContainer,{backgroundColor:colors?.background}]}>
+
+    <>
+          {/* <StatusBar style="light" backgroundColor={"#0c3b73"} /> */}
+    
+      
 
       <View style={styles.overlay}>
         <View style={styles.header}>
@@ -389,7 +394,7 @@ const { width: deviceWidth } = Dimensions.get("window");
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </>
   );
 }
 

@@ -120,6 +120,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:107285483046:android:f0172bebcb27fba4c720e7",
+        "android_client_info": {
+          "package_name": "com.wertone.societyApp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "107285483046-cp8hbccgbn4380jh9919lk2nta0sml0j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJaeHYKPqlfxMn8xb1KtRER1gXoN6hEuA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "107285483046-cp8hbccgbn4380jh9919lk2nta0sml0j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

@@ -33,7 +33,7 @@ const ProductDetailsCard = ({
         if (selectionMode) {
           onSelect();
         } else {
-          navigation.navigate("ProductDetail", { item });
+          // navigation.navigate("ProductDetail", { item });
         }
       }}
       onLongPress={onLongSelect}
