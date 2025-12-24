@@ -36,6 +36,35 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:107285483046:android:d4d75edf08b206a0c720e7",
+        "android_client_info": {
+          "package_name": "com.wertone.f2g"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "107285483046-cp8hbccgbn4380jh9919lk2nta0sml0j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJaeHYKPqlfxMn8xb1KtRER1gXoN6hEuA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "107285483046-cp8hbccgbn4380jh9919lk2nta0sml0j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:107285483046:android:d8cb7ec44d22b967c720e7",
         "android_client_info": {
           "package_name": "com.wertone.qwikbill"

@@ -22,7 +22,7 @@ function InvoiceTransactionScreen() {
   const fetchinvoiceData=async()=>{
     try{
       setIsLoading(true)
-    const response=  await readApi(`transaction/getTransactionsByInvoicefk/${invoices.invoicefk}`)
+    const response=  await readApi(`transaction/getTransactionsByInvoicefk/${invoices.id}`)
     console.log(response,"response of transaction")
       setTransactions(response.transactions)
     }catch(err){

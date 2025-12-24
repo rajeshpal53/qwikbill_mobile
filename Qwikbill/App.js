@@ -26,6 +26,18 @@ import { navigationRef } from "./src/Util/NavigationService.js";
 import { ThemeProvider,useThemeContext } from "./src/Store/ThemeContext.js";
 import { useTheme } from "./constants/Theme.js";
 import useCheckForUpdate from "./src/Util/useCheckForUpdate.js";
+import * as SystemUI from 'expo-system-ui';
+import { StatusBar } from "expo-status-bar";
+import {
+  storeMessage,
+  requestUserPermission,
+  setupTokenRefreshListener,
+  setupBackgroundHandler,
+  foregroundHandler,
+
+} from "./src/Util/NotificationHandler";
+// import { useAudioPlayer } from 'expo-audio';
+
 //import { requestUserPermission, setupTokenRefreshListener } from "./src/Util/NotificationHandler.js";
 const customTheme = {
   ...DefaultTheme,
@@ -41,8 +53,11 @@ export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(true);
   const[fcmToken, setFcmToken] = useState(null);
 
-    const { colors, isDark } = useTheme();
+  //   const audioSource = require('./assets/notification.mp3');
+  // const player = useAudioPlayer(audioSource);
 
+    const { colors, isDark } = useTheme();
+SystemUI.setBackgroundColorAsync('transparent');
 
   useEffect(() => {
     const loadFonts = async () => {
@@ -60,9 +75,31 @@ export default function App() {
 
   });
 
+
+   useEffect(() => {
+    // Request permission and retrieve token on startup
+    requestUserPermission();
+    // Set up the token refresh listener
+    const unsubscribeTokenRefresh = setupTokenRefreshListener(setFcmToken);
+    // Clean up the token refresh listener
+    return () => unsubscribeTokenRefresh();
+  }, []);
+  useEffect(() => {
+    // Handle background messages
+      const remoteMessage=setupBackgroundHandler();
+      // playNotificationSound();
+      console.log('Message handled in the background:', remoteMessage);
+  }, []);
+  useEffect(() => {
+    const unsubscribeForeground = foregroundHandler(storeMessage);
+    console.log("unsubscribeForeground", unsubscribeForeground);
+    return () => unsubscribeForeground();
+  }, []);
+
   useCheckForUpdate();
   return (
     <SafeAreaProvider>
+        <StatusBar translucent backgroundColor="transparent" style="light" />
       <StorageLocationProvider>
         <ThemeProvider>
       <UserDataProvider>

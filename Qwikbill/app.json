@@ -2,19 +2,23 @@
   "expo": {
     "name": "QwikBill",
     "slug": "qwikbill",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "newArchEnabled": true,
-    "orientation": "portrait",
     "icon": "./assets/qLogo.png",
-"userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/qLogo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "androidStatusBar": {
+      "translucent": true,
+      "backgroundColor": "transparent",
+      "barStyle": "light-content"
+    },
     "plugins": [
-        "@config-plugins/react-native-pdf",
-         "@react-native-firebase/app",
+      "@config-plugins/react-native-pdf",
+      "@react-native-firebase/app",
       "@react-native-firebase/auth",
       [
         "expo-local-authentication",
@@ -36,11 +40,13 @@
         "expo-build-properties",
         {
           "android": {
-              "enableProguardInReleaseBuilds": true
+            "enableProguardInReleaseBuilds": true,
+            "resizeableActivity": true
           }
         }
-      ]
-
+      ],
+      "expo-web-browser",
+      "expo-audio"
     ],
     "ios": {
       "buildNumber": "1.0.0",

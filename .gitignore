@@ -1,1 +1,6 @@
 node_modules
+
+
+# Android build outputs
+*.apk
+*.aab

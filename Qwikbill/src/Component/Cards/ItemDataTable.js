@@ -233,7 +233,7 @@ const ItemDataTable = ({
                     ₹{item.sellPrice}
                   </DataTable.Cell>
                   <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>
-                    {item.quantity}
+                    {item.quantity} {item?.unit}
                   </DataTable.Cell>
                   <DataTable.Cell style={{ width: COLUMN_WIDTHS.small }}>
                     ₹{amount.toFixed(2)}

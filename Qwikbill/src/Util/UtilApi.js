@@ -46,6 +46,19 @@ const apiRequest = async (method, url, data = null, customHeaders = {}) => {
   }
 };
 
+
+export const unitOptions = [
+    { label: "Kg", value: "Kg" },
+    { label: "Bag", value: "Bag" },
+    { label: "Litre", value: "Litre" },
+    { label: "Piece", value: "Piece" },
+    { label: "Meter", value: "Meter" },
+    { label: "Box", value: "Box" },
+    { label: "Packet", value: "Packet" },
+    { label: "Gram", value: "Gram" },
+    { label: "Dozen", value: "Dozen" },
+  ];
+
   const deleteApiRequest = async (method, url, headers = {}, payload) => {
   try {
     const config = {
@@ -139,7 +152,7 @@ export const updateApi = async (endpoint, data, headers) => {
     1:"unpaid",
     2:"paid",
     3:"partially paid",
-    4:"Quatation"
+    4:"Quotation"
   }
 
 

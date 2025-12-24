@@ -9,9 +9,9 @@ import * as Yup from "yup";
 import { ShopContext } from "../Store/ShopContext";
 import { useSnackbar } from "../Store/SnackbarContext";
 import UserDataContext from "../Store/UserDataContext";
-import { createApi, readApi, updateApi } from "../Util/UtilApi";
-
-
+import { createApi, readApi, updateApi,unitOptions } from "../Util/UtilApi";
+import GenderDropdown from "./GenderDropdown";
+import GenericDropdown from "../UI/DropDown/GenericDropDown";
 
 
 
@@ -59,10 +59,13 @@ const AddProduct = ({ navigation }) => {
   const { showSnackbar } = useSnackbar();
   const [expanded, setExpanded] = useState(false);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const [selectedUnit,setSelectedUnit]=useState('kg')
 const TAX_OPTIONS = ["5", "12", "18", "28"]; // only percentage values
   const timeoutId = useRef(null); // useRef to persist timeoutId
-
   console.log("DATA OF HSNCODE IS ", HSNCode);
+
+
+
 
   // const TaxRateWatcher = ({ showSnackbar }) => {
   //   const { errors, touched } = useFormikContext();
@@ -77,6 +80,9 @@ const TAX_OPTIONS = ["5", "12", "18", "28"]; // only percentage values
   // };
 
   useEffect(() => {
+    if(EditData){
+      setSelectedUnit(EditData?.unit)
+    }
     console.log("Edit data is ", EditData);
     console.log("Isupdated Data is ", isUpdated);
   }, [EditData, isUpdated]);
@@ -94,6 +100,9 @@ const TAX_OPTIONS = ["5", "12", "18", "28"]; // only percentage values
     };
   }, []);
 
+
+
+
   const validationSchema = Yup.object().shape({
     /* ProductCategory: Yup.string().required("Product category is required"), */
     ProductName: Yup.string().required("Product name is required"),
@@ -103,13 +112,9 @@ const TAX_OPTIONS = ["5", "12", "18", "28"]; // only percentage values
     TaxRate: Yup.number()
       .typeError("Tax value must be a number")
       .max(100, "Tax rate cannot greater than 100%")
-    //   .when("HSNCode", {
-    //     is: (val) => val && val.trim() !== "",
-    //     then: (schema) => schema.required("Tax rate is required if HSN code is entered"),
-    //     otherwise: (schema) => schema.notRequired(),
-    //   })
     ,
     HSNCode: Yup.string().matches(/^\d{4}(\d{2})?(\d{2})?$/, 'Enter a valid 4, 6, or 8-digit HSN code'),
+    unit: Yup.string().required('Unit is required'),
     PurchasePrice: Yup.number()
       .required("Purchase price is required")
       .typeError("Purchase price must be a number")
@@ -216,6 +221,7 @@ const TAX_OPTIONS = ["5", "12", "18", "28"]; // only percentage values
               TaxRate: EditData?.taxRate || "",
               // HSNCode: String(EditData?.hsncode) || "",
               HSNCode: EditData?.hsncode !== undefined ? String(EditData.hsncode) : "",
+              unit :EditData?.unit||"kg"
             }}
             validationSchema={validationSchema}
 
@@ -236,10 +242,12 @@ const TAX_OPTIONS = ["5", "12", "18", "28"]; // only percentage values
                 costPrice: values?.PurchasePrice,
                 sellPrice: values?.SellingPrice,
                 taxRate: values?.TaxRate,
+                unit:values?.unit,
                 // hsncodefk: HSNCode?.id,
                 // isStock: values?.IsStockData,
                 vendorfk: selectedShop.vendor.id,
                 hsncode: parseInt(values.HSNCode),
+                
               };
               console.log("Data is 15863", ProductData);
 
@@ -299,7 +307,17 @@ const TAX_OPTIONS = ["5", "12", "18", "28"]; // only percentage values
               errors,
               touched,
               setFieldValue,
-            }) => (
+            }) =>
+              
+              {
+
+                   const handleSelectUnit = (unitValue) => {
+    console.log("selecting Unit  is , ", unitValue);
+    setSelectedUnit(unitValue);
+    setFieldValue("unit", unitValue);
+  };
+                
+                 return (
 
               <>
 
@@ -365,6 +383,22 @@ const TAX_OPTIONS = ["5", "12", "18", "28"]; // only percentage values
 {touched.SellingPrice && errors.SellingPrice && (
   <Text style={styles.errorText}>{errors.SellingPrice}</Text>
 )}
+
+
+    <GenericDropdown
+            dropDownlabelStyle={styles.dropDownlabelStyle}
+            pickerContainerStyle={styles.pickerContainerStyle}
+            pickerStyle={styles.pickerStyle}
+            value={values?.unit}
+            label={"Unit" + " *"}
+            options={unitOptions}
+            selectedValue={selectedUnit}
+            onValueChange={handleSelectUnit}
+          />
+        {touched.unit && errors.unit ? (
+          <Text style={{ color: "red", marginLeft: 2 }}>{errors.unit}</Text>
+        ) : null}
+
                 
                   {/* HSN Code */}
                   <TextInput
@@ -460,6 +494,8 @@ const TAX_OPTIONS = ["5", "12", "18", "28"]; // only percentage values
 </View>
 
 
+
+
                   {/* Submit Button */}
                   <TouchableOpacity
                     style={styles.submitButton}
@@ -480,6 +516,9 @@ const TAX_OPTIONS = ["5", "12", "18", "28"]; // only percentage values
                 </View>
               </>
             )}
+              }
+              
+            
           </Formik>
         </ScrollView>
 
@@ -587,6 +626,27 @@ backdrop: {
   justifyContent: "flex-start",
   alignItems: "center",
 },
+pickerContainerStyle: {
+    // height: 50,
+    // height:"100%",
+    width: "100%",
+    // backgroundColor: "#EDEDED",
+    backgroundColor: "#fff",
+    // borderWidth: 1,
+    borderBottomWidth: 1,
+    justifyContent: "center",
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
+  },
+  pickerStyle: {
+    // height: "100%",
+    // width: "100%",
+  },
+  dropDownlabelStyle: {
+    fontSize: 12,
+    // backgroundColor:"#EDEDED",
+    top: 0,
+  },
 });
 
 export default AddProduct;

@@ -65,6 +65,7 @@ const ProductDetailsCard = ({
           >
             {item.name}
           </Text>
+           
 
           {(selectedShop?.role?.name === "owner" ||
             selectedShop?.role?.name === "manager") && (
@@ -92,7 +93,7 @@ const ProductDetailsCard = ({
           <View style={styles.rowBetween}>
             <View style={styles.detailBox}>
               <Text style={[styles.label, { color: colors.text }]}>
-                Sell Price
+                SellPrice. per {item?.unit}
               </Text>
               <Text style={[styles.value, { color: colors.text }]}>
                 ₹{item.sellPrice}

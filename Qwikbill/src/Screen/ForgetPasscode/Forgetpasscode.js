@@ -1,7 +1,7 @@
 import {
   Alert,
   Image,
-  SafeAreaView,
+  
   StatusBar,
   StyleSheet,
   TextInput,
@@ -14,6 +14,7 @@ import {
   Card,
   Text
 } from "react-native-paper";
+import {SafeAreaView} from "react-native-safe-area-context"
 
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Store/AuthContext";

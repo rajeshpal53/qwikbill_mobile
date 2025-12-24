@@ -249,6 +249,7 @@ const handleBulkDelete = async () => {
       name: invoice?.user?.name || "",
       partialAmount: 0,
       paymentMode: invoice?.paymentMode || "Cash",
+      type: invoice?.type,
      discountRate:Number(invoice?.invoiceProducts?.[0]?.discountRate),
       products: invoice?.invoiceProducts?.map((p) => {
     console.log("p in map is",p)
@@ -280,7 +281,7 @@ const handleBulkDelete = async () => {
         productname: p?.name || "Unknown Product", // ✅ you need to join with product table if available
          name: p?.Product?.name || "Unknown Product", /// ✅ you need to join with product table if available
         quantity: p?.quantity ,
-        taxRate: Math.round(Number(p?.gstRate) * 100) ||p?.Product?.taxRate , // gstRate is 0.180 => 18
+        taxRate: p?.Product?.taxRate , // gstRate is 0.180 => 18
       discountRate:Number(p?.discountRate),
       sellPrice:Number(p?.Product?.sellPrice),
       gstAmount:Number(p?.gstAmt),
@@ -289,13 +290,8 @@ const handleBulkDelete = async () => {
     navigation.navigate("CreateInvoice", {
       iscloneItem:newCart
     });
-
     toggleHandler(); // close menu
-
   }
-
-
-
   const fetchSearchedData = async (query, pageNum = 1) => {
     setSearchCalled(true); // Mark search as initiated
     setIsLoading(true);

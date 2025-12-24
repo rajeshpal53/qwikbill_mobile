@@ -244,7 +244,7 @@ const TransactionModal = ({ visible, onClose, invoices }) => {
             <Text>
               ₹
               {typeof invoices?.finaltotal === 'number'
-                ? invoices.finaltotal.toFixed(2)
+                ? invoices?.finaltotal?.toFixed(2)
                 : invoices?.finaltotal || "0.00"}
             </Text>
           </View>
@@ -252,7 +252,7 @@ const TransactionModal = ({ visible, onClose, invoices }) => {
           {/* Paid Amount */}
           <Text style={styles.label}>Paid Amount</Text>
           <View style={styles.disabledInput}>
-            <Text>₹{invoices?.paidAmount.toFixed(2)}</Text>
+            <Text>₹{invoices?.paidAmount?.toFixed(2)}</Text>
           </View>
 
           {/* Enter Amount (Only Editable Field) */}

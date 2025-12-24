@@ -8,10 +8,10 @@ import {
   ScrollView,
   ScrollViewComponent,
   ScrollViewBase,
-  SafeAreaView,
   StatusBar,
   Keyboard,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Provider as PaperProvider,
   Text,

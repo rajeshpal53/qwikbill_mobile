@@ -12,8 +12,6 @@ import UserDataContext from "../../Store/UserDataContext";
 import { ShopContext } from "../../Store/ShopContext";
 
 
-
-
 const AllInvoiceScreen = () => {
   const { userData } = useContext(UserDataContext);
   const searchBarRef = useRef();

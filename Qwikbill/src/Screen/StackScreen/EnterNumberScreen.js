@@ -40,7 +40,9 @@ import { getApp } from "@react-native-firebase/app";
 import {
   getAuth,
   onAuthStateChanged,
-  signInWithPhoneNumber
+  signInWithPhoneNumber,
+  getIdToken,
+  signOut
 } from '@react-native-firebase/auth';
 import CountryCodeModal from "../../Component/CountryCodeModal";
 import SetpasswordModal from "../../Components/Modal/SetpasswordModal";
@@ -142,7 +144,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
             clearInterval(interval);
             // Clear the interval when timer reaches 0
             setIsTimerRunning(false); // Stop the timer
-
+          
             // if (threeTimer) {
             //   resetCount();
             // }
@@ -193,30 +195,42 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
   }, []);
 
   useEffect(() => {
-    async function signOutUser() {
+    const signOutUser = async () => {
       try {
-        setIsLoading(true)
-        // showSnackbar("User signed out successfully (19.0.0)", "success");
-        //await auth().signOut();
-        //log.info('User signed out successfully');
+        setIsLoading(true);
+        await signOut(auth); // ✅ replaces auth().signOut()
+        console.log("User signed out successfully");
       } catch (error) {
         console.error("Error signing out:", error);
-        // showSnackbar("User signed out failed (19.0.0)", "error");
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
+
     signOutUser();
   }, []);
 
-  useEffect(() => {
-    // Firebase Auth State Listener
 
-    console.log("debugg111");
-    const subscriber = onAuthStateChanged(auth, async (user) => {
-      // handle user state changes here if needed
+    useEffect(() => {
+    console.log("Firebase Auth listener initialized");
+
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const token = await getIdToken(user);
+        setPasswordModalVisible(true);
+        console.log("User info:", user);
+        setIdToken(token);
+
+        const fcmToken = await AsyncStorage.getItem("FCMToken");
+        const phoneNumber = user.phoneNumber?.replace("+91", "");
+
+        console.log("FCM:", fcmToken, "Phone:", phoneNumber);
+      } else {
+        console.log("User signed out or not logged in");
+      }
     });
-    return () => subscriber(); // Unsubscribe on cleanup
+
+    return () => unsubscribe();
   }, []);
 
   const idTokenValidate = async (idToken) => {
@@ -248,11 +262,12 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
   const postData = async (password, isForgetPassword, navigation) => {
     setIsLoading(true);
     console.log("FCMToken:", FCMToken);
+    const fToken = await AsyncStorage.getItem("FCMToken");
     const payload = {
       mobile: phoneNumber,
       password,
       idToken: idToken,
-      fcmtokens: [FCMToken]
+      fcmtokens: [FCMToken]||[fToken]
     };
 
     console.log("Payload:", payload);
@@ -362,7 +377,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
     //     setIdToken(idToken);
     //     console.log("debugg77777 pra", user, idToken);
     //     setPasswordModalVisible(true);  
-    //   }
+    //   }`
 
     setIsDisabled(true);
     setTimeout(() => setIsDisabled(false), 10000);
@@ -371,7 +386,7 @@ const EnterNumberScreen = ({ navigation, route, setIsForgetPasswordState }) => {
       if (confirm) {
         const userCredential = await confirm.confirm(otp);
         const user = userCredential.user;
-        const idToken = await user.getIdToken();
+        const idToken = await getIdToken(user);
         setIdToken(idToken);
         setPasswordModalVisible(true);
       }
@@ -789,8 +804,9 @@ return (
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
     )}
-
-    <SetpasswordModal
+    {
+      passwordModalVisible&&(
+         <SetpasswordModal
       visible={passwordModalVisible}
       closeModal={closeModal}
       navigation={navigation}
@@ -798,6 +814,9 @@ return (
       isForgetPassword={isForgetPassword}
       setIsForgetPasswordState={setIsForgetPasswordState}
     />
+      )
+    }
+   
   </View>
 );
 };

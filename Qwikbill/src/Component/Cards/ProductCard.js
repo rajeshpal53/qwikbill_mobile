@@ -38,6 +38,8 @@ const ProductCardDetails = ({ item }) => {
       <Card style={styles.card}>
         <View style={styles.productNameContainer}>
           <Text style={styles.productName}>{item?.name}</Text>
+         <Text style={styles.productName}>{item?.unit||"kg"}</Text>
+
         </View>
         <View style={styles.mainContentWrapper}>
           {/* Product Details Section */}

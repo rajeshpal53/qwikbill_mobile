@@ -109,6 +109,16 @@ export default function CreateInvoice({ navigation, route }) {
     setInvoiceHandler();
   }, [buttonsModes]);
 
+  useEffect(()=>{
+    if(iscloneItem){
+      setSelectedValue(iscloneItem?.type)
+
+    }
+
+  },[iscloneItem])
+
+  console.log("invoiceType is", selectedValue);
+  
   useEffect(() => {
     console.log("selected Value is , ", selectedValue);
   }, [selectedValue]);
