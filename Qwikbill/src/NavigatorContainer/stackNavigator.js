@@ -1,13 +1,12 @@
-import {
-  createStackNavigator
-} from "@react-navigation/stack";
+import { createStackNavigator } from "@react-navigation/stack";
 import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity
+  TouchableOpacity,
+  Platform,
 } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons"; // if you're using Expo
@@ -61,47 +60,45 @@ import { useTheme } from "../../constants/Theme.js";
 import ShareTransaction from "../Components/ShareTransaction.js";
 import { SafeAreaView } from "react-native-safe-area-context";
 export default function StackNavigator() {
-      // useTokenExpiry()
+  // useTokenExpiry()
 
   const Stack = createStackNavigator();
   const [isLandscape, setIsLandscape] = useState(false);
   const { isAuthenticated, isLoading, searchMode } = useContext(AuthContext);
- const {theme}=useThemeContext()
- const{colors}=useTheme()
+  const { theme } = useThemeContext();
+  const { colors } = useTheme();
   const [roleDetails, setroleDetails] = useState(false);
   const [noItemModal, setNoItemModal] = useState(false);
   const [noItemData, setNoItemData] = useState({});
   const [isConnected, setIsConnected] = useState(false);
- const [initialRoute, setInitialRoute] = useState(null);
-  const { passkey } = usePasskey()
+  const [initialRoute, setInitialRoute] = useState(null);
+  const { passkey } = usePasskey();
 
-  const styles = stackStyles(colors)
-   const { userData, fetchUserData, clearUserData } =
+  const styles = stackStyles(colors);
+  const { userData, fetchUserData, clearUserData } =
     useContext(UserDataContext);
-      const [isForgetPasswordState, setIsForgetPasswordState] = useState(false);
+  const [isForgetPasswordState, setIsForgetPasswordState] = useState(false);
   useEffect(() => {
-  const decideRoute = async () => {
-    try {
-      if (isForgetPasswordState) {
+    const decideRoute = async () => {
+      try {
+        if (isForgetPasswordState) {
+          setInitialRoute("login");
+        } else if (userData && Object.keys(userData).length > 0) {
+          setInitialRoute(passkey == null ? "CreateNewPasscode" : "Passcode");
+        } else {
+          setInitialRoute("login");
+        }
+      } catch (err) {
+        console.log("Route decision error:", err);
         setInitialRoute("login");
-      } else if (userData && Object.keys(userData).length > 0) {
-        setInitialRoute(passkey == null ? "CreateNewPasscode" : "Passcode");
-      } else {
-        setInitialRoute("login");
+      } finally {
       }
-    } catch (err) {
-      console.log("Route decision error:", err);
-      setInitialRoute("login");
-    } finally {
-     
-    }
-  };
+    };
 
-  decideRoute();
-}, [userData, passkey, isForgetPasswordState]);
+    decideRoute();
+  }, [userData, passkey, isForgetPasswordState]);
 
-
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const fetchServiceProvider = async (userData) => {
     try {
       if (userData) {
@@ -125,7 +122,6 @@ export default function StackNavigator() {
     } catch (err) {
       console.log("Error is , , - ", err);
       console.log("err.data.status", err.status);
-
     } finally {
       // setIsLoading(false);
     }
@@ -167,38 +163,35 @@ export default function StackNavigator() {
   //   checkRoute();
   // }, []);
 
-
-
   if (isLoading || initialRoute === null) {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <ActivityIndicator size="large" />
-    </View>
-  );
-}
-
-
-
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   // console.log("userData is", userData);
   // console.log(isLoading);
   // console.log(isAuthenticated, "akdskddkfkfkf");
   return (
     // <SafeAreaView style={{ flex: 1, backgroundColor: colors?.background }}>
-    <SafeAreaView edges={['bottom']} style={{ flex: 1, backgroundColor: colors?.background }}>
+    <SafeAreaView
+      edges={["bottom"]}
+      style={{ flex: 1, backgroundColor: colors?.background }}
+    >
       <Stack.Navigator
         // initialRouteName={userData ? "Passcode" : "login"}
-         initialRouteName={initialRoute}
-       screenOptions={{
-    headerStyle: {
-      backgroundColor: colors?.background, // 🔹 applies to all screens
-    },
-    headerTintColor: colors?.text, // optional: text/icon color
-    headerTitleStyle: {
-      fontWeight: "bold", // optional: styling for header title
-    },
-  }}
-
+        initialRouteName={initialRoute}
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: colors?.background, // 🔹 applies to all screens
+          },
+          headerTintColor: colors?.text, // optional: text/icon color
+          headerTitleStyle: {
+            fontWeight: "bold", // optional: styling for header title
+          },
+        }}
       >
         <Stack.Screen
           name="wertone"
@@ -229,7 +222,9 @@ export default function StackNavigator() {
               <Text style={styles.headerTitle}>{t("Add Product")}</Text>
             ),
             headerTitleAlign: "center",
+              headerLeft: () => <CustomBackButton />,
           }}
+          
         />
 
         <Stack.Screen
@@ -242,26 +237,29 @@ export default function StackNavigator() {
 
             headerTitleAlign: "center",
 
-            // headerLeft: () => <CustomBackButton />,
+            headerLeft: () => <CustomBackButton />,
           }}
         />
         <Stack.Screen
-  name="InvoiceTransactionScreen"
-  component={InvoiceTransactionScreen}
-  options={({ route }) => ({
-    headerTitle: "Transaction Details",
-    headerRight: () => <ShareTransaction id={route.params?.invoices?.invoicefk} />, // ✅ pass id
-  })}
-/>
+          name="InvoiceTransactionScreen"
+          component={InvoiceTransactionScreen}
+          options={({ route }) => ({
+            headerTitle: "Transaction Details",
+            headerRight: () => (
+              <ShareTransaction id={route.params?.invoices?.invoicefk} />
+            ), // ✅ pass id
+              headerLeft: () => <CustomBackButton />,
+          })}
+        />
 
         <Stack.Screen
           name="EditProduct"
           component={EditProductScreen}
           options={{
             headerTitle: "Edit Product Details",
+              headerLeft: () => <CustomBackButton />,
           }}
         />
-
 
         <Stack.Screen
           name="Passcode"
@@ -287,6 +285,7 @@ export default function StackNavigator() {
             //   <Text style={styles.headerTitle}>{"Create Invoice"}</Text>
             // ),
             headerTitleAlign: "center",
+              headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -296,6 +295,7 @@ export default function StackNavigator() {
           options={{
             headerTitle: "Add Shop",
             headerTitleAlign: "center",
+              headerLeft: () => <CustomBackButton />,
           }}
         />
         <Stack.Screen
@@ -303,6 +303,7 @@ export default function StackNavigator() {
           component={GenrateInvoiceScreen}
           options={{
             headerTitle: "Generate Invoice",
+              headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -316,14 +317,11 @@ export default function StackNavigator() {
                 isLandscape={isLandscape}
                 setIsLandscape={setIsLandscape}
               />
+              
             ),
+              headerLeft: () => <CustomBackButton />,
             headerTitleAlign: "center",
-            // headerLeft: () => (
-            //   <CustomBackButton
-            //     isLandscape={isLandscape}
-            //     setIsLandscape={setIsLandscape}
-            //   />
-            // ),
+           
           })}
         />
         <Stack.Screen
@@ -331,12 +329,7 @@ export default function StackNavigator() {
           component={TransactionScreen}
           options={({ route }) => ({
             headerTitle: "Transactions",
-            // headerLeft: () => (
-            //   <CustomBackButton
-            //     isLandscape={isLandscape}
-            //     setIsLandscape={setIsLandscape}
-            //   />
-            // ),
+              headerLeft: () => <CustomBackButton />,
             headerTitleAlign: "center",
           })}
         />
@@ -345,14 +338,8 @@ export default function StackNavigator() {
           component={TransactionDetailScreen}
           options={({ route }) => ({
             headerTitle: "Transaction Detail",
-            // headerLeft: () => (
-            //   <CustomBackButton
-            //     isLandscape={isLandscape}
-            //     setIsLandscape={setIsLandscape}
-            //   />
-            // ),
+              headerLeft: () => <CustomBackButton />,
             headerTitleAlign: "center",
-            
           })}
         />
         <Stack.Screen
@@ -360,12 +347,7 @@ export default function StackNavigator() {
           component={InvoicePreviewScreen}
           options={({ route }) => ({
             headerTitle: "preview Invoices",
-            // headerLeft: () => (
-            //   <CustomBackButton
-            //     isLandscape={isLandscape}
-            //     setIsLandscape={setIsLandscape}
-            //   />
-            // ),
+             headerLeft: () => <CustomBackButton />,
             headerTitleAlign: "center",
           })}
         />
@@ -377,7 +359,7 @@ export default function StackNavigator() {
             headerTitle: "View Shops",
             // headerTitleAlign: searchMode ? "left" : "center",
             headerTitleAlign: "center",
-
+              headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -386,13 +368,14 @@ export default function StackNavigator() {
           component={AdminSectionScreen}
           options={{
             // headerShown: false,
+
             headerTitle: () => (
               <Text style={styles.headerTitle}>{"Admin Section"}</Text>
             ),
             headerTitleAlign: "center",
             // headerTintColor: "#000",
             // headerShadowVisible: false,
-            // headerLeft: () => <CustomBackButton />,
+            headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -405,7 +388,7 @@ export default function StackNavigator() {
             ),
 
             headerTitleAlign: "center",
-            // headerLeft: () => <CustomBackButton />,
+            headerLeft: () => <CustomBackButton />,
           }}
         ></Stack.Screen>
 
@@ -418,7 +401,7 @@ export default function StackNavigator() {
             ),
 
             headerTitleAlign: "center",
-            // headerLeft: () => <CustomBackButton />,
+            headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -431,7 +414,7 @@ export default function StackNavigator() {
             ),
 
             headerTitleAlign: "center",
-            // headerLeft: () => <CustomBackButton />,
+             headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -444,10 +427,9 @@ export default function StackNavigator() {
             ),
 
             headerTitleAlign: "center",
-            // headerLeft: () => <CustomBackButton />,
+             headerLeft: () => <CustomBackButton />,
           }}
         />
-
 
         <Stack.Screen
           name="login"
@@ -468,7 +450,6 @@ export default function StackNavigator() {
           )}
         </Stack.Screen>
 
-
         <Stack.Screen
           name="CustomerDetails"
           component={CustomerDetails}
@@ -487,7 +468,7 @@ export default function StackNavigator() {
             //   // backgroundColor: "#fff"
             // },
 
-            // headerLeft: () => <CustomBackButton />,
+           headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -498,6 +479,7 @@ export default function StackNavigator() {
             headerTitle: () => (
               <Text style={styles.headerTitle}>{"Invoice Preview"}</Text>
             ),
+              headerLeft: () => <CustomBackButton />,
             headerTitleAlign: "center",
             // headerTitle: "Invoice Preview",
           }}
@@ -510,6 +492,7 @@ export default function StackNavigator() {
             headerTitle: () => (
               <Text style={styles.headerTitle}>{"Add Role"}</Text>
             ),
+             headerLeft: () => <CustomBackButton />,
             headerTitleAlign: "center",
             // headerTitle: "Add Role",
           }}
@@ -522,6 +505,7 @@ export default function StackNavigator() {
             headerTitle: () => (
               <Text style={styles.headerTitle}>{"Edit Role"}</Text>
             ),
+             headerLeft: () => <CustomBackButton />,
             headerTitleAlign: "center",
             // headerTitle: "Add Role",
           }}
@@ -548,6 +532,8 @@ export default function StackNavigator() {
             ),
             headerTitleAlign: "center",
             // headerTitle: "View Shop Details",
+
+              headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -560,6 +546,7 @@ export default function StackNavigator() {
             ),
             headerTitleAlign: "center",
             // headerTitle: "View Shop Details",
+              headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -570,7 +557,6 @@ export default function StackNavigator() {
             headerTitle: "View All Products",
           }}
         /> */}
-
 
         <Stack.Screen
           name="AllItemProduct"
@@ -588,10 +574,9 @@ export default function StackNavigator() {
               // backgroundColor: "transparent",
               // backgroundColor: "#fff"
             },
-           // headerLeft: () => <CustomBackButton />,
+             headerLeft: () => <CustomBackButton />,
           }}
         />
-
 
         <Stack.Screen
           name="Customer"
@@ -603,6 +588,7 @@ export default function StackNavigator() {
             ),
             headerTitleAlign: "center",
             // headerTitle: "All Customer",
+              headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -613,7 +599,7 @@ export default function StackNavigator() {
             headerShown: false,
             headerTintColor: "#000",
             headerShadowVisible: false,
-            // headerLeft: () => <CustomBackButton />,
+            headerLeft: () => <CustomBackButton />,
           }}
         />
         <Stack.Screen
@@ -621,6 +607,7 @@ export default function StackNavigator() {
           component={AllQueryAndSupport}
           options={{
             headerTitle: "View Shop Details",
+              headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -629,7 +616,8 @@ export default function StackNavigator() {
           component={ChatWithUs}
           options={{
             headerTitle: "Chat With Us",
-            unmountOnBlur: true
+            unmountOnBlur: true,
+              headerLeft: () => <CustomBackButton />,
           }}
         />
 
@@ -638,34 +626,31 @@ export default function StackNavigator() {
           component={UserAccounts}
           options={{
             headerTitle: "User Accounts",
+              headerLeft: () => <CustomBackButton />,
           }}
         />
-
       </Stack.Navigator>
 
       <CheckInternet
         isConnected={isConnected}
         setIsConnected={setIsConnected}
       />
-      </SafeAreaView>
-   
+    </SafeAreaView>
   );
 }
 
-
-
-const stackStyles =(colors)=> StyleSheet.create({
-  headerTitle: {
-    color:colors?.text,
-    fontFamily: "Poppins-Regular",
-    fontSize: fontSize.headingSmall,
-    fontWeight: "bold",
-
-  },
-  fab: {
-    position: "absolute",
-    margin: 16,
-    right: 0,
-    bottom: 0,
-  },
-});
+const stackStyles = (colors) =>
+  StyleSheet.create({
+    headerTitle: {
+      color: colors?.text,
+      fontFamily: "Poppins-Regular",
+      fontSize: fontSize.headingSmall,
+      fontWeight: "bold",
+    },
+    fab: {
+      position: "absolute",
+      margin: 16,
+      right: 0,
+      bottom: 0,
+    },
+  });

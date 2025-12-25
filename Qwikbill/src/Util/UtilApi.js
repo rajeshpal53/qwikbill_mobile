@@ -13,38 +13,86 @@ import { navigate } from "./NavigationService"; // global navigation helper
 // for development:> eas build --platform android  --profile development
 // for production:> eas build --platform android  --profile production
 export const NORM_URL="https://qwikbill.in/qapp/"
-const apiRequest = async (method, url, data = null, customHeaders = {}) => {
-  try {
-    const userDataString = await AsyncStorage.getItem('userData');
-    const userData = userDataString ? JSON.parse(userDataString) : null;
-    const token = userData?.token;
 
-    const headers = {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-      ...customHeaders,
+const apiRequest = async (method, url, data = null, headers = {}) => {
+  try {
+    // 🔹 Get token from AsyncStorage
+    const storedUserData = await AsyncStorage.getItem("userData");
+    const userData = storedUserData ? JSON.parse(storedUserData) : null;
+
+    // Adjust key if your token name is different
+    const token = userData?.token || userData?.accessToken;
+
+    const fullUrl = `${API_BASE_URL}${url}`;
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
+        ...headers,
+      },
+      withCredentials: true,
     };
 
-    const response = await axios({
-      url: `${API_BASE_URL}${url}`,
-      method,
-      data: data ? JSON.stringify(data) : null,
-      headers,
-      withCredentials: true,
-    });
+    let response;
 
-    return response.data || '';
-  } catch (error) {
-    console.error(`Error with ${method.toUpperCase()} request to ${url}:`, error.response || error.message);
-     if (error.response?.status === 401|| error?.data?.status===401) {
-      console.log("Unauthorized! Redirecting to login.");
-      await AsyncStorage.removeItem("userData"); // clear session
-      navigate("login",{status:401}); // redirect to login
+    switch (method.toLowerCase()) {
+      case "get":
+        response = await axios.get(fullUrl, config);
+        break;
+
+      case "post":
+        response = await axios.post(fullUrl, data, config);
+        break;
+
+      case "put":
+        response = await axios.put(fullUrl, data, config);
+        break;
+
+      case "patch":
+        response = await axios.patch(fullUrl, data, config);
+        break;
+
+      case "delete":
+        response = await axios.delete(fullUrl, config);
+        break;
+
+      default:
+        throw new Error(`Unsupported method: ${method}`);
     }
 
-    throw error.response || error.message;
+    return response.data;
+  } catch (error) {
+    console.error(
+      `API Error [${method.toUpperCase()} ${url}]`,
+      error?.response?.data || error.message
+    );
+
+    throw error?.response?.data || error.message;
   }
 };
+
+export const createApi = async (endpoint, data, headers) => {
+  return apiRequest("post", endpoint, data, headers);
+};
+
+// READ
+export const readApi = async (endpoint, headers) => {
+  return apiRequest("get", endpoint, null, headers);
+};
+
+// UPDATE
+export const updateApi = async (endpoint, data, headers) => {
+  return apiRequest("put", endpoint, data, headers);
+};
+
+// DELETE
+export const deleteApi = async (endpoint, headers) => {
+  return apiRequest("delete", endpoint, null, headers);
+};
+
+
 
 
 export const unitOptions = [
@@ -58,54 +106,6 @@ export const unitOptions = [
     { label: "Gram", value: "Gram" },
     { label: "Dozen", value: "Dozen" },
   ];
-
-  const deleteApiRequest = async (method, url, headers = {}, payload) => {
-  try {
-    const config = {
-      url: `${API_BASE_URL}${url}`,
-      method,
-      headers: {
-        "Content-Type": "application/json",
-        ...headers,
-      },
-      withCredentials: true,
-    };
-
-    // only add data if payload is provided and method usually accepts a body
-    if (payload) {
-      config.data = payload; // let axios handle JSON.stringify internally
-    }
-    
-    const response = await axios(config);
-    return response.data || "";
-  } catch (error) {
-    console.error(
-      `Error with ${method.toUpperCase()} request to ${url}:`,
-      error.response || error.message
-    );
-    throw error.response || error.message;
-  }
-};
-
-  //CREATE
-  export const createApi = async (endpoint, data, headers) => {
-    return apiRequest('post', endpoint, data, headers);
-  };
-
-// READ
-  export const readApi = async (endpoint, headers) => {
-    return apiRequest('get', endpoint, null, headers);
-  };
-
-// UPDATE
-export const updateApi = async (endpoint, data, headers) => {
-    return apiRequest('put', endpoint, data, headers);
-  };
-
-  // DELETE
-  export const deleteApi = async (endpoint,headers,payload) => {
-    return deleteApiRequest('delete', endpoint, headers,payload);
-  };
   export const fontSize = {
     headingLarge: 24,
     headingMedium: 22,

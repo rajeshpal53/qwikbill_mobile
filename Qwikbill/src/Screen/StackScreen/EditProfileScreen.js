@@ -1,6 +1,6 @@
 import { Formik } from "formik";
 import { useContext, useEffect, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View,KeyboardAvoidingView,Platform } from "react-native";
 import {
   ActivityIndicator,
   Button,
@@ -331,6 +331,11 @@ export default function EditProfileScreen({ navigation }) {
   };
 
   return (
+     <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
+    >
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <Formik
 
@@ -579,6 +584,7 @@ export default function EditProfileScreen({ navigation }) {
         />
       )}
     </View>
+    </KeyboardAvoidingView>
   );
 }
 

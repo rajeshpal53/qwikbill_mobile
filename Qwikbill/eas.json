@@ -18,7 +18,8 @@
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
-        "simulator": true
+        "simulator": true,
+        "buildConfiguration": "Debug"
       }
     },
     "preview": {
@@ -32,15 +33,22 @@
     },
     "production": {
       "autoIncrement": true,
+      "distribution": "store",         
       "android": {
         "buildType": "app-bundle"
       },
       "ios": {
         "simulator": false
+     
       }
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "your-apple-id@email.com", 
+        "ascAppId": "YOUR_APP_STORE_CONNECT_APP_ID" 
+      }
+    }
   }
 }

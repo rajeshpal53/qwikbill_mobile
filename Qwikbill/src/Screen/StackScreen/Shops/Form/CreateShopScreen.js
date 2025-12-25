@@ -47,6 +47,8 @@ import UserDataContext from "../../../../Store/UserDataContext";
 import { ShopContext } from "../../../../Store/ShopContext";
 import ConfirmModal from "../../../../Components/Modal/ConfirmModal";
 import ProviderBankDetailForm from "./ProviderBankDetailForm";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
 // Form validation schema using Yup
 
 // const validationSchema = Yup.object().shape({
@@ -214,10 +216,9 @@ const CreateShopScreen = ({ navigation }) => {
   console.log("USER DATA IS15369 ", routeData);
 
   const [genderList, setGenderList] = useState([
-    { label: "Select Gender", value: null },
-    { label: "Male", value: "Male" },
-    { label: "Female", value: "Female" },
-    { label: "Other", value: "other" },
+    { gender: "Male" },
+    { gender: "Female" },
+    { gender: "Other" },
   ]);
   const textInputMode = "flat";
   const progressRef = useRef(null);
@@ -653,6 +654,11 @@ signature:(routeData?.signatureImage &&
   }
 
   return (
+              <KeyboardAwareScrollView
+  enableOnAndroid
+  keyboardShouldPersistTaps="handled"
+  extraScrollHeight={0}
+>
     <Formik
       initialValues={initialData}
       enableReinitialize={true}
@@ -1078,6 +1084,7 @@ signature:(routeData?.signatureImage &&
         );
       }}
     </Formik>
+</KeyboardAwareScrollView>
   );
 };
 const styles = StyleSheet.create({

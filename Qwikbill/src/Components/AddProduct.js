@@ -3,7 +3,7 @@ import { Formik } from "formik";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Alert, Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Text, TextInput,List,ActivityIndicator,Portal, Modal } from "react-native-paper";
-import RazorpayCheckout from 'react-native-razorpay';
+// import RazorpayCheckout from 'react-native-razorpay';
 import Svg, { Path } from "react-native-svg";
 import * as Yup from "yup";
 import { ShopContext } from "../Store/ShopContext";
@@ -145,29 +145,29 @@ const TAX_OPTIONS = ["5", "12", "18", "28"]; // only percentage values
     };
     // Open Razorpay Checkout
     console.log("Razorpay options: ", options);
-    RazorpayCheckout.open(options)
-      .then(async (data) => {
-        // Success  
-        console.log("payment data:", data)
-        //  setIsLoading(true)
-        // const response= await createApi("wallet/verifyPayment",{razorpay_order_id:data?.razorpay_order_id,
-        //   razorpay_payment_id:data?.razorpay_payment_id, 
-        //   razorpay_signature:data?.razorpay_signature, 
-        //   userfk:userData?.user?.id, 
-        //   amount:amount})
-        console.log("response of verify  result", response)
-        Alert.alert('Payment Success', `Payment ID: ${data.razorpay_payment_id}`);
-        // setIsLoading(false)
-      })
-      .catch((error) => {
-        // Error
-        console.error("payment error", error)
-        Alert.alert(
-          'Payment Failed',
-          `Error: ${error.code} | ${error.description}`
-        );
-        //  setIsLoading(false)
-      });
+    // RazorpayCheckout.open(options)
+    //   .then(async (data) => {
+    //     // Success  
+    //     console.log("payment data:", data)
+    //     //  setIsLoading(true)
+    //     // const response= await createApi("wallet/verifyPayment",{razorpay_order_id:data?.razorpay_order_id,
+    //     //   razorpay_payment_id:data?.razorpay_payment_id, 
+    //     //   razorpay_signature:data?.razorpay_signature, 
+    //     //   userfk:userData?.user?.id, 
+    //     //   amount:amount})
+    //     console.log("response of verify  result", response)
+    //     Alert.alert('Payment Success', `Payment ID: ${data.razorpay_payment_id}`);
+    //     // setIsLoading(false)
+    //   })
+    //   .catch((error) => {
+    //     // Error
+    //     console.error("payment error", error)
+    //     Alert.alert(
+    //       'Payment Failed',
+    //       `Error: ${error.code} | ${error.description}`
+    //     );
+    //     //  setIsLoading(false)
+    //   });
   };
 
   const HandleHsnCode = async (hsncode, setFieldValue) => {

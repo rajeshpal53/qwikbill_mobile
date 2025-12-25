@@ -110,32 +110,44 @@ const downloadInvoicePressHandler = async (api, name) => {
   }
 };
 
-
 const downloadExcelHandler = async (api, name = "SampleFile") => {
   await checkNotificationPermission();
-  console.log("Downloading Excel:", api, name);
+
   const extension = ".xlsx";
-  const fileType = "xlsx";
   const mimeType =
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
   try {
     setIsLoading(true);
 
-    // Local file path
     const fileUri = FileSystem.documentDirectory + `${name}${extension}`;
 
-    // Modern download API
     const { uri } = await FileSystem.downloadAsync(api, fileUri, {
       headers: {
         Authorization: `Bearer ${userData?.token}`,
       },
     });
 
-    console.log("Downloaded XLSX: debug 1:", uri);
+    console.log("Downloaded Excel:", uri);
 
-    // Save or share the file
-    await saveFile(uri, `${name}${extension}`, mimeType, fileType);
+    // ✅ iOS: Export to Files / Share Sheet
+    if (Platform.OS === "ios") {
+      if (!(await Sharing.isAvailableAsync())) {
+        Alert.alert("Error", "Sharing is not available on this device");
+        return;
+      }
+
+      await Sharing.shareAsync(uri, {
+        mimeType,
+        dialogTitle: "Save Excel File",
+        UTI: "org.openxmlformats.spreadsheetml.sheet",
+      });
+    }
+
+    // ✅ Android: keep your existing save logic
+    else {
+      await saveFile(uri, `${name}${extension}`, mimeType, "xlsx");
+    }
   } catch (error) {
     console.error("Excel Download/Save error:", error);
     Alert.alert("Download Failed", "Unable to download the Excel file.");

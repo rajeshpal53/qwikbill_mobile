@@ -7,6 +7,7 @@ import ServiceImagePicker from "../../../../Components/ServiceImagePicker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useSnackbar } from "../../../../Store/SnackbarContext";
+import GenderDropdown from "../../../../Components/GenderDropdown";
 
 const ProviderProfileForm = ({
   title,
@@ -184,18 +185,18 @@ const ProviderProfileForm = ({
       </View>
 
       <View style={{}}>
-        <View>
-          <GenericDropdown
-            dropDownlabelStyle={styles.dropDownlabelStyle}
-            pickerContainerStyle={styles.pickerContainerStyle}
-            pickerStyle={styles.pickerStyle}
-            containerStyle={styles.containerStyle}
-            label={"Gender" + " *"}
-            options={genderList}
-            selectedValue={selectedGender}
-            onValueChange={handleSelectGender}
-          />
-        </View>
+                       <GenderDropdown 
+                        genderList={genderList}
+  selectedGender={selectedGender}
+  setSelectedGender={handleSelectGender}
+  setFieldValue={setFieldValue}
+  touched={touched}
+  errors={errors}
+                       />
+                        
+
+               
+
         {touched.gender && errors.gender ? (
           <Text style={{ color: "red", marginLeft: 2 }}>{errors.gender}</Text>
         ) : null}

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
   Text,
+
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 // import { Modal } from "react-native-paper";
@@ -181,7 +182,7 @@ const Searchbarwithmic = ({
       <View style={styles.container}>
         <Searchbar
           ref={refuser || null}
-          style={styles.searchbar}
+          style={[styles.searchbar,{height:Platform.OS === "android"?45:37}]}
           numberOfLines={1}
           placeholder={SelectedPlaceholderText || "Search for ....."}
           onFocus={() => {
@@ -270,14 +271,16 @@ const styles = StyleSheet.create({
   },
 
   searchbar: {
-    height: 45, // Increase height to make sure the placeholder can be vertically centered
+   // Increase height to make sure the placeholder can be vertically centered
     borderRadius: 10,
+  
+    width:"100%",
     backgroundColor: "#EDEDED",
     // justifyContent: "center", // Vertically center the content
     // paddingVertical: 0, // Remove extra padding for centering
     marginVertical: 2,
 
-    marginBottom: 10,
+    marginBottom: 8,
   },
   inputStyle: {
     // textAlignVertical: "center", // Center input text vertically

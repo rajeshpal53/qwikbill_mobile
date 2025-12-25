@@ -42,21 +42,38 @@
           "android": {
             "enableProguardInReleaseBuilds": true,
             "resizeableActivity": true
+          },"ios": {
+            "useFrameworks": "static",
+            "useModularHeaders": true
           }
         }
       ],
       "expo-web-browser",
       "expo-audio"
     ],
-    "ios": {
-      "buildNumber": "1.0.0",
-      "supportsTablet": true,
-      "infoPlist": {
-        "NSSpeechRecognitionUsageDescription": "Allow ${PRODUCT_NAME} to use speech recognition.",
-        "NSMicrophoneUsageDescription": "Allow ${PRODUCT_NAME} to use the microphone."
+     "ios": {
+      "useFrameworks": "static",
+       "buildConfiguration": {
+        "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES": "YES"
       },
-      "bundleIdentifier": "com.wertone.qwikbill"
-    },
+  "hermesEnabled": true,
+  "supportsTablet": true,
+  "bundleIdentifier": "com.wertone.qwikbill",
+  "googleServicesFile": "./GoogleService-Info.plist",
+  "infoPlist": {
+  "NSAppTransportSecurity": {
+    "NSAllowsArbitraryLoads": true
+  },
+  "NSUserNotificationUsageDescription": "Qwikbill uses notifications to inform users about important billing updates, payment alerts, and account-related activities.",
+        "NSCameraUsageDescription": "Qwikbill uses the camera to capture images or documents for uploading bills and verification purposes.",
+        "NSMicrophoneUsageDescription": "Qwikbill uses the microphone only when users intentionally record audio or video within the app.",
+        "NSPhotoLibraryUsageDescription": "Qwikbill accesses the photo library to allow users to select images or documents for bill uploads.",
+        "NSDocumentsFolderUsageDescription": "Qwikbill accesses files only to allow users to upload Excel documents for billing data processing.",
+  "UIBackgroundModes": ["remote-notification"],
+  "ITSAppUsesNonExemptEncryption": false,
+  "FirebaseAppDelegateProxyEnabled": true
+}
+},
     "android": {
       "versionCode": 1,
       "googleServicesFile": "./google-services.json",

@@ -2,11 +2,12 @@ import { Formik } from "formik";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  KeyboardAvoidingView,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,Platform
 } from "react-native";
 import { TextInput } from "react-native-paper";
 import * as Yup from "yup";
@@ -272,6 +273,9 @@ const AddRole = () => {
   };
 
   return (
+    <KeyboardAvoidingView  style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}>
     <ScrollView style={styles.container}>
       <Formik
         initialValues={{
@@ -498,6 +502,7 @@ const AddRole = () => {
         buttonTitle="Go Back"
       />
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

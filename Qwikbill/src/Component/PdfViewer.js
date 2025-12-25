@@ -143,30 +143,6 @@ const PdfScreen = ({ navigation }) => {
     <ActivityIndicator size="large" />
   </View>
 ) : (
-//   <WebView
-//   originWhitelist={["*"]}
-//   allowFileAccess={true}
-//   allowUniversalAccessFromFileURLs={true}
-//   source={{
-//     html: `
-//       <html>
-//         <body style="margin:0;padding:0;overflow:hidden">
-//           <iframe
-//             src="data:application/pdf;base64,${pdfBase64}"
-//             type="application/pdf"
-//             width="100%"
-//             height="100%"
-//             style="border:none;"
-//           ></iframe>
-//         </body>
-//       </html>
-//     `,
-//   }}
-//   style={{ flex: 1 }}
-//   useWebKit={true}
-//   javaScriptEnabled={true}
-//   scalesPageToFit={true}
-// />
  <WebView
       originWhitelist={["*"]}
       style={{ flex: 1 }}
@@ -181,15 +157,6 @@ const PdfScreen = ({ navigation }) => {
           true;
         `}
     />
-    // <WebView originWhitelist={["*"]} source={{ html }} style={{ flex: 1 }} />
-    //  <WebView
-    //   originWhitelist={["*"]}
-    //   allowFileAccess={true}
-    //   allowUniversalAccessFromFileURLs={true}
-    //   source={{ uri: 'https://f2gfinance.com/' }}
-    //   style={{ flex: 1 ,width: '100%', height: '50%', backgroundColor: 'gray',marginTop:10 ,zIndex:100}}
-    //   onError={(err) => console.log("WebView error:", err)}
-    // />
 )}
 
       <Card style={styles.card}>

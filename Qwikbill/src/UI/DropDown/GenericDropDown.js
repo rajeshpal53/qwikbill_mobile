@@ -1,75 +1,96 @@
+import React, { useState } from "react";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { List } from "react-native-paper";
 
+const GenericDropdown = ({
+  label,
+  required = false,
+  options = [],
+  selectedValue,
+  onValueChange,
+  containerStyle,
+  accordionStyle,
+  labelStyle,
+}) => {
+  const [expanded, setExpanded] = useState(false);
 
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-
-const GenericDropdown = ({ label, dropDownlabelStyle, options, selectedValue, onValueChange, containerStyle, pickerContainerStyle, pickerStyle, fontStyles }) => {
   return (
-    <View style={containerStyle}>
-{label && (
-  <Text style={[styles.label, dropDownlabelStyle]}>
-    {typeof label === 'string' && label.includes('*') ? (
-      <>
-        {label.replace('*', '')}
-        <Text style={{ }}>*</Text>
-      </>
-    ) : (
-      label
-    )}
-  </Text>
-)}
-      <View style={
-        [
-          // styles.container, 
-          // containerStyle
-          pickerContainerStyle
-          ]
-          }>
-        <Picker
-          mode="dropdown"
-          selectedValue={selectedValue}
-          onValueChange={(itemValue) => {
-            console.log("setItem , ", itemValue );
-            onValueChange(itemValue)
-          }}
-          style={pickerStyle}
-          dropdownIconColor={pickerStyle?.color || "black"}
-          placeholder={label}
-        >
-          {options.map((option, index) => (
-            <Picker.Item style={fontStyles} key={index} label={option.label} value={option.value} />
-          ))}
-        </Picker>
-      </View>
+    <View style={[styles.wrapper, containerStyle]}>
+      {label && (
+        <Text style={[styles.label, labelStyle]}>
+          {label}
+          {required && <Text style={styles.required}> *</Text>}
+        </Text>
+      )}
+
+      <List.Accordion
+        title={selectedValue || `Select ${label}`}
+        expanded={expanded}
+        onPress={() => setExpanded(!expanded)}
+        style={[styles.accordion, accordionStyle]}
+        titleStyle={styles.title}
+        right={props => <List.Icon {...props} icon="chevron-down" />}
+      >
+        <View style={styles.dropdownContainer}>
+          <ScrollView>
+            {options.map((item, index) => (
+              <List.Item
+                key={index}
+                title={item.label}
+                titleStyle={styles.itemTitle}
+                onPress={() => {
+                  onValueChange(item.value);
+                  setExpanded(false);
+                }}
+                style={styles.listItem}
+              />
+            ))}
+          </ScrollView>
+        </View>
+      </List.Accordion>
     </View>
   );
 };
 
+
 const styles = StyleSheet.create({
-  container: {
-    height: 40,
-    width: '100%',
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    justifyContent: 'center',
-    borderRadius: 5,
-  },
-  picker: {
-    height: '100%',
-    width: '100%',
+  wrapper: {
+    marginTop: 12,
   },
   label: {
-    position: 'absolute',
-    backgroundColor: 'white',
-    top: -12,
-    left: 10,
-    zIndex: 1,
+    position: "absolute",
+    top: -8,
+    left: 12,
+    backgroundColor: "#fff",
+    zIndex: 10,
     paddingHorizontal: 4,
+    fontSize: 13,
+    color: "rgba(0,0,0,0.6)",
+  },
+  required: {
+    color: "red",
+  },
+  accordion: {
+    backgroundColor: "#fff", // flat filled
+    borderRadius: 6,
+    paddingVertical: 0,
+  },
+  title: {
     fontSize: 14,
-    color: 'rgba(0, 0, 0, 0.6)',
+    paddingVertical: 6, // 👈 reduced height
+  },
+  dropdownContainer: {
+    backgroundColor: "#fff",
+    maxHeight: 180,
+  },
+  listItem: {
+    paddingVertical: 2, // 👈 compact items
+  },
+  itemTitle: {
+    fontSize: 14,
   },
 });
+
 
 export default GenericDropdown;
 
