@@ -34,6 +34,7 @@ function ViewInvoiceScreen1({ navigation }) {
   const [searchModal, setSearchmodal] = useState(false);
   const [selected, setSelected] = useState("All");
   const [sortBy, setSortBy] = useState("");
+  const [hasError,setHasError]=useState(false)
   const [dateRange, setDateRange] = useState({});
   const [date, setDate] = useState({
     startDate: new Date(),
@@ -57,6 +58,19 @@ const [selectionMode, setSelectionMode] = useState(false);
   const[visible,setVisible]=useState(false)
   const {showSnackbar}=useSnackbar();
   const [apiError, setApiError] = useState(false);
+  const apiInProgress = useRef(false);
+
+
+  // setModalVisible={setModalVisible}
+  //         isModalVisible={isModalVisible}
+  //         setSortBy={setSortBy}
+  //         sortBy={sortBy}
+  //         dateRange={dateRange}
+  //         setDateRange={setDateRange}
+  //         formatDate={formatDate}
+  //         setTypeFilter={setTypeFilter}
+
+
   // useEffect(() => {
   //   if (page === 1) {
   //     fetchInvoices(1);
@@ -111,27 +125,29 @@ const handleBulkDelete = async () => {
 
 
   // Unified effect for filters and selected shop
-  useEffect(() => {
-  if (selectedShop?.vendor?.id && !apiError) {
-    setPage(1);
-    setSearchQuery("");
-    setSearchCalled(false);
-    setHasMore(true);
-    fetchInvoices(1, true);
-  }
-}, [selected, sortBy, typeFilter, selectedShop?.vendor?.id,dateRange]);
+useEffect(() => {
+  if (!selectedShop?.vendor?.id || apiError) return;
+
+  setPage(1);
+  setSearchQuery("");
+  setSearchCalled(false);
+  setHasMore(true);
+
+  fetchInvoices(1, true);
+}, [selected, sortBy, typeFilter, selectedShop?.vendor?.id, dateRange]);
 
 
   // Only used for pagination
-  useEffect(() => {
-    if (page > 1) {
-      if (searchQuery?.length > 0 && searchCalled) {
-        fetchSearchedData(searchQuery, page);
-      } else {
-        fetchInvoices(page);
-      }
+useEffect(() => {
+  if (page > 1 && !apiError) {
+    if (searchQuery?.length > 0 && searchCalled) {
+      fetchSearchedData(searchQuery, page);
+    } else {
+      fetchInvoices(page);
     }
-  }, [page]);
+  }
+}, [page]);
+
   
 
   const buildApiUrl = (pageNum) => {
@@ -155,34 +171,46 @@ const handleBulkDelete = async () => {
     return api;
   };
 
- const fetchInvoices = async (pageNum = 1, force = false) => {
-  if (!force && pageNum === 1 && !mainLoading) return;
+  const fetchInvoices = async (pageNum = 1, force = false) => {
+  if (apiInProgress.current) return;      // 🔒 lock
+  if (apiError && !force) return;          // ❌ stop on error
+  if (!vendorId || !userData?.token) return;
+
+  apiInProgress.current = true;
+
   if (pageNum === 1) {
     setMainLoading(true);
     setHasMore(true);
-    setApiError(false); // reset error on new fetch
+    setApiError(false);
   }
+
   setIsLoading(true);
+
   try {
     const api = buildApiUrl(pageNum);
     const response = await readApi(api, authHeader);
 
     if (pageNum === 1) {
-      setInvoices(response.invoices || []);
+      setInvoices(response?.invoices || []);
     } else if (response?.invoices?.length > 0) {
       setInvoices(prev => [...prev, ...response.invoices]);
     } else {
       setHasMore(false);
     }
   } catch (err) {
-    setApiError(true); // stop repeated calls
+    console.error("Invoice API error:", err);
+    setApiError(true);
+
     if (pageNum === 1) setInvoices([]);
-    console.error("API fetch failed:", err);
+
+    handleApiError(err);
   } finally {
+    apiInProgress.current = false;  // 🔓 unlock
     setIsLoading(false);
     setMainLoading(false);
   }
 };
+
 
     const loadMoreData = () => {
     if (!isLoading && hasMore) {

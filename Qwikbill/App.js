@@ -36,6 +36,7 @@ import {
   foregroundHandler,
 
 } from "./src/Util/NotificationHandler";
+import { setUnauthorizedHandler } from "./src/Util/authEvent.js";
 // import { useAudioPlayer } from 'expo-audio';
 
 //import { requestUserPermission, setupTokenRefreshListener } from "./src/Util/NotificationHandler.js";
@@ -95,6 +96,16 @@ SystemUI.setBackgroundColorAsync('transparent');
     console.log("unsubscribeForeground", unsubscribeForeground);
     return () => unsubscribeForeground();
   }, []);
+
+  useEffect(() => {
+    setUnauthorizedHandler(() => {
+      navigationRef.current?.reset({
+        index: 0,
+        routes: [{ name: "Login" }],
+      });
+    });
+  }, []);
+
 
   useCheckForUpdate();
   return (

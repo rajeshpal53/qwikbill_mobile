@@ -52,6 +52,11 @@
       "expo-audio"
     ],
      "ios": {
+       "splash": {
+        "image": "./assets/qLogoIos.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#ffffff"
+      },
       "useFrameworks": "static",
        "buildConfiguration": {
         "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES": "YES"
@@ -75,6 +80,11 @@
 }
 },
     "android": {
+      "splash": {
+        "image": "./assets/qLogo.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#ffffff"
+      },
       "versionCode": 1,
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {

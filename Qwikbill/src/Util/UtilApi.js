@@ -1,5 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { triggerUnauthorized } from "./authEvents";
+
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
 // const API_BASE_URL = "https://wertone-billing.onrender.com/";
 
@@ -13,6 +15,7 @@ import { navigate } from "./NavigationService"; // global navigation helper
 // for development:> eas build --platform android  --profile development
 // for production:> eas build --platform android  --profile production
 export const NORM_URL="https://qwikbill.in/qapp/"
+let isLoggingOut = false;
 
 const apiRequest = async (method, url, data = null, headers = {}) => {
   try {
@@ -64,6 +67,19 @@ const apiRequest = async (method, url, data = null, headers = {}) => {
 
     return response.data;
   } catch (error) {
+    if (status === 401 && !isLoggingOut) {
+      isLoggingOut = true;
+
+      console.warn("Session expired. Logging out...");
+
+      await AsyncStorage.removeItem("userData");
+
+      triggerUnauthorized(); // 🚀 notify app
+
+      setTimeout(() => {
+        isLoggingOut = false;
+      }, 2000);
+    }
     console.error(
       `API Error [${method.toUpperCase()} ${url}]`,
       error?.response?.data || error.message
